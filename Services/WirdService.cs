@@ -1,0 +1,80 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Azure.Core;
+using Hifz.Migrations;
+using Hifz.Models;
+using Hifz.Repositories.Interfaces;
+using Hifz.Services.Interfaces;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
+
+namespace Hifz.Services
+{
+    public class WirdService : IWirdService
+    {
+        private readonly IWirdRepository _wirdRepository;
+
+        public WirdService(IWirdRepository wirdRepository)
+        {
+            _wirdRepository = wirdRepository;
+        }
+
+        public async Task<(bool IsSuccess, string Message)> AddWirdAsync(WirdAssignment wird)
+        {
+            if (wird.Status.ToString() != "notSet")
+                wird.IsCompleted = true;
+            bool isAdded = await _wirdRepository.AddWirdAsync(wird);
+            return (
+                isAdded,
+                isAdded
+                    ? "Wird has been successfully assigned!"
+                    : "Failed to assign wird. No changes were made."
+            );
+        }
+
+        public async Task<bool> DeleteWirdAssignment(Guid id)
+        {
+            var Wird = await _wirdRepository.GetWirdByID(id);
+            if (Wird == null)
+                return false;
+            bool isWirdDeleted = await _wirdRepository.DeleteWirdAssignment(id);
+            return isWirdDeleted;
+        }
+
+        public async Task<List<WirdAssignment>?> GetWirdAssignmentsByClassIdAsync(
+            Guid classID,
+            string? fromDate,
+            string? toDate
+        )
+        {
+            DateTime from = string.IsNullOrEmpty(fromDate)
+                ? DateTime.Today
+                : DateTime.Parse(fromDate);
+
+            DateTime to = string.IsNullOrEmpty(toDate)
+                ? DateTime.Today.AddDays(1)
+                : DateTime.Parse(toDate);
+
+            return await _wirdRepository.GetWirdAssignmentsByClassIdAsync(classID, from, to);
+        }
+
+        public async Task<bool> UpdateStatus(Guid Id, AssignmentStatus status)
+        {
+            var Wird = await _wirdRepository.GetWirdByID(Id);
+            if (Wird == null)
+                return false;
+
+            return await _wirdRepository.UpdateStatus(Id, status);
+        }
+
+        public async Task<bool> UpdateWirdNote(Guid Id, string Note)
+        {
+            var Wird = await _wirdRepository.GetWirdByID(Id);
+            if (Wird == null)
+                return false;
+
+            return await _wirdRepository.UpdateNote(Id, Note);
+        }
+    }
+}

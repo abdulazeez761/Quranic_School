@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="OnlineMeetings" xml:space="preserve"><value>الاجتماعات المباشرة</value></data>
+  <data name="JoinActiveMeetings" xml:space="preserve"><value>انضم إلى الاجتماعات النشطة لحلقاتك المسجلة</value></data>
+  <data name="LiveNow" xml:space="preserve"><value>مباشر الآن</value></data>
+  <data name="StudentsEnrolled" xml:space="preserve"><value>طالب مسجل</value></data>
+  <data name="Teachers" xml:space="preserve"><value>معلم</value></data>
+  <data name="SecureConnection" xml:space="preserve"><value>اتصال آمن</value></data>
+  <data name="JoinMeeting" xml:space="preserve"><value>انضم للاجتماع</value></data>
+  <data name="NoActiveMeetings" xml:space="preserve"><value>لا توجد اجتماعات نشطة</value></data>
+  <data name="NoActiveMeetingsDesc" xml:space="preserve"><value>لا توجد اجتماعات نشطة حالياً. تحقق لاحقاً أو انتظر حتى يبدأ معلمك اجتماعاً.</value></data>
+</root>

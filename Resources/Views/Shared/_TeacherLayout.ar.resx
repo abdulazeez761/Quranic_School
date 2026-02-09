@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="title" xml:space="preserve">
+    <value>بوابة المعلم</value>
+  </data>
+  <data name="TeacherPortal" xml:space="preserve">
+    <value>بوابة المعلم</value>
+  </data>
+  <data name="SystemName" xml:space="preserve">
+    <value>نظام إدارة حلقات التحفيظ</value>
+  </data>
+  <data name="TeacherRole" xml:space="preserve">
+    <value>معلم</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>تسجيل الخروج</value>
+  </data>
+  <data name="Classes" xml:space="preserve">
+    <value>الحلقات</value>
+  </data>
+  <data name="Students" xml:space="preserve">
+    <value>الطلاب</value>
+  </data>
+  <data name="Wirds" xml:space="preserve">
+    <value>الأوراد</value>
+  </data>
+  <data name="Meetings" xml:space="preserve">
+    <value>الاجتماعات</value>
+  </data>
+  <data name="Attendance" xml:space="preserve">
+    <value>الحضور</value>
+  </data>
+</root>

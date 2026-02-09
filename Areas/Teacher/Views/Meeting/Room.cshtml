@@ -1,0 +1,313 @@
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["PageTitle"].Value;
+    var roomName = (string)ViewBag.RoomName;
+    var displayName = (string)ViewBag.DisplayName;
+    var className = (string)ViewBag.ClassName ?? "Class";
+    var classId = (Guid)ViewBag.ClassId;
+    var isTeacher = (bool)ViewBag.IsTeacher;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/teacher/meeting.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/teacher/modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+}
+
+<div class="meeting-wrapper">
+    <!-- Header Section -->
+    <div class="meeting-header-bar">
+        <div class="meeting-header-content">
+            <div>
+                <h2 class="meeting-title">
+                    <i class="bi bi-camera-video"></i>
+                    @className
+                </h2>
+                <p class="meeting-subtitle">
+                    <i class="bi bi-person-circle me-1"></i>@displayName
+                    <span class="mx-2">•</span>
+                    <i class="bi bi-door-open me-1"></i>@Localizer["Room"] @roomName
+                </p>
+            </div>
+            <div class="meeting-status-badge">
+                <span class="status-indicator"></span>
+                @Localizer["LiveMeeting"]
+            </div>
+        </div>
+    </div>
+
+    <!-- Jitsi Meeting Container -->
+    <div id="meet" class="meeting-container"></div>
+
+    <!-- Status Footer -->
+    <div class="status-footer">
+        <div class="status-footer-content">
+            <div class="status-item">
+                <i class="bi bi-shield-check"></i>
+                <span>@Localizer["SecureConnection"]</span>
+            </div>
+            <div class="status-item" id="participant-info">
+                <i class="bi bi-people"></i>
+                <span class="participant-count" id="count">@Localizer["Connecting"]</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Teacher Controls Panel (Only visible to teachers) -->
+    @if (isTeacher)
+    {
+        <div class="controls-panel fade-in">
+            <h3 class="controls-title">
+                <i class="bi bi-sliders"></i>
+                @Localizer["MeetingControls"]
+            </h3>
+            <div class="controls-grid">
+                <button onclick="muteAll()" class="control-btn control-btn-secondary">
+                    <i class="bi bi-mic-mute"></i>
+                    @Localizer["MuteAll"]
+                </button>
+                <button onclick="toggleShareScreen()" class="control-btn control-btn-primary">
+                    <i class="bi bi-display"></i>
+                    @Localizer["ShareScreen"]
+                </button>
+                <button onclick="toggleChat()" class="control-btn control-btn-secondary">
+                    <i class="bi bi-chat-dots"></i>
+                    @Localizer["ToggleChat"]
+                </button>
+                <button onclick="toggleTileView()" class="control-btn control-btn-secondary">
+                    <i class="bi bi-grid-3x3"></i>
+                    @Localizer["TileView"]
+                </button>
+                <button onclick="endClass(); return false;" class="control-btn control-btn-danger" type="button">
+                    <i class="bi bi-stop-circle"></i>
+                    @Localizer["EndMeeting"]
+                </button>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Enhanced Leave Meeting Modal -->
+<div id="leaveModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-icon">
+            <i class="bi bi-exclamation-circle-fill"></i>
+        </div>
+        <h2 class="modal-title">@Localizer["EndMeetingQuestion"]</h2>
+        <p class="modal-description">
+            @Localizer["EndMeetingConfirm"]
+        </p>
+        <div class="modal-buttons">
+            <button type="button" class="btn-modal btn-cancel" onclick="hideLeaveModal()">
+                <i class="bi bi-arrow-left"></i>
+                @Localizer["ContinueMeeting"]
+            </button>
+            <button type="button" class="btn-modal btn-end" onclick="confirmEndClass()">
+                <i class="bi bi-stop-circle"></i>
+                @Localizer["EndMeeting"]
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Jitsi Meet External API -->
+<script src="https://meet.jit.si/external_api.js"></script>
+
+<script>
+    let api;
+    let participantCount = 1; // Start with 1 (current user)
+
+    document.addEventListener("DOMContentLoaded", function () {
+    initializeJitsi();
+    });
+
+    function initializeJitsi() {
+    const domain = "meet.jit.si";
+    const options = {
+    roomName: "@roomName",
+    parentNode: document.querySelector('#meet'),
+    width: "100%",
+    height: "100%",
+    userInfo: {
+    displayName: "@displayName"
+    },
+    configOverwrite: {
+    startWithAudioMuted: @(isTeacher ? "false" : "true"),
+    startWithVideoMuted: false,
+    prejoinPageEnabled: false,
+    disableDeepLinking: true,
+    enableWelcomePage: false,
+    enableClosePage: false,
+    enableNoisyMicDetection: true,
+    toolbarButtons: [
+    'microphone', 'camera', 'closedcaptions', 'desktop',
+    'fullscreen', 'fodeviceselection',
+    'chat', 'raisehand', 'videoquality', 'filmstrip',
+    'tileview', 'download', 'help', 'mute-everyone'
+    ]
+    },
+    interfaceConfigOverwrite: {
+    SHOW_JITSI_WATERMARK: false,
+    SHOW_WATERMARK_FOR_GUESTS: false,
+    DEFAULT_REMOTE_DISPLAY_NAME: 'Participant',
+    DISABLE_JOIN_LEAVE_NOTIFICATIONS: false
+    }
+    };
+
+    api = new JitsiMeetExternalAPI(domain, options);
+
+    // Event Listeners
+    api.addEventListener('videoConferenceJoined', function (event) {
+    console.log("✅ Joined room:", event.roomName);
+    updateParticipantCount();
+    showToast("You joined the meeting", "success");
+    });
+
+    api.addEventListener('participantJoined', function (participant) {
+    participantCount++;
+    console.log("👤 Participant joined:", participant.displayName || participant.id);
+    updateParticipantCount();
+    showToast((participant.displayName || "Someone") + " joined", "info");
+    });
+
+    api.addEventListener('participantLeft', function (participant) {
+    participantCount--;
+    console.log("👋 Participant left:", participant.id);
+    updateParticipantCount();
+    });
+
+    api.addEventListener('raiseHandUpdated', function (event) {
+    console.log("✋ Raise hand:", event.participantId);
+    @if (isTeacher)
+    {
+        <text>
+            showToast("A student raised their hand!", "warning");
+        </text>
+    }
+    });
+
+    api.addEventListener('readyToClose', function () {
+    console.log("Meeting ended");
+    redirectToClassList();
+    });
+
+    api.addEventListener('participantsInfoChanged', function (event) {
+    if (event && event.participants) {
+    participantCount = event.participants.length;
+    updateParticipantCount();
+    }
+    });
+    }
+
+    // Control Functions
+    function muteAll() {
+    if (api) {
+    api.executeCommand('muteEveryone');
+    showToast("All participants muted", "success");
+    }
+    }
+
+    function toggleShareScreen() {
+    if (api) {
+    api.executeCommand('toggleShareScreen');
+    }
+    }
+
+    function toggleChat() {
+    if (api) {
+    api.executeCommand('toggleChat');
+    }
+    }
+
+    function toggleTileView() {
+    if (api) {
+    api.executeCommand('toggleTileView');
+    }
+    }
+
+    function endClass(event) {
+    if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    }
+    console.log("End class clicked, showing modal");
+    showLeaveModal();
+    return false;
+    }
+
+    function showLeaveModal() {
+    const overlay = document.getElementById('leaveModal');
+    const meetContainer = document.querySelector('.meeting-wrapper');
+    console.log("Showing modal, overlay element:", overlay);
+    if (overlay) {
+    overlay.classList.add('active');
+    // Disable interaction with meeting while modal is open
+    if (meetContainer) {
+    meetContainer.style.pointerEvents = 'none';
+    }
+    }
+    }
+
+    function hideLeaveModal() {
+    const overlay = document.getElementById('leaveModal');
+    const meetContainer = document.querySelector('.meeting-wrapper');
+    if (overlay) {
+    overlay.classList.remove('active');
+    // Re-enable interaction with meeting
+    if (meetContainer) {
+    meetContainer.style.pointerEvents = 'auto';
+    }
+    }
+    }
+
+    function confirmEndClass() {
+    console.log("Confirmed end class");
+    hideLeaveModal();
+    if (api) {
+    api.executeCommand('hangup');
+    }
+    setTimeout(redirectToClassList, 1500);
+    }
+
+    function redirectToClassList() {
+    window.location.href = '@Url.Action("ManageMeetings", "TeacherClasses", new { area = "Teacher" })';
+    }
+
+    function updateParticipantCount() {
+    const countElement = document.getElementById('count');
+    if (countElement) {
+    countElement.textContent = participantCount + (participantCount === 1 ? ' @Localizer["Participant"]' : ' @Localizer["Participants"]');
+    }
+    }
+
+    function showToast(message, type) {
+    // Simple console notification - can be enhanced with a toast library
+    console.log(`[${type.toUpperCase()}] ${message}`);
+
+    // You can add a toast notification library here for better UX
+    // For now, we'll use console logging
+    }
+
+    // Intercept Jitsi's close attempts
+    let allowJitsiClose = false;
+
+    // Watch for Jitsi trying to show a dialog
+    document.addEventListener('click', function (e) {
+    // If any dialog tries to appear, show our modal instead
+    const dialogs = document.querySelectorAll('[role="dialog"], [role="alertdialog"]');
+    dialogs.forEach(dialog => {
+    if (dialog && !dialog.id.includes('leaveModal')) {
+    dialog.style.display = 'none';
+    dialog.style.visibility = 'hidden';
+    }
+    });
+    }, true);
+
+    // Warn before leaving - DISABLED in favor of custom leave modal
+    // window.addEventListener('beforeunload', function (e) {
+    //     if (api) {
+    //         e.preventDefault();
+    //         e.returnValue = '';
+    //     }
+    // });
+</script>

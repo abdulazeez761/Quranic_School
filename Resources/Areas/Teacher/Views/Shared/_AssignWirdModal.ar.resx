@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="AssignWirdTo" xml:space="preserve">
+    <value>تخصيص ورد لـ</value>
+  </data>
+  <data name="AssignmentType" xml:space="preserve">
+    <value>نوع الورد</value>
+  </data>
+  <data name="SelectType" xml:space="preserve">
+    <value>اختر نوع الورد</value>
+  </data>
+  <data name="Memorization" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="Revision" xml:space="preserve">
+    <value>مراجعة</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>من</value>
+  </data>
+  <data name="To" xml:space="preserve">
+    <value>إلى</value>
+  </data>
+  <data name="Juz" xml:space="preserve">
+    <value>الجزء</value>
+  </data>
+  <data name="Page" xml:space="preserve">
+    <value>الصفحة</value>
+  </data>
+  <data name="Surah" xml:space="preserve">
+    <value>السورة</value>
+  </data>
+  <data name="Ayah" xml:space="preserve">
+    <value>الآية</value>
+  </data>
+  <data name="AyahNumber" xml:space="preserve">
+    <value>رقم الآية</value>
+  </data>
+  <data name="PageNumber" xml:space="preserve">
+    <value>رقم الصفحة</value>
+  </data>
+  <data name="Grade" xml:space="preserve">
+    <value>التقييم (اختياري - للواجبات المكتملة)</value>
+  </data>
+  <data name="NotGraded" xml:space="preserve">
+    <value>لم يُقيّم</value>
+  </data>
+  <data name="Poor" xml:space="preserve">
+    <value>ضعيف</value>
+  </data>
+  <data name="Fair" xml:space="preserve">
+    <value>مقبول</value>
+  </data>
+  <data name="Good" xml:space="preserve">
+    <value>جيد</value>
+  </data>
+  <data name="VeryGood" xml:space="preserve">
+    <value>جيد جداً</value>
+  </data>
+  <data name="Excellent" xml:space="preserve">
+    <value>ممتاز</value>
+  </data>
+  <data name="NoteOptional" xml:space="preserve">
+    <value>ملاحظة (اختياري)</value>
+  </data>
+  <data name="NotePlaceholder" xml:space="preserve">
+    <value>أضف أي ملاحظات أو تعليمات...</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="AssignWird" xml:space="preserve">
+    <value>تخصيص الورد</value>
+  </data>
+  <data name="SelectSurah" xml:space="preserve">
+    <value>اختر السورة</value>
+  </data>
+</root>

@@ -1,0 +1,106 @@
+/* Enhanced Checkbox Styles */
+.day-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: var(--card-bg);
+  position: relative;
+  user-select: none;
+}
+
+.day-checkbox:hover {
+  border-color: var(--primary-green);
+  background: var(--surface-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.day-checkbox input[type='checkbox'] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.day-checkbox-custom {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  background: white;
+}
+
+.day-checkbox-custom i {
+  font-size: 16px;
+  color: white;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.2s ease;
+}
+
+.day-checkbox input[type='checkbox']:checked ~ .day-checkbox-custom {
+  background: var(--primary-green);
+  border-color: var(--primary-green);
+}
+
+.day-checkbox input[type='checkbox']:checked ~ .day-checkbox-custom i {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.day-checkbox input[type='checkbox']:checked ~ .day-label {
+  color: var(--primary-green);
+  font-weight: 600;
+}
+
+.day-checkbox
+  input[type='checkbox']:checked
+  + .day-checkbox-custom
+  + .day-label {
+  color: var(--primary-green);
+}
+
+.day-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-color);
+  transition: all 0.3s ease;
+}
+
+/* Checked state for the whole container */
+.day-checkbox:has(input:checked) {
+  border-color: var(--primary-green);
+  background: rgba(76, 175, 80, 0.05);
+}
+
+/* Focus state for accessibility */
+.day-checkbox input[type='checkbox']:focus ~ .day-checkbox-custom {
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+/* Animation on check */
+@keyframes checkBounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.day-checkbox input[type='checkbox']:checked ~ .day-checkbox-custom {
+  animation: checkBounce 0.3s ease;
+}

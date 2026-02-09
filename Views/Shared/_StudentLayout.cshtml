@@ -1,0 +1,147 @@
+@using System.Security.Claims
+<!DOCTYPE html>
+<html lang="en">
+@{
+    var isArabic = System.Threading.Thread.CurrentThread.CurrentCulture.Name.StartsWith("ar");
+    string? studentName = User.FindFirstValue(ClaimTypes.Name);
+}
+
+<html lang="@System.Threading.Thread.CurrentThread.CurrentCulture.Name" dir="@(isArabic ? "rtl" : "ltr")">
+
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - @Localizer["Title"]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#648c51" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="#648c51" />
+    <meta name="apple-mobile-web-app-title" content="Hifz" />
+    <meta name="description" content="Quran School Management System for teachers, students, and parents" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    
+    <!-- Fonts & Icons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/main.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/student/student-layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/switchLanguage.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pwa-install.css" asp-append-version="true" />
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+
+<body>
+    <div class="student-layout">
+        <!-- Top Header -->
+        <header class="student-header">
+            <div class="header-left">
+                <h1 class="header-title">@Localizer["StudentPortal"]</h1>
+                <p class="header-subtitle">@Localizer["SystemName"]</p>
+            </div>
+
+            <div class="header-right">
+                <!-- Language Switcher -->
+                <div class="language-switcher">
+                    <button class="language-btn" id="languageToggle" aria-label="Switch Language">
+                        <i class='bx bx-globe'></i>
+                        <span id="currentLang">@(isArabic ? "العربية" : "English")</span>
+                        <i class='bx bx-chevron-down'></i>
+                    </button>
+                    <ul class="language-menu" id="languageMenu">
+                        <li>
+                            <a href="#" data-lang="ar" class="language-option @(isArabic ? "active" : "")">
+                                <i class='bx bx-check'></i>
+                                <span>العربية</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-lang="en" class="language-option @(!isArabic ? "active" : "")">
+                                <i class='bx bx-check'></i>
+                                <span>English</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- User Profile -->
+                <div class="user-profile">
+                    <div class="user-info">
+                        <div class="user-name">@studentName</div>
+                        <div class="user-role">@Localizer["StudentRole"]</div>
+                    </div>
+                    <div class="user-avatar">
+                        <i class='bx bx-user'></i>
+                    </div>
+                </div>
+
+                <!-- Logout Button -->
+                <a asp-area="" asp-controller="Auth" asp-action="Logout" class="logout-btn">
+                    <i class='bx bx-log-out'></i>
+                    <span>@Localizer["LogOut"]</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="student-nav">
+            <ul class="nav-tabs">
+                <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
+                    <a asp-area="Student" asp-controller="Home" asp-action="Index">
+                        <i class='bx bx-home-alt'></i>
+                        <span>@Localizer["Dashboard"]</span>
+                    </a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Profile" ? "active" : "")">
+                    <a asp-area="Student" asp-controller="Profile" asp-action="Index">
+                        <i class='bx bx-user-circle'></i>
+                        <span>@Localizer["Profile"]</span>
+                    </a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Attendance" ? "active" : "")">
+                    <a asp-area="Student" asp-controller="Attendance" asp-action="Index">
+                        <i class='bx bx-calendar-check'></i>
+                        <span>@Localizer["Attendance"]</span>
+                    </a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Wird" ? "active" : "")">
+                    <a asp-area="Student" asp-controller="Wird" asp-action="Index">
+                        <i class='bx bx-book-open'></i>
+                        <span>@Localizer["Wirds"]</span>
+                    </a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Meeting" ? "active" : "")">
+                    <a asp-area="Student" asp-controller="Meeting" asp-action="Index">
+                        <i class='bx bx-video'></i>
+                        <span>@Localizer["Meetings"]</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="student-content">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/student/student-layout.js" asp-append-version="true"></script>
+    <script src="~/js/languageSwitcher.js" asp-append-version="true"></script>
+    <script src="~/js/pwa-install.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

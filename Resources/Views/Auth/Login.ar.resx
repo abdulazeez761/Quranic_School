@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Title" xml:space="preserve">
+    <value>تسجيل الدخول</value>
+  </data>
+  <data name="WelcomeTitle" xml:space="preserve">
+    <value>أهلاً وسهلاً بكم</value>
+  </data>
+  <data name="WelcomeSubtitle" xml:space="preserve">
+    <value>منصة تحفيظ القرآن الكريم المتطورة</value>
+  </data>
+  <data name="UnifiedSystem" xml:space="preserve">
+    <value>نظام موحد لجميع المستخدمين</value>
+  </data>
+  <data name="TrustedBy" xml:space="preserve">
+    <value>أكثر من 500 طالب وولي أمر يثق بنا</value>
+  </data>
+  <data name="LoginHeader" xml:space="preserve">
+    <value>تسجيل الدخول</value>
+  </data>
+  <data name="LoginSubheader" xml:space="preserve">
+    <value>أدخل بياناتك للوصول إلى حسابك</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>اسم المستخدم</value>
+  </data>
+  <data name="UsernamePlaceholder" xml:space="preserve">
+    <value>أدخل اسم المستخدم</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>كلمة المرور</value>
+  </data>
+  <data name="PasswordPlaceholder" xml:space="preserve">
+    <value>أدخل كلمة المرور</value>
+  </data>
+  <data name="LoginButton" xml:space="preserve">
+    <value>تسجيل الدخول</value>
+  </data>
+  <data name="Or" xml:space="preserve">
+    <value>أو</value>
+  </data>
+  <data name="NoAccount" xml:space="preserve">
+    <value>لا تملك حساباً؟</value>
+  </data>
+  <data name="RegisterNow" xml:space="preserve">
+    <value>سجل الآن</value>
+  </data>
+</root>

@@ -1,0 +1,208 @@
+@using System.Security.Claims
+<!DOCTYPE html>
+<html lang="en">
+@{
+    var isArabic = System.Threading.Thread.CurrentThread.CurrentCulture.Name.StartsWith("ar");
+    string? parentName = User.FindFirstValue(ClaimTypes.Name);
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+
+<html lang="@System.Threading.Thread.CurrentThread.CurrentCulture.Name" dir="@(isArabic ? "rtl" : "ltr")">
+
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - @Localizer["Title"]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#648c51" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="#648c51" />
+    <meta name="apple-mobile-web-app-title" content="Hifz" />
+    <meta name="description" content="Quran School Management System for teachers, students, and parents" />
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+
+    <!-- Fonts & Icons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/main.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/parent/parent-layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/parent/child-details.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/switchLanguage.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pwa-install.css" asp-append-version="true" />
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+
+<body>
+    <div class="parent-layout">
+        <!-- Top Header -->
+        <header class="parent-header">
+            <div class="header-left">
+                <div class="header-brand">
+                    <div class="brand-icon">
+                        <i class='bx bx-book-heart'></i>
+                    </div>
+                    <div>
+                        <h1 class="header-title">@Localizer["ParentPortal"]</h1>
+                        <p class="header-subtitle">@Localizer["SystemName"]</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <!-- Language Switcher -->
+                <div class="language-switcher">
+                    <button class="language-btn" id="languageToggle" aria-label="Switch Language">
+                        <i class='bx bx-globe'></i>
+                        <span id="currentLang">@(isArabic ? "العربية" : "English")</span>
+                        <i class='bx bx-chevron-down'></i>
+                    </button>
+                    <ul class="language-menu" id="languageMenu">
+                        <li>
+                            <a href="#" data-lang="ar" class="language-option @(isArabic ? "active" : "")">
+                                <i class='bx bx-check'></i>
+                                <span>العربية</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-lang="en" class="language-option @(!isArabic ? "active" : "")">
+                                <i class='bx bx-check'></i>
+                                <span>English</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- User Profile -->
+                <div class="user-profile">
+                    <div class="user-info">
+                        <div class="user-name">@parentName</div>
+                        <div class="user-role">@Localizer["ParentRole"]</div>
+                    </div>
+                    <div class="user-avatar">
+                        <i class='bx bx-user'></i>
+                    </div>
+                </div>
+
+                <!-- Logout Button -->
+                <a asp-area="" asp-controller="Auth" asp-action="Logout" class="logout-btn">
+                    <i class='bx bx-log-out'></i>
+                    <span>@Localizer["LogOut"]</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- Desktop Navigation Tabs -->
+        <nav class="parent-nav desktop-nav">
+            <ul class="nav-tabs">
+                <li class="@(currentController == "Home" ? "active" : "")">
+                    <a asp-area="Parent" asp-controller="Home" asp-action="Index">
+                        <i class='bx bx-home-alt'></i>
+                        <span>@Localizer["Dashboard"]</span>
+                    </a>
+                </li>
+                <li class="@(currentController == "Children" ? "active" : "")">
+                    <a asp-area="Parent" asp-controller="Children" asp-action="Index">
+                        <i class='bx bx-group'></i>
+                        <span>@Localizer["Children"]</span>
+                    </a>
+                </li>
+                <li class="@(currentController == "Meeting" ? "active" : "")">
+                    <a asp-area="Parent" asp-controller="Meeting" asp-action="Index">
+                        <i class='bx bx-video'></i>
+                        <span>@Localizer["Meetings"]</span>
+                    </a>
+                </li>
+                <li class="@(currentController == "Profile" ? "active" : "")">
+                    <a asp-area="Parent" asp-controller="Profile" asp-action="Index">
+                        <i class='bx bx-user-circle'></i>
+                        <span>@Localizer["Profile"]</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="parent-content">
+            <!-- Toast Notifications -->
+            @if (TempData["Success"] != null)
+            {
+                <div class="toast-notification toast-success" id="toastSuccess">
+                    <i class='bx bx-check-circle'></i>
+                    <span>@TempData["Success"]</span>
+                    <button class="toast-close" onclick="this.parentElement.remove()">
+                        <i class='bx bx-x'></i>
+                    </button>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="toast-notification toast-error" id="toastError">
+                    <i class='bx bx-error-circle'></i>
+                    <span>@TempData["Error"]</span>
+                    <button class="toast-close" onclick="this.parentElement.remove()">
+                        <i class='bx bx-x'></i>
+                    </button>
+                </div>
+            }
+
+            @RenderBody()
+        </main>
+
+        <!-- Mobile Bottom Navigation -->
+        <nav class="mobile-bottom-nav">
+            <a asp-area="Parent" asp-controller="Home" asp-action="Index"
+                   class="mobile-nav-item @(currentController == "Home" ? "active" : "")">
+                <i class='bx bx-home-alt'></i>
+                <span>@Localizer["Dashboard"]</span>
+            </a>
+            <a asp-area="Parent" asp-controller="Children" asp-action="Index"
+                   class="mobile-nav-item @(currentController == "Children" ? "active" : "")">
+                <i class='bx bx-group'></i>
+                <span>@Localizer["Children"]</span>
+            </a>
+            <a asp-area="Parent" asp-controller="Meeting" asp-action="Index"
+                   class="mobile-nav-item @(currentController == "Meeting" ? "active" : "")">
+                <i class='bx bx-video'></i>
+                <span>@Localizer["Meetings"]</span>
+            </a>
+            <a asp-area="Parent" asp-controller="Profile" asp-action="Index"
+                   class="mobile-nav-item @(currentController == "Profile" ? "active" : "")">
+                <i class='bx bx-user-circle'></i>
+                <span>@Localizer["Profile"]</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Scripts -->
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/parent/parent-layout.js" asp-append-version="true"></script>
+    <script src="~/js/languageSwitcher.js" asp-append-version="true"></script>
+    <script src="~/js/pwa-install.js" asp-append-version="true"></script>
+    <script>
+        // Auto-dismiss toast notifications
+        setTimeout(() => {
+        document.querySelectorAll('.toast-notification').forEach(t => {
+        t.style.animation = 'slideOutRight 0.4s ease forwards';
+        setTimeout(() => t.remove(), 400);
+        });
+        }, 4000);
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

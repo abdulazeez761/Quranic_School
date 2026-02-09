@@ -1,0 +1,71 @@
+@model Hifz.Models.Parent
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["Profile"];
+}
+
+<link rel="stylesheet" href="~/css/parent/profile.css" asp-append-version="true" />
+
+<div class="profile-container">
+    <div class="profile-header">
+        <h1 class="page-title">
+            <i class='bx bx-user-circle'></i>
+            @Localizer["ProfileTitle"]
+        </h1>
+        <p class="page-subtitle">@Localizer["ProfileSubtitle"]</p>
+    </div>
+
+    <div class="profile-card">
+        <div class="profile-avatar-section">
+            <div class="profile-avatar">
+                <i class='bx bx-user'></i>
+            </div>
+            <h2 class="profile-name">@Model.ParentInfo.FirstName @Model.ParentInfo.SecondName</h2>
+            <p class="profile-role">
+                <i class='bx bx-shield-quarter'></i>
+                @Localizer["ParentRole"]
+            </p>
+        </div>
+
+        <div class="profile-info-section">
+            <div class="info-row">
+                <div class="info-icon"><i class='bx bx-user'></i></div>
+                <div class="info-details">
+                    <span class="info-label">@Localizer["Username"]</span>
+                    <span class="info-value">@Model.ParentInfo.Username</span>
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-icon"><i class='bx bx-envelope'></i></div>
+                <div class="info-details">
+                    <span class="info-label">@Localizer["Email"]</span>
+                    <span class="info-value">@(string.IsNullOrEmpty(Model.ParentInfo.Email) ?
+                                                Localizer["NotProvided"].Value : Model.ParentInfo.Email)</span>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon"><i class='bx bx-phone'></i></div>
+                    <div class="info-details">
+                        <span class="info-label">@Localizer["PhoneNumber"]</span>
+                        <span class="info-value">@(string.IsNullOrEmpty(Model.ParentInfo.PhoneNumber) ?
+                                                    Localizer["NotProvided"].Value : Model.ParentInfo.PhoneNumber)</span>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-icon"><i class='bx bx-group'></i></div>
+                        <div class="info-details">
+                            <span class="info-label">@Localizer["NumberOfChildren"]</span>
+                            <span class="info-value info-value-badge">@Model.Students.Count</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-actions">
+                    <a asp-area="Parent" asp-controller="Profile" asp-action="Edit" class="edit-profile-btn">
+                        <i class='bx bx-edit'></i>
+                        @Localizer["EditProfile"]
+                    </a>
+                </div>
+            </div>
+        </div>

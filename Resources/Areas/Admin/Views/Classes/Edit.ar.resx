@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Title" xml:space="preserve">
+    <value>تعديل بيانات الحلقة القرآنية</value>
+  </data>
+  <data name="PageTitle" xml:space="preserve">
+    <value>تعديل بيانات الحلقة</value>
+  </data>
+  <data name="PageDescription" xml:space="preserve">
+    <value>تحديث معلومات الحلقة في النظام</value>
+  </data>
+  <data name="BackToList" xml:space="preserve">
+    <value>العودة للقائمة</value>
+  </data>
+  <data name="ValidationError" xml:space="preserve">
+    <value>يرجى تصحيح الأخطاء التالية:</value>
+  </data>
+  <data name="BasicInformation" xml:space="preserve">
+    <value>المعلومات الأساسية</value>
+  </data>
+  <data name="ClassName" xml:space="preserve">
+    <value>اسم الحلقة</value>
+  </data>
+  <data name="ClassNamePlaceholder" xml:space="preserve">
+    <value>مثال: حلقة الفجر</value>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="SelectGender" xml:space="preserve">
+    <value>-- اختر فئة الحلقة --</value>
+  </data>
+  <data name="Male" xml:space="preserve">
+    <value>ذكور</value>
+  </data>
+  <data name="Female" xml:space="preserve">
+    <value>إناث</value>
+  </data>
+  <data name="ClassTime" xml:space="preserve">
+    <value>وقت الحلقة</value>
+  </data>
+  <data name="ClassTimeHelper" xml:space="preserve">
+    <value>حدد الوقت المناسب لبدء الحلقة</value>
+  </data>
+  <data name="ClassDays" xml:space="preserve">
+    <value>أيام الحلقة</value>
+  </data>
+  <data name="SelectDays" xml:space="preserve">
+    <value>اختر الأيام</value>
+  </data>
+  <data name="SelectDaysHelper" xml:space="preserve">
+    <value>حدد الأيام التي تعقد فيها الحلقة خلال الأسبوع</value>
+  </data>
+  <data name="TeachersAndStudents" xml:space="preserve">
+    <value>الشيوخ والطلاب</value>
+  </data>
+  <data name="AssistantTeachers" xml:space="preserve">
+    <value>الشيوخ المساعدين</value>
+  </data>
+  <data name="SelectTeachersPlaceholder" xml:space="preserve">
+    <value>اختر الشيوخ...</value>
+  </data>
+  <data name="TeachersHelper" xml:space="preserve">
+    <value>يمكنك تحديد أكثر من شيخ للحلقة</value>
+  </data>
+  <data name="Students" xml:space="preserve">
+    <value>الطلاب</value>
+  </data>
+  <data name="SelectStudentsPlaceholder" xml:space="preserve">
+    <value>اختر الطلاب...</value>
+  </data>
+  <data name="StudentsHelper" xml:space="preserve">
+    <value>يمكنك تحديد أكثر من طالب للحلقة</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>حفظ التعديلات</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="EditGuidelines" xml:space="preserve">
+    <value>إرشادات التعديل</value>
+  </data>
+  <data name="Guideline1" xml:space="preserve">
+    <value>جميع الحقول المميزة بعلامة</value>
+  </data>
+  <data name="Guideline1Suffix" xml:space="preserve">
+    <value>إلزامية</value>
+  </data>
+  <data name="Guideline2" xml:space="preserve">
+    <value>يمكنك تعديل أي معلومة من معلومات الحلقة</value>
+  </data>
+  <data name="Guideline3" xml:space="preserve">
+    <value>تأكد من حفظ التعديلات بالضغط على زر "حفظ التعديلات"</value>
+  </data>
+  <data name="Guideline4" xml:space="preserve">
+    <value>يمكنك إلغاء التعديلات والعودة للقائمة في أي وقت</value>
+  </data>
+  <data name="Guideline5" xml:space="preserve">
+    <value>التعديلات ستظهر فوراً على جميع الطلاب والشيوخ المرتبطين بالحلقة</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>لا توجد نتائج</value>
+  </data>
+</root>

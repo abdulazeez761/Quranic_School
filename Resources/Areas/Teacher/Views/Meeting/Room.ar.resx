@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="PageTitle" xml:space="preserve">
+    <value>غرفة الحصة الإلكترونية</value>
+  </data>
+  <data name="Room" xml:space="preserve">
+    <value>الغرفة:</value>
+  </data>
+  <data name="LiveMeeting" xml:space="preserve">
+    <value>اجتماع مباشر</value>
+  </data>
+  <data name="SecureConnection" xml:space="preserve">
+    <value>اتصال آمن</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>جاري الاتصال...</value>
+  </data>
+  <data name="MeetingControls" xml:space="preserve">
+    <value>أدوات التحكم</value>
+  </data>
+  <data name="MuteAll" xml:space="preserve">
+    <value>كتم الكل</value>
+  </data>
+  <data name="ShareScreen" xml:space="preserve">
+    <value>مشاركة الشاشة</value>
+  </data>
+  <data name="ToggleChat" xml:space="preserve">
+    <value>المحادثة</value>
+  </data>
+  <data name="TileView" xml:space="preserve">
+    <value>عرض مربعات</value>
+  </data>
+  <data name="EndMeeting" xml:space="preserve">
+    <value>إنهاء الاجتماع</value>
+  </data>
+  <data name="EndMeetingQuestion" xml:space="preserve">
+    <value>إنهاء الاجتماع؟</value>
+  </data>
+  <data name="EndMeetingConfirm" xml:space="preserve">
+    <value>هل أنت متأكد من إنهاء هذا الاجتماع؟ سيتم قطع اتصال جميع المشاركين ولن يتمكنوا من إعادة الانضمام.</value>
+  </data>
+  <data name="ContinueMeeting" xml:space="preserve">
+    <value>متابعة الاجتماع</value>
+  </data>
+  <data name="Participant" xml:space="preserve">
+    <value>مشارك</value>
+  </data>
+  <data name="Participants" xml:space="preserve">
+    <value>مشاركين</value>
+  </data>
+</root>

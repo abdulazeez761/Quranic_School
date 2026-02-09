@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Children" xml:space="preserve">
+    <value>الأبناء</value>
+  </data>
+  <data name="MyChildren" xml:space="preserve">
+    <value>أبنائي</value>
+  </data>
+  <data name="ChildrenSubtitle" xml:space="preserve">
+    <value>قائمة بجميع أبنائك المسجلين في النظام</value>
+  </data>
+  <data name="Class" xml:space="preserve">
+    <value>الحلقة</value>
+  </data>
+  <data name="NoClass" xml:space="preserve">
+    <value>غير مسجل في حلقة</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>اسم المستخدم</value>
+  </data>
+  <data name="ViewDetails" xml:space="preserve">
+    <value>عرض التفاصيل</value>
+  </data>
+  <data name="NoChildren" xml:space="preserve">
+    <value>لا يوجد أبناء مسجلين حالياً</value>
+  </data>
+  <data name="AttendanceRate" xml:space="preserve">
+    <value>نسبة الحضور</value>
+  </data>
+  <data name="CompletedWirds" xml:space="preserve">
+    <value>الأوراد المكتملة</value>
+  </data>
+  <data name="MemorizedJuz" xml:space="preserve">
+    <value>الأجزاء المحفوظة</value>
+  </data>
+  <data name="TotalChildren" xml:space="preserve">
+    <value>إجمالي الأبناء</value>
+  </data>
+  <data name="LiveNow" xml:space="preserve">
+    <value>مباشر الآن</value>
+  </data>
+  <data name="JoinMeeting" xml:space="preserve">
+    <value>الانضمام للاجتماع</value>
+  </data>
+  <data name="NoChildrenDescription" xml:space="preserve">
+    <value>لم يتم تسجيل أي أبناء في النظام بعد</value>
+  </data>
+</root>

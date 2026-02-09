@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="PageTitle" xml:space="preserve">
+    <value>تحضير الطلاب</value>
+  </data>
+  <data name="PageHeader" xml:space="preserve">
+    <value>حضور وغياب الطلاب</value>
+  </data>
+  <data name="PageDescription" xml:space="preserve">
+    <value>إدارة وتتبع حضور الطلاب اليومي</value>
+  </data>
+  <data name="SaveAll" xml:space="preserve">
+    <value>حفظ الكل</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>تصدير</value>
+  </data>
+  <data name="Present" xml:space="preserve">
+    <value>حاضر</value>
+  </data>
+  <data name="Late" xml:space="preserve">
+    <value>متأخر</value>
+  </data>
+  <data name="Absent" xml:space="preserve">
+    <value>غائب</value>
+  </data>
+  <data name="Excuse" xml:space="preserve">
+    <value>عذر</value>
+  </data>
+  <data name="FilterData" xml:space="preserve">
+    <value>تصفية البيانات</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>التاريخ</value>
+  </data>
+  <data name="SelectDate" xml:space="preserve">
+    <value>اختر التاريخ</value>
+  </data>
+  <data name="Class" xml:space="preserve">
+    <value>الحلقة</value>
+  </data>
+  <data name="SearchStudent" xml:space="preserve">
+    <value>البحث عن طالب...</value>
+  </data>
+  <data name="TotalStudents" xml:space="preserve">
+    <value>إجمالي الطلاب:</value>
+  </data>
+  <data name="StudentName" xml:space="preserve">
+    <value>اسم الطالب</value>
+  </data>
+  <data name="Attendance" xml:space="preserve">
+    <value>حضور</value>
+  </data>
+  <data name="NoData" xml:space="preserve">
+    <value>لا توجد بيانات</value>
+  </data>
+  <data name="NoStudentsFound" xml:space="preserve">
+    <value>لم يتم العثور على طلاب في هذه الحلقة</value>
+  </data>
+</root>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="WirdAssignments" xml:space="preserve">
+    <value>Wird Assignments</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Filters</value>
+  </data>
+  <data name="StudentName" xml:space="preserve">
+    <value>Student Name</value>
+  </data>
+  <data name="SearchByName" xml:space="preserve">
+    <value>Search by name...</value>
+  </data>
+  <data name="AssignmentType" xml:space="preserve">
+    <value>Assignment Type</value>
+  </data>
+  <data name="AllTypes" xml:space="preserve">
+    <value>All Types</value>
+  </data>
+  <data name="Hifz" xml:space="preserve">
+    <value>Hifz</value>
+  </data>
+  <data name="Wird" xml:space="preserve">
+    <value>Wird</value>
+  </data>
+  <data name="Revision" xml:space="preserve">
+    <value>Revision</value>
+  </data>
+  <data name="Memorization" xml:space="preserve">
+    <value>Memorization</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="AllStatuses" xml:space="preserve">
+    <value>All Statuses</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>Not Set</value>
+  </data>
+  <data name="Poor" xml:space="preserve">
+    <value>Poor</value>
+  </data>
+  <data name="Fair" xml:space="preserve">
+    <value>Fair</value>
+  </data>
+  <data name="Good" xml:space="preserve">
+    <value>Good</value>
+  </data>
+  <data name="VeryGood" xml:space="preserve">
+    <value>Very Good</value>
+  </data>
+  <data name="Excellent" xml:space="preserve">
+    <value>Excellent</value>
+  </data>
+  <data name="DateFrom" xml:space="preserve">
+    <value>Date From</value>
+  </data>
+  <data name="DateTo" xml:space="preserve">
+    <value>Date To</value>
+  </data>
+  <data name="ApplyFilters" xml:space="preserve">
+    <value>✓ Apply Filters</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>↺ Reset</value>
+  </data>
+  <data name="Showing" xml:space="preserve">
+    <value>Showing</value>
+  </data>
+  <data name="Assignments" xml:space="preserve">
+    <value>assignments</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>Success!</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error!</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>From:</value>
+  </data>
+  <data name="To" xml:space="preserve">
+    <value>To:</value>
+  </data>
+  <data name="Surah" xml:space="preserve">
+    <value>Surah:</value>
+  </data>
+  <data name="Ayah" xml:space="preserve">
+    <value>Ayah:</value>
+  </data>
+  <data name="Juz" xml:space="preserve">
+    <value>Juz:</value>
+  </data>
+  <data name="Page" xml:space="preserve">
+    <value>Page:</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>Note:</value>
+  </data>
+  <data name="Assigned" xml:space="preserve">
+    <value>Assigned:</value>
+  </data>
+  <data name="AddNotes" xml:space="preserve">
+    <value>Add notes...</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>Are you sure you want to delete</value>
+  </data>
+</root>

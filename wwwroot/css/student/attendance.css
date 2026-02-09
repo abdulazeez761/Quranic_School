@@ -1,0 +1,477 @@
+/* Attendance Container */
+.attendance-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* RTL Support */
+[dir='rtl'] .attendance-container {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir='ltr'] .attendance-container {
+  direction: ltr;
+  text-align: left;
+}
+
+.attendance-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: var(--space-2xl);
+}
+
+/* RTL Support */
+[dir='rtl'] .attendance-header {
+  justify-content: flex-end;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+/* RTL Support */
+[dir='rtl'] .header-left {
+  flex-direction: row-reverse;
+}
+
+.header-icon {
+  font-size: 2.5rem;
+  color: var(--dark-green);
+}
+
+.attendance-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* Filter Section */
+.filter-section {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  margin-bottom: var(--space-xl);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.filter-form {
+  display: flex;
+  gap: var(--space-lg);
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+/* RTL Support */
+[dir='rtl'] .filter-form {
+  flex-direction: row-reverse;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-group label {
+  font-size: var(--font-size-sm);
+  color: var(--text-medium);
+  font-weight: 500;
+}
+
+.date-input {
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  transition: all 0.3s ease;
+}
+
+.date-input:focus {
+  outline: none;
+  border-color: var(--dark-green);
+  box-shadow: 0 0 0 3px rgba(100, 140, 81, 0.1);
+}
+
+.filter-btn,
+.clear-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  direction: ltr;
+}
+
+/* RTL Support for buttons */
+[dir='rtl'] .filter-btn,
+[dir='rtl'] .clear-btn {
+  direction: rtl;
+  flex-direction: row-reverse;
+}
+
+.filter-btn {
+  background: linear-gradient(
+    135deg,
+    var(--secondary-green),
+    var(--dark-green)
+  );
+  color: var(--white);
+}
+
+.filter-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(100, 140, 81, 0.3);
+}
+
+.clear-btn {
+  background: #e9ecef;
+  color: var(--text-dark);
+}
+
+.clear-btn:hover {
+  background: var(--border-color);
+}
+
+/* Statistics Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.stat-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* RTL Support */
+[dir='rtl'] .stat-card {
+  flex-direction: row-reverse;
+}
+
+.stat-card i {
+  font-size: 2rem;
+}
+
+.stat-present i {
+  color: var(--success);
+}
+
+.stat-absent i {
+  color: var(--danger);
+}
+
+.stat-late i {
+  color: var(--warning);
+}
+
+.stat-total i {
+  color: var(--dark-green);
+}
+
+.stat-info h3 {
+  font-size: var(--font-size-sm);
+  color: var(--text-medium);
+  margin: 0 0 var(--space-xs) 0;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* Attendance Table */
+.attendance-table-container {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+}
+
+.attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.attendance-table thead {
+  background: linear-gradient(135deg, var(--light-gray) 0%, #e9ecef 100%);
+}
+
+.attendance-table th {
+  padding: var(--space-md) var(--space-lg);
+  text-align: left;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--border-color);
+}
+
+/* RTL Support */
+[dir='rtl'] .attendance-table th {
+  text-align: right;
+}
+
+.attendance-table td {
+  padding: var(--space-lg);
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-dark);
+  direction: ltr;
+}
+
+/* RTL Support for table cells */
+[dir='rtl'] .attendance-table td {
+  direction: rtl;
+}
+
+.attendance-table tbody tr {
+  transition: all 0.3s ease;
+}
+
+.attendance-table tbody tr:hover {
+  background: var(--light-gray);
+}
+
+.attendance-table td i {
+  margin-right: var(--space-sm);
+  margin-left: 0;
+  color: var(--dark-green);
+}
+
+/* RTL Support */
+[dir='rtl'] .attendance-table td i {
+  margin-right: 0;
+  margin-left: var(--space-sm);
+}
+
+.status-badge {
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-transform: capitalize;
+  display: inline-block;
+}
+
+.status-badge.status-present {
+  background: #d4edda;
+  color: var(--dark-green);
+}
+
+.status-badge.status-absent {
+  background: #f8d7da;
+  color: var(--danger);
+}
+
+.status-badge.status-late {
+  background: #fff3cd;
+  color: #856404;
+}
+
+/* No Data Message */
+.no-data-message {
+  text-align: center;
+  padding: var(--space-2xl);
+  color: var(--text-medium);
+}
+
+.no-data-message i {
+  font-size: 3rem;
+  color: var(--border-color);
+  margin-bottom: var(--space-md);
+}
+
+.no-data-message p {
+  font-size: var(--font-size-lg);
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .filter-form {
+    gap: var(--space-sm);
+  }
+}
+
+@media (max-width: 768px) {
+  .attendance-header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: var(--space-lg);
+  }
+
+  .attendance-title {
+    font-size: var(--font-size-xl);
+  }
+
+  .header-icon {
+    font-size: 2rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+
+  .stat-card {
+    padding: var(--space-md);
+  }
+
+  .stat-card i {
+    font-size: 1.5rem;
+  }
+
+  .stat-info h3 {
+    font-size: var(--font-size-xs);
+  }
+
+  .stat-value {
+    font-size: var(--font-size-xl);
+  }
+
+  .filter-section {
+    padding: var(--space-md);
+  }
+
+  .filter-title {
+    font-size: var(--font-size-base);
+  }
+
+  .filter-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-sm);
+  }
+
+  .filter-group {
+    min-width: 100%;
+  }
+
+  .filter-label {
+    font-size: var(--font-size-sm);
+  }
+
+  .filter-input {
+    font-size: var(--font-size-sm);
+    padding: var(--space-xs) var(--space-sm);
+  }
+
+  .filter-button {
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-sm);
+  }
+
+  .attendance-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .attendance-table {
+    font-size: var(--font-size-sm);
+    min-width: 600px;
+  }
+
+  .attendance-table th,
+  .attendance-table td {
+    padding: var(--space-sm);
+  }
+
+  .status-badge {
+    font-size: var(--font-size-xs);
+    padding: 4px var(--space-sm);
+  }
+
+  .no-data-message {
+    padding: var(--space-xl);
+  }
+
+  .no-data-message i {
+    font-size: 2rem;
+  }
+
+  .no-data-message p {
+    font-size: var(--font-size-base);
+  }
+}
+
+@media (max-width: 480px) {
+  .attendance-header {
+    margin-bottom: var(--space-md);
+  }
+
+  .attendance-title {
+    font-size: var(--font-size-lg);
+  }
+
+  .header-icon {
+    font-size: 1.5rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  .stat-card {
+    padding: var(--space-sm);
+  }
+
+  .filter-section {
+    padding: var(--space-sm);
+  }
+
+  .filter-title {
+    font-size: var(--font-size-sm);
+  }
+
+  .filter-button {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--font-size-xs);
+  }
+
+  .attendance-table {
+    font-size: var(--font-size-xs);
+  }
+
+  .attendance-table th,
+  .attendance-table td {
+    padding: var(--space-xs);
+  }
+
+  .no-data-message {
+    padding: var(--space-md);
+  }
+}

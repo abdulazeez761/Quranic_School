@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="StudentDetails" xml:space="preserve">
+    <value>تفاصيل الطالب</value>
+  </data>
+  <data name="BackToStudents" xml:space="preserve">
+    <value>العودة للطلاب</value>
+  </data>
+  <data name="Age" xml:space="preserve">
+    <value>العمر</value>
+  </data>
+  <data name="Years" xml:space="preserve">
+    <value>سنوات</value>
+  </data>
+  <data name="AcademicInformation" xml:space="preserve">
+    <value>المعلومات الأكاديمية</value>
+  </data>
+  <data name="MemorizedJuz" xml:space="preserve">
+    <value>الأجزاء المحفوظة</value>
+  </data>
+  <data name="TajwidLevel" xml:space="preserve">
+    <value>مستوى التجويد</value>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>الجنس</value>
+  </data>
+  <data name="DateOfBirth" xml:space="preserve">
+    <value>تاريخ الميلاد</value>
+  </data>
+  <data name="ContactInformation" xml:space="preserve">
+    <value>معلومات الاتصال</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>الهاتف</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="Parent" xml:space="preserve">
+    <value>ولي الأمر</value>
+  </data>
+  <data name="ClassesEnrolled" xml:space="preserve">
+    <value>الحلقات المسجلة</value>
+  </data>
+  <data name="AssignedWirds" xml:space="preserve">
+    <value>الأوراد المخصصة</value>
+  </data>
+  <data name="Assigned" xml:space="preserve">
+    <value>تاريخ التخصيص:</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>مكتمل</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>من:</value>
+  </data>
+  <data name="To" xml:space="preserve">
+    <value>إلى:</value>
+  </data>
+  <data name="Surah" xml:space="preserve">
+    <value>السورة:</value>
+  </data>
+  <data name="Juz" xml:space="preserve">
+    <value>الجزء:</value>
+  </data>
+  <data name="Page" xml:space="preserve">
+    <value>الصفحة:</value>
+  </data>
+  <data name="Ayah" xml:space="preserve">
+    <value>الآية:</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>ملاحظات:</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>السابق</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>التالي</value>
+  </data>
+  <data name="PageOf" xml:space="preserve">
+    <value>صفحة {0} من {1}</value>
+  </data>
+  <data name="NoWirdsYet" xml:space="preserve">
+    <value>لم يتم تخصيص أوراد بعد</value>
+  </data>
+  <data name="ParentNotes" xml:space="preserve">
+    <value>ملاحظات ولي الأمر</value>
+  </data>
+  <data name="AddNewNote" xml:space="preserve">
+    <value>إضافة ملاحظة جديدة</value>
+  </data>
+  <data name="WritePlaceholder" xml:space="preserve">
+    <value>اكتب ملاحظة لولي الأمر...</value>
+  </data>
+  <data name="AddNote" xml:space="preserve">
+    <value>إضافة ملاحظة</value>
+  </data>
+  <data name="By" xml:space="preserve">
+    <value>بواسطة:</value>
+  </data>
+  <data name="Updated" xml:space="preserve">
+    <value>(تم التحديث:</value>
+  </data>
+  <data name="ConfirmDeleteNote" xml:space="preserve">
+    <value>هل أنت متأكد من حذف هذه الملاحظة؟</value>
+  </data>
+  <data name="NoNotesYet" xml:space="preserve">
+    <value>لم تتم إضافة ملاحظات بعد</value>
+  </data>
+  <data name="none" xml:space="preserve">
+    <value>غير محدد</value>
+  </data>
+  <data name="First" xml:space="preserve">
+    <value>تمهيدي/مبتدئ</value>
+  </data>
+  <data name="Second" xml:space="preserve">
+    <value>متوسط</value>
+  </data>
+  <data name="Third" xml:space="preserve">
+    <value>متقدم</value>
+  </data>
+</root>

@@ -1,0 +1,157 @@
+﻿@model Hifz.Models.WirdAssignment
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+<!-- Load styles if not already loaded -->
+<link rel="stylesheet" href="~/css/teacher/AssignWirdModal.css" asp-append-version="true" />
+
+<div id="assignWirdModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2 class="modal-title">@Localizer["AssignWirdTo"] <span id="studentName"></span></h2>
+            <button type="button" class="modal-close" onclick="closeWirdModal()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <form id="wirdAssignmentForm" asp-action="AssignWird" asp-controller="Student" method="post">
+            <input type="hidden" id="StudentId" name="StudentId" />
+
+            <div class="modal-body">
+                <!-- Assignment Type -->
+                <div class="form-group">
+                    <label class="form-label" for="Type">@Localizer["AssignmentType"]</label>
+                    <select class="form-control" id="Type" name="Type" required>
+                        <option value="">@Localizer["SelectType"]</option>
+                        <option value="1">@Localizer["Memorization"]</option>
+                        <option value="2">@Localizer["Revision"]</option>
+                    </select>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="Type"></span>
+                </div>
+
+                <!-- From Section -->
+                <div class="section-header">@Localizer["From"]</div>
+
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label class="form-label" for="FromJuz">@Localizer["Juz"]</label>
+                        <input type="number" class="form-control" id="FromJuz" name="FromJuz" min="1" max="30" required
+                               placeholder="1-30" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="FromJuz"></span>
+                    </div>
+                    <div class="form-group half-width">
+                        <label class="form-label" for="FromPage">@Localizer["Page"]</label>
+                        <input type="number" class="form-control" id="FromPage" name="FromPage" min="1" required
+                               placeholder="@Localizer["PageNumber"]" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="FromPage"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="FromSurah">@Localizer["Surah"]</label>
+                    <select class="form-control" id="FromSurah" name="FromSurah" required>
+                        @await Html.PartialAsync("_SurahOptions")
+                    </select>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="FromSurah"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="FromAyah">@Localizer["Ayah"]</label>
+                    <input type="text" class="form-control" id="FromAyah" name="FromAyah" maxlength="10" required
+                           placeholder="@Localizer["AyahNumber"]" />
+                    <span class="text-danger field-validation-valid" data-valmsg-for="FromAyah"></span>
+                </div>
+
+                <!-- To Section -->
+                <div class="section-header">@Localizer["To"]</div>
+
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label class="form-label" for="ToJuz">@Localizer["Juz"]</label>
+                        <input type="number" class="form-control" id="ToJuz" name="ToJuz" min="1" max="30" required
+                               placeholder="1-30" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="ToJuz"></span>
+                    </div>
+                    <div class="form-group half-width">
+                        <label class="form-label" for="ToPage">@Localizer["Page"]</label>
+                        <input type="number" class="form-control" id="ToPage" name="ToPage" min="1" required
+                               placeholder="@Localizer["PageNumber"]" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="ToPage"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="ToSurah">@Localizer["Surah"]</label>
+                    <select class="form-control" id="ToSurah" name="ToSurah" required>
+                        @await Html.PartialAsync("_SurahOptions")
+                    </select>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="ToSurah"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="ToAyah">@Localizer["Ayah"]</label>
+                    <input type="number" class="form-control" id="ToAyah" name="ToAyah" min="1" required
+                           placeholder="@Localizer["AyahNumber"]" />
+                    <span class="text-danger field-validation-valid" data-valmsg-for="ToAyah"></span>
+                </div>
+                <!-- Assignment Grade (Optional - for completed assignments) -->
+                <div class="form-group">
+                    <label class="form-label" for="Grade">@Localizer["Grade"]</label>
+                    <select class="form-control" id="Grade" name="Status">
+                        <option value="0">@Localizer["NotGraded"]</option>
+                        <option value="1">@Localizer["Poor"]</option>
+                        <option value="2">@Localizer["Fair"]</option>
+                        <option value="3">@Localizer["Good"]</option>
+                        <option value="4">@Localizer["VeryGood"]</option>
+                        <option value="5">@Localizer["Excellent"]</option>
+                    </select>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="Grade"></span>
+                </div>
+
+                <!-- Optional Note -->
+                <div class="form-group">
+                    <label class="form-label" for="Note">@Localizer["NoteOptional"]</label>
+                    <textarea class="form-control" id="Note" name="Note" rows="3" maxlength="500"
+                              placeholder="@Localizer["NotePlaceholder"]"></textarea>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="Note"></span>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeWirdModal()">@Localizer["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">@Localizer["AssignWird"]</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    function openWirdModal(studentId, studentName) {
+        document.getElementById('StudentId').value = studentId;
+        document.getElementById('studentName').textContent = studentName;
+        document.getElementById('assignWirdModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeWirdModal() {
+        document.getElementById('assignWirdModal').classList.remove('active');
+        document.body.style.overflow = '';
+        document.getElementById('wirdAssignmentForm').reset();
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('assignWirdModal')?.addEventListener('click', function (e) {
+        if (e.target === this) {
+            closeWirdModal();
+        }
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && document.getElementById('assignWirdModal').classList.contains('active')) {
+            closeWirdModal();
+        }
+    });
+</script>

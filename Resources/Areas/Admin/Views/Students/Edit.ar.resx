@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Title" xml:space="preserve">
+    <value>تعديل بيانات الطالب</value>
+    <comment>عنوان الصفحة</comment>
+  </data>
+  <data name="PageTitle" xml:space="preserve">
+    <value>تعديل بيانات الطالب</value>
+    <comment>العنوان الرئيسي للصفحة</comment>
+  </data>
+  <data name="PageDescription" xml:space="preserve">
+    <value>أدخل بيانات الطالب لإضافته إلى النظام</value>
+    <comment>وصف الصفحة</comment>
+  </data>
+  <data name="BackToList" xml:space="preserve">
+    <value>العودة للقائمة</value>
+    <comment>نص زر العودة للقائمة</comment>
+  </data>
+  <data name="ValidationErrorsTitle" xml:space="preserve">
+    <value>يرجى تصحيح الأخطاء التالية:</value>
+    <comment>عنوان ملخص أخطاء التحقق</comment>
+  </data>
+  <data name="PersonalInformation" xml:space="preserve">
+    <value>المعلومات الشخصية</value>
+    <comment>عنوان قسم المعلومات الشخصية</comment>
+  </data>
+  <data name="ContactInformation" xml:space="preserve">
+    <value>معلومات الاتصال</value>
+    <comment>عنوان قسم معلومات الاتصال</comment>
+  </data>
+  <data name="PasswordSection" xml:space="preserve">
+    <value>كلمة المرور</value>
+    <comment>عنوان قسم كلمة المرور</comment>
+  </data>
+  <data name="AcademicInformation" xml:space="preserve">
+    <value>المعلومات الأكاديمية</value>
+    <comment>عنوان قسم المعلومات الأكاديمية</comment>
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>الاسم الأول</value>
+    <comment>تسمية حقل الاسم الأول</comment>
+  </data>
+  <data name="FirstNamePlaceholder" xml:space="preserve">
+    <value>مثال: محمد</value>
+    <comment>نص بديل لحقل الاسم الأول</comment>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>اسم العائلة</value>
+    <comment>تسمية حقل اسم العائلة</comment>
+  </data>
+  <data name="LastNamePlaceholder" xml:space="preserve">
+    <value>مثال: أحمد</value>
+    <comment>نص بديل لحقل اسم العائلة</comment>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>الجنس</value>
+    <comment>تسمية حقل الجنس</comment>
+  </data>
+  <data name="SelectGender" xml:space="preserve">
+    <value>-- اختر الجنس --</value>
+    <comment>خيار افتراضي لقائمة الجنس</comment>
+  </data>
+  <data name="Male" xml:space="preserve">
+    <value>ذكر</value>
+    <comment>خيار ذكر</comment>
+  </data>
+  <data name="Female" xml:space="preserve">
+    <value>أنثى</value>
+    <comment>خيار أنثى</comment>
+  </data>
+  <data name="DateOfBirth" xml:space="preserve">
+    <value>تاريخ الميلاد</value>
+    <comment>تسمية حقل تاريخ الميلاد</comment>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>رقم الهاتف</value>
+    <comment>تسمية حقل رقم الهاتف</comment>
+  </data>
+  <data name="PhoneNumberPlaceholder" xml:space="preserve">
+    <value>79XXXXXXX</value>
+    <comment>نص بديل لحقل رقم الهاتف</comment>
+  </data>
+  <data name="PhoneNumberHelper" xml:space="preserve">
+    <value>مثال: 790123456</value>
+    <comment>نص مساعد لحقل رقم الهاتف</comment>
+  </data>
+  <data name="PhoneNumberTitle" xml:space="preserve">
+    <value>أدخل رقم هاتف أردني صحيح</value>
+    <comment>عنوان تلميح لحقل رقم الهاتف</comment>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+    <comment>تسمية حقل البريد الإلكتروني</comment>
+  </data>
+  <data name="EmailPlaceholder" xml:space="preserve">
+    <value>example@email.com</value>
+    <comment>نص بديل لحقل البريد الإلكتروني</comment>
+  </data>
+  <data name="EmailHelper" xml:space="preserve">
+    <value>سيتم استخدامه لتسجيل الدخول</value>
+    <comment>نص مساعد لحقل البريد الإلكتروني</comment>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>كلمة المرور</value>
+    <comment>تسمية حقل كلمة المرور</comment>
+  </data>
+  <data name="PasswordPlaceholder" xml:space="preserve">
+    <value>أدخل كلمة مرور قوية</value>
+    <comment>نص بديل لحقل كلمة المرور</comment>
+  </data>
+  <data name="PasswordHelper" xml:space="preserve">
+    <value>يجب أن تكون 6 أحرف على الأقل</value>
+    <comment>نص مساعد لحقل كلمة المرور</comment>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>تأكيد كلمة المرور</value>
+    <comment>تسمية حقل تأكيد كلمة المرور</comment>
+  </data>
+  <data name="ConfirmPasswordPlaceholder" xml:space="preserve">
+    <value>أعد كتابة كلمة المرور</value>
+    <comment>نص بديل لحقل تأكيد كلمة المرور</comment>
+  </data>
+  <data name="MemorizedJuz" xml:space="preserve">
+    <value>عدد الأجزاء المحفوظة</value>
+    <comment>تسمية حقل عدد الأجزاء المحفوظة</comment>
+  </data>
+  <data name="MemorizedJuzPlaceholder" xml:space="preserve">
+    <value>من 0 إلى 30</value>
+    <comment>نص بديل لحقل عدد الأجزاء المحفوظة</comment>
+  </data>
+  <data name="MemorizedJuzHelper" xml:space="preserve">
+    <value>أدخل عدد الأجزاء من القرآن الكريم</value>
+    <comment>نص مساعد لحقل عدد الأجزاء المحفوظة</comment>
+  </data>
+  <data name="TajwidLevel" xml:space="preserve">
+    <value>مستوى التجويد</value>
+    <comment>تسمية حقل مستوى التجويد</comment>
+  </data>
+  <data name="TajwidLevelNone" xml:space="preserve">
+    <value>غير محدد</value>
+    <comment>خيار لا يوجد لمستوى التجويد</comment>
+  </data>
+  <data name="TajwidLevelFirst" xml:space="preserve">
+    <value>تمهيدي/مبتدئ</value>
+    <comment>خيار المستوى الأول لمستوى التجويد</comment>
+  </data>
+  <data name="TajwidLevelSecond" xml:space="preserve">
+    <value>متوسط</value>
+    <comment>خيار المستوى الثاني لمستوى التجويد</comment>
+  </data>
+  <data name="TajwidLevelThird" xml:space="preserve">
+    <value>متقدم</value>
+    <comment>خيار المستوى الثالث لمستوى التجويد</comment>
+  </data>
+  <data name="TajwidLevelHelper" xml:space="preserve">
+    <value>حدد مستوى التجويد الحالي</value>
+    <comment>نص مساعد لحقل مستوى التجويد</comment>
+  </data>
+  <data name="Classes" xml:space="preserve">
+    <value>الحلقات</value>
+    <comment>تسمية حقل الحلقات</comment>
+  </data>
+  <data name="ClassesHelper" xml:space="preserve">
+    <value>يمكنك تحديد أكثر من حلقة للطالب</value>
+    <comment>نص مساعد لحقل الحلقات</comment>
+  </data>
+  <data name="SaveData" xml:space="preserve">
+    <value>حفظ البيانات</value>
+    <comment>نص زر الحفظ</comment>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+    <comment>نص زر الإلغاء</comment>
+  </data>
+  <data name="FillInstructions" xml:space="preserve">
+    <value>إرشادات التعبئة</value>
+    <comment>عنوان قسم إرشادات التعبئة</comment>
+  </data>
+  <data name="HelpInstruction1" xml:space="preserve">
+    <value>جميع الحقول المميزة بعلامة * إلزامية</value>
+    <comment>إرشاد 1</comment>
+  </data>
+  <data name="HelpInstruction2" xml:space="preserve">
+    <value>رقم الهاتف يجب أن يكون رقم أردني صحيح (9-10 أرقام)</value>
+    <comment>إرشاد 2</comment>
+  </data>
+  <data name="HelpInstruction3" xml:space="preserve">
+    <value>البريد الإلكتروني سيستخدم لتسجيل دخول الطالب للنظام</value>
+    <comment>إرشاد 3</comment>
+  </data>
+  <data name="HelpInstruction4" xml:space="preserve">
+    <value>كلمة المرور يجب أن تكون 6 أحرف على الأقل</value>
+    <comment>إرشاد 4</comment>
+  </data>
+  <data name="HelpInstruction5" xml:space="preserve">
+    <value>يمكن إضافة الطالب لأكثر من حلقة في نفس الوقت</value>
+    <comment>إرشاد 5</comment>
+  </data>
+  <data name="HelpInstruction6" xml:space="preserve">
+    <value>مستوى التجويد اختياري ويمكن تعديله لاحقاً</value>
+    <comment>إرشاد 6</comment>
+  </data>
+  <data name="SelectParent" xml:space="preserve">
+    <value>اختر الاب</value>
+    <comment/>
+  </data>
+  <data name="Parent" xml:space="preserve">
+    <value>أب الطالب</value>
+    <comment/>
+  </data>
+  <data name="ParentHelper" xml:space="preserve">
+    <value>اختر اب الطاب حتى يمكنه ان يتابع انجاز ولده</value>
+    <comment/>
+  </data>
+</root>

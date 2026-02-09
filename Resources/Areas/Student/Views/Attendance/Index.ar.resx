@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="MyAttendance" xml:space="preserve"><value>سجل حضوري</value></data>
+  <data name="FromDate" xml:space="preserve"><value>من تاريخ</value></data>
+  <data name="ToDate" xml:space="preserve"><value>إلى تاريخ</value></data>
+  <data name="Filter" xml:space="preserve"><value>تصفية</value></data>
+  <data name="Clear" xml:space="preserve"><value>مسح</value></data>
+  <data name="Present" xml:space="preserve"><value>حاضر</value></data>
+  <data name="Absent" xml:space="preserve"><value>غائب</value></data>
+  <data name="Late" xml:space="preserve"><value>متأخر</value></data>
+  <data name="Total" xml:space="preserve"><value>الإجمالي</value></data>
+  <data name="Date" xml:space="preserve"><value>التاريخ</value></data>
+  <data name="Class" xml:space="preserve"><value>الحلقة</value></data>
+  <data name="Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="NoAttendanceRecordsFound" xml:space="preserve"><value>لا توجد سجلات حضور.</value></data>
+</root>

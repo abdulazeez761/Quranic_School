@@ -1,0 +1,52 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 4px 10px;
+  background: var(--light-gray);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  color: var(--text-dark);
+  white-space: nowrap;
+}
+
+.chip-primary {
+  background: rgba(141, 242, 156, 0.2);
+  color: var(--dark-green);
+  font-weight: 500;
+}
+
+/* Badge Styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+.badge-warning {
+  background: rgba(255, 193, 7, 0.1);
+  color: #856404;
+}
+
+/* Avatar */
+.avatar-sm {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .chip {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+
+  .table-actions {
+    justify-content: flex-start;
+  }
+}

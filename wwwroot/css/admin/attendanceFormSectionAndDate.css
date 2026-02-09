@@ -1,0 +1,144 @@
+.form-section {
+  position: relative;
+  width: 100%;
+}
+
+.form-select {
+  width: 100%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--white);
+  border-radius: 12px;
+  padding: 12px 40px 12px 18px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 14px;
+}
+
+.form-select:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.form-select:focus {
+  border-color: var(--white);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Select2 specific enhancements */
+.select2-container--default .select2-selection--single {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 12px 18px;
+  height: auto;
+  min-height: 48px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.select2-container--default .select2-selection--single:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.select2-container--default.select2-container--focus
+  .select2-selection--single {
+  border-color: var(--white);
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.select2-container--default
+  .select2-selection--single
+  .select2-selection__rendered {
+  color: var(--white);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  padding: 0;
+}
+
+.select2-container--default
+  .select2-selection--single
+  .select2-selection__arrow {
+  height: 100%;
+  right: 14px;
+}
+
+.select2-container--default
+  .select2-selection--single
+  .select2-selection__arrow
+  b {
+  border-color: rgba(255, 255, 255, 0.8) transparent transparent transparent;
+  border-width: 6px 5px 0 5px;
+}
+.date-input::-webkit-calendar-picker-indicator {
+  background-color: var(--primary-green);
+  border-radius: 4px;
+  padding: 5px;
+}
+/* Days numbers */
+.flatpickr-day {
+  color: #f2f2f2 !important;
+}
+
+/* Month & Year at the top */
+.flatpickr-current-month,
+.flatpickr-months .flatpickr-month {
+  color: #f2f2f2 !important;
+}
+
+/* Weekday headers (Sat, Sun, etc.) */
+.flatpickr-weekday {
+  color: #f2f2f2 !important;
+}
+
+/* Navigation arrows (next/prev buttons) */
+.flatpickr-months .flatpickr-month .flatpickr-prev-month svg,
+.flatpickr-months .flatpickr-month .flatpickr-next-month svg {
+  fill: #ffffff !important;
+}
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+  color: var(--text-dark) !important;
+  background: var(--primary-green) !important;
+  border-color: var(--primary-green) !important;
+}
+.flatpickr-prev-month:hover svg,
+.flatpickr-next-month:hover svg {
+  fill: var(--accent-gold) !important;
+}
+.flatpickr-day:hover {
+  color: var(--text-dark) !important;
+}
+select option {
+  background-color: var(--secondary-green) !important;
+  color: #ffffff !important; /* white text for readability */
+}
+select {
+  background-color: var(--light-gray);
+  border: 1px solid var(--secondary-green);
+  border-radius: 6px;
+  padding: 8px;
+  color: var(--text-dark);
+  cursor: pointer;
+}

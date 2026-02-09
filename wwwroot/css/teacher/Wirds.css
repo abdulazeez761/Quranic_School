@@ -1,0 +1,876 @@
+/* ===================================
+   PAGE LAYOUT
+   =================================== */
+.page-container {
+  max-width: var(--container-max);
+  margin: auto;
+  padding: var(--space-xl);
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-header h2 {
+  font-size: var(--font-size-2xl);
+  color: var(--text-dark);
+  margin-bottom: var(--space-lg);
+  font-weight: 700;
+}
+
+/* ===================================
+   FILTER BAR
+   =================================== */
+.filter-bar {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+}
+
+.filter-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+
+.filter-bar-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.filter-toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-xs);
+  color: var(--text-medium);
+  font-size: 20px;
+  transition: var(--transition-base);
+  border-radius: var(--radius-sm);
+}
+
+.filter-toggle:hover {
+  background: var(--light-gray);
+  color: var(--primary-green);
+}
+
+.filter-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.filter-label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 2px;
+}
+
+.filter-input,
+.filter-select {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-base);
+  transition: var(--transition-base);
+  background: var(--white);
+  color: var(--text-dark);
+}
+
+.filter-input:focus,
+.filter-select:focus {
+  outline: none;
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 3px rgba(141, 242, 156, 0.2);
+}
+
+.filter-input::placeholder {
+  color: var(--text-light);
+  font-style: italic;
+}
+
+.filter-actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border-color);
+}
+
+.btn-filter {
+  padding: 8px 20px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  transition: var(--transition-base);
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.btn-apply {
+  background: var(--primary-green);
+  color: var(--text-dark);
+}
+
+.btn-apply:hover {
+  background: var(--dark-green);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-reset {
+  background: transparent;
+  color: var(--text-medium);
+  border: 1px solid var(--border-color);
+}
+
+.btn-reset:hover {
+  background: var(--light-gray);
+  border-color: var(--text-medium);
+}
+
+.results-count {
+  font-size: var(--font-size-sm);
+  color: var(--text-medium);
+  margin-bottom: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--light-gray);
+  border-radius: var(--radius-md);
+  display: inline-block;
+}
+
+/* ===================================
+   WIRD CARD STYLE - MODERN
+   =================================== */
+.wird-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  margin-bottom: var(--space-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border-left: 4px solid var(--dark-green);
+  position: relative;
+  overflow: hidden;
+}
+
+.wird-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.wird-card.excellent {
+  border-left-color: #28a745;
+}
+
+.wird-card.verygood {
+  border-left-color: #17a2b8;
+}
+
+.wird-card.good {
+  border-left-color: #fd7e14;
+}
+
+.wird-card.fair {
+  border-left-color: #ffc107;
+}
+
+.wird-card.poor {
+  border-left-color: #dc3545;
+}
+
+.wird-card.notset {
+  border-left-color: #d9d9d9;
+}
+
+/* ===================================
+   WIRD CARD HEADER
+   =================================== */
+.wird-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.wird-type {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.wird-type i {
+  font-size: 1.2rem;
+  color: var(--dark-green);
+}
+
+.wird-status-badge {
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* Status badge colors */
+.wird-status-badge.status-notset {
+  background: #f5f5f5;
+  color: #757575;
+}
+
+.wird-status-badge.status-poor {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.wird-status-badge.status-fair {
+  background: #fff9c4;
+  color: #f57f17;
+}
+
+.wird-status-badge.status-good {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.wird-status-badge.status-verygood {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.wird-status-badge.status-excellent {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+/* ===================================
+   STUDENT NAME
+   =================================== */
+.student-name {
+  color: var(--text-dark);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin: 0 0 var(--space-lg) 0;
+}
+
+/* ===================================
+   WIRD CARD BODY
+   =================================== */
+.wird-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.wird-range {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--space-lg);
+  align-items: center;
+}
+
+.range-section {
+  background: linear-gradient(135deg, var(--light-gray) 0%, #e9ecef 100%);
+  padding: var(--space-lg);
+  border-radius: var(--radius-md);
+}
+
+.range-section label {
+  font-size: var(--font-size-sm);
+  color: var(--text-medium);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: var(--space-sm);
+}
+
+.range-section p {
+  font-size: var(--font-size-sm);
+  color: var(--text-dark);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.range-section strong {
+  color: var(--dark-green);
+}
+
+.range-arrow {
+  font-size: 2rem;
+  color: var(--dark-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+[dir='rtl'] .range-arrow {
+  transform: scaleX(-1);
+}
+
+/* Wird Note */
+.wird-note {
+  background: #fff3cd;
+  border-left: 3px solid var(--warning);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-start;
+}
+
+.wird-note i {
+  font-size: 1.2rem;
+  color: #856404;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.wird-note p {
+  margin: 0;
+  color: #856404;
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+}
+
+/* Wird Footer */
+.wird-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border-color);
+}
+
+.wird-date {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  color: var(--text-medium);
+}
+
+.wird-date i {
+  color: var(--dark-green);
+}
+
+.edit-note-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-base);
+  color: var(--text-medium);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
+}
+
+.edit-note-btn:hover {
+  background: var(--light-gray);
+  color: var(--primary-green);
+  border-color: var(--primary-green);
+}
+
+.edit-note-btn i {
+  font-size: 1rem;
+}
+
+/* ===================================
+   NOTES EDIT SECTION
+   =================================== */
+.notes-edit {
+  width: 100%;
+  animation: slideDown 0.3s ease;
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border-color);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.notes-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: var(--space-sm);
+  border: 2px solid var(--primary-green);
+  border-radius: var(--radius-md);
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  resize: vertical;
+  transition: var(--transition-base);
+  background: var(--white);
+  color: var(--text-dark);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.notes-textarea:focus {
+  outline: none;
+  border-color: var(--dark-green);
+  box-shadow:
+    0 0 0 3px rgba(141, 242, 156, 0.2),
+    inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.notes-textarea::placeholder {
+  color: var(--text-light);
+  font-style: italic;
+}
+
+/* ===================================
+   ACTION BUTTONS
+   =================================== */
+.assignment-actions {
+  margin-top: var(--space-lg);
+  padding-top: var(--space-lg);
+  border-top: 2px solid var(--border-color);
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-buttons {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  transition: var(--transition-base);
+  color: var(--white);
+  border: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+/* Excellent */
+.btn-success {
+  background: #28a745;
+}
+
+.btn-success:hover {
+  background: #218838;
+}
+
+/* Very Good */
+.btn-verygood {
+  background: #17a2b8;
+}
+
+.btn-verygood:hover {
+  background: #138496;
+}
+
+/* Good */
+.btn-good {
+  background: #fd7e14;
+}
+
+.btn-good:hover {
+  background: #e96c0c;
+}
+
+/* Fair */
+.btn-fair {
+  background: #ffc107;
+  color: white;
+}
+
+.btn-fair:hover {
+  background: #e0a800;
+}
+
+/* Poor */
+.btn-poor {
+  background: #dc3545;
+}
+
+.btn-poor:hover {
+  background: #c82333;
+}
+
+/* Delete button */
+.btn-delete {
+  background: #dc3545;
+  flex-shrink: 0;
+}
+
+.btn-delete:hover {
+  background: #c82333;
+}
+
+/* Secondary button for cancel */
+.btn-secondary {
+  background: #6c757d;
+  color: var(--white);
+}
+
+.btn-secondary:hover {
+  background: #5a6268;
+}
+
+/* after updating the card */
+.wird-card.updated {
+  border: 2px solid #4caf50;
+  box-shadow:
+    0 0 20px rgba(76, 175, 80, 0.6),
+    0 4px 12px rgba(76, 175, 80, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  background: linear-gradient(
+    135deg,
+    rgba(76, 175, 80, 0.05) 0%,
+    rgba(76, 175, 80, 0.02) 100%
+  );
+  transform: scale(1.02);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: successPulse 0.3s ease-out;
+}
+
+.wird-card.failed-to-update {
+  border: 2px solid #f44336;
+  box-shadow:
+    0 0 20px rgba(244, 67, 54, 0.6),
+    0 4px 12px rgba(244, 67, 54, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: linear-gradient(
+    135deg,
+    rgba(244, 67, 54, 0.05) 0%,
+    rgba(244, 67, 54, 0.02) 100%
+  );
+  transform: translateX(0);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: errorShake 0.5s ease-in-out;
+}
+
+@keyframes successPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(76, 175, 80, 0);
+  }
+  50% {
+    transform: scale(1.03);
+    box-shadow: 0 0 30px rgba(76, 175, 80, 0.8);
+  }
+  100% {
+    transform: scale(1.02);
+    box-shadow:
+      0 0 20px rgba(76, 175, 80, 0.6),
+      0 4px 12px rgba(76, 175, 80, 0.3);
+  }
+}
+
+@keyframes errorShake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-4px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+/* ===================================
+   RESPONSIVE DESIGN
+   =================================== */
+@media (max-width: 1200px) {
+  .page-container {
+    padding: var(--space-lg);
+  }
+
+  .filter-content {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: var(--space-md);
+  }
+
+  .page-header h2 {
+    font-size: var(--font-size-xl);
+  }
+
+  .filter-bar {
+    padding: var(--space-md);
+  }
+
+  .filter-bar-title {
+    font-size: var(--font-size-base);
+  }
+
+  .filter-content {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  .filter-actions {
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .btn-filter {
+    width: 100%;
+    justify-content: center;
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .wird-card {
+    padding: var(--space-md);
+  }
+
+  .wird-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .wird-type {
+    font-size: var(--font-size-sm);
+  }
+
+  .student-name {
+    font-size: var(--font-size-base);
+  }
+
+  .wird-range {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .range-section {
+    padding: var(--space-md);
+  }
+
+  .range-section label {
+    font-size: var(--font-size-xs);
+  }
+
+  .range-section p {
+    font-size: var(--font-size-xs);
+  }
+
+  .range-arrow {
+    text-align: center;
+    font-size: var(--font-size-xl);
+  }
+
+  .range-arrow i {
+    display: inline-block;
+    transform: rotate(90deg);
+  }
+
+  [dir='rtl'] .range-arrow i {
+    transform: rotate(90deg);
+  }
+
+  .wird-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .wird-date {
+    font-size: var(--font-size-xs);
+  }
+
+  .edit-note-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .assignment-actions {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .status-buttons {
+    width: 100%;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .btn {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .notes-textarea {
+    min-height: 100px;
+    font-size: var(--font-size-xs);
+  }
+
+  .alert {
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .page-container {
+    padding: var(--space-sm);
+  }
+
+  .page-header h2 {
+    font-size: var(--font-size-lg);
+  }
+
+  .filter-bar {
+    padding: var(--space-sm);
+  }
+
+  .wird-card {
+    padding: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
+
+  .wird-card-body {
+    gap: var(--space-md);
+  }
+
+  .wird-type i {
+    font-size: 1rem;
+  }
+
+  .range-section {
+    padding: var(--space-sm);
+  }
+
+  .wird-note {
+    padding: var(--space-sm);
+    font-size: var(--font-size-xs);
+  }
+
+  .btn {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* message design  */
+.alert {
+  border-radius: 8px;
+  border: none;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  animation: slideDown 0.3s ease-out;
+  transition:
+    opacity 0.5s ease-out,
+    transform 0.5s ease-out;
+  align-items: baseline !important;
+}
+
+.alert-success {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  color: #155724;
+  border-left: 4px solid #28a745;
+}
+
+.alert-danger {
+  background: linear-gradient(135deg, #f8d7da 0%, #f1c2c7 100%);
+  color: #721c24;
+  border-left: 4px solid #dc3545;
+}
+
+.alert i {
+  font-size: 1.25rem;
+  position: relative;
+  top: 2px;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

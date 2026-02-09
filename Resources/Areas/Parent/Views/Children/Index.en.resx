@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Children" xml:space="preserve">
+    <value>Children</value>
+  </data>
+  <data name="MyChildren" xml:space="preserve">
+    <value>My Children</value>
+  </data>
+  <data name="ChildrenSubtitle" xml:space="preserve">
+    <value>List of all your children registered in the system</value>
+  </data>
+  <data name="Class" xml:space="preserve">
+    <value>Class</value>
+  </data>
+  <data name="NoClass" xml:space="preserve">
+    <value>Not enrolled in class</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="ViewDetails" xml:space="preserve">
+    <value>View Details</value>
+  </data>
+  <data name="NoChildren" xml:space="preserve">
+    <value>No children registered currently</value>
+  </data>
+  <data name="AttendanceRate" xml:space="preserve">
+    <value>Attendance Rate</value>
+  </data>
+  <data name="CompletedWirds" xml:space="preserve">
+    <value>Completed Wirds</value>
+  </data>
+  <data name="MemorizedJuz" xml:space="preserve">
+    <value>Memorized Juz</value>
+  </data>
+  <data name="TotalChildren" xml:space="preserve">
+    <value>Total Children</value>
+  </data>
+  <data name="LiveNow" xml:space="preserve">
+    <value>Live Now</value>
+  </data>
+  <data name="JoinMeeting" xml:space="preserve">
+    <value>Join Meeting</value>
+  </data>
+  <data name="NoChildrenDescription" xml:space="preserve">
+    <value>No children have been registered in the system yet</value>
+  </data>
+</root>

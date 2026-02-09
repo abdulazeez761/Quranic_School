@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="MorningBoysClass" xml:space="preserve">
+    <value>Morning Boys Class</value>
+  </data>
+  <data name="Students" xml:space="preserve">
+    <value>Students</value>
+  </data>
+  <data name="ChangeClass" xml:space="preserve">
+    <value>Change Class</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>Success!</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error!</value>
+  </data>
+  <data name="JuzMemorized" xml:space="preserve">
+    <value>Juz Memorized</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="CompletedWirds" xml:space="preserve">
+    <value>Completed Wirds</value>
+  </data>
+  <data name="Age" xml:space="preserve">
+    <value>Age</value>
+  </data>
+  <data name="Years" xml:space="preserve">
+    <value>years</value>
+  </data>
+  <data name="ViewDetails" xml:space="preserve">
+    <value>View Details</value>
+  </data>
+  <data name="AddWird" xml:space="preserve">
+    <value>Add Wird</value>
+  </data>
+  <data name="none" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="First" xml:space="preserve">
+    <value>Beginner</value>
+  </data>
+  <data name="Second" xml:space="preserve">
+    <value>Intermediate</value>
+  </data>
+  <data name="Third" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+</root>

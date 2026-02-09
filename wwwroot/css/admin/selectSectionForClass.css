@@ -1,0 +1,35 @@
+/* Select2 custom styles */
+.select2-container--default .select2-selection {
+  background-color: var(--white);
+  border: 1px solid var(--secondary-green);
+  border-radius: 0.5rem;
+  min-height: 45px;
+  padding: 0.25rem 0.5rem;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.select2-container--default .select2-selection:focus,
+.select2-container--default .select2-selection:hover {
+  border-color: var(--primary-green);
+  box-shadow: var(--shadow-hover);
+}
+
+.select2-container--default .select2-selection__choice {
+  background-color: var(--primary-green);
+  color: var(--text-dark);
+  border-radius: 0.25rem;
+  padding: 0 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.select2-container--default .select2-selection__choice__remove {
+  color: var(--white);
+  margin-right: 0.25rem;
+}
+
+.select2-container--default .select2-dropdown {
+  border-radius: 0.5rem;
+  border: 1px solid var(--secondary-green);
+  box-shadow: var(--shadow);
+}

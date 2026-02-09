@@ -1,0 +1,123 @@
+@model IEnumerable<Hifz.Models.StudentAttendance>
+
+@{
+    ViewData["Title"] = "Attendance";
+}
+
+<link rel="stylesheet" href="~/css/student/attendance.css" asp-append-version="true" />
+
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+<div class="attendance-container"
+     dir="@(System.Globalization.CultureInfo.CurrentUICulture.Name.StartsWith("ar") ? "rtl" : "ltr")">
+    <div class="attendance-header">
+        <div class="header-left">
+            <i class='bx bx-calendar-check header-icon'></i>
+            <h1 class="attendance-title">@Localizer["MyAttendance"]</h1>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <form asp-area="Student" asp-controller="Attendance" asp-action="Index" method="get" class="filter-form">
+            <div class="filter-group">
+                <label for="fromDate">@Localizer["FromDate"]</label>
+                <input type="date" id="fromDate" name="fromDate" value="@ViewBag.FromDate?.ToString("yyyy-MM-dd")"
+                       class="date-input" />
+            </div>
+            <div class="filter-group">
+                <label for="toDate">@Localizer["ToDate"]</label>
+                <input type="date" id="toDate" name="toDate" value="@ViewBag.ToDate?.ToString("yyyy-MM-dd")"
+                       class="date-input" />
+            </div>
+            <button type="submit" class="filter-btn">
+                <i class='bx bx-filter'></i>
+                @Localizer["Filter"]
+            </button>
+            @if (!string.IsNullOrEmpty(ViewBag.FromDate?.ToString()) ||
+                                    !string.IsNullOrEmpty(ViewBag.ToDate?.ToString()))
+            {
+                <a href="/Student/Attendance" class="clear-btn">
+                    <i class='bx bx-x'></i>
+                    @Localizer["Clear"]
+                </a>
+            }
+        </form>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="stats-grid">
+        <div class="stat-card stat-present">
+            <i class='bx bx-check-circle'></i>
+            <div class="stat-info">
+                <h3>@Localizer["Present"]</h3>
+                <p class="stat-value">@Model.Count(a => a.Status == Hifz.Models.AttendanceStatus.Present)</p>
+            </div>
+        </div>
+        <div class="stat-card stat-absent">
+            <i class='bx bx-x-circle'></i>
+            <div class="stat-info">
+                <h3>@Localizer["Absent"]</h3>
+                <p class="stat-value">@Model.Count(a => a.Status == Hifz.Models.AttendanceStatus.Absent)</p>
+            </div>
+        </div>
+        <div class="stat-card stat-late">
+            <i class='bx bx-time'></i>
+            <div class="stat-info">
+                <h3>@Localizer["Late"]</h3>
+                <p class="stat-value">@Model.Count(a => a.Status == Hifz.Models.AttendanceStatus.Late)</p>
+            </div>
+        </div>
+        <div class="stat-card stat-total">
+            <i class='bx bx-calendar'></i>
+            <div class="stat-info">
+                <h3>@Localizer["Total"]</h3>
+                <p class="stat-value">@Model.Count()</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance Table -->
+    <div class="attendance-table-container">
+        @if (Model.Any())
+        {
+            <table class="attendance-table">
+                <thead>
+                    <tr>
+                        <th>@Localizer["Date"]</th>
+                        <th>@Localizer["Class"]</th>
+                        <th>@Localizer["Status"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var attendance in Model)
+                    {
+                        var statusClass = attendance.Status.ToString().ToLower();
+                        <tr>
+                            <td>
+                                <i class='bx bx-calendar'></i>
+                                @attendance.Date.ToString("MMMM dd, yyyy")
+                            </td>
+                            <td>
+                                <i class='bx bx-book'></i>
+                                @attendance.Class.Name
+                            </td>
+                            <td>
+                                <span class="status-badge status-@statusClass">
+                                    @Localizer[attendance.Status.ToString()]
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="no-data-message">
+                <i class='bx bx-calendar-x'></i>
+                <p>@Localizer["NoAttendanceRecordsFound"]</p>
+            </div>
+        }
+    </div>
+</div>

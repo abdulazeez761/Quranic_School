@@ -1,0 +1,97 @@
+@using Hifz.Models
+@model IEnumerable<Student>
+
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+<link rel="stylesheet" href="~/css/teacher/Students.css" />
+<link rel="stylesheet" href="~/css/teacher/AssignWirdModal.css" /> @* the append vresion for caching the page*@
+
+<div class="class-header">
+    <div class="class-header-left">
+        <h2>@Localizer["MorningBoysClass"]</h2>
+        <p>@Model.Count() @Localizer["Students"]</p>
+    </div>
+    <a class="change-class-btn" asp-action="Index" asp-controller="Home">@Localizer["ChangeClass"]</a>
+</div>
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert" id="successAlert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <strong>@Localizer["Success"]</strong> @TempData["SuccessMessage"]
+
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert" id="errorAlert">
+        <i class="bi bi-x-circle-fill me-2"></i>
+        <strong>@Localizer["Error"]</strong> @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+<div class="students-grid">
+    @foreach (Student student in Model)
+    {
+        var age = DateTime.Now.Year - student.DateOfBirth.Year;
+        var activeWirds = 1; // This should come from your actual data
+        var studentFullName = $"{student.StudentInfo.FirstName} {student.StudentInfo.SecondName}";
+
+        <div class="student-card">
+            <div class="student-card-header">
+                <div>
+                    <h3 class="student-name">@studentFullName</h3>
+                    <p class="student-level">
+                        @Localizer["JuzMemorized"]: @student.MemorizedJuz • @Localizer[student.TajwidLevel.ToString()]
+                    </p>
+                </div>
+                <span class="active-badge @(activeWirds == 0 ? "zero" : "")">
+                    @activeWirds @Localizer["Active"]
+                </span>
+            </div>
+            <div class="student-info">
+                <div class="info-row">
+                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    <span class="info-label">@Localizer["CompletedWirds"]:</span>
+                    <span class="info-value">0</span>
+                </div>
+                <div class="info-row">
+                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span class="info-label">@Localizer["Age"]:</span>
+                    <span class="info-value">@age @Localizer["Years"]</span>
+                </div>
+            </div>
+            <div class="student-actions">
+                <a asp-action="Details" asp-route-id="@student.UserId" class="btn btn-outline">@Localizer["ViewDetails"]</a>
+                <button class="btn btn-primary" onclick="openWirdModal('@student.UserId', '@studentFullName')">
+                    <span class="plus-icon">+</span>
+                    @Localizer["AddWird"]
+                </button>
+            </div>
+        </div>
+    }
+</div>
+<script>
+    setTimeout(function () {
+        const successAlert = document.getElementById('successAlert');
+        const errorAlert = document.getElementById('errorAlert');
+
+        if (successAlert) {
+            successAlert.style.opacity = '0';
+
+            setTimeout(() => successAlert.style.display = 'none', 500);
+        }
+        if (errorAlert) {
+            errorAlert.style.opacity = '0';
+
+            setTimeout(() => errorAlert.style.display = 'none', 500);
+        }
+    }, 5000);</script>
+    <!-- Include the modal partial view -->
+    @await Html.PartialAsync("_AssignWirdModal", new WirdAssignment())

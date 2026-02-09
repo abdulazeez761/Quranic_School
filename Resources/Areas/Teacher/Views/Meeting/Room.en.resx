@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Online Class Room</value>
+  </data>
+  <data name="Room" xml:space="preserve">
+    <value>Room:</value>
+  </data>
+  <data name="LiveMeeting" xml:space="preserve">
+    <value>Live Meeting</value>
+  </data>
+  <data name="SecureConnection" xml:space="preserve">
+    <value>Secure Connection</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>Connecting...</value>
+  </data>
+  <data name="MeetingControls" xml:space="preserve">
+    <value>Meeting Controls</value>
+  </data>
+  <data name="MuteAll" xml:space="preserve">
+    <value>Mute All</value>
+  </data>
+  <data name="ShareScreen" xml:space="preserve">
+    <value>Share Screen</value>
+  </data>
+  <data name="ToggleChat" xml:space="preserve">
+    <value>Toggle Chat</value>
+  </data>
+  <data name="TileView" xml:space="preserve">
+    <value>Tile View</value>
+  </data>
+  <data name="EndMeeting" xml:space="preserve">
+    <value>End Meeting</value>
+  </data>
+  <data name="EndMeetingQuestion" xml:space="preserve">
+    <value>End Meeting?</value>
+  </data>
+  <data name="EndMeetingConfirm" xml:space="preserve">
+    <value>Are you sure you want to end this meeting? All participants will be disconnected and cannot rejoin.</value>
+  </data>
+  <data name="ContinueMeeting" xml:space="preserve">
+    <value>Continue Meeting</value>
+  </data>
+  <data name="Participant" xml:space="preserve">
+    <value>participant</value>
+  </data>
+  <data name="Participants" xml:space="preserve">
+    <value>participants</value>
+  </data>
+</root>

@@ -1,0 +1,74 @@
+/* Error & Auth Pages Common Styles */
+
+/* Error Page Styles */
+.error-container {
+  max-width: 1200px;
+  margin: 3rem auto;
+  padding: 0 1rem;
+}
+
+.error-center {
+  display: flex;
+  justify-content: center;
+}
+
+.error-card {
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.error-header {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: #ffffff;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.error-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.error-body {
+  padding: 2rem;
+  text-align: center;
+}
+
+.error-body p {
+  margin: 1rem 0;
+  color: #666;
+  line-height: 1.6;
+}
+
+.error-body strong {
+  color: #333;
+}
+
+/* Auth Pages Button Styles */
+.auth-button {
+  display: inline-block;
+  background: linear-gradient(135deg, #8df29c 0%, #85a67c 100%);
+  color: #2c3e50;
+  padding: 0.75rem 2rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: transform 150ms ease, box-shadow 150ms ease;
+  margin-top: 1rem;
+  display: inline-block;
+}
+
+.auth-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  text-decoration: none;
+  color: #2c3e50;
+}
+
+.auth-button:active {
+  transform: translateY(0);
+}

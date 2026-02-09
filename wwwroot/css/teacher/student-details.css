@@ -1,0 +1,352 @@
+.details-header {
+  background: linear-gradient(
+    135deg,
+    var(--secondary-green) 0%,
+    var(--dark-green) 100%
+  );
+  color: var(--white);
+  padding: var(--space-xl);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+.details-header-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+.student-avatar {
+  width: 120px;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: bold;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.student-basic-info h1 {
+  font-size: var(--font-size-3xl);
+  margin: 0 0 var(--space-sm) 0;
+  font-weight: 700;
+}
+
+.student-basic-info p {
+  margin: var(--space-xs) 0;
+  opacity: 0.9;
+  font-size: var(--font-size-base);
+}
+
+.back-button {
+  color: var(--white);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xl);
+  opacity: 0.9;
+  transition: opacity var(--transition-base);
+}
+
+.back-button:hover {
+  opacity: 1;
+}
+
+/* RTL: Flip directional icons */
+[dir='rtl'] .bi-chevron-left,
+[dir='rtl'] .bi-chevron-right,
+[dir='rtl'] .bi-arrow-left {
+  transform: scaleX(-1);
+}
+
+.details-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xl);
+  margin-bottom: var(--space-xl);
+}
+
+@media (max-width: 968px) {
+  .details-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.info-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-md);
+  border-left: 4px solid var(--secondary-green);
+}
+
+.info-card h3 {
+  font-size: var(--font-size-lg);
+  margin: 0 0 var(--space-md) 0;
+  color: var(--secondary-green);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--border-color);
+  align-items: center;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-weight: 600;
+  color: var(--text-medium);
+}
+
+.info-value {
+  color: var(--secondary-green);
+  font-weight: 500;
+}
+
+.wirds-section {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-md);
+  border-left: 4px solid var(--secondary-green);
+}
+
+.wirds-section h3 {
+  font-size: var(--font-size-lg);
+  margin: 0 0 var(--space-xl) 0;
+  color: var(--secondary-green);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.wirds-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.wird-item {
+  background: var(--light-gray);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--secondary-green);
+  display: block;
+  margin-bottom: var(--space-md);
+}
+
+.wird-item:last-child {
+  margin-bottom: 0;
+}
+
+.wird-details h4 {
+  margin: 0 0 var(--space-sm) 0;
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+.wird-meta {
+  display: flex;
+  gap: var(--space-lg);
+  font-size: var(--font-size-sm);
+  color: var(--text-medium);
+}
+
+.wird-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+.status-completed {
+  background: rgba(40, 167, 69, 0.1);
+  color: var(--success);
+}
+
+.status-pending {
+  background: rgba(255, 193, 7, 0.1);
+  color: #856404;
+}
+
+.status-failed {
+  background: rgba(220, 53, 69, 0.1);
+  color: var(--danger);
+}
+
+.empty-state {
+  text-align: center;
+  padding: var(--space-xl);
+  color: var(--text-light);
+}
+
+.empty-state i {
+  font-size: var(--font-size-3xl);
+  display: block;
+  margin-bottom: var(--space-md);
+  opacity: 0.5;
+}
+
+/* ===================================
+   Responsive Design
+   =================================== */
+@media (max-width: 1200px) {
+  .details-container {
+    gap: var(--space-lg);
+  }
+}
+
+@media (max-width: 968px) {
+  .details-container {
+    grid-template-columns: 1fr;
+  }
+
+  .details-header {
+    padding: var(--space-lg);
+  }
+
+  .details-header-content {
+    gap: var(--space-lg);
+  }
+
+  .student-avatar {
+    width: 100px;
+    height: 100px;
+    font-size: 2.5rem;
+  }
+
+  .student-basic-info h1 {
+    font-size: var(--font-size-2xl);
+  }
+}
+
+@media (max-width: 768px) {
+  .details-header {
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+  }
+
+  .details-header-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-md);
+  }
+
+  .student-avatar {
+    width: 80px;
+    height: 80px;
+    font-size: 2rem;
+  }
+
+  .student-basic-info h1 {
+    font-size: var(--font-size-xl);
+  }
+
+  .student-basic-info p {
+    font-size: var(--font-size-sm);
+  }
+
+  .back-button {
+    margin-bottom: var(--space-md);
+    font-size: var(--font-size-sm);
+  }
+
+  .info-card,
+  .wirds-section {
+    padding: var(--space-md);
+    border-left-width: 3px;
+  }
+
+  .info-card h3,
+  .wirds-section h3 {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--space-md);
+  }
+
+  .info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs);
+    padding: var(--space-sm) 0;
+  }
+
+  .info-label,
+  .info-value {
+    font-size: var(--font-size-sm);
+  }
+
+  .wird-item {
+    padding: var(--space-sm);
+  }
+
+  .wird-details h4 {
+    font-size: var(--font-size-sm);
+  }
+
+  .wird-meta {
+    flex-direction: column;
+    gap: var(--space-sm);
+    font-size: var(--font-size-xs);
+  }
+
+  .wird-status {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--font-size-xs);
+  }
+
+  .empty-state {
+    padding: var(--space-lg);
+  }
+
+  .empty-state i {
+    font-size: var(--font-size-2xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .details-header {
+    padding: var(--space-sm);
+  }
+
+  .student-avatar {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+    border-width: 2px;
+  }
+
+  .student-basic-info h1 {
+    font-size: var(--font-size-lg);
+  }
+
+  .student-basic-info p {
+    font-size: var(--font-size-xs);
+  }
+
+  .info-card,
+  .wirds-section {
+    padding: var(--space-sm);
+  }
+
+  .wirds-list {
+    gap: var(--space-sm);
+  }
+}

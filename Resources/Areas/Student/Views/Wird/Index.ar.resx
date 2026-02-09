@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="MyWirds" xml:space="preserve"><value>أورادي</value></data>
+  <data name="Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="All" xml:space="preserve"><value>الكل</value></data>
+  <data name="Pending" xml:space="preserve"><value>قيد الانتظار</value></data>
+  <data name="Completed" xml:space="preserve"><value>مكتمل</value></data>
+  <data name="Type" xml:space="preserve"><value>النوع</value></data>
+  <data name="AllTypes" xml:space="preserve"><value>كل الأنواع</value></data>
+  <data name="TotalWirds" xml:space="preserve"><value>إجمالي الأوراد</value></data>
+  <data name="From" xml:space="preserve"><value>من</value></data>
+  <data name="To" xml:space="preserve"><value>إلى</value></data>
+  <data name="Surah" xml:space="preserve"><value>سورة</value></data>
+  <data name="Ayah" xml:space="preserve"><value>آية</value></data>
+  <data name="Juz" xml:space="preserve"><value>جزء</value></data>
+  <data name="Page" xml:space="preserve"><value>صفحة</value></data>
+  <data name="Note" xml:space="preserve"><value>ملاحظة</value></data>
+  <data name="AssignedDate" xml:space="preserve"><value>تاريخ التعيين</value></data>
+  <data name="NoWirdAssignmentsFound" xml:space="preserve"><value>لا توجد أوراد.</value></data>
+  <data name="Review" xml:space="preserve"><value>مراجعة</value></data>
+  <data name="Memorization" xml:space="preserve"><value>حفظ</value></data>
+  <data name="Revision" xml:space="preserve"><value>مراجعة</value></data>
+  <data name="Tajwid" xml:space="preserve"><value>تجويد</value></data>
+  <data name="Tafsir" xml:space="preserve"><value>تفسير</value></data>
+  <data name="Other" xml:space="preserve"><value>أخرى</value></data>
+  <data name="Wird" xml:space="preserve"><value>ورد</value></data>
+  <data name="Previous" xml:space="preserve"><value>السابق</value></data>
+  <data name="Next" xml:space="preserve"><value>التالي</value></data>
+  <data name="Of" xml:space="preserve"><value>من</value></data>
+  <data name="TotalRecords" xml:space="preserve"><value>سجل</value></data>
+  <data name="Clear" xml:space="preserve"><value>مسح</value></data>
+  <data name="notSet" xml:space="preserve"><value>لم يُحدد</value></data>
+  <data name="poor" xml:space="preserve"><value>ضعيف</value></data>
+  <data name="fair" xml:space="preserve"><value>مقبول</value></data>
+  <data name="good" xml:space="preserve"><value>جيد</value></data>
+  <data name="veryGood" xml:space="preserve"><value>جيد جداً</value></data>
+  <data name="excellent" xml:space="preserve"><value>ممتاز</value></data>
+</root>

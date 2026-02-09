@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="MyAttendance" xml:space="preserve"><value>My Attendance</value></data>
+  <data name="FromDate" xml:space="preserve"><value>From Date</value></data>
+  <data name="ToDate" xml:space="preserve"><value>To Date</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filter</value></data>
+  <data name="Clear" xml:space="preserve"><value>Clear</value></data>
+  <data name="Present" xml:space="preserve"><value>Present</value></data>
+  <data name="Absent" xml:space="preserve"><value>Absent</value></data>
+  <data name="Late" xml:space="preserve"><value>Late</value></data>
+  <data name="Total" xml:space="preserve"><value>Total</value></data>
+  <data name="Date" xml:space="preserve"><value>Date</value></data>
+  <data name="Class" xml:space="preserve"><value>Class</value></data>
+  <data name="Status" xml:space="preserve"><value>Status</value></data>
+  <data name="NoAttendanceRecordsFound" xml:space="preserve"><value>No attendance records found.</value></data>
+</root>

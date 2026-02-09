@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Dashboard" xml:space="preserve">
+    <value>لوحة التحكم</value>
+  </data>
+  <data name="WelcomeMessage" xml:space="preserve">
+    <value>مرحباً</value>
+  </data>
+  <data name="DashboardSubtitle" xml:space="preserve">
+    <value>تابع تقدم أبنائك في حفظ القرآن الكريم</value>
+  </data>
+  <data name="Class" xml:space="preserve">
+    <value>الحلقة</value>
+  </data>
+  <data name="NoClass" xml:space="preserve">
+    <value>غير مسجل في حلقة</value>
+  </data>
+  <data name="ViewDetails" xml:space="preserve">
+    <value>عرض التفاصيل</value>
+  </data>
+  <data name="NoChildren" xml:space="preserve">
+    <value>لا يوجد أبناء مسجلين حالياً</value>
+  </data>
+  <data name="QuickStats" xml:space="preserve">
+    <value>إحصائيات سريعة</value>
+  </data>
+  <data name="TotalChildren" xml:space="preserve">
+    <value>إجمالي الأبناء</value>
+  </data>
+  <data name="ActiveMeetings" xml:space="preserve">
+    <value>الاجتماعات النشطة</value>
+  </data>
+  <data name="MeetingInProgress" xml:space="preserve">
+    <value>اجتماع قائم</value>
+  </data>
+  <data name="JoinNow" xml:space="preserve">
+    <value>انضم الآن</value>
+  </data>
+  <data name="AttendanceRate" xml:space="preserve">
+    <value>نسبة الحضور</value>
+  </data>
+  <data name="CompletedWirds" xml:space="preserve">
+    <value>الأوراد المكتملة</value>
+  </data>
+  <data name="TotalMemorizedJuz" xml:space="preserve">
+    <value>إجمالي الأجزاء المحفوظة</value>
+  </data>
+  <data name="MyChildren" xml:space="preserve">
+    <value>أبنائي</value>
+  </data>
+  <data name="ViewAll" xml:space="preserve">
+    <value>عرض الكل</value>
+  </data>
+  <data name="NoChildrenDescription" xml:space="preserve">
+    <value>لم يتم تسجيل أي أبناء في النظام بعد</value>
+  </data>
+  <data name="RecentActivity" xml:space="preserve">
+    <value>النشاط الأخير</value>
+  </data>
+  <data name="LiveNow" xml:space="preserve">
+    <value>مباشر الآن</value>
+  </data>
+  <data name="Juz" xml:space="preserve">
+    <value>جزء</value>
+  </data>
+  <data name="MemorizedJuz" xml:space="preserve">
+    <value>الأجزاء المحفوظة</value>
+  </data>
+  <data name="TajwidLevel" xml:space="preserve">
+    <value>مستوى التجويد</value>
+  </data>
+  <data name="TajwidLevel_Beginner" xml:space="preserve">
+    <value>مبتدئ</value>
+  </data>
+  <data name="TajwidLevel_Intermediate" xml:space="preserve">
+    <value>متوسط</value>
+  </data>
+  <data name="TajwidLevel_Advanced" xml:space="preserve">
+    <value>متقدم</value>
+  </data>
+  <data name="TajwidLevel_none" xml:space="preserve">
+    <value>غير محدد</value>
+  </data>
+  <data name="TajwidLevel_First" xml:space="preserve">
+    <value>تمهيدي</value>
+  </data>
+  <data name="TajwidLevel_Second" xml:space="preserve">
+    <value>متوسط</value>
+  </data>
+  <data name="TajwidLevel_Third" xml:space="preserve">
+    <value>متقدم</value>
+  </data>
+  <data name="AttendanceRecorded" xml:space="preserve">
+    <value>تم تسجيل الحضور</value>
+  </data>
+  <data name="WirdAssignment" xml:space="preserve">
+    <value>ورد يومي</value>
+  </data>
+  <data name="AttendanceStatus_Present" xml:space="preserve">
+    <value>حاضر</value>
+  </data>
+  <data name="AttendanceStatus_Late" xml:space="preserve">
+    <value>متأخر</value>
+  </data>
+  <data name="AttendanceStatus_Absent" xml:space="preserve">
+    <value>غائب</value>
+  </data>
+  <data name="AttendanceStatus_Excused" xml:space="preserve">
+    <value>معذور</value>
+  </data>
+  <data name="AssignmentType_Wird" xml:space="preserve">
+    <value>ورد</value>
+  </data>
+  <data name="AssignmentType_Memorization" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="AssignmentType_Revision" xml:space="preserve">
+    <value>مراجعة</value>
+  </data>
+  <data name="AssignmentType_Tajwid" xml:space="preserve">
+    <value>تجويد</value>
+  </data>
+  <data name="AssignmentType_Tafsir" xml:space="preserve">
+    <value>تفسير</value>
+  </data>
+  <data name="AssignmentType_Other" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="AssignmentType_newMemorization" xml:space="preserve">
+    <value>حفظ جديد</value>
+  </data>
+  <data name="AssignmentType_review" xml:space="preserve">
+    <value>مراجعة</value>
+  </data>
+  <data name="AssignmentType_Recitation" xml:space="preserve">
+    <value>تلاوة</value>
+  </data>
+  <data name="ActivityStatus_Completed" xml:space="preserve">
+    <value>مكتمل</value>
+  </data>
+  <data name="ActivityStatus_Pending" xml:space="preserve">
+    <value>قيد الانتظار</value>
+  </data>
+</root>

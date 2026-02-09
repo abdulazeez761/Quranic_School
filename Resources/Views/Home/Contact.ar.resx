@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ContactTitle" xml:space="preserve">
+    <value>تواصل معنا</value>
+    <comment/>
+  </data>
+  <data name="ContactSubtitle" xml:space="preserve">
+    <value>نسعد بتواصلكم معنا، لا تترددوا في إرسال أي استفسار أو ملاحظة</value>
+    <comment/>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>العنوان</value>
+    <comment/>
+  </data>
+  <data name="AddressValue" xml:space="preserve">
+    <value>إربد، الأردن</value>
+    <comment/>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>الهاتف</value>
+    <comment/>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+    <comment/>
+  </data>
+  <data name="WorkHours" xml:space="preserve">
+    <value>ساعات العمل</value>
+    <comment/>
+  </data>
+  <data name="WorkHoursValue" xml:space="preserve">
+    <value>الأحد - الخميس: 8:00 ص - 6:00 م</value>
+    <comment/>
+  </data>
+  <data name="SendMessage" xml:space="preserve">
+    <value>أرسل لنا رسالة</value>
+    <comment/>
+  </data>
+  <data name="FormSubtitle" xml:space="preserve">
+    <value>املأ النموذج التالي وسنتواصل معك في أقرب وقت</value>
+    <comment/>
+  </data>
+  <data name="FullName" xml:space="preserve">
+    <value>الاسم الكامل</value>
+    <comment/>
+  </data>
+  <data name="FullNamePlaceholder" xml:space="preserve">
+    <value>أدخل اسمك الكامل</value>
+    <comment/>
+  </data>
+  <data name="EmailLabel" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+    <comment/>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>رقم الهاتف</value>
+    <comment/>
+  </data>
+  <data name="Subject" xml:space="preserve">
+    <value>الموضوع</value>
+    <comment/>
+  </data>
+  <data name="SelectSubject" xml:space="preserve">
+    <value>اختر الموضوع</value>
+    <comment/>
+  </data>
+  <data name="GeneralInquiry" xml:space="preserve">
+    <value>استفسار عام</value>
+    <comment/>
+  </data>
+  <data name="Registration" xml:space="preserve">
+    <value>التسجيل في الأكاديمية</value>
+    <comment/>
+  </data>
+  <data name="TechnicalSupport" xml:space="preserve">
+    <value>الدعم الفني</value>
+    <comment/>
+  </data>
+  <data name="Suggestion" xml:space="preserve">
+    <value>اقتراح أو ملاحظة</value>
+    <comment/>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>أخرى</value>
+    <comment/>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>الرسالة</value>
+    <comment/>
+  </data>
+  <data name="MessagePlaceholder" xml:space="preserve">
+    <value>اكتب رسالتك هنا...</value>
+    <comment/>
+  </data>
+  <data name="SendButton" xml:space="preserve">
+    <value>إرسال الرسالة</value>
+    <comment/>
+  </data>
+  <data name="FollowUs" xml:space="preserve">
+    <value>تابعنا على وسائل التواصل</value>
+    <comment/>
+  </data>
+  <data name="FollowUsDesc" xml:space="preserve">
+    <value>يمكنك أيضاً التواصل معنا عبر حساباتنا الرسمية على منصات التواصل الاجتماعي</value>
+    <comment/>
+  </data>
+  <data name="FAQ" xml:space="preserve">
+    <value>الأسئلة الشائعة</value>
+    <comment/>
+  </data>
+  <data name="FAQ1Q" xml:space="preserve">
+    <value>كيف يمكنني تسجيل طفلي في الأكاديمية؟</value>
+    <comment/>
+  </data>
+  <data name="FAQ1A" xml:space="preserve">
+    <value>يمكنك التسجيل من خلال صفحة التسجيل الرئيسية أو التواصل معنا مباشرة عبر واتساب.</value>
+    <comment/>
+  </data>
+  <data name="FAQ2Q" xml:space="preserve">
+    <value>ما هي أوقات الحصص؟</value>
+    <comment/>
+  </data>
+  <data name="FAQ2A" xml:space="preserve">
+    <value>تُعقد الحصص من الأحد إلى الخميس، ويتم تحديد الأوقات بالاتفاق مع المعلم.</value>
+    <comment/>
+  </data>
+  <data name="FAQ3Q" xml:space="preserve">
+    <value>هل يمكنني حضور جلسة تجريبية مجانية؟</value>
+    <comment/>
+  </data>
+  <data name="FAQ3A" xml:space="preserve">
+    <value>نعم! نقدم جلسة تعريفية مجانية لكل طالب جديد. سجّل من الصفحة الرئيسية.</value>
+    <comment/>
+  </data>
+</root>

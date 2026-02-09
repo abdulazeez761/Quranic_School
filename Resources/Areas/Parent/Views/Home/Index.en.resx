@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="WelcomeMessage" xml:space="preserve">
+    <value>Welcome</value>
+  </data>
+  <data name="DashboardSubtitle" xml:space="preserve">
+    <value>Track your children's progress in Quran memorization</value>
+  </data>
+  <data name="Class" xml:space="preserve">
+    <value>Class</value>
+  </data>
+  <data name="NoClass" xml:space="preserve">
+    <value>Not enrolled in class</value>
+  </data>
+  <data name="ViewDetails" xml:space="preserve">
+    <value>View Details</value>
+  </data>
+  <data name="NoChildren" xml:space="preserve">
+    <value>No children registered currently</value>
+  </data>
+  <data name="QuickStats" xml:space="preserve">
+    <value>Quick Stats</value>
+  </data>
+  <data name="TotalChildren" xml:space="preserve">
+    <value>Total Children</value>
+  </data>
+  <data name="ActiveMeetings" xml:space="preserve">
+    <value>Active Meetings</value>
+  </data>
+  <data name="MeetingInProgress" xml:space="preserve">
+    <value>Meeting in Progress</value>
+  </data>
+  <data name="JoinNow" xml:space="preserve">
+    <value>Join Now</value>
+  </data>
+  <data name="AttendanceRate" xml:space="preserve">
+    <value>Attendance Rate</value>
+  </data>
+  <data name="CompletedWirds" xml:space="preserve">
+    <value>Completed Wirds</value>
+  </data>
+  <data name="TotalMemorizedJuz" xml:space="preserve">
+    <value>Total Memorized Juz</value>
+  </data>
+  <data name="MyChildren" xml:space="preserve">
+    <value>My Children</value>
+  </data>
+  <data name="ViewAll" xml:space="preserve">
+    <value>View All</value>
+  </data>
+  <data name="NoChildrenDescription" xml:space="preserve">
+    <value>No children have been registered in the system yet</value>
+  </data>
+  <data name="RecentActivity" xml:space="preserve">
+    <value>Recent Activity</value>
+  </data>
+  <data name="LiveNow" xml:space="preserve">
+    <value>Live Now</value>
+  </data>
+  <data name="Juz" xml:space="preserve">
+    <value>Juz</value>
+  </data>
+  <data name="MemorizedJuz" xml:space="preserve">
+    <value>Memorized Juz</value>
+  </data>
+  <data name="TajwidLevel" xml:space="preserve">
+    <value>Tajwid Level</value>
+  </data>
+  <data name="TajwidLevel_Beginner" xml:space="preserve">
+    <value>Beginner</value>
+  </data>
+  <data name="TajwidLevel_Intermediate" xml:space="preserve">
+    <value>Intermediate</value>
+  </data>
+  <data name="TajwidLevel_Advanced" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+  <data name="TajwidLevel_none" xml:space="preserve">
+    <value>Not Set</value>
+  </data>
+  <data name="TajwidLevel_First" xml:space="preserve">
+    <value>Beginner</value>
+  </data>
+  <data name="TajwidLevel_Second" xml:space="preserve">
+    <value>Intermediate</value>
+  </data>
+  <data name="TajwidLevel_Third" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+  <data name="AttendanceRecorded" xml:space="preserve">
+    <value>Attendance recorded</value>
+  </data>
+  <data name="WirdAssignment" xml:space="preserve">
+    <value>Wird Assignment</value>
+  </data>
+  <data name="AttendanceStatus_Present" xml:space="preserve">
+    <value>Present</value>
+  </data>
+  <data name="AttendanceStatus_Late" xml:space="preserve">
+    <value>Late</value>
+  </data>
+  <data name="AttendanceStatus_Absent" xml:space="preserve">
+    <value>Absent</value>
+  </data>
+  <data name="AttendanceStatus_Excused" xml:space="preserve">
+    <value>Excused</value>
+  </data>
+  <data name="AssignmentType_Wird" xml:space="preserve">
+    <value>Wird</value>
+  </data>
+  <data name="AssignmentType_Memorization" xml:space="preserve">
+    <value>Memorization</value>
+  </data>
+  <data name="AssignmentType_Revision" xml:space="preserve">
+    <value>Revision</value>
+  </data>
+  <data name="AssignmentType_Tajwid" xml:space="preserve">
+    <value>Tajwid</value>
+  </data>
+  <data name="AssignmentType_Tafsir" xml:space="preserve">
+    <value>Tafsir</value>
+  </data>
+  <data name="AssignmentType_Other" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="AssignmentType_newMemorization" xml:space="preserve">
+    <value>New Memorization</value>
+  </data>
+  <data name="AssignmentType_review" xml:space="preserve">
+    <value>Review</value>
+  </data>
+  <data name="AssignmentType_Recitation" xml:space="preserve">
+    <value>Recitation</value>
+  </data>
+  <data name="ActivityStatus_Completed" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="ActivityStatus_Pending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+</root>

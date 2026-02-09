@@ -1,0 +1,70 @@
+.helper-text {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--text-medium);
+  margin-top: var(--space-xs);
+}
+
+.divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: var(--space-xl) 0;
+}
+
+.list-disc {
+  list-style: disc;
+}
+
+.list-disc li {
+  margin-bottom: var(--space-sm);
+}
+
+/* Alert Styles */
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.alert-danger {
+  background: rgba(220, 53, 69, 0.1);
+  border: 1px solid rgba(220, 53, 69, 0.2);
+  color: var(--danger);
+}
+
+.alert i {
+  font-size: var(--font-size-2xl);
+  margin-top: 2px;
+}
+
+/* Password Strength Indicator */
+.password-strength {
+  height: 4px;
+  background: var(--border-color);
+  border-radius: var(--radius-sm);
+  margin-top: var(--space-xs);
+  overflow: hidden;
+}
+
+.password-strength-bar {
+  height: 100%;
+  transition: all var(--transition-base);
+}
+
+.password-strength-weak {
+  background: var(--danger);
+  width: 33%;
+}
+
+.password-strength-medium {
+  background: var(--warning);
+  width: 66%;
+}
+
+.password-strength-strong {
+  background: var(--success);
+  width: 100%;
+}

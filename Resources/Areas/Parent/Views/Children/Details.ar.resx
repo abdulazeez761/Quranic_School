@@ -1,0 +1,595 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="ChildDetails" xml:space="preserve">
+    <value>تفاصيل الطالب</value>
+  </data>
+  <data name="NoClass" xml:space="preserve">
+    <value>غير مسجل في حلقة</value>
+  </data>
+  <data name="BackToList" xml:space="preserve">
+    <value>العودة للقائمة</value>
+  </data>
+  <data name="TotalAttendance" xml:space="preserve">
+    <value>إجمالي الحضور</value>
+  </data>
+  <data name="CompletedWirds" xml:space="preserve">
+    <value>الأوراد المكتملة</value>
+  </data>
+  <data name="MemorizedJuz" xml:space="preserve">
+    <value>الأجزاء المحفوظة</value>
+  </data>
+  <data name="TajwidLevel" xml:space="preserve">
+    <value>مستوى التجويد</value>
+  </data>
+  <data name="TajwidLevel_Beginner" xml:space="preserve">
+    <value>تمهيدي/مبتدئ</value>
+  </data>
+  <data name="TajwidLevel_Intermediate" xml:space="preserve">
+    <value>متوسط</value>
+  </data>
+  <data name="TajwidLevel_Advanced" xml:space="preserve">
+    <value>متقدم</value>
+  </data>
+  <data name="TajwidLevel_none" xml:space="preserve">
+    <value>غير محدد</value>
+  </data>
+  <data name="TajwidLevel_First" xml:space="preserve">
+    <value>تمهيدي/مبتدئ</value>
+  </data>
+  <data name="TajwidLevel_Second" xml:space="preserve">
+    <value>متوسط</value>
+  </data>
+  <data name="TajwidLevel_Third" xml:space="preserve">
+    <value>متقدم</value>
+  </data>
+  <data name="PersonalInformation" xml:space="preserve">
+    <value>المعلومات الشخصية</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>رقم الهاتف</value>
+  </data>
+  <data name="DateOfBirth" xml:space="preserve">
+    <value>تاريخ الميلاد</value>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>الجنس</value>
+  </data>
+  <data name="Gender_Male" xml:space="preserve">
+    <value>ذكر</value>
+  </data>
+  <data name="Gender_Female" xml:space="preserve">
+    <value>أنثى</value>
+  </data>
+  <data name="Gender_male" xml:space="preserve">
+    <value>ذكر</value>
+  </data>
+  <data name="Gender_female" xml:space="preserve">
+    <value>أنثى</value>
+  </data>
+  <data name="AttendanceHistory" xml:space="preserve">
+    <value>سجل الحضور</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>التاريخ</value>
+  </data>
+  <data name="Class" xml:space="preserve">
+    <value>الحلقة</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="AttendanceStatus_Present" xml:space="preserve">
+    <value>حاضر</value>
+  </data>
+  <data name="AttendanceStatus_Late" xml:space="preserve">
+    <value>متأخر</value>
+  </data>
+  <data name="AttendanceStatus_Absent" xml:space="preserve">
+    <value>غائب</value>
+  </data>
+  <data name="AttendanceStatus_Excused" xml:space="preserve">
+    <value>معذور</value>
+  </data>
+  <data name="AttendanceStatus_Pending" xml:space="preserve">
+    <value>قيد الانتظار</value>
+  </data>
+  <data name="NoAttendanceRecords" xml:space="preserve">
+    <value>لا توجد سجلات حضور</value>
+  </data>
+  <data name="WirdAssignments" xml:space="preserve">
+    <value>الأوراد اليومية</value>
+  </data>
+  <data name="AssignmentType_Wird" xml:space="preserve">
+    <value>ورد</value>
+  </data>
+  <data name="AssignmentType_Memorization" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="AssignmentType_Revision" xml:space="preserve">
+    <value>مراجعة</value>
+  </data>
+  <data name="AssignmentType_Tajwid" xml:space="preserve">
+    <value>تجويد</value>
+  </data>
+  <data name="AssignmentType_Tafsir" xml:space="preserve">
+    <value>تفسير</value>
+  </data>
+  <data name="AssignmentType_Other" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="AssignmentType_newMemorization" xml:space="preserve">
+    <value>حفظ جديد</value>
+  </data>
+  <data name="AssignmentType_review" xml:space="preserve">
+    <value>مراجعة</value>
+  </data>
+  <data name="AssignmentType_Recitation" xml:space="preserve">
+    <value>تلاوة</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>من</value>
+  </data>
+  <data name="To" xml:space="preserve">
+    <value>إلى</value>
+  </data>
+  <data name="Page" xml:space="preserve">
+    <value>صفحة</value>
+  </data>
+  <data name="AssignmentStatus_notSet" xml:space="preserve">
+    <value>غير محدد</value>
+  </data>
+  <data name="AssignmentStatus_poor" xml:space="preserve">
+    <value>ضعيف</value>
+  </data>
+  <data name="AssignmentStatus_fair" xml:space="preserve">
+    <value>مقبول</value>
+  </data>
+  <data name="AssignmentStatus_good" xml:space="preserve">
+    <value>جيد</value>
+  </data>
+  <data name="AssignmentStatus_veryGood" xml:space="preserve">
+    <value>جيد جداً</value>
+  </data>
+  <data name="AssignmentStatus_excellent" xml:space="preserve">
+    <value>ممتاز</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>مكتمل</value>
+  </data>
+  <data name="NoWirdAssignments" xml:space="preserve">
+    <value>لا توجد أوراد مسجلة</value>
+  </data>
+  <data name="OnlineMeetings" xml:space="preserve">
+    <value>الاجتماعات الإلكترونية</value>
+  </data>
+  <data name="ClassMeetingInProgress" xml:space="preserve">
+    <value>اجتماع الحلقة قائم</value>
+  </data>
+  <data name="HasActiveMeeting" xml:space="preserve">
+    <value>لديه اجتماع نشط</value>
+  </data>
+  <data name="JoinMeeting" xml:space="preserve">
+    <value>الانضمام للاجتماع</value>
+  </data>
+  <data name="NoActiveMeeting" xml:space="preserve">
+    <value>لا يوجد اجتماع نشط</value>
+  </data>
+  <data name="NoActiveMeetingDescription" xml:space="preserve">
+    <value>لا توجد اجتماعات نشطة حالياً لهذه الحلقة</value>
+  </data>
+  <data name="ParentNotes" xml:space="preserve">
+    <value>ملاحظات ولي الأمر</value>
+  </data>
+  <data name="NoParentNotes" xml:space="preserve">
+    <value>لا توجد ملاحظات متاحة</value>
+  </data>
+  <data name="NoteBy" xml:space="preserve">
+    <value>ملاحظة من</value>
+  </data>
+  <data name="Overview" xml:space="preserve">
+    <value>نظرة عامة</value>
+  </data>
+  <data name="Meetings" xml:space="preserve">
+    <value>الاجتماعات</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>الملاحظات</value>
+  </data>
+  <!-- Surah Names in Arabic -->
+  <data name="Surah_AlFatiha" xml:space="preserve">
+    <value>الفاتحة</value>
+  </data>
+  <data name="Surah_AlBaqarah" xml:space="preserve">
+    <value>البقرة</value>
+  </data>
+  <data name="Surah_AliImran" xml:space="preserve">
+    <value>آل عمران</value>
+  </data>
+  <data name="Surah_AnNisa" xml:space="preserve">
+    <value>النساء</value>
+  </data>
+  <data name="Surah_AlMaidah" xml:space="preserve">
+    <value>المائدة</value>
+  </data>
+  <data name="Surah_AlAnam" xml:space="preserve">
+    <value>الأنعام</value>
+  </data>
+  <data name="Surah_AlAraf" xml:space="preserve">
+    <value>الأعراف</value>
+  </data>
+  <data name="Surah_AlAnfal" xml:space="preserve">
+    <value>الأنفال</value>
+  </data>
+  <data name="Surah_AtTawbah" xml:space="preserve">
+    <value>التوبة</value>
+  </data>
+  <data name="Surah_Yunus" xml:space="preserve">
+    <value>يونس</value>
+  </data>
+  <data name="Surah_Hud" xml:space="preserve">
+    <value>هود</value>
+  </data>
+  <data name="Surah_Yusuf" xml:space="preserve">
+    <value>يوسف</value>
+  </data>
+  <data name="Surah_ArRad" xml:space="preserve">
+    <value>الرعد</value>
+  </data>
+  <data name="Surah_Ibrahim" xml:space="preserve">
+    <value>إبراهيم</value>
+  </data>
+  <data name="Surah_AlHijr" xml:space="preserve">
+    <value>الحجر</value>
+  </data>
+  <data name="Surah_AnNahl" xml:space="preserve">
+    <value>النحل</value>
+  </data>
+  <data name="Surah_AlIsra" xml:space="preserve">
+    <value>الإسراء</value>
+  </data>
+  <data name="Surah_AlKahf" xml:space="preserve">
+    <value>الكهف</value>
+  </data>
+  <data name="Surah_Maryam" xml:space="preserve">
+    <value>مريم</value>
+  </data>
+  <data name="Surah_TaHa" xml:space="preserve">
+    <value>طه</value>
+  </data>
+  <data name="Surah_AlAnbiya" xml:space="preserve">
+    <value>الأنبياء</value>
+  </data>
+  <data name="Surah_AlHajj" xml:space="preserve">
+    <value>الحج</value>
+  </data>
+  <data name="Surah_AlMuminun" xml:space="preserve">
+    <value>المؤمنون</value>
+  </data>
+  <data name="Surah_AnNur" xml:space="preserve">
+    <value>النور</value>
+  </data>
+  <data name="Surah_AlFurqan" xml:space="preserve">
+    <value>الفرقان</value>
+  </data>
+  <data name="Surah_AshShuara" xml:space="preserve">
+    <value>الشعراء</value>
+  </data>
+  <data name="Surah_AnNaml" xml:space="preserve">
+    <value>النمل</value>
+  </data>
+  <data name="Surah_AlQasas" xml:space="preserve">
+    <value>القصص</value>
+  </data>
+  <data name="Surah_AlAnkabut" xml:space="preserve">
+    <value>العنكبوت</value>
+  </data>
+  <data name="Surah_ArRum" xml:space="preserve">
+    <value>الروم</value>
+  </data>
+  <data name="Surah_Luqman" xml:space="preserve">
+    <value>لقمان</value>
+  </data>
+  <data name="Surah_AsSajda" xml:space="preserve">
+    <value>السجدة</value>
+  </data>
+  <data name="Surah_AlAhzab" xml:space="preserve">
+    <value>الأحزاب</value>
+  </data>
+  <data name="Surah_Saba" xml:space="preserve">
+    <value>سبأ</value>
+  </data>
+  <data name="Surah_Fatir" xml:space="preserve">
+    <value>فاطر</value>
+  </data>
+  <data name="Surah_YaSin" xml:space="preserve">
+    <value>يس</value>
+  </data>
+  <data name="Surah_AsSaffat" xml:space="preserve">
+    <value>الصافات</value>
+  </data>
+  <data name="Surah_Sad" xml:space="preserve">
+    <value>ص</value>
+  </data>
+  <data name="Surah_AzZumar" xml:space="preserve">
+    <value>الزمر</value>
+  </data>
+  <data name="Surah_Ghafir" xml:space="preserve">
+    <value>غافر</value>
+  </data>
+  <data name="Surah_Fussilat" xml:space="preserve">
+    <value>فصلت</value>
+  </data>
+  <data name="Surah_AshShura" xml:space="preserve">
+    <value>الشورى</value>
+  </data>
+  <data name="Surah_AzZukhruf" xml:space="preserve">
+    <value>الزخرف</value>
+  </data>
+  <data name="Surah_AdDukhan" xml:space="preserve">
+    <value>الدخان</value>
+  </data>
+  <data name="Surah_AlJathiya" xml:space="preserve">
+    <value>الجاثية</value>
+  </data>
+  <data name="Surah_AlAhqaf" xml:space="preserve">
+    <value>الأحقاف</value>
+  </data>
+  <data name="Surah_Muhammad" xml:space="preserve">
+    <value>محمد</value>
+  </data>
+  <data name="Surah_AlFath" xml:space="preserve">
+    <value>الفتح</value>
+  </data>
+  <data name="Surah_AlHujurat" xml:space="preserve">
+    <value>الحجرات</value>
+  </data>
+  <data name="Surah_Qaf" xml:space="preserve">
+    <value>ق</value>
+  </data>
+  <data name="Surah_AdhDhariyat" xml:space="preserve">
+    <value>الذاريات</value>
+  </data>
+  <data name="Surah_AtTur" xml:space="preserve">
+    <value>الطور</value>
+  </data>
+  <data name="Surah_AnNajm" xml:space="preserve">
+    <value>النجم</value>
+  </data>
+  <data name="Surah_AlQamar" xml:space="preserve">
+    <value>القمر</value>
+  </data>
+  <data name="Surah_ArRahman" xml:space="preserve">
+    <value>الرحمن</value>
+  </data>
+  <data name="Surah_AlWaqia" xml:space="preserve">
+    <value>الواقعة</value>
+  </data>
+  <data name="Surah_AlHadid" xml:space="preserve">
+    <value>الحديد</value>
+  </data>
+  <data name="Surah_AlMujadila" xml:space="preserve">
+    <value>المجادلة</value>
+  </data>
+  <data name="Surah_AlHashr" xml:space="preserve">
+    <value>الحشر</value>
+  </data>
+  <data name="Surah_AlMumtahina" xml:space="preserve">
+    <value>الممتحنة</value>
+  </data>
+  <data name="Surah_AsSaff" xml:space="preserve">
+    <value>الصف</value>
+  </data>
+  <data name="Surah_AlJumua" xml:space="preserve">
+    <value>الجمعة</value>
+  </data>
+  <data name="Surah_AlMunafiqun" xml:space="preserve">
+    <value>المنافقون</value>
+  </data>
+  <data name="Surah_AtTaghabun" xml:space="preserve">
+    <value>التغابن</value>
+  </data>
+  <data name="Surah_AtTalaq" xml:space="preserve">
+    <value>الطلاق</value>
+  </data>
+  <data name="Surah_AtTahrim" xml:space="preserve">
+    <value>التحريم</value>
+  </data>
+  <data name="Surah_AlMulk" xml:space="preserve">
+    <value>الملك</value>
+  </data>
+  <data name="Surah_AlQalam" xml:space="preserve">
+    <value>القلم</value>
+  </data>
+  <data name="Surah_AlHaqqah" xml:space="preserve">
+    <value>الحاقة</value>
+  </data>
+  <data name="Surah_AlMaarij" xml:space="preserve">
+    <value>المعارج</value>
+  </data>
+  <data name="Surah_Nuh" xml:space="preserve">
+    <value>نوح</value>
+  </data>
+  <data name="Surah_AlJinn" xml:space="preserve">
+    <value>الجن</value>
+  </data>
+  <data name="Surah_AlMuzzammil" xml:space="preserve">
+    <value>المزمل</value>
+  </data>
+  <data name="Surah_AlMuddaththir" xml:space="preserve">
+    <value>المدثر</value>
+  </data>
+  <data name="Surah_AlQiyamah" xml:space="preserve">
+    <value>القيامة</value>
+  </data>
+  <data name="Surah_AlInsan" xml:space="preserve">
+    <value>الإنسان</value>
+  </data>
+  <data name="Surah_AlMursalat" xml:space="preserve">
+    <value>المرسلات</value>
+  </data>
+  <data name="Surah_AnNaba" xml:space="preserve">
+    <value>النبأ</value>
+  </data>
+  <data name="Surah_AnNaziat" xml:space="preserve">
+    <value>النازعات</value>
+  </data>
+  <data name="Surah_Abasa" xml:space="preserve">
+    <value>عبس</value>
+  </data>
+  <data name="Surah_AtTakwir" xml:space="preserve">
+    <value>التكوير</value>
+  </data>
+  <data name="Surah_AlInfitar" xml:space="preserve">
+    <value>الإنفطار</value>
+  </data>
+  <data name="Surah_AlMutaffifin" xml:space="preserve">
+    <value>المطففين</value>
+  </data>
+  <data name="Surah_AlInshiqaq" xml:space="preserve">
+    <value>الإنشقاق</value>
+  </data>
+  <data name="Surah_AlBuruj" xml:space="preserve">
+    <value>البروج</value>
+  </data>
+  <data name="Surah_AtTariq" xml:space="preserve">
+    <value>الطارق</value>
+  </data>
+  <data name="Surah_AlAla" xml:space="preserve">
+    <value>الأعلى</value>
+  </data>
+  <data name="Surah_AlGhashiyah" xml:space="preserve">
+    <value>الغاشية</value>
+  </data>
+  <data name="Surah_AlFajr" xml:space="preserve">
+    <value>الفجر</value>
+  </data>
+  <data name="Surah_AlBalad" xml:space="preserve">
+    <value>البلد</value>
+  </data>
+  <data name="Surah_AshShams" xml:space="preserve">
+    <value>الشمس</value>
+  </data>
+  <data name="Surah_AlLail" xml:space="preserve">
+    <value>الليل</value>
+  </data>
+  <data name="Surah_AdDuha" xml:space="preserve">
+    <value>الضحى</value>
+  </data>
+  <data name="Surah_AshSharh" xml:space="preserve">
+    <value>الشرح</value>
+  </data>
+  <data name="Surah_AtTin" xml:space="preserve">
+    <value>التين</value>
+  </data>
+  <data name="Surah_AlAlaq" xml:space="preserve">
+    <value>العلق</value>
+  </data>
+  <data name="Surah_AlQadr" xml:space="preserve">
+    <value>القدر</value>
+  </data>
+  <data name="Surah_AlBayyinah" xml:space="preserve">
+    <value>البينة</value>
+  </data>
+  <data name="Surah_AzZalzalah" xml:space="preserve">
+    <value>الزلزلة</value>
+  </data>
+  <data name="Surah_AlAdiyat" xml:space="preserve">
+    <value>العاديات</value>
+  </data>
+  <data name="Surah_AlQariah" xml:space="preserve">
+    <value>القارعة</value>
+  </data>
+  <data name="Surah_AtTakathur" xml:space="preserve">
+    <value>التكاثر</value>
+  </data>
+  <data name="Surah_AlAsr" xml:space="preserve">
+    <value>العصر</value>
+  </data>
+  <data name="Surah_AlHumazah" xml:space="preserve">
+    <value>الهمزة</value>
+  </data>
+  <data name="Surah_AlFil" xml:space="preserve">
+    <value>الفيل</value>
+  </data>
+  <data name="Surah_Quraish" xml:space="preserve">
+    <value>قريش</value>
+  </data>
+  <data name="Surah_AlMaun" xml:space="preserve">
+    <value>الماعون</value>
+  </data>
+  <data name="Surah_AlKawthar" xml:space="preserve">
+    <value>الكوثر</value>
+  </data>
+  <data name="Surah_AlKafirun" xml:space="preserve">
+    <value>الكافرون</value>
+  </data>
+  <data name="Surah_AnNasr" xml:space="preserve">
+    <value>النصر</value>
+  </data>
+  <data name="Surah_AlMasad" xml:space="preserve">
+    <value>المسد</value>
+  </data>
+  <data name="Surah_AlIkhlas" xml:space="preserve">
+    <value>الإخلاص</value>
+  </data>
+  <data name="Surah_AlFalaq" xml:space="preserve">
+    <value>الفلق</value>
+  </data>
+  <data name="Surah_AnNas" xml:space="preserve">
+    <value>الناس</value>
+  </data>
+  <data name="Of" xml:space="preserve">
+    <value>من</value>
+  </data>
+  <data name="TotalRecords" xml:space="preserve">
+    <value>السجلات</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>التالي</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>السابق</value>
+  </data>
+  <data name="AttendanceRate" xml:space="preserve">
+    <value>نسبة الحضور</value>
+  </data>
+  <data name="AttendanceSummary" xml:space="preserve">
+    <value>ملخص الحضور</value>
+  </data>
+  <data name="MemorizationProgress" xml:space="preserve">
+    <value>تقدم الحفظ</value>
+  </data>
+  <data name="Juz" xml:space="preserve">
+    <value>جزء</value>
+  </data>
+  <data name="JuzMemorized" xml:space="preserve">
+    <value>جزء محفوظ</value>
+  </data>
+  <data name="JuzRemaining" xml:space="preserve">
+    <value>جزء متبقي</value>
+  </data>
+  <data name="WriteNote" xml:space="preserve">
+    <value>اكتب ملاحظة</value>
+  </data>
+  <data name="NoteContentPlaceholder" xml:space="preserve">
+    <value>اكتب ملاحظتك هنا...</value>
+  </data>
+  <data name="SendNote" xml:space="preserve">
+    <value>إرسال الملاحظة</value>
+  </data>
+  <data name="ConfirmDeleteNote" xml:space="preserve">
+    <value>هل أنت متأكد من حذف هذه الملاحظة؟</value>
+  </data>
+  <data name="DeleteNote" xml:space="preserve">
+    <value>حذف الملاحظة</value>
+  </data>
+  <data name="NoParentNotesHint" xml:space="preserve">
+    <value>يمكنك إضافة ملاحظات للمعلم حول تقدم ابنك</value>
+  </data>
+  <data name="NotProvided" xml:space="preserve">
+    <value>غير متوفر</value>
+  </data>
+</root>

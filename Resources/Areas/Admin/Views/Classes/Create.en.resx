@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Create Quranic Class</value>
+    <comment/>
+  </data>
+  <data name="PageDescription" xml:space="preserve">
+    <value>Enter the circle details to add it to the system</value>
+    <comment/>
+  </data>
+  <data name="BackToList" xml:space="preserve">
+    <value>Back to List</value>
+    <comment/>
+  </data>
+  <data name="ValidationErrors" xml:space="preserve">
+    <value>Please correct the following errors:</value>
+    <comment/>
+  </data>
+  <data name="BasicInformation" xml:space="preserve">
+    <value>Basic Information</value>
+    <comment/>
+  </data>
+  <data name="ClassName" xml:space="preserve">
+    <value>ClassName</value>
+    <comment/>
+  </data>
+  <data name="ClassNamePlaceholder" xml:space="preserve">
+    <value>Example: Fajr Circle</value>
+    <comment/>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>Category</value>
+    <comment/>
+  </data>
+  <data name="SelectGender" xml:space="preserve">
+    <value>-- Select Circle Category --</value>
+    <comment/>
+  </data>
+  <data name="Male" xml:space="preserve">
+    <value>Males</value>
+    <comment/>
+  </data>
+  <data name="Female" xml:space="preserve">
+    <value>Females</value>
+    <comment/>
+  </data>
+  <data name="ClassTime" xml:space="preserve">
+    <value>ClassTime</value>
+    <comment/>
+  </data>
+  <data name="ClassTimeHelper" xml:space="preserve">
+    <value>Set the appropriate time to start the circle</value>
+    <comment/>
+  </data>
+  <data name="ClassDays" xml:space="preserve">
+    <value>ClassDays</value>
+    <comment/>
+  </data>
+  <data name="SelectDays" xml:space="preserve">
+    <value>Select Days</value>
+    <comment/>
+  </data>
+  <data name="Sunday" xml:space="preserve">
+    <value>Sunday</value>
+    <comment/>
+  </data>
+  <data name="Monday" xml:space="preserve">
+    <value>Monday</value>
+    <comment/>
+  </data>
+  <data name="Tuesday" xml:space="preserve">
+    <value>Tuesday</value>
+    <comment/>
+  </data>
+  <data name="Wednesday" xml:space="preserve">
+    <value>Wednesday</value>
+    <comment/>
+  </data>
+  <data name="Thursday" xml:space="preserve">
+    <value>Thursday</value>
+    <comment/>
+  </data>
+  <data name="Friday" xml:space="preserve">
+    <value>Friday</value>
+    <comment/>
+  </data>
+  <data name="Saturday" xml:space="preserve">
+    <value>Saturday</value>
+    <comment/>
+  </data>
+  <data name="DaysHelper" xml:space="preserve">
+    <value>Select the days when the circle is held during the week</value>
+    <comment/>
+  </data>
+  <data name="TeachersAndStudents" xml:space="preserve">
+    <value>Teachers and Students</value>
+    <comment/>
+  </data>
+  <data name="AssistantTeachers" xml:space="preserve">
+    <value>Assistant Teachers</value>
+    <comment/>
+  </data>
+  <data name="TeachersHelper" xml:space="preserve">
+    <value>You can select more than one teacher for the circle</value>
+    <comment/>
+  </data>
+  <data name="Students" xml:space="preserve">
+    <value>Students</value>
+    <comment/>
+  </data>
+  <data name="StudentsHelper" xml:space="preserve">
+    <value>You can select more than one student for the circle</value>
+    <comment/>
+  </data>
+  <data name="SaveData" xml:space="preserve">
+    <value>Save Data</value>
+    <comment/>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment/>
+  </data>
+  <data name="FillingInstructions" xml:space="preserve">
+    <value>Filling Instructions</value>
+    <comment/>
+  </data>
+  <data name="Instruction1" xml:space="preserve">
+    <value>All fields marked with * are required</value>
+    <comment/>
+  </data>
+  <data name="Instruction2" xml:space="preserve">
+    <value>The circle name must be clear and distinctive</value>
+    <comment/>
+  </data>
+  <data name="Instruction3" xml:space="preserve">
+    <value>You can select more than one day for the circle during the week</value>
+    <comment/>
+  </data>
+  <data name="Instruction4" xml:space="preserve">
+    <value>Selecting assistant teachers and students is optional and can be modified later</value>
+    <comment/>
+  </data>
+  <data name="Instruction5" xml:space="preserve">
+    <value>Make sure to set an appropriate time that suits all concerned parties</value>
+    <comment/>
+  </data>
+  <data name="SelectTeachers" xml:space="preserve">
+    <value>Select Teachers...</value>
+    <comment/>
+  </data>
+  <data name="SelectStudents" xml:space="preserve">
+    <value>Select Students...</value>
+    <comment/>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>No results found</value>
+    <comment/>
+  </data>
+</root>

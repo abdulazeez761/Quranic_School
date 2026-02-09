@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Room" xml:space="preserve"><value>Room</value></data>
+  <data name="LiveMeeting" xml:space="preserve"><value>Live Meeting</value></data>
+  <data name="SecureConnection" xml:space="preserve"><value>Secure Connection</value></data>
+  <data name="Connecting" xml:space="preserve"><value>Connecting...</value></data>
+  <data name="Participant" xml:space="preserve"><value>participant</value></data>
+  <data name="Participants" xml:space="preserve"><value>participants</value></data>
+</root>

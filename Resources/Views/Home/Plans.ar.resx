@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HeaderTitle" xml:space="preserve">
+    <value>🕌 أهلاً بكم في أكاديمية ذِكْر</value>
+    <comment/>
+  </data>
+  <data name="HeaderSubtitle" xml:space="preserve">
+    <value>منصة تعليمية شرعية تفاعلية، تجمع بين تحفيظ القرآن الكريم، وتربية الأبناء على العقيدة والسيرة والأخلاق، بأمان وراحة من المنزل</value>
+    <comment/>
+  </data>
+  <data name="QuranPlanTitle" xml:space="preserve">
+    <value>📖 تحفيظ القرآن الكريم</value>
+    <comment/>
+  </data>
+  <data name="QuranPlanAge" xml:space="preserve">
+    <value>أطفال من 5 إلى 12 سنة</value>
+    <comment/>
+  </data>
+  <data name="Monthly" xml:space="preserve">
+    <value>شهرياً</value>
+    <comment/>
+  </data>
+  <data name="QuranPlanDesc" xml:space="preserve">
+    <value>حفظ + مراجعة + فهم بسيط للمعاني</value>
+    <comment/>
+  </data>
+  <data name="QuranF1" xml:space="preserve">
+    <value>جلسات تحفيظ تفاعلية</value>
+    <comment/>
+  </data>
+  <data name="QuranF2" xml:space="preserve">
+    <value>مراجعة دورية للمحفوظات</value>
+    <comment/>
+  </data>
+  <data name="QuranF3" xml:space="preserve">
+    <value>شرح مبسط للمعاني</value>
+    <comment/>
+  </data>
+  <data name="QuranF4" xml:space="preserve">
+    <value>تقييم أسبوعي</value>
+    <comment/>
+  </data>
+  <data name="QuranF5" xml:space="preserve">
+    <value>تقارير شهرية للوالدين</value>
+    <comment/>
+  </data>
+  <data name="ChoosePlan" xml:space="preserve">
+    <value>اختر هذه الخطة</value>
+    <comment/>
+  </data>
+  <data name="FaithPlanTitle" xml:space="preserve">
+    <value>🌟 تربية إيمانية</value>
+    <comment/>
+  </data>
+  <data name="FaithPlanAge" xml:space="preserve">
+    <value>فتيات من 10 إلى 17 سنة</value>
+    <comment/>
+  </data>
+  <data name="FaithPlanDesc" xml:space="preserve">
+    <value>سيرة نبوية – عقيدة – أخلاق – فقه مبسط</value>
+    <comment/>
+  </data>
+  <data name="FaithF1" xml:space="preserve">
+    <value>دروس السيرة النبوية</value>
+    <comment/>
+  </data>
+  <data name="FaithF2" xml:space="preserve">
+    <value>أسس العقيدة الإسلامية</value>
+    <comment/>
+  </data>
+  <data name="FaithF3" xml:space="preserve">
+    <value>الأخلاق والآداب الإسلامية</value>
+    <comment/>
+  </data>
+  <data name="FaithF4" xml:space="preserve">
+    <value>الفقه المبسط</value>
+    <comment/>
+  </data>
+  <data name="FaithF5" xml:space="preserve">
+    <value>أنشطة تربوية تفاعلية</value>
+    <comment/>
+  </data>
+  <data name="FaithF6" xml:space="preserve">
+    <value>متابعة شخصية للطالبة</value>
+    <comment/>
+  </data>
+  <data name="FollowupPlanTitle" xml:space="preserve">
+    <value>🎯 برنامج التثبيت والمتابعة</value>
+    <comment/>
+  </data>
+  <data name="FollowupPlanAge" xml:space="preserve">
+    <value>لكل الأعمار</value>
+    <comment/>
+  </data>
+  <data name="FollowupPlanDesc" xml:space="preserve">
+    <value>مراجعة دورية – جوائز – متابعة حثيثة</value>
+    <comment/>
+  </data>
+  <data name="FollowupF1" xml:space="preserve">
+    <value>مراجعة دورية للمحفوظات</value>
+    <comment/>
+  </data>
+  <data name="FollowupF2" xml:space="preserve">
+    <value>نظام جوائز وتحفيز</value>
+    <comment/>
+  </data>
+  <data name="FollowupF3" xml:space="preserve">
+    <value>متابعة حثيثة للتقدم</value>
+    <comment/>
+  </data>
+  <data name="FollowupF4" xml:space="preserve">
+    <value>تقييم شهري</value>
+    <comment/>
+  </data>
+  <data name="FollowupF5" xml:space="preserve">
+    <value>إرشاد ونصائح تربوية</value>
+    <comment/>
+  </data>
+  <data name="WhyChooseTitle" xml:space="preserve">
+    <value>💡 لماذا تختار "ذِكْر"؟</value>
+    <comment/>
+  </data>
+  <data name="Feature1Title" xml:space="preserve">
+    <value>تعليم آمن من المنزل</value>
+    <comment/>
+  </data>
+  <data name="Feature1Desc" xml:space="preserve">
+    <value>تجربة تعليمية مريحة وآمنة من المنزل دون الحاجة لإرسال الأطفال لمراكز خارجية</value>
+    <comment/>
+  </data>
+  <data name="Feature2Title" xml:space="preserve">
+    <value>أسلوب ممتع وتفاعلي</value>
+    <comment/>
+  </data>
+  <data name="Feature2Desc" xml:space="preserve">
+    <value>أسلوب ممتع يجمع بين الجدية والأنشطة التربوية التفاعلية</value>
+    <comment/>
+  </data>
+  <data name="Feature3Title" xml:space="preserve">
+    <value>متابعة دقيقة للوالدين</value>
+    <comment/>
+  </data>
+  <data name="Feature3Desc" xml:space="preserve">
+    <value>متابعة دقيقة لكل طالب من خلال صفحة خاصة لولي الأمر مع إشعارات فورية</value>
+    <comment/>
+  </data>
+  <data name="Feature4Title" xml:space="preserve">
+    <value>معلمون معتمدون</value>
+    <comment/>
+  </data>
+  <data name="Feature4Desc" xml:space="preserve">
+    <value>معلمون معتمدون في التعليم الرقمي والشرعي مع خبرة في التعامل مع الأطفال</value>
+    <comment/>
+  </data>
+  <data name="FreeTrialTitle" xml:space="preserve">
+    <value>🎁 احصل على جلسة تعريفية مجانية!</value>
+    <comment/>
+  </data>
+  <data name="FreeTrialDesc" xml:space="preserve">
+    <value>هل تريد تجربة أول حصة مجانًا لطفلك؟ املأ النموذج الآن وسنتواصل معك خلال 24 ساعة</value>
+    <comment/>
+  </data>
+  <data name="FullName" xml:space="preserve">
+    <value>الاسم الكامل</value>
+    <comment/>
+  </data>
+  <data name="ChildAge" xml:space="preserve">
+    <value>عمر الطفل</value>
+    <comment/>
+  </data>
+  <data name="SelectAge" xml:space="preserve">
+    <value>اختر العمر</value>
+    <comment/>
+  </data>
+  <data name="Age5_7" xml:space="preserve">
+    <value>5-7 سنوات</value>
+    <comment/>
+  </data>
+  <data name="Age8_10" xml:space="preserve">
+    <value>8-10 سنوات</value>
+    <comment/>
+  </data>
+  <data name="Age11_13" xml:space="preserve">
+    <value>11-13 سنة</value>
+    <comment/>
+  </data>
+  <data name="Age14_17" xml:space="preserve">
+    <value>14-17 سنة</value>
+    <comment/>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>الدولة</value>
+    <comment/>
+  </data>
+  <data name="WhatsAppNumber" xml:space="preserve">
+    <value>رقم التواصل (واتساب)</value>
+    <comment/>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>ملاحظات</value>
+    <comment/>
+  </data>
+  <data name="NotesPlaceholder" xml:space="preserve">
+    <value>أي ملاحظات إضافية...</value>
+    <comment/>
+  </data>
+  <data name="SubmitRequest" xml:space="preserve">
+    <value>إرسال الطلب</value>
+    <comment/>
+  </data>
+  <data name="QuestionsTitle" xml:space="preserve">
+    <value>📞 هل لديك أسئلة؟</value>
+    <comment/>
+  </data>
+  <data name="QuestionsSubtitle" xml:space="preserve">
+    <value>فريقنا بانتظارك على:</value>
+    <comment/>
+  </data>
+  <data name="WhatsAppLabel" xml:space="preserve">
+    <value>📱 واتساب</value>
+    <comment/>
+  </data>
+  <data name="WebsiteLabel" xml:space="preserve">
+    <value>🌐 الموقع الإلكتروني</value>
+    <comment/>
+  </data>
+  <data name="EmailLabel" xml:space="preserve">
+    <value>📧 البريد الإلكتروني</value>
+    <comment/>
+  </data>
+  <data name="ClosingMessage" xml:space="preserve">
+    <value>💚 "ذِكْر" ليست مجرد منصة تحفيظ، بل رفيق تربوي ينشئ أبناءك على القرآن ويحبّب إليهم الدين</value>
+    <comment/>
+  </data>
+</root>

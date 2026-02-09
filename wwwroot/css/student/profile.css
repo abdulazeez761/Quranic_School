@@ -1,0 +1,435 @@
+/* Profile Container */
+.profile-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* RTL Support */
+[dir='rtl'] .profile-container {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir='ltr'] .profile-container {
+  direction: ltr;
+  text-align: left;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-2xl);
+}
+
+/* RTL Support */
+[dir='rtl'] .profile-header {
+  flex-direction: row-reverse;
+}
+
+.header-icon {
+  font-size: 2.5rem;
+  color: var(--dark-green);
+}
+
+.profile-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* Profile Content */
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.profile-section {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0 0 var(--space-lg) 0;
+  padding-bottom: var(--space-md);
+  border-bottom: 2px solid var(--border-color);
+}
+
+/* RTL Support */
+[dir='rtl'] .section-title {
+  flex-direction: row-reverse;
+}
+
+.section-title i {
+  font-size: 1.5rem;
+  color: var(--dark-green);
+}
+
+/* Info Grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-lg);
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.info-item label {
+  font-size: var(--font-size-sm);
+  color: var(--text-medium);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* RTL Support */
+[dir='rtl'] .info-item label {
+  text-align: right;
+}
+
+.info-item p {
+  font-size: var(--font-size-base);
+  color: var(--text-dark);
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Progress Grid */
+.progress-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-xl);
+}
+
+.progress-card {
+  display: flex;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+  background: linear-gradient(135deg, var(--light-gray) 0%, #e9ecef 100%);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  align-items: flex-start;
+}
+
+/* RTL Support - Keep flex order but swap content direction */
+[dir='rtl'] .progress-card {
+  flex-direction: row-reverse;
+  direction: rtl;
+}
+
+[dir='ltr'] .progress-card {
+  direction: ltr;
+}
+
+.progress-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(
+    135deg,
+    var(--secondary-green),
+    var(--dark-green)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.progress-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+/* Ensure progress info doesn't inherit RTL direction issues */
+[dir='rtl'] .progress-info {
+  direction: ltr;
+}
+
+.progress-info label {
+  font-size: var(--font-size-sm);
+  color: var(--text-medium);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 14px;
+  background: var(--border-color);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin: var(--space-xs) 0;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Ensure progress bar works correctly in both LTR and RTL */
+[dir='rtl'] .progress-bar {
+  direction: ltr;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--secondary-green), var(--dark-green));
+  border-radius: var(--radius-full);
+  transition: width 0.6s ease;
+  display: block;
+  box-sizing: border-box;
+}
+
+/* RTL Support for progress bar */
+[dir='rtl'] .progress-fill {
+  background: linear-gradient(90deg, var(--dark-green), var(--secondary-green));
+}
+
+.progress-value {
+  font-size: var(--font-size-sm);
+  color: var(--text-dark);
+  font-weight: 600;
+  margin: 0;
+  margin-top: var(--space-xs);
+}
+
+.tajwid-level {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--dark-green);
+  margin: 0;
+}
+
+/* Classes List */
+.classes-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-md);
+}
+
+.class-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  background: linear-gradient(135deg, var(--light-gray) 0%, #e9ecef 100%);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.class-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* RTL Support */
+[dir='rtl'] .class-item {
+  flex-direction: row-reverse;
+}
+
+.class-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    135deg,
+    var(--secondary-green),
+    var(--dark-green)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.class-details h3 {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0 0 var(--space-xs) 0;
+}
+
+/* RTL Support */
+[dir='rtl'] .class-details h3 {
+  text-align: right;
+}
+
+.class-details p {
+  font-size: var(--font-size-sm);
+  color: var(--text-medium);
+  margin: 0;
+}
+
+/* RTL Support */
+[dir='rtl'] .class-details p {
+  text-align: right;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .profile-header {
+    margin-bottom: var(--space-xl);
+  }
+
+  .info-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .classes-list {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+    margin-bottom: var(--space-lg);
+  }
+
+  .profile-title {
+    font-size: var(--font-size-xl);
+  }
+
+  .header-icon {
+    font-size: 2rem;
+  }
+
+  .profile-section {
+    padding: var(--space-lg);
+  }
+
+  .section-title {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--space-md);
+  }
+
+  .section-title i {
+    font-size: 1.2rem;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .info-item {
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .info-item label {
+    font-size: var(--font-size-xs);
+  }
+
+  .info-item p {
+    font-size: var(--font-size-sm);
+  }
+
+  .progress-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .progress-item {
+    padding: var(--space-md);
+  }
+
+  .progress-label {
+    font-size: var(--font-size-sm);
+  }
+
+  .classes-list {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  .class-item {
+    padding: var(--space-md);
+  }
+
+  .class-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+
+  .class-details h3 {
+    font-size: var(--font-size-sm);
+  }
+
+  .class-details p {
+    font-size: var(--font-size-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-header {
+    margin-bottom: var(--space-md);
+  }
+
+  .profile-title {
+    font-size: var(--font-size-lg);
+  }
+
+  .header-icon {
+    font-size: 1.5rem;
+  }
+
+  .profile-section {
+    padding: var(--space-md);
+  }
+
+  .section-title {
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-sm);
+  }
+
+  .info-item label {
+    font-size: 0.7rem;
+  }
+
+  .info-item p {
+    font-size: var(--font-size-xs);
+  }
+
+  .progress-item {
+    padding: var(--space-sm);
+  }
+
+  .tajwid-level {
+    font-size: var(--font-size-lg);
+  }
+
+  .class-item {
+    padding: var(--space-sm);
+  }
+
+  .class-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+}

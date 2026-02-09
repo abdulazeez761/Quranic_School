@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <!-- Page Title -->
+  <data name="Title" xml:space="preserve">
+    <value>إدارة أولياء الأمور</value>
+    <comment>عنوان صفحة إدارة أولياء الأمور</comment>
+  </data>
+  
+  <!-- Page Header Section -->
+  <data name="PageTitle" xml:space="preserve">
+    <value>إدارة أولياء الأمور</value>
+    <comment>عنوان الصفحة الرئيسي</comment>
+  </data>
+  
+  <data name="PageDescription" xml:space="preserve">
+    <value>عرض وإدارة جميع أولياء الأمور في المركز</value>
+    <comment>وصف الصفحة الفرعي</comment>
+  </data>
+  
+  <data name="AddNewParent" xml:space="preserve">
+    <value>إضافة ولي أمر جديد</value>
+    <comment>نص زر إضافة ولي أمر جديد</comment>
+  </data>
+  
+  <data name="Export" xml:space="preserve">
+    <value>تصدير</value>
+    <comment>نص زر التصدير</comment>
+  </data>
+  
+  <!-- Statistics Cards -->
+  <data name="TotalParents" xml:space="preserve">
+    <value>إجمالي أولياء الأمور</value>
+    <comment>تسمية لعدد أولياء الأمور الإجمالي</comment>
+  </data>
+  
+  <data name="WithChildren" xml:space="preserve">
+    <value>لديهم أبناء</value>
+    <comment>تسمية لأولياء الأمور الذين لديهم أبناء</comment>
+  </data>
+  
+  <data name="WithoutChildren" xml:space="preserve">
+    <value>بدون أبناء</value>
+    <comment>تسمية لأولياء الأمور الذين ليس لديهم أبناء</comment>
+  </data>
+  
+  <data name="TotalChildren" xml:space="preserve">
+    <value>عدد الأبناء</value>
+    <comment>تسمية لإجمالي عدد الأبناء</comment>
+  </data>
+  
+  <!-- Search and Filter -->
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>البحث بالاسم الأول أو الثاني...</value>
+    <comment>نص بديل لحقل البحث</comment>
+  </data>
+  
+  <data name="AllChildren" xml:space="preserve">
+    <value>جميع الأبناء</value>
+    <comment>الخيار الافتراضي في قائمة تصفية الأبناء</comment>
+  </data>
+  
+  <data name="Reset" xml:space="preserve">
+    <value>إعادة تعيين</value>
+    <comment>نص زر إعادة تعيين الفلاتر</comment>
+  </data>
+  
+  <!-- Table Headers -->
+  <data name="FirstName" xml:space="preserve">
+    <value>الاسم الأول</value>
+    <comment>رأس عمود الاسم الأول في الجدول</comment>
+  </data>
+  
+  <data name="LastName" xml:space="preserve">
+    <value>الاسم الثاني</value>
+    <comment>رأس عمود الاسم الثاني في الجدول</comment>
+  </data>
+  
+  <data name="Email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+    <comment>رأس عمود البريد الإلكتروني في الجدول</comment>
+  </data>
+  
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>رقم الجوال</value>
+    <comment>رأس عمود رقم الجوال في الجدول</comment>
+  </data>
+  
+  <data name="Children" xml:space="preserve">
+    <value>الأبناء</value>
+    <comment>رأس عمود الأبناء في الجدول</comment>
+  </data>
+  
+  <data name="Actions" xml:space="preserve">
+    <value>العمليات</value>
+    <comment>رأس عمود أزرار العمليات في الجدول</comment>
+  </data>
+  
+  <!-- Table Content -->
+  <data name="NoChildren" xml:space="preserve">
+    <value>لا يوجد أبناء</value>
+    <comment>نص الشارة عندما لا يكون للولي أمر أبناء</comment>
+  </data>
+  
+  <!-- Action Tooltips -->
+  <data name="ViewDetails" xml:space="preserve">
+    <value>عرض التفاصيل</value>
+    <comment>تلميح أداة لزر عرض التفاصيل</comment>
+  </data>
+  
+  <data name="Edit" xml:space="preserve">
+    <value>تعديل</value>
+    <comment>تلميح أداة لزر التعديل</comment>
+  </data>
+  
+  <data name="Delete" xml:space="preserve">
+    <value>حذف</value>
+    <comment>تلميح أداة لزر الحذف</comment>
+  </data>
+  
+  <data name="DeleteConfirmation" xml:space="preserve">
+    <value>هل أنت متأكد من حذف ولي الأمر {0} {1}؟ سيتم حذف جميع البيانات المرتبطة به.</value>
+    <comment>رسالة تأكيد لحذف ولي أمر. {0} = الاسم الأول، {1} = الاسم الثاني</comment>
+  </data>
+  
+  <!-- Empty State -->
+  <data name="NoDataAvailable" xml:space="preserve">
+    <value>لا توجد بيانات</value>
+    <comment>العنوان عندما لا يوجد أولياء أمور</comment>
+  </data>
+  
+  <data name="NoParentsAdded" xml:space="preserve">
+    <value>لم يتم إضافة أي أولياء أمور بعد</value>
+    <comment>الرسالة عندما لا يوجد أولياء أمور</comment>
+  </data>
+  
+  <!-- Table Footer -->
+  <data name="ShowingParents" xml:space="preserve">
+    <value>عرض {0} من {1} ولي أمر</value>
+    <comment>نص التذييل يعرض النتائج المفلترة. {0} = العدد المرئي، {1} = العدد الإجمالي</comment>
+  </data>
+
+  <!-- Additional Parent-specific Keys -->
+  <data name="Username" xml:space="preserve">
+    <value>اسم المستخدم</value>
+    <comment>رأس عمود اسم المستخدم في الجدول</comment>
+  </data>
+
+  <data name="ChildrenCount" xml:space="preserve">
+    <value>ابن/ابنة</value>
+    <comment>نص عدد الأبناء</comment>
+  </data>
+  
+</root>

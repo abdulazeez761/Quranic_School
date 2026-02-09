@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="OnlineMeetings" xml:space="preserve">
+    <value>Online Meetings</value>
+  </data>
+  <data name="JoinActiveMeetingsForYourChildren" xml:space="preserve">
+    <value>Join active meetings for your children's classes</value>
+  </data>
+  <data name="LiveNow" xml:space="preserve">
+    <value>Live Now</value>
+  </data>
+  <data name="StudentsEnrolled" xml:space="preserve">
+    <value>Students Enrolled</value>
+  </data>
+  <data name="Teachers" xml:space="preserve">
+    <value>Teachers</value>
+  </data>
+  <data name="SecureConnection" xml:space="preserve">
+    <value>Secure Connection</value>
+  </data>
+  <data name="JoinMeeting" xml:space="preserve">
+    <value>Join Meeting</value>
+  </data>
+  <data name="NoActiveMeetings" xml:space="preserve">
+    <value>No Active Meetings</value>
+  </data>
+  <data name="NoActiveMeetingsDescription" xml:space="preserve">
+    <value>There are currently no active meetings for your children's classes</value>
+  </data>
+</root>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="WirdAssignments" xml:space="preserve">
+    <value>الأوراد المخصصة</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>التصفية</value>
+  </data>
+  <data name="StudentName" xml:space="preserve">
+    <value>اسم الطالب</value>
+  </data>
+  <data name="SearchByName" xml:space="preserve">
+    <value>ابحث بالاسم...</value>
+  </data>
+  <data name="AssignmentType" xml:space="preserve">
+    <value>نوع الورد</value>
+  </data>
+  <data name="AllTypes" xml:space="preserve">
+    <value>جميع الأنواع</value>
+  </data>
+  <data name="Hifz" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="Wird" xml:space="preserve">
+    <value>ورد</value>
+  </data>
+  <data name="Revision" xml:space="preserve">
+    <value>مراجعة</value>
+  </data>
+  <data name="Memorization" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="AllStatuses" xml:space="preserve">
+    <value>جميع الحالات</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>غير محدد</value>
+  </data>
+  <data name="Poor" xml:space="preserve">
+    <value>ضعيف</value>
+  </data>
+  <data name="Fair" xml:space="preserve">
+    <value>مقبول</value>
+  </data>
+  <data name="Good" xml:space="preserve">
+    <value>جيد</value>
+  </data>
+  <data name="VeryGood" xml:space="preserve">
+    <value>جيد جداً</value>
+  </data>
+  <data name="Excellent" xml:space="preserve">
+    <value>ممتاز</value>
+  </data>
+  <data name="DateFrom" xml:space="preserve">
+    <value>من تاريخ</value>
+  </data>
+  <data name="DateTo" xml:space="preserve">
+    <value>إلى تاريخ</value>
+  </data>
+  <data name="ApplyFilters" xml:space="preserve">
+    <value>✓ تطبيق التصفية</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>↺ إعادة تعيين</value>
+  </data>
+  <data name="Showing" xml:space="preserve">
+    <value>عرض</value>
+  </data>
+  <data name="Assignments" xml:space="preserve">
+    <value>أوراد</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>نجح!</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>خطأ!</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>من:</value>
+  </data>
+  <data name="To" xml:space="preserve">
+    <value>إلى:</value>
+  </data>
+  <data name="Surah" xml:space="preserve">
+    <value>السورة:</value>
+  </data>
+  <data name="Ayah" xml:space="preserve">
+    <value>الآية:</value>
+  </data>
+  <data name="Juz" xml:space="preserve">
+    <value>الجزء:</value>
+  </data>
+  <data name="Page" xml:space="preserve">
+    <value>الصفحة:</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>ملاحظة:</value>
+  </data>
+  <data name="Assigned" xml:space="preserve">
+    <value>تاريخ التخصيص:</value>
+  </data>
+  <data name="AddNotes" xml:space="preserve">
+    <value>أضف ملاحظات...</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>هل أنت متأكد من حذف ورد</value>
+  </data>
+</root>

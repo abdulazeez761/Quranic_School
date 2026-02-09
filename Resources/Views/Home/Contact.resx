@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ContactTitle" xml:space="preserve">
+    <value>Contact Us</value>
+    <comment/>
+  </data>
+  <data name="ContactSubtitle" xml:space="preserve">
+    <value>We are happy to hear from you, do not hesitate to send any inquiry or feedback</value>
+    <comment/>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Address</value>
+    <comment/>
+  </data>
+  <data name="AddressValue" xml:space="preserve">
+    <value>Irbid, Jordan</value>
+    <comment/>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Phone</value>
+    <comment/>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+    <comment/>
+  </data>
+  <data name="WorkHours" xml:space="preserve">
+    <value>Working Hours</value>
+    <comment/>
+  </data>
+  <data name="WorkHoursValue" xml:space="preserve">
+    <value>Sunday - Thursday: 8:00 AM - 6:00 PM</value>
+    <comment/>
+  </data>
+  <data name="SendMessage" xml:space="preserve">
+    <value>Send Us a Message</value>
+    <comment/>
+  </data>
+  <data name="FormSubtitle" xml:space="preserve">
+    <value>Fill out the following form and we will get back to you as soon as possible</value>
+    <comment/>
+  </data>
+  <data name="FullName" xml:space="preserve">
+    <value>Full Name</value>
+    <comment/>
+  </data>
+  <data name="FullNamePlaceholder" xml:space="preserve">
+    <value>Enter your full name</value>
+    <comment/>
+  </data>
+  <data name="EmailLabel" xml:space="preserve">
+    <value>Email</value>
+    <comment/>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Phone Number</value>
+    <comment/>
+  </data>
+  <data name="Subject" xml:space="preserve">
+    <value>Subject</value>
+    <comment/>
+  </data>
+  <data name="SelectSubject" xml:space="preserve">
+    <value>Select subject</value>
+    <comment/>
+  </data>
+  <data name="GeneralInquiry" xml:space="preserve">
+    <value>General Inquiry</value>
+    <comment/>
+  </data>
+  <data name="Registration" xml:space="preserve">
+    <value>Academy Registration</value>
+    <comment/>
+  </data>
+  <data name="TechnicalSupport" xml:space="preserve">
+    <value>Technical Support</value>
+    <comment/>
+  </data>
+  <data name="Suggestion" xml:space="preserve">
+    <value>Suggestion or Feedback</value>
+    <comment/>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>Other</value>
+    <comment/>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Message</value>
+    <comment/>
+  </data>
+  <data name="MessagePlaceholder" xml:space="preserve">
+    <value>Write your message here...</value>
+    <comment/>
+  </data>
+  <data name="SendButton" xml:space="preserve">
+    <value>Send Message</value>
+    <comment/>
+  </data>
+  <data name="FollowUs" xml:space="preserve">
+    <value>Follow Us on Social Media</value>
+    <comment/>
+  </data>
+  <data name="FollowUsDesc" xml:space="preserve">
+    <value>You can also reach us through our official accounts on social media platforms</value>
+    <comment/>
+  </data>
+  <data name="FAQ" xml:space="preserve">
+    <value>Frequently Asked Questions</value>
+    <comment/>
+  </data>
+  <data name="FAQ1Q" xml:space="preserve">
+    <value>How can I register my child in the academy?</value>
+    <comment/>
+  </data>
+  <data name="FAQ1A" xml:space="preserve">
+    <value>You can register through the main registration page or contact us directly via WhatsApp.</value>
+    <comment/>
+  </data>
+  <data name="FAQ2Q" xml:space="preserve">
+    <value>What are the class times?</value>
+    <comment/>
+  </data>
+  <data name="FAQ2A" xml:space="preserve">
+    <value>Classes are held from Sunday to Thursday, and times are arranged with the teacher.</value>
+    <comment/>
+  </data>
+  <data name="FAQ3Q" xml:space="preserve">
+    <value>Can I attend a free trial session?</value>
+    <comment/>
+  </data>
+  <data name="FAQ3A" xml:space="preserve">
+    <value>Yes! We offer a free introductory session for every new student. Register from the main page.</value>
+    <comment/>
+  </data>
+</root>

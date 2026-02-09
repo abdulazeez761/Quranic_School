@@ -1,0 +1,33 @@
+@{
+    ViewData["Title"] = "Error";
+    Layout = (ViewData["Role"]?.ToString() == "Admin")
+    ? "~/Views/Shared/_AdminLayout.cshtml"
+    : "~/Views/Shared/_Layout.cshtml";
+}
+
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+<link rel="stylesheet" href="~/css/shared/error-auth.css" asp-append-version="true" />
+
+<div class="error-container">
+    <div class="error-center">
+        <!-- Error Icon -->
+        <div style="margin-bottom: 1.5rem; text-align: center;">
+            <svg style="width: 80px; height: 80px; color: #dc3545; margin: 0 auto;" fill="none" stroke="currentColor"
+                 viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+        </div>
+
+        <div class="error-card">
+            <div class="error-header">
+                <h1>@Localizer["ErrorTitle"]</h1>
+            </div>
+            <div class="error-body">
+                <p>@ViewData["ErrorMessage"]</p>
+                <a href="/" class="auth-button">@Localizer["BackToHome"]</a>
+            </div>
+        </div>
+    </div>
+</div>

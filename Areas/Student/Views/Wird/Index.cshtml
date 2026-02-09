@@ -1,0 +1,247 @@
+@using Hifz.Common.Helper
+@model Hifz.DTOs.Wird.PaginatedWirdsResponse
+
+@{
+    ViewData["Title"] = "Wirds";
+}
+
+<link rel="stylesheet" href="~/css/student/wird.css" asp-append-version="true" />
+
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    var isArabic = System.Globalization.CultureInfo.CurrentUICulture.Name.StartsWith("ar");
+    var currentStatus = ViewBag.Status as string;
+    var currentType = ViewBag.Type as string;
+    int pageSize = ViewBag.PageSize is int size ? size : 10;
+}
+
+<div class="wird-container" dir="@(isArabic ? "rtl" : "ltr")">
+    <div class="wird-header">
+        <div class="header-left">
+            <i class='bx bx-book-open header-icon'></i>
+            <h1 class="wird-title">@Localizer["MyWirds"]</h1>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <div class="filter-group">
+            <label>@Localizer["Status"]:</label>
+            <div class="filter-tabs">
+                <a href="@Url.Action("Index", "Wird", new { area = "Student", status = (string?)null, type = (string?)null, page = 1, pageSize })"
+                       class="filter-tab @(string.IsNullOrEmpty(currentStatus) && string.IsNullOrEmpty(currentType) ? "active" : "")">
+                    <i class='bx bx-list-ul'></i>
+                    @Localizer["All"]
+                </a>
+                <a href="@Url.Action("Index", "Wird", new { area = "Student", status = "pending", type = currentType, page = 1, pageSize })"
+                       class="filter-tab @(currentStatus == "pending" ? "active" : "")">
+                    <i class='bx bx-time'></i>
+                    @Localizer["Pending"]
+                </a>
+                <a href="@Url.Action("Index", "Wird", new { area = "Student", status = "completed", type = currentType, page = 1, pageSize })"
+                       class="filter-tab @(currentStatus == "completed" ? "active" : "")">
+                    <i class='bx bx-check-circle'></i>
+                    @Localizer["Completed"]
+                </a>
+            </div>
+        </div>
+
+        <div class="filter-group"
+             style="margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+            <label>@Localizer["Type"]:</label>
+            <div class="filter-tabs">
+                <a href="@Url.Action("Index", "Wird", new { area = "Student", status = currentStatus, type = (string?)null, page = 1, pageSize })"
+                       class="filter-tab @(string.IsNullOrEmpty(currentType) ? "active" : "")">
+                    @Localizer["AllTypes"]
+                </a>
+                @foreach (var type in Enum.GetValues(typeof(Hifz.Models.AssignmentType)))
+                {
+                    var typeName = type.ToString();
+                    <a href="@Url.Action("Index", "Wird", new { area = "Student", status = currentStatus, type = typeName, page = 1, pageSize })"
+                           class="filter-tab @(currentType == typeName ? "active" : "")">
+                        @Localizer[type.ToString()]
+                    </a>
+                }
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(ViewBag.Status) || !string.IsNullOrEmpty(ViewBag.Type))
+        {
+            <div class="filter-actions"
+                 style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                <a href="@Url.Action("Index", "Wird", new { area = "Student", page = 1, pageSize })"
+                       class="clear-filter-btn">
+                    <i class='bx bx-x'></i>
+                    @Localizer["Clear"]
+                </a>
+            </div>
+        }
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="stats-grid">
+        <div class="stat-card stat-total">
+            <i class='bx bx-book-bookmark'></i>
+            <div class="stat-info">
+                <h3>@Localizer["TotalWirds"]</h3>
+                <p class="stat-value">@Model.TotalCount</p>
+            </div>
+        </div>
+        <div class="stat-card stat-pending">
+            <i class='bx bx-time-five'></i>
+            <div class="stat-info">
+                <h3>@Localizer["Pending"]</h3>
+                <p class="stat-value">@Model.PendingCount</p>
+            </div>
+        </div>
+        <div class="stat-card stat-completed">
+            <i class='bx bx-check-double'></i>
+            <div class="stat-info">
+                <h3>@Localizer["Completed"]</h3>
+                <p class="stat-value">@Model.CompletedCount</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wirds List -->
+    <div class="wirds-list">
+        @if (Model.Wirds.Any())
+        {
+            @foreach (var wird in Model.Wirds)
+            {
+                var statusClass = wird.IsCompleted ? "completed" : "pending";
+                var typeClass = wird.Type.ToString().ToLower();
+
+                <div class="wird-card @statusClass">
+                    <div class="wird-card-header">
+                        <div class="wird-type">
+                            <i class='bx bx-bookmark'></i>
+                            <span>@Localizer[wird.Type.ToString()]</span>
+                        </div>
+                        <span class="wird-status-badge status-@statusClass">
+                            @(wird.IsCompleted? Localizer["Completed"] : Localizer["Pending"])
+                        </span>
+                    </div>
+
+                    <div class="wird-card-body">
+                        <div class="wird-range">
+                            <div class="range-section">
+                                <label>@Localizer["From"]:</label>
+                                <p>
+                                    <strong>@Localizer["Surah"]:</strong>
+                                    @Formatting.GetLocalizedSurahName(wird.FromSurah)<br />
+                                    <strong>@Localizer["Ayah"]:</strong> @wird.FromAyah<br />
+                                    <strong>@Localizer["Juz"]:</strong> @wird.FromJuz, <strong>@Localizer["Page"]:</strong>
+                                    @wird.FromPage
+                                </p>
+                            </div>
+                            <div class="range-arrow">
+                                <i class='bx bx-right-arrow-alt'></i>
+                            </div>
+                            <div class="range-section">
+                                <label>@Localizer["To"]:</label>
+                                <p>
+                                    <strong>@Localizer["Surah"]:</strong> @Formatting.GetLocalizedSurahName(wird.ToSurah)<br />
+                                    <strong>@Localizer["Ayah"]:</strong> @wird.ToAyah<br />
+                                    <strong>@Localizer["Juz"]:</strong> @wird.ToJuz, <strong>@Localizer["Page"]:</strong>
+                                    @wird.ToPage
+                                </p>
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(wird.Note))
+                        {
+                            <div class="wird-note">
+                                <i class='bx bx-note'></i>
+                                <p>@Localizer["Note"]: @wird.Note</p>
+                            </div>
+                        }
+
+                        <div class="wird-footer">
+                            <div class="wird-date">
+                                <i class='bx bx-calendar'></i>
+                                @Localizer["AssignedDate"]: @wird.AssignedDate.ToString("MMM dd, yyyy")
+                            </div>
+                            <div class="wird-assignment-status">
+                                <i class='bx bx-info-circle'></i>
+                                @Localizer["Status"]: @Localizer[wird.Status.ToString()]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="no-data-message">
+                <i class='bx bx-book-alt'></i>
+                <p>@Localizer["NoWirdAssignmentsFound"]</p>
+            </div>
+        }
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <div class="pagination-controls">
+            <div class="pagination-info">
+                <span>
+                    @Localizer["Page"] @Model.PageNumber @Localizer["Of"] @Model.TotalPages
+                    (@Model.TotalCount @Localizer["TotalRecords"])
+                </span>
+            </div>
+            <div class="pagination-buttons">
+                @if (Model.HasPreviousPage)
+                {
+                    <a class="pagination-btn prev-btn"
+                           href="@Url.Action("Index", "Wird", new { area = "Student", status = currentStatus, type = currentType, page = Model.PageNumber - 1, pageSize })">
+                        <i class='bx bx-chevron-left'></i>
+                        @Localizer["Previous"]
+                    </a>
+                }
+                else
+                {
+                    <button class="pagination-btn prev-btn" disabled>
+                        <i class='bx bx-chevron-left'></i>
+                        @Localizer["Previous"]
+                    </button>
+                }
+
+                <div class="page-numbers">
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        if (i == Model.PageNumber)
+                        {
+                            <span class="page-num active">@i</span>
+                        }
+                        else if (i == 1 || i == Model.TotalPages || (i >= Model.PageNumber - 1 && i <= Model.PageNumber + 1))
+                        {
+                            <a class="page-num"
+                               href="@Url.Action("Index", "Wird", new { area = "Student", status = currentStatus, type = currentType, page = i, pageSize })">@i</a>
+                        }
+                        else if (i == 2 || i == Model.TotalPages - 1)
+                        {
+                            <span class="page-num dots">...</span>
+                        }
+                    }
+                </div>
+
+                @if (Model.HasNextPage)
+                {
+                    <a class="pagination-btn next-btn"
+                           href="@Url.Action("Index", "Wird", new { area = "Student", status = currentStatus, type = currentType, page = Model.PageNumber + 1, pageSize })">
+                        @Localizer["Next"]
+                        <i class='bx bx-chevron-right'></i>
+                    </a>
+                }
+                else
+                {
+                    <button class="pagination-btn next-btn" disabled>
+                        @Localizer["Next"]
+                        <i class='bx bx-chevron-right'></i>
+                    </button>
+                }
+            </div>
+        </div>
+    }
+</div>

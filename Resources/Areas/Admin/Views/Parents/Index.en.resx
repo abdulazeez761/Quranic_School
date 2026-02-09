@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <!-- Page Title -->
+  <data name="Title" xml:space="preserve">
+    <value>Parent Management</value>
+    <comment>Page title for Parent Management page</comment>
+  </data>
+  
+  <!-- Page Header Section -->
+  <data name="PageTitle" xml:space="preserve">
+    <value>Parent Management</value>
+    <comment>Main page heading</comment>
+  </data>
+  
+  <data name="PageDescription" xml:space="preserve">
+    <value>View and manage all Parents in the center</value>
+    <comment>Page description subtitle</comment>
+  </data>
+  
+  <data name="AddNewParent" xml:space="preserve">
+    <value>Add New Parent</value>
+    <comment>Button text for adding a new parent</comment>
+  </data>
+  
+  <data name="Export" xml:space="preserve">
+    <value>Export</value>
+    <comment>Export button text</comment>
+  </data>
+  
+  <!-- Statistics Cards -->
+  <data name="TotalParents" xml:space="preserve">
+    <value>Total Parents</value>
+    <comment>Label for Total Parents count</comment>
+  </data>
+  
+  <data name="WithChildren" xml:space="preserve">
+    <value>With Children</value>
+    <comment>Label for Parents With Children</comment>
+  </data>
+  
+  <data name="WithoutChildren" xml:space="preserve">
+    <value>Without Children</value>
+    <comment>Label for Parents Without Children</comment>
+  </data>
+  
+  <data name="TotalChildren" xml:space="preserve">
+    <value>Total Children</value>
+    <comment>Label for total Number of Children</comment>
+  </data>
+  
+  <!-- Search and Filter -->
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Search by first or last name...</value>
+    <comment>Placeholder text for search input</comment>
+  </data>
+  
+  <data name="AllChildren" xml:space="preserve">
+    <value>All Children</value>
+    <comment>Default option in class filter dropdown</comment>
+  </data>
+  
+  <data name="Reset" xml:space="preserve">
+    <value>Reset</value>
+    <comment>Reset filters button text</comment>
+  </data>
+  
+  <!-- Table Headers -->
+  <data name="FirstName" xml:space="preserve">
+    <value>First Name</value>
+    <comment>Table column header for first name</comment>
+  </data>
+  
+  <data name="LastName" xml:space="preserve">
+    <value>Last Name</value>
+    <comment>Table column header for last name</comment>
+  </data>
+  
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+    <comment>Table column header for email</comment>
+  </data>
+  
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Phone Number</value>
+    <comment>Table column header for phone number</comment>
+  </data>
+  
+  <data name="Children" xml:space="preserve">
+    <value>Children</value>
+    <comment>Table column header for Children</comment>
+  </data>
+  
+  <data name="Actions" xml:space="preserve">
+    <value>Actions</value>
+    <comment>Table column header for action buttons</comment>
+  </data>
+  
+  <!-- Table Content -->
+  <data name="NoChildren" xml:space="preserve">
+    <value>No Children</value>
+    <comment>Badge text when parent has no Children</comment>
+  </data>
+  
+  <!-- Action Tooltips -->
+  <data name="ViewDetails" xml:space="preserve">
+    <value>View Details</value>
+    <comment>Tooltip for view details button</comment>
+  </data>
+  
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+    <comment>Tooltip for edit button</comment>
+  </data>
+  
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+    <comment>Tooltip for delete button</comment>
+  </data>
+  
+  <data name="DeleteConfirmation" xml:space="preserve">
+    <value>Are you sure you want to delete parent {0} {1}? All associated data will be deleted.</value>
+    <comment>Confirmation message for deleting a parent. {0} = first name, {1} = last name</comment>
+  </data>
+  
+  <!-- Empty State -->
+  <data name="NoDataAvailable" xml:space="preserve">
+    <value>No Data Available</value>
+    <comment>Title when no Parents exist</comment>
+  </data>
+  
+  <data name="NoParentsAdded" xml:space="preserve">
+    <value>No Parents have been added yet</value>
+    <comment>Message when no Parents exist</comment>
+  </data>
+  
+  <!-- Table Footer -->
+  <data name="ShowingParents" xml:space="preserve">
+    <value>Showing {0} of {1} parents</value>
+    <comment>Footer text showing filtered results. {0} = visible count, {1} = total count</comment>
+  </data>
+  
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+    <comment>Table header for username column</comment>
+  </data>
+  <data name="ChildrenCount" xml:space="preserve">
+    <value>child(ren)</value>
+    <comment>Text for children count</comment>
+  </data>
+</root>
+

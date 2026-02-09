@@ -1,0 +1,108 @@
+@model Hifz.DTOs.EditParentDto
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["EditProfile"];
+}
+
+<link rel="stylesheet" href="~/css/parent/profile.css" asp-append-version="true" />
+
+<div class="profile-container">
+    <div class="profile-header">
+        <h1 class="page-title">
+            <i class='bx bx-edit'></i>
+            @Localizer["EditProfile"]
+        </h1>
+        <p class="page-subtitle">@Localizer["EditProfileSubtitle"]</p>
+    </div>
+
+    <div class="edit-form-card">
+        <form asp-area="Parent" asp-controller="Profile" asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="FirstName">
+                        <i class='bx bx-user'></i> @Localizer["FirstName"]
+                    </label>
+                    <input type="text" id="FirstName" name="FirstName" value="@Model.FirstName"
+                        class="form-input" placeholder="@Localizer["FirstNamePlaceholder"]" />
+                    <span asp-validation-for="FirstName" class="field-validation-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="SecondName">
+                        <i class='bx bx-user'></i> @Localizer["SecondName"]
+                    </label>
+                    <input type="text" id="SecondName" name="SecondName" value="@Model.SecondName"
+                        class="form-input" placeholder="@Localizer["SecondNamePlaceholder"]" />
+                    <span asp-validation-for="SecondName" class="field-validation-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="Email">
+                        <i class='bx bx-envelope'></i> @Localizer["Email"]
+                    </label>
+                    <input type="email" id="Email" name="Email" value="@Model.Email"
+                        class="form-input" placeholder="@Localizer["EmailPlaceholder"]" />
+                    <span asp-validation-for="Email" class="field-validation-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="PhoneNumber">
+                        <i class='bx bx-phone'></i> @Localizer["PhoneNumber"]
+                    </label>
+                    <input type="tel" id="PhoneNumber" name="PhoneNumber" value="@Model.PhoneNumber"
+                        class="form-input" placeholder="@Localizer["PhonePlaceholder"]" />
+                    <span asp-validation-for="PhoneNumber" class="field-validation-error"></span>
+                </div>
+            </div>
+
+            <div class="form-divider">
+                <span>@Localizer["ChangePassword"]</span>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="Password">
+                        <i class='bx bx-lock-alt'></i> @Localizer["NewPassword"]
+                    </label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="Password" name="Password"
+                            class="form-input" placeholder="@Localizer["NewPasswordPlaceholder"]" />
+                        <button type="button" class="toggle-password" onclick="togglePassword('Password', this)">
+                            <i class='bx bx-hide'></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="field-validation-error"></span>
+                    <small class="form-hint">@Localizer["PasswordHint"]</small>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a asp-area="Parent" asp-controller="Profile" asp-action="Index" class="cancel-btn">
+                    <i class='bx bx-x'></i>
+                    @Localizer["Cancel"]
+                </a>
+                <button type="submit" class="save-btn">
+                    <i class='bx bx-save'></i>
+                    @Localizer["SaveChanges"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function togglePassword(inputId, btn) {
+        var input = document.getElementById(inputId);
+        var icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.className = 'bx bx-show';
+        } else {
+            input.type = 'password';
+            icon.className = 'bx bx-hide';
+        }
+    }
+</script>

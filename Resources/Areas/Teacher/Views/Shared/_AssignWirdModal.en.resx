@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="AssignWirdTo" xml:space="preserve">
+    <value>Assign Wird to</value>
+  </data>
+  <data name="AssignmentType" xml:space="preserve">
+    <value>Assignment Type</value>
+  </data>
+  <data name="SelectType" xml:space="preserve">
+    <value>Select assignment type</value>
+  </data>
+  <data name="Memorization" xml:space="preserve">
+    <value>Memorization</value>
+  </data>
+  <data name="Revision" xml:space="preserve">
+    <value>Revision</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="To" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="Juz" xml:space="preserve">
+    <value>Juz</value>
+  </data>
+  <data name="Page" xml:space="preserve">
+    <value>Page</value>
+  </data>
+  <data name="Surah" xml:space="preserve">
+    <value>Surah</value>
+  </data>
+  <data name="Ayah" xml:space="preserve">
+    <value>Ayah</value>
+  </data>
+  <data name="AyahNumber" xml:space="preserve">
+    <value>Ayah number</value>
+  </data>
+  <data name="PageNumber" xml:space="preserve">
+    <value>Page number</value>
+  </data>
+  <data name="Grade" xml:space="preserve">
+    <value>Grade (Optional - for completed assignments)</value>
+  </data>
+  <data name="NotGraded" xml:space="preserve">
+    <value>Not Graded</value>
+  </data>
+  <data name="Poor" xml:space="preserve">
+    <value>Poor</value>
+  </data>
+  <data name="Fair" xml:space="preserve">
+    <value>Fair</value>
+  </data>
+  <data name="Good" xml:space="preserve">
+    <value>Good</value>
+  </data>
+  <data name="VeryGood" xml:space="preserve">
+    <value>Very Good</value>
+  </data>
+  <data name="Excellent" xml:space="preserve">
+    <value>Excellent</value>
+  </data>
+  <data name="NoteOptional" xml:space="preserve">
+    <value>Note (Optional)</value>
+  </data>
+  <data name="NotePlaceholder" xml:space="preserve">
+    <value>Add any notes or instructions...</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="AssignWird" xml:space="preserve">
+    <value>Assign Wird</value>
+  </data>
+  <data name="SelectSurah" xml:space="preserve">
+    <value>Select Surah</value>
+  </data>
+</root>

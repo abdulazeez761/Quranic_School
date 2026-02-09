@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Teacher Attendance Management</value>
+  </data>
+  <data name="PageDescription" xml:space="preserve">
+    <value>Manage and track teacher attendance and working hours</value>
+  </data>
+  <data name="SaveAll" xml:space="preserve">
+    <value>Save All</value>
+  </data>
+  <data name="ExportReport" xml:space="preserve">
+    <value>Export Report</value>
+  </data>
+  <data name="Present" xml:space="preserve">
+    <value>Present</value>
+  </data>
+  <data name="Late" xml:space="preserve">
+    <value>Late</value>
+  </data>
+  <data name="Absent" xml:space="preserve">
+    <value>Absent</value>
+  </data>
+  <data name="Excuse" xml:space="preserve">
+    <value>Excuse</value>
+  </data>
+  <data name="FilterData" xml:space="preserve">
+    <value>Filter Data</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="SelectDate" xml:space="preserve">
+    <value>Select Date</value>
+  </data>
+  <data name="Class" xml:space="preserve">
+    <value>Class</value>
+  </data>
+  <data name="SearchTeacher" xml:space="preserve">
+    <value>Search for teacher...</value>
+  </data>
+  <data name="TotalTeachers" xml:space="preserve">
+    <value>Total Teachers:</value>
+  </data>
+  <data name="TeacherName" xml:space="preserve">
+    <value>Teacher Name</value>
+  </data>
+  <data name="WorkingHours" xml:space="preserve">
+    <value>Working Hours</value>
+  </data>
+  <data name="Hour" xml:space="preserve">
+    <value>hour</value>
+  </data>
+  <data name="NoData" xml:space="preserve">
+    <value>No Data</value>
+  </data>
+  <data name="NoTeachersFound" xml:space="preserve">
+    <value>No teachers found in this class</value>
+  </data>
+  <data name="Saving" xml:space="preserve">
+    <value>Saving...</value>
+  </data>
+</root>

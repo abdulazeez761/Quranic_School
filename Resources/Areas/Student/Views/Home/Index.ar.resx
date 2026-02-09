@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Welcome" xml:space="preserve"><value>مرحباً</value></data>
+  <data name="MemorizedJuz" xml:space="preserve"><value>الأجزاء المحفوظة</value></data>
+  <data name="TajwidLevel" xml:space="preserve"><value>مستوى التجويد</value></data>
+  <data name="AttendanceRate" xml:space="preserve"><value>نسبة الحضور</value></data>
+  <data name="PendingWirds" xml:space="preserve"><value>الأوراد المعلقة</value></data>
+  <data name="RecentAttendance" xml:space="preserve"><value>سجل الحضور الحديث</value></data>
+  <data name="ViewAll" xml:space="preserve"><value>عرض الكل</value></data>
+  <data name="NoAttendanceRecords" xml:space="preserve"><value>لا توجد سجلات حضور حتى الآن.</value></data>
+  <data name="NoPendingWirds" xml:space="preserve"><value>لا توجد أوراد معلقة.</value></data>
+  <data name="Assigned" xml:space="preserve"><value>تاريخ التعيين</value></data>
+  <data name="Present" xml:space="preserve"><value>حاضر</value></data>
+  <data name="Absent" xml:space="preserve"><value>غائب</value></data>
+  <data name="Late" xml:space="preserve"><value>متأخر</value></data>
+  <data name="notSet" xml:space="preserve"><value>لم يُحدد</value></data>
+  <data name="poor" xml:space="preserve"><value>ضعيف</value></data>
+  <data name="fair" xml:space="preserve"><value>مقبول</value></data>
+  <data name="good" xml:space="preserve"><value>جيد</value></data>
+  <data name="veryGood" xml:space="preserve"><value>جيد جداً</value></data>
+  <data name="excellent" xml:space="preserve"><value>ممتاز</value></data>
+  <data name="none" xml:space="preserve"><value>غير محدد</value></data>
+  <data name="First" xml:space="preserve"><value>تمهيدي/مبتدئ</value></data>
+  <data name="Second" xml:space="preserve"><value>متوسط</value></data>
+  <data name="Third" xml:space="preserve"><value>متقدم</value></data>
+</root>

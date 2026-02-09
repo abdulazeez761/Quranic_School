@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Title" xml:space="preserve">
+    <value>بوابة ولي الأمر</value>
+  </data>
+  <data name="ParentPortal" xml:space="preserve">
+    <value>بوابة ولي الأمر</value>
+  </data>
+  <data name="SystemName" xml:space="preserve">
+    <value>نظام إدارة حلقات التحفيظ</value>
+  </data>
+  <data name="ParentRole" xml:space="preserve">
+    <value>ولي أمر</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>تسجيل الخروج</value>
+  </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>الرئيسية</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>الملف الشخصي</value>
+  </data>
+  <data name="Children" xml:space="preserve">
+    <value>الأبناء</value>
+  </data>
+  <data name="Meetings" xml:space="preserve">
+    <value>الاجتماعات</value>
+  </data>
+</root>

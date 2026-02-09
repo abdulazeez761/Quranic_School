@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="MyProfile" xml:space="preserve"><value>ملفي الشخصي</value></data>
+  <data name="PersonalInformation" xml:space="preserve"><value>المعلومات الشخصية</value></data>
+  <data name="FullName" xml:space="preserve"><value>الاسم الكامل</value></data>
+  <data name="Email" xml:space="preserve"><value>البريد الإلكتروني</value></data>
+  <data name="PhoneNumber" xml:space="preserve"><value>رقم الهاتف</value></data>
+  <data name="DateOfBirth" xml:space="preserve"><value>تاريخ الميلاد</value></data>
+  <data name="Gender" xml:space="preserve"><value>الجنس</value></data>
+  <data name="AcademicProgress" xml:space="preserve"><value>التقدم الأكاديمي</value></data>
+  <data name="MemorizedJuz" xml:space="preserve"><value>الأجزاء المحفوظة</value></data>
+  <data name="OutOf30Juz" xml:space="preserve"><value>من 30 جزء</value></data>
+  <data name="TajwidLevel" xml:space="preserve"><value>مستوى التجويد</value></data>
+  <data name="EnrolledClasses" xml:space="preserve"><value>الحلقات المسجلة</value></data>
+  <data name="ParentInformation" xml:space="preserve"><value>معلومات ولي الأمر</value></data>
+  <data name="ParentName" xml:space="preserve"><value>اسم ولي الأمر</value></data>
+  <data name="ParentEmail" xml:space="preserve"><value>بريد ولي الأمر</value></data>
+  <data name="ParentPhone" xml:space="preserve"><value>هاتف ولي الأمر</value></data>
+  <data name="Username" xml:space="preserve"><value>اسم المستخدم</value></data>
+  <data name="ParentUsername" xml:space="preserve"><value>اسم مستخدم ولي الأمر</value></data>
+  <data name="male" xml:space="preserve"><value>ذكر</value></data>
+  <data name="female" xml:space="preserve"><value>أنثى</value></data>
+  <data name="none" xml:space="preserve"><value>غير محدد</value></data>
+  <data name="First" xml:space="preserve"><value>تمهيدي/مبتدئ</value></data>
+  <data name="Second" xml:space="preserve"><value>متوسط</value></data>
+  <data name="Third" xml:space="preserve"><value>متقدم</value></data>
+</root>

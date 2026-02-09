@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="PageTitle" xml:space="preserve">
+    <value>إدارة حضور المعلمين</value>
+  </data>
+  <data name="PageDescription" xml:space="preserve">
+    <value>إدارة وتتبع حضور المعلمين وساعات العمل</value>
+  </data>
+  <data name="SaveAll" xml:space="preserve">
+    <value>حفظ الكل</value>
+  </data>
+  <data name="ExportReport" xml:space="preserve">
+    <value>تصدير التقرير</value>
+  </data>
+  <data name="Present" xml:space="preserve">
+    <value>حاضر</value>
+  </data>
+  <data name="Late" xml:space="preserve">
+    <value>متأخر</value>
+  </data>
+  <data name="Absent" xml:space="preserve">
+    <value>غائب</value>
+  </data>
+  <data name="Excuse" xml:space="preserve">
+    <value>عذر</value>
+  </data>
+  <data name="FilterData" xml:space="preserve">
+    <value>تصفية البيانات</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>التاريخ</value>
+  </data>
+  <data name="SelectDate" xml:space="preserve">
+    <value>اختر التاريخ</value>
+  </data>
+  <data name="Class" xml:space="preserve">
+    <value>الحلقة</value>
+  </data>
+  <data name="SearchTeacher" xml:space="preserve">
+    <value>البحث عن معلم...</value>
+  </data>
+  <data name="TotalTeachers" xml:space="preserve">
+    <value>إجمالي المعلمين:</value>
+  </data>
+  <data name="TeacherName" xml:space="preserve">
+    <value>اسم المعلم</value>
+  </data>
+  <data name="WorkingHours" xml:space="preserve">
+    <value>ساعات العمل</value>
+  </data>
+  <data name="Hour" xml:space="preserve">
+    <value>ساعة</value>
+  </data>
+  <data name="NoData" xml:space="preserve">
+    <value>لا توجد بيانات</value>
+  </data>
+  <data name="NoTeachersFound" xml:space="preserve">
+    <value>لم يتم العثور على معلمين في هذه الحلقة</value>
+  </data>
+  <data name="Saving" xml:space="preserve">
+    <value>جاري الحفظ...</value>
+  </data>
+</root>

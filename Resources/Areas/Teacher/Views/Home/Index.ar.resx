@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="MyClasses" xml:space="preserve">
+    <value>حلقاتي</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="Students" xml:space="preserve">
+    <value>طلاب</value>
+  </data>
+  <data name="NoDaysSet" xml:space="preserve">
+    <value>لم يتم تحديد أيام</value>
+  </data>
+</root>

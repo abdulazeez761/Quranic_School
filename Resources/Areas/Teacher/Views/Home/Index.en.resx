@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="MyClasses" xml:space="preserve">
+    <value>My Classes</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="Students" xml:space="preserve">
+    <value>Students</value>
+  </data>
+  <data name="NoDaysSet" xml:space="preserve">
+    <value>No days set</value>
+  </data>
+</root>

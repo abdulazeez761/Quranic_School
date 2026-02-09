@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HeaderTitle" xml:space="preserve">
+    <value>Welcome to Dhikr Academy</value>
+    <comment/>
+  </data>
+  <data name="HeaderSubtitle" xml:space="preserve">
+    <value>An interactive Islamic educational platform combining Quran memorization with raising children on creed, biography, and ethics, safely and comfortably from home</value>
+    <comment/>
+  </data>
+  <data name="QuranPlanTitle" xml:space="preserve">
+    <value>Quran Memorization</value>
+    <comment/>
+  </data>
+  <data name="QuranPlanAge" xml:space="preserve">
+    <value>Children aged 5 to 12</value>
+    <comment/>
+  </data>
+  <data name="Monthly" xml:space="preserve">
+    <value>Monthly</value>
+    <comment/>
+  </data>
+  <data name="QuranPlanDesc" xml:space="preserve">
+    <value>Memorization + Review + Simple understanding of meanings</value>
+    <comment/>
+  </data>
+  <data name="QuranF1" xml:space="preserve">
+    <value>Interactive memorization sessions</value>
+    <comment/>
+  </data>
+  <data name="QuranF2" xml:space="preserve">
+    <value>Periodic review of memorized content</value>
+    <comment/>
+  </data>
+  <data name="QuranF3" xml:space="preserve">
+    <value>Simplified explanation of meanings</value>
+    <comment/>
+  </data>
+  <data name="QuranF4" xml:space="preserve">
+    <value>Weekly assessment</value>
+    <comment/>
+  </data>
+  <data name="QuranF5" xml:space="preserve">
+    <value>Monthly reports for parents</value>
+    <comment/>
+  </data>
+  <data name="ChoosePlan" xml:space="preserve">
+    <value>Choose This Plan</value>
+    <comment/>
+  </data>
+  <data name="FaithPlanTitle" xml:space="preserve">
+    <value>Faith Education</value>
+    <comment/>
+  </data>
+  <data name="FaithPlanAge" xml:space="preserve">
+    <value>Girls aged 10 to 17</value>
+    <comment/>
+  </data>
+  <data name="FaithPlanDesc" xml:space="preserve">
+    <value>Prophetic biography - Creed - Ethics - Simplified jurisprudence</value>
+    <comment/>
+  </data>
+  <data name="FaithF1" xml:space="preserve">
+    <value>Prophetic biography lessons</value>
+    <comment/>
+  </data>
+  <data name="FaithF2" xml:space="preserve">
+    <value>Foundations of Islamic creed</value>
+    <comment/>
+  </data>
+  <data name="FaithF3" xml:space="preserve">
+    <value>Islamic ethics and manners</value>
+    <comment/>
+  </data>
+  <data name="FaithF4" xml:space="preserve">
+    <value>Simplified jurisprudence</value>
+    <comment/>
+  </data>
+  <data name="FaithF5" xml:space="preserve">
+    <value>Interactive educational activities</value>
+    <comment/>
+  </data>
+  <data name="FaithF6" xml:space="preserve">
+    <value>Personal follow-up for the student</value>
+    <comment/>
+  </data>
+  <data name="FollowupPlanTitle" xml:space="preserve">
+    <value>Reinforcement and Follow-up Program</value>
+    <comment/>
+  </data>
+  <data name="FollowupPlanAge" xml:space="preserve">
+    <value>All ages</value>
+    <comment/>
+  </data>
+  <data name="FollowupPlanDesc" xml:space="preserve">
+    <value>Periodic review - Rewards - Diligent follow-up</value>
+    <comment/>
+  </data>
+  <data name="FollowupF1" xml:space="preserve">
+    <value>Periodic review of memorized content</value>
+    <comment/>
+  </data>
+  <data name="FollowupF2" xml:space="preserve">
+    <value>Rewards and motivation system</value>
+    <comment/>
+  </data>
+  <data name="FollowupF3" xml:space="preserve">
+    <value>Diligent progress follow-up</value>
+    <comment/>
+  </data>
+  <data name="FollowupF4" xml:space="preserve">
+    <value>Monthly assessment</value>
+    <comment/>
+  </data>
+  <data name="FollowupF5" xml:space="preserve">
+    <value>Guidance and educational advice</value>
+    <comment/>
+  </data>
+  <data name="WhyChooseTitle" xml:space="preserve">
+    <value>Why Choose "Dhikr"?</value>
+    <comment/>
+  </data>
+  <data name="Feature1Title" xml:space="preserve">
+    <value>Safe Learning from Home</value>
+    <comment/>
+  </data>
+  <data name="Feature1Desc" xml:space="preserve">
+    <value>A comfortable and safe learning experience from home without the need to send children to external centers</value>
+    <comment/>
+  </data>
+  <data name="Feature2Title" xml:space="preserve">
+    <value>Fun and Interactive Approach</value>
+    <comment/>
+  </data>
+  <data name="Feature2Desc" xml:space="preserve">
+    <value>A fun approach combining seriousness with interactive educational activities</value>
+    <comment/>
+  </data>
+  <data name="Feature3Title" xml:space="preserve">
+    <value>Precise Follow-up for Parents</value>
+    <comment/>
+  </data>
+  <data name="Feature3Desc" xml:space="preserve">
+    <value>Precise follow-up for each student through a dedicated parent page with instant notifications</value>
+    <comment/>
+  </data>
+  <data name="Feature4Title" xml:space="preserve">
+    <value>Certified Teachers</value>
+    <comment/>
+  </data>
+  <data name="Feature4Desc" xml:space="preserve">
+    <value>Teachers certified in digital and Islamic education with experience in working with children</value>
+    <comment/>
+  </data>
+  <data name="FreeTrialTitle" xml:space="preserve">
+    <value>Get a Free Introductory Session!</value>
+    <comment/>
+  </data>
+  <data name="FreeTrialDesc" xml:space="preserve">
+    <value>Want to try the first session free for your child? Fill out the form now and we'll contact you within 24 hours</value>
+    <comment/>
+  </data>
+  <data name="FullName" xml:space="preserve">
+    <value>Full Name</value>
+    <comment/>
+  </data>
+  <data name="ChildAge" xml:space="preserve">
+    <value>Child's Age</value>
+    <comment/>
+  </data>
+  <data name="SelectAge" xml:space="preserve">
+    <value>Select age</value>
+    <comment/>
+  </data>
+  <data name="Age5_7" xml:space="preserve">
+    <value>5-7 years</value>
+    <comment/>
+  </data>
+  <data name="Age8_10" xml:space="preserve">
+    <value>8-10 years</value>
+    <comment/>
+  </data>
+  <data name="Age11_13" xml:space="preserve">
+    <value>11-13 years</value>
+    <comment/>
+  </data>
+  <data name="Age14_17" xml:space="preserve">
+    <value>14-17 years</value>
+    <comment/>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Country</value>
+    <comment/>
+  </data>
+  <data name="WhatsAppNumber" xml:space="preserve">
+    <value>Contact Number (WhatsApp)</value>
+    <comment/>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Notes</value>
+    <comment/>
+  </data>
+  <data name="NotesPlaceholder" xml:space="preserve">
+    <value>Any additional notes...</value>
+    <comment/>
+  </data>
+  <data name="SubmitRequest" xml:space="preserve">
+    <value>Submit Request</value>
+    <comment/>
+  </data>
+  <data name="QuestionsTitle" xml:space="preserve">
+    <value>Have Questions?</value>
+    <comment/>
+  </data>
+  <data name="QuestionsSubtitle" xml:space="preserve">
+    <value>Our team is waiting for you on:</value>
+    <comment/>
+  </data>
+  <data name="WhatsAppLabel" xml:space="preserve">
+    <value>WhatsApp</value>
+    <comment/>
+  </data>
+  <data name="WebsiteLabel" xml:space="preserve">
+    <value>Website</value>
+    <comment/>
+  </data>
+  <data name="EmailLabel" xml:space="preserve">
+    <value>Email</value>
+    <comment/>
+  </data>
+  <data name="ClosingMessage" xml:space="preserve">
+    <value>"Dhikr" is not just a memorization platform, it's an educational companion that raises your children on the Quran and instills the love of religion in them</value>
+    <comment/>
+  </data>
+</root>

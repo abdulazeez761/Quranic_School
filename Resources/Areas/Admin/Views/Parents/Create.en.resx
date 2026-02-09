@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <!-- Page Title -->
+  <data name="Title" xml:space="preserve">
+    <value>Add New Parent</value>
+    <comment>Page title</comment>
+  </data>
+  
+  <!-- Page Header -->
+  <data name="PageTitle" xml:space="preserve">
+    <value>Add New Parent</value>
+    <comment>Main page heading</comment>
+  </data>
+  
+  <data name="PageDescription" xml:space="preserve">
+    <value>Enter parent information to add them to the system</value>
+    <comment>Page description</comment>
+  </data>
+  
+  <data name="BackToList" xml:space="preserve">
+    <value>Back to List</value>
+    <comment>Back to list button text</comment>
+  </data>
+  
+  <!-- Validation Summary -->
+  <data name="ValidationErrorsTitle" xml:space="preserve">
+    <value>Please correct the following errors:</value>
+    <comment>Validation summary title</comment>
+  </data>
+  
+  <!-- Section Titles -->
+  <data name="PersonalInformation" xml:space="preserve">
+    <value>Personal Information</value>
+    <comment>Personal information section title</comment>
+  </data>
+  
+  <data name="ContactInformation" xml:space="preserve">
+    <value>Contact Information</value>
+    <comment>Contact information section title</comment>
+  </data>
+  
+  <data name="PasswordSection" xml:space="preserve">
+    <value>Password</value>
+    <comment>Password section title</comment>
+  </data>
+  
+  <data name="AcademicInformation" xml:space="preserve">
+    <value>Academic Information</value>
+    <comment>Academic information section title</comment>
+  </data>
+  
+  <!-- Form Labels -->
+  <data name="FirstName" xml:space="preserve">
+    <value>First Name</value>
+    <comment>First name field label</comment>
+  </data>
+  
+  <data name="FirstNamePlaceholder" xml:space="preserve">
+    <value>Example: Mohammad</value>
+    <comment>First name field placeholder</comment>
+  </data>
+  
+  <data name="LastName" xml:space="preserve">
+    <value>Last Name</value>
+    <comment>Last name field label</comment>
+  </data>
+  
+  <data name="LastNamePlaceholder" xml:space="preserve">
+    <value>Example: Ahmad</value>
+    <comment>Last name field placeholder</comment>
+  </data>
+  
+  <data name="Gender" xml:space="preserve">
+    <value>Gender</value>
+    <comment>Gender field label</comment>
+  </data>
+  
+  <data name="SelectGender" xml:space="preserve">
+    <value>-- Select Gender --</value>
+    <comment>Default gender selection option</comment>
+  </data>
+  
+  <data name="Male" xml:space="preserve">
+    <value>Male</value>
+    <comment>Male option</comment>
+  </data>
+  
+  <data name="Female" xml:space="preserve">
+    <value>Female</value>
+    <comment>Female option</comment>
+  </data>
+  
+  <data name="DateOfBirth" xml:space="preserve">
+    <value>Date of Birth</value>
+    <comment>Date of birth field label</comment>
+  </data>
+  
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Phone Number</value>
+    <comment>Phone number field label</comment>
+  </data>
+  
+  <data name="PhoneNumberPlaceholder" xml:space="preserve">
+    <value>79XXXXXXX</value>
+    <comment>Phone number field placeholder</comment>
+  </data>
+  
+  <data name="PhoneNumberHelper" xml:space="preserve">
+    <value>Example: 790123456</value>
+    <comment>Phone number helper text</comment>
+  </data>
+  
+  <data name="PhoneNumberTitle" xml:space="preserve">
+    <value>Enter a valid Jordanian phone number</value>
+    <comment>Phone number tooltip title</comment>
+  </data>
+  
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+    <comment>Email field label</comment>
+  </data>
+  
+  <data name="EmailPlaceholder" xml:space="preserve">
+    <value>example@email.com</value>
+    <comment>Email field placeholder</comment>
+  </data>
+  
+  <data name="EmailHelper" xml:space="preserve">
+    <value>Will be used for login</value>
+    <comment>Email helper text</comment>
+  </data>
+  
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+    <comment>Password field label</comment>
+  </data>
+  
+  <data name="PasswordPlaceholder" xml:space="preserve">
+    <value>Enter a strong password</value>
+    <comment>Password field placeholder</comment>
+  </data>
+  
+  <data name="PasswordHelper" xml:space="preserve">
+    <value>Must be at least 6 characters</value>
+    <comment>Password helper text</comment>
+  </data>
+  
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Confirm Password</value>
+    <comment>Confirm password field label</comment>
+  </data>
+  
+  <data name="ConfirmPasswordPlaceholder" xml:space="preserve">
+    <value>Re-enter password</value>
+    <comment>Confirm password field placeholder</comment>
+  </data>
+  
+  <data name="MemorizedJuz" xml:space="preserve">
+    <value>Memorized Juz Count</value>
+    <comment>Memorized juz field label</comment>
+  </data>
+  
+  <data name="MemorizedJuzPlaceholder" xml:space="preserve">
+    <value>From 0 to 30</value>
+    <comment>Memorized juz field placeholder</comment>
+  </data>
+  
+  <data name="MemorizedJuzHelper" xml:space="preserve">
+    <value>Enter the number of Quran juz memorized</value>
+    <comment>Memorized juz helper text</comment>
+  </data>
+  
+  <data name="TajwidLevel" xml:space="preserve">
+    <value>Tajweed Level</value>
+    <comment>Tajweed level field label</comment>
+  </data>
+  
+  <data name="TajwidLevelNone" xml:space="preserve">
+    <value>None</value>
+    <comment>None option for tajweed level</comment>
+  </data>
+  
+  <data name="TajwidLevelFirst" xml:space="preserve">
+    <value>Beginner</value>
+    <comment>First level option for tajweed</comment>
+  </data>
+  
+  <data name="TajwidLevelSecond" xml:space="preserve">
+    <value>Intermediate</value>
+    <comment>Second level option for tajweed</comment>
+  </data>
+  
+  <data name="TajwidLevelThird" xml:space="preserve">
+    <value>Advanced</value>
+    <comment>Third level option for tajweed</comment>
+  </data>
+  
+  <data name="TajwidLevelHelper" xml:space="preserve">
+    <value>Select current tajweed level</value>
+    <comment>Tajweed level helper text</comment>
+  </data>
+  
+  <data name="Classes" xml:space="preserve">
+    <value>Classes</value>
+    <comment>Classes field label</comment>
+  </data>
+  
+  <data name="ClassesHelper" xml:space="preserve">
+    <value>You can select multiple classes for the parent</value>
+    <comment>Classes helper text</comment>
+  </data>
+  
+  <!-- Form Actions -->
+  <data name="SaveData" xml:space="preserve">
+    <value>Save Data</value>
+    <comment>Save button text</comment>
+  </data>
+  
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>Cancel button text</comment>
+  </data>
+  
+  <!-- Help Section -->
+  <data name="FillInstructions" xml:space="preserve">
+    <value>Fill Instructions</value>
+    <comment>Help instructions section title</comment>
+  </data>
+  
+  <data name="HelpInstruction1" xml:space="preserve">
+    <value>All fields marked with * are required</value>
+    <comment>Instruction 1</comment>
+  </data>
+  
+  <data name="HelpInstruction2" xml:space="preserve">
+    <value>Phone number must be a valid Jordanian number (9-10 digits)</value>
+    <comment>Instruction 2</comment>
+  </data>
+  
+  <data name="HelpInstruction3" xml:space="preserve">
+    <value>Email will be used for parent login to the system</value>
+    <comment>Instruction 3</comment>
+  </data>
+  
+  <data name="HelpInstruction4" xml:space="preserve">
+    <value>Password must be at least 6 characters</value>
+    <comment>Instruction 4</comment>
+  </data>
+  
+  <data name="HelpInstruction5" xml:space="preserve">
+    <value>parent can be added to multiple classes at once</value>
+    <comment>Instruction 5</comment>
+  </data>
+  
+  <data name="HelpInstruction6" xml:space="preserve">
+    <value>Tajweed level is optional and can be updated later</value>
+    <comment>Instruction 6</comment>
+  </data>
+  
+</root>

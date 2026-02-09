@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="MorningBoysClass" xml:space="preserve">
+    <value>حلقة الصبح - بنين</value>
+  </data>
+  <data name="Students" xml:space="preserve">
+    <value>طلاب</value>
+  </data>
+  <data name="ChangeClass" xml:space="preserve">
+    <value>تغيير الحلقة</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>نجح!</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>خطأ!</value>
+  </data>
+  <data name="JuzMemorized" xml:space="preserve">
+    <value>الأجزاء المحفوظة</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="CompletedWirds" xml:space="preserve">
+    <value>الأوراد المكتملة</value>
+  </data>
+  <data name="Age" xml:space="preserve">
+    <value>العمر</value>
+  </data>
+  <data name="Years" xml:space="preserve">
+    <value>سنوات</value>
+  </data>
+  <data name="ViewDetails" xml:space="preserve">
+    <value>عرض التفاصيل</value>
+  </data>
+  <data name="AddWird" xml:space="preserve">
+    <value>إضافة ورد</value>
+  </data>
+  <data name="none" xml:space="preserve">
+    <value>غير محدد</value>
+  </data>
+  <data name="First" xml:space="preserve">
+    <value>تمهيدي/مبتدئ</value>
+  </data>
+  <data name="Second" xml:space="preserve">
+    <value>متوسط</value>
+  </data>
+  <data name="Third" xml:space="preserve">
+    <value>متقدم</value>
+  </data>
+</root>

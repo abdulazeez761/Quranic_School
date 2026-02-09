@@ -1,0 +1,157 @@
+@{
+    ViewData["Title"] = "Online Class Room";
+    var roomName = (string)ViewBag.RoomName;
+    var displayName = (string)ViewBag.DisplayName;
+    var className = (string)ViewBag.ClassName ?? "Class";
+    var classId = (Guid)ViewBag.ClassId;
+    var studentId = (Guid)ViewBag.StudentId;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/teacher/meeting.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+}
+
+<div class="meeting-wrapper">
+    <!-- Header Section -->
+    <div class="meeting-header-bar">
+        <div class="meeting-header-content">
+            <div>
+                <h2 class="meeting-title">
+                    <i class="bi bi-camera-video"></i>
+                    @className
+                </h2>
+                <p class="meeting-subtitle">
+                    <i class="bi bi-person-circle me-1"></i>@displayName
+                    <span class="mx-2">•</span>
+                    <i class="bi bi-door-open me-1"></i>Room: @roomName
+                </p>
+            </div>
+            <div class="meeting-status-badge">
+                <span class="status-indicator"></span>
+                Live Meeting
+            </div>
+        </div>
+    </div>
+
+    <!-- Jitsi Meeting Container -->
+    <div id="meet" class="meeting-container"></div>
+
+    <!-- Status Footer -->
+    <div class="status-footer">
+        <div class="status-footer-content">
+            <div class="status-item">
+                <i class="bi bi-shield-check"></i>
+                <span>Secure Connection</span>
+            </div>
+            <div class="status-item" id="participant-info">
+                <i class="bi bi-people"></i>
+                <span class="participant-count" id="count">Connecting...</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Jitsi Meet External API -->
+<script src="https://meet.jit.si/external_api.js"></script>
+
+<script>
+    let api;
+    let participantCount = 1; // Start with 1 (current user)
+
+    document.addEventListener("DOMContentLoaded", function () {
+        initializeJitsi();
+    });
+
+    function initializeJitsi() {
+        const domain = "meet.jit.si";
+        const options = {
+            roomName: "@roomName",
+            parentNode: document.querySelector('#meet'),
+            width: "100%",
+            height: "100%",
+            userInfo: {
+                displayName: "@displayName"
+            },
+            configOverwrite: {
+                startWithAudioMuted: true,  // Parents start muted
+                startWithVideoMuted: false,
+                prejoinPageEnabled: false,
+                disableDeepLinking: true,
+                enableWelcomePage: false,
+                enableClosePage: false,
+                enableNoisyMicDetection: true,
+                toolbarButtons: [
+                    'microphone', 'camera', 'closedcaptions', 'desktop',
+                    'fullscreen', 'fodeviceselection', 'hangup',
+                    'chat', 'raisehand', 'videoquality', 'filmstrip',
+                    'tileview', 'download', 'help'
+                ]
+            },
+            interfaceConfigOverwrite: {
+                SHOW_JITSI_WATERMARK: false,
+                SHOW_WATERMARK_FOR_GUESTS: false,
+                DEFAULT_REMOTE_DISPLAY_NAME: 'Participant',
+                DISABLE_JOIN_LEAVE_NOTIFICATIONS: false
+            }
+        };
+
+        api = new JitsiMeetExternalAPI(domain, options);
+
+        // Event Listeners
+        api.addEventListener('videoConferenceJoined', function (event) {
+            console.log("✅ Joined room:", event.roomName);
+            updateParticipantCount();
+            showToast("You joined the meeting", "success");
+        });
+
+        api.addEventListener('participantJoined', function (participant) {
+            participantCount++;
+            console.log("👤 Participant joined:", participant.displayName || participant.id);
+            updateParticipantCount();
+            showToast((participant.displayName || "Someone") + " joined", "info");
+        });
+
+        api.addEventListener('participantLeft', function (participant) {
+            participantCount--;
+            console.log("👋 Participant left:", participant.id);
+            updateParticipantCount();
+        });
+
+        api.addEventListener('readyToClose', function () {
+            console.log("Meeting ended");
+            redirectToMeetingList();
+        });
+
+        api.addEventListener('participantsInfoChanged', function (event) {
+            if (event && event.participants) {
+                participantCount = event.participants.length;
+                updateParticipantCount();
+            }
+        });
+    }
+
+    function redirectToMeetingList() {
+        window.location.href = '@Url.Action("Index", "Meeting", new { area = "Parent" })';
+    }
+
+    function updateParticipantCount() {
+        const countElement = document.getElementById('count');
+        if (countElement) {
+            countElement.textContent = participantCount + (participantCount === 1 ? ' participant' : ' participants');
+        }
+    }
+
+    function showToast(message, type) {
+        // Simple console notification - can be enhanced with a toast library
+        console.log(`[${type.toUpperCase()}] ${message}`);
+    }
+
+    // Warn before leaving
+    window.addEventListener('beforeunload', function (e) {
+        if (api) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+</script>

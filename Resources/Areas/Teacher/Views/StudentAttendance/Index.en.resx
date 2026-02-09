@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Student Attendance</value>
+  </data>
+  <data name="PageHeader" xml:space="preserve">
+    <value>Student Attendance</value>
+  </data>
+  <data name="PageDescription" xml:space="preserve">
+    <value>Record and track student attendance</value>
+  </data>
+  <data name="SaveAll" xml:space="preserve">
+    <value>Save All</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="Present" xml:space="preserve">
+    <value>Present</value>
+  </data>
+  <data name="Late" xml:space="preserve">
+    <value>Late</value>
+  </data>
+  <data name="Absent" xml:space="preserve">
+    <value>Absent</value>
+  </data>
+  <data name="Excuse" xml:space="preserve">
+    <value>Excuse</value>
+  </data>
+  <data name="FilterData" xml:space="preserve">
+    <value>Filter Data</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="SelectDate" xml:space="preserve">
+    <value>Select Date</value>
+  </data>
+  <data name="Class" xml:space="preserve">
+    <value>Class</value>
+  </data>
+  <data name="SearchStudent" xml:space="preserve">
+    <value>Search student...</value>
+  </data>
+  <data name="TotalStudents" xml:space="preserve">
+    <value>Total Students:</value>
+  </data>
+  <data name="StudentName" xml:space="preserve">
+    <value>Student Name</value>
+  </data>
+  <data name="NoData" xml:space="preserve">
+    <value>No Data</value>
+  </data>
+  <data name="NoStudentsFound" xml:space="preserve">
+    <value>No students found</value>
+  </data>
+</root>

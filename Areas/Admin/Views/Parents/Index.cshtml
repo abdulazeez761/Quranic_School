@@ -1,0 +1,228 @@
+@model IEnumerable<Hifz.Models.Parent>
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = @Localizer["Title"];
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-between align-center mb-lg flex-wrap gap-md">
+    <div>
+        <h2 class="section-title mb-sm">
+            <i class='bx bx-user-circle' style="color: var(--primary-green);"></i>
+            @Localizer["PageTitle"]
+        </h2>
+        <p class="text-medium">@Localizer["PageDescription"]</p>
+    </div>
+    <div class="btn-group">
+        <a asp-action="Create" class="btn btn-primary">
+            <i class='bx bx-user-plus'></i>
+            <span>@Localizer["AddNewParent"]</span>
+        </a>
+        <button class="btn btn-outline" id="exportBtn">
+            <i class='bx bx-download'></i>
+            <span>@Localizer["Export"]</span>
+        </button>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+@{
+    var totalParents = Model.Count();
+    var parentsWithChildren = Model.Count(p => p.Students != null && p.Students.Any());
+    var parentsWithoutChildren = totalParents - parentsWithChildren;
+    var totalChildren = Model.Sum(p => p.Students?.Count ?? 0);
+}
+
+<div class="grid-auto-fit mb-lg">
+    <div class="card card-stat">
+        <div class="card-stat-icon">
+            <i class='bx bx-user-circle'></i>
+        </div>
+        <div class="card-stat-content">
+            <div class="card-stat-label">@Localizer["TotalParents"]</div>
+            <div class="card-stat-value">@totalParents</div>
+        </div>
+    </div>
+
+    <div class="card card-stat">
+        <div class="card-stat-icon" style="background: var(--success);">
+            <i class='bx bx-check-circle'></i>
+        </div>
+        <div class="card-stat-content">
+            <div class="card-stat-label">@Localizer["WithChildren"]</div>
+            <div class="card-stat-value">@parentsWithChildren</div>
+        </div>
+    </div>
+
+    <div class="card card-stat">
+        <div class="card-stat-icon" style="background: var(--warning);">
+            <i class='bx bx-error'></i>
+        </div>
+        <div class="card-stat-content">
+            <div class="card-stat-label">@Localizer["WithoutChildren"]</div>
+            <div class="card-stat-value">@parentsWithoutChildren</div>
+        </div>
+    </div>
+
+    <div class="card card-stat">
+        <div class="card-stat-icon" style="background: var(--info);">
+            <i class='bx bx-group'></i>
+        </div>
+        <div class="card-stat-content">
+            <div class="card-stat-label">@Localizer["TotalChildren"]</div>
+            <div class="card-stat-value">@totalChildren</div>
+        </div>
+    </div>
+</div>
+
+<!-- Parents Table -->
+<div class="table-container">
+    <!-- Search Toolbar -->
+    <div class="table-toolbar">
+        <div class="table-search">
+            <input type="text" id="searchInput" placeholder="@Localizer["SearchPlaceholder"]">
+            <i class='bx bx-search'></i>
+        </div>
+        <div class="table-filters">
+            <button id="clearFilters" class="btn btn-outline btn-sm">
+                <i class='bx bx-refresh'></i>
+                <span class="d-none d-md-inline">@Localizer["Reset"]</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrapper">
+        <table class="table table-responsive-cards">
+            <thead>
+                <tr>
+                    <th style="width: 50px;">#</th>
+                    <th class="sortable">
+                        <i class='bx bx-user'></i> @Localizer["FirstName"]
+                    </th>
+                    <th class="sortable">
+                        <i class='bx bx-user'></i> @Localizer["LastName"]
+                    </th>
+                    <th>
+                        <i class='bx bx-user'></i> @Localizer["Username"]
+                    </th>
+                    <th>
+                        <i class='bx bx-phone'></i> @Localizer["PhoneNumber"]
+                    </th>
+                    <th>
+                        <i class='bx bx-group'></i> @Localizer["Children"]
+                    </th>
+                    <th class="text-center" style="width: 140px;">@Localizer["Actions"]</th>
+                </tr>
+            </thead>
+            <tbody id="parentsTableBody">
+                @if (Model != null && Model.Any())
+                {
+                    int index = 1;
+                    foreach (var parent in Model)
+                    {
+                        var childrenCount = parent.Students?.Count ?? 0;
+                        var hasChildren = childrenCount > 0;
+
+                        <tr class="table-row" data-firstname="@parent.ParentInfo.FirstName.ToLower()"
+                            data-secondname="@parent.ParentInfo.SecondName.ToLower()">
+
+                            <td class="text-center text-medium" data-label="#">@index</td>
+
+                            <td data-label="@Localizer["FirstName"]">
+                                <div class="d-flex align-center gap-sm">
+                                    <div class="avatar-sm"
+                                        style="background: var(--primary-green); color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                                        @parent.ParentInfo.FirstName.Substring(0, 1)
+                                    </div>
+                                    <span class="fw-medium">@parent.ParentInfo.FirstName</span>
+                                </div>
+                            </td>
+
+                            <td data-label="@Localizer["LastName"]">
+                                <span class="fw-medium">@parent.ParentInfo.SecondName</span>
+                            </td>
+
+                            <td data-label="@Localizer["Username"]">
+                                <div class="d-flex align-center gap-xs">
+                                    <i class='bx bx-user text-medium'></i>
+                                    <span class="text-truncate" style="max-width: 150px;" title="@parent.ParentInfo.Username">
+                                        @parent.ParentInfo.Username
+                                    </span>
+                                </div>
+                            </td>
+
+                            <td data-label="@Localizer["PhoneNumber"]">
+                                <div class="d-flex align-center gap-xs">
+                                    <i class='bx bx-phone text-medium'></i>
+                                    <span dir="ltr">@parent.ParentInfo.PhoneNumber</span>
+                                </div>
+                            </td>
+
+                            <td data-label="@Localizer["Children"]">
+                                @if (hasChildren)
+                                {
+                                    <span class="badge badge-success">
+                                        <i class='bx bx-user'></i> @childrenCount @Localizer["ChildrenCount"]
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-warning">
+                                        <i class='bx bx-info-circle'></i> @Localizer["NoChildren"]
+                                    </span>
+                                }
+                            </td>
+
+                            <td data-label="@Localizer["Actions"]">
+                                <div class="table-actions justify-center">
+                                    <a asp-action="Edit" asp-route-id="@parent.UserId" class="table-action-btn"
+                                        data-tooltip="@Localizer["Edit"]">
+                                        <i class='bx bx-edit'></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@parent.UserId" class="table-action-btn danger"
+                                        data-confirm-delete="@string.Format(Localizer["DeleteConfirmation"].Value, parent.ParentInfo.FirstName, parent.ParentInfo.SecondName)"
+                                        data-tooltip="@Localizer["Delete"]">
+                                        <i class='bx bx-trash'></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        index++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7">
+                            <div class="table-empty">
+                                <i class='bx bx-user-x'></i>
+                                <h3 class="table-empty-title">@Localizer["NoDataAvailable"]</h3>
+                                <p class="text-medium">@Localizer["NoParentsAdded"]</p>
+                                <a asp-action="Create" class="btn btn-primary mt-md">
+                                    <i class='bx bx-user-plus'></i> @Localizer["AddNewParent"]
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Table Footer -->
+    <div class="table-footer">
+        <div class="table-info">
+            @Html.Raw(string.Format(Localizer["ShowingParents"].Value,
+            $"<strong><span id='visibleCount'>{totalParents}</span></strong>",
+                        $"<strong>{totalParents}</strong>"))
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/parent/search.js"></script>
+    <script src="~/js/confirmModal.js"></script>
+}

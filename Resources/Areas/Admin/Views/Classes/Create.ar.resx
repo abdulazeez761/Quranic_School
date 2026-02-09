@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="PageTitle" xml:space="preserve">
+    <value>إنشاء حلقة قرآنية</value>
+  </data>
+  <data name="PageDescription" xml:space="preserve">
+    <value>أدخل بيانات الحلقة لإضافتها إلى النظام</value>
+  </data>
+  <data name="BackToList" xml:space="preserve">
+    <value>العودة للقائمة</value>
+  </data>
+  <data name="ValidationErrors" xml:space="preserve">
+    <value>يرجى تصحيح الأخطاء التالية:</value>
+  </data>
+  <data name="BasicInformation" xml:space="preserve">
+    <value>المعلومات الأساسية</value>
+  </data>
+  <data name="ClassName" xml:space="preserve">
+    <value>اسم الحلقة</value>
+  </data>
+  <data name="ClassNamePlaceholder" xml:space="preserve">
+    <value>مثال: حلقة الفجر</value>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="SelectGender" xml:space="preserve">
+    <value>-- اختر فئة الحلقة --</value>
+  </data>
+  <data name="Male" xml:space="preserve">
+    <value>ذكور</value>
+  </data>
+  <data name="Female" xml:space="preserve">
+    <value>إناث</value>
+  </data>
+  <data name="ClassTime" xml:space="preserve">
+    <value>وقت الحلقة</value>
+  </data>
+  <data name="ClassTimeHelper" xml:space="preserve">
+    <value>حدد الوقت المناسب لبدء الحلقة</value>
+  </data>
+  <data name="ClassDays" xml:space="preserve">
+    <value>أيام الحلقة</value>
+  </data>
+  <data name="SelectDays" xml:space="preserve">
+    <value>اختر الأيام</value>
+  </data>
+  <data name="Sunday" xml:space="preserve">
+    <value>الأحد</value>
+  </data>
+  <data name="Monday" xml:space="preserve">
+    <value>الاثنين</value>
+  </data>
+  <data name="Tuesday" xml:space="preserve">
+    <value>الثلاثاء</value>
+  </data>
+  <data name="Wednesday" xml:space="preserve">
+    <value>الأربعاء</value>
+  </data>
+  <data name="Thursday" xml:space="preserve">
+    <value>الخميس</value>
+  </data>
+  <data name="Friday" xml:space="preserve">
+    <value>الجمعة</value>
+  </data>
+  <data name="Saturday" xml:space="preserve">
+    <value>السبت</value>
+  </data>
+  <data name="DaysHelper" xml:space="preserve">
+    <value>حدد الأيام التي تعقد فيها الحلقة خلال الأسبوع</value>
+  </data>
+  <data name="TeachersAndStudents" xml:space="preserve">
+    <value>الشيوخ والطلاب</value>
+  </data>
+  <data name="AssistantTeachers" xml:space="preserve">
+    <value>الشيوخ المساعدين</value>
+  </data>
+  <data name="TeachersHelper" xml:space="preserve">
+    <value>يمكنك تحديد أكثر من شيخ للحلقة</value>
+  </data>
+  <data name="Students" xml:space="preserve">
+    <value>الطلاب</value>
+  </data>
+  <data name="StudentsHelper" xml:space="preserve">
+    <value>يمكنك تحديد أكثر من طالب للحلقة</value>
+  </data>
+  <data name="SaveData" xml:space="preserve">
+    <value>حفظ البيانات</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="FillingInstructions" xml:space="preserve">
+    <value>إرشادات التعبئة</value>
+  </data>
+  <data name="Instruction1" xml:space="preserve">
+    <value>جميع الحقول المميزة بعلامة * إلزامية</value>
+  </data>
+  <data name="Instruction2" xml:space="preserve">
+    <value>اسم الحلقة يجب أن يكون واضحاً ومميزاً</value>
+  </data>
+  <data name="Instruction3" xml:space="preserve">
+    <value>يمكن اختيار أكثر من يوم للحلقة خلال الأسبوع</value>
+  </data>
+  <data name="Instruction4" xml:space="preserve">
+    <value>تحديد الشيوخ المساعدين والطلاب اختياري ويمكن تعديله لاحقاً</value>
+  </data>
+  <data name="Instruction5" xml:space="preserve">
+    <value>تأكد من تحديد وقت مناسب يتوافق مع جميع المعنيين</value>
+  </data>
+  <data name="SelectTeachers" xml:space="preserve">
+    <value>اختر الشيوخ...</value>
+  </data>
+  <data name="SelectStudents" xml:space="preserve">
+    <value>اختر الطلاب...</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>لا توجد نتائج</value>
+  </data>
+</root>

@@ -1,0 +1,220 @@
+/* Mobile Optimization Styles for Teacher Portal */
+
+/* Touch-friendly button and interactive element sizes */
+@media (hover: none) and (pointer: coarse) {
+  /* Minimum touch target size (44x44px) */
+  .user-avatar,
+  .logout-btn,
+  .language-btn,
+  .nav-tabs a,
+  .class-card {
+    min-height: 44px;
+    min-width: 44px;
+    padding-right: calc(var(--space-sm) + 2px);
+    padding-left: calc(var(--space-sm) + 2px);
+  }
+
+  /* Remove hover effects, use active state instead */
+  .teacher-header {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  }
+
+  .teacher-header:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  }
+
+  .class-card {
+    cursor: pointer;
+    -webkit-tap-highlight-color: rgba(141, 242, 156, 0.1);
+  }
+
+  .class-card:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    background-color: rgba(141, 242, 156, 0.05);
+  }
+
+  .user-profile:hover {
+    border-color: transparent;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .user-profile:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  }
+
+  .logout-btn:hover {
+    transform: none;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.2);
+  }
+
+  .logout-btn:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 4px rgba(231, 76, 60, 0.2);
+  }
+
+  /* Enhanced touch feedback for nav */
+  .nav-tabs a {
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .nav-tabs a:active {
+    background-color: rgba(141, 242, 156, 0.15);
+  }
+
+  /* Remove animations for better performance on mobile */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Landscape orientation fixes */
+@media (max-width: 768px) and (orientation: landscape) {
+  .teacher-layout {
+    min-height: auto;
+  }
+
+  .teacher-header {
+    padding: var(--space-sm);
+  }
+
+  .header-title {
+    font-size: var(--font-size-base);
+  }
+
+  .header-subtitle {
+    display: none;
+  }
+
+  .nav-tabs a span {
+    display: none;
+  }
+
+  .nav-tabs a {
+    padding: var(--space-xs) var(--space-sm);
+  }
+
+  .teacher-content {
+    padding: var(--space-sm);
+    min-height: calc(100vh - 120px);
+  }
+
+  .classes-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Prevent zoom on input focus (iOS) */
+input,
+select,
+textarea,
+button {
+  font-size: 16px;
+}
+
+/* Better scrolling experience */
+.teacher-nav,
+.nav-tabs {
+  scroll-behavior: smooth;
+}
+
+/* Safe area insets for notched devices */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  .teacher-header {
+    padding-left: max(var(--space-md), env(safe-area-inset-left));
+    padding-right: max(var(--space-md), env(safe-area-inset-right));
+  }
+
+  .teacher-content {
+    padding-left: max(var(--space-md), env(safe-area-inset-left));
+    padding-right: max(var(--space-md), env(safe-area-inset-right));
+  }
+}
+
+/* Optimize for different viewport sizes */
+@media (max-width: 360px) {
+  .header-title {
+    font-size: var(--font-size-base);
+  }
+
+  .header-subtitle {
+    display: none;
+  }
+
+  .nav-tabs a {
+    padding: 6px 6px;
+    font-size: 9px;
+  }
+
+  .nav-tabs i {
+    font-size: 14px;
+  }
+
+  .class-name {
+    font-size: 0.8rem;
+  }
+
+  .classes-container {
+    padding: 8px;
+  }
+
+  .class-card {
+    padding: 8px;
+  }
+}
+
+/* Improve readability with better line-height on mobile */
+.class-info-item,
+.class-name {
+  line-height: 1.4;
+}
+
+/* Loading state indicator */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.loading::after {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-left: 8px;
+  border: 2px solid rgba(141, 242, 156, 0.3);
+  border-right-color: var(--primary-green);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Sticky header on scroll */
+@media (max-width: 768px) {
+  .teacher-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+
+  .teacher-nav {
+    position: sticky;
+    top: auto;
+    z-index: 999;
+  }
+}

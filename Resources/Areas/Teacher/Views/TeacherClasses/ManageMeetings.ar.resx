@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="PageTitle" xml:space="preserve">
+    <value>إدارة الحصص الإلكترونية</value>
+  </data>
+  <data name="PageSubtitle" xml:space="preserve">
+    <value>بدء وإدارة الاجتماعات الافتراضية لحلقاتك</value>
+  </data>
+  <data name="TotalClasses" xml:space="preserve">
+    <value>إجمالي الحلقات</value>
+  </data>
+  <data name="ActiveMeetings" xml:space="preserve">
+    <value>اجتماعات نشطة</value>
+  </data>
+  <data name="ActiveMeetingsNote" xml:space="preserve">
+    <value>لديك اجتماعات جارية يمكن للطلاب الانضمام إليها</value>
+  </data>
+  <data name="ClassName" xml:space="preserve">
+    <value>اسم الحلقة</value>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>الجنس</value>
+  </data>
+  <data name="Students" xml:space="preserve">
+    <value>الطلاب</value>
+  </data>
+  <data name="Enrolled" xml:space="preserve">
+    <value>مسجل</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>غير نشط</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>انضمام</value>
+  </data>
+  <data name="End" xml:space="preserve">
+    <value>إنهاء</value>
+  </data>
+  <data name="StartAndJoin" xml:space="preserve">
+    <value>بدء والانضمام</value>
+  </data>
+  <data name="NoClassesFound" xml:space="preserve">
+    <value>لا توجد حلقات</value>
+  </data>
+  <data name="NoClassesAssigned" xml:space="preserve">
+    <value>لم يتم تعيين أي حلقات لك بعد.</value>
+  </data>
+  <data name="EndMeeting" xml:space="preserve">
+    <value>إنهاء الاجتماع؟</value>
+  </data>
+  <data name="EndMeetingConfirm" xml:space="preserve">
+    <value>هل أنت متأكد من إنهاء هذا الاجتماع؟ سيتم قطع اتصال جميع المشاركين ولن يتمكنوا من إعادة الانضمام.</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+</root>

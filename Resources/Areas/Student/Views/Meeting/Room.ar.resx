@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Room" xml:space="preserve"><value>الغرفة</value></data>
+  <data name="LiveMeeting" xml:space="preserve"><value>اجتماع مباشر</value></data>
+  <data name="SecureConnection" xml:space="preserve"><value>اتصال آمن</value></data>
+  <data name="Connecting" xml:space="preserve"><value>جاري الاتصال...</value></data>
+  <data name="Participant" xml:space="preserve"><value>مشارك</value></data>
+  <data name="Participants" xml:space="preserve"><value>مشاركين</value></data>
+</root>

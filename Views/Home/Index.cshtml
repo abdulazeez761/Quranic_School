@@ -1,0 +1,506 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css" />
+}
+
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="container">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-lg-6">
+                    <h1 class="hero-title">@Localizer["Welcome"]</h1>
+                    <p class="hero-subtitle">@Localizer["Heart"]</p>
+                    <p class="hero-description">
+                        @Localizer["PlatForm"]
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="#registration" class="btn btn-primary btn-lg">@Localizer["Start Learning"]</a>
+                        <a href="#about" class="btn btn-outline-light btn-lg">@Localizer["Learn More"]</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-image">
+                        <div class="floating-card">
+                            <i class="fas fa-book-open"></i>
+                            <h4>@Localizer["Track"]</h4>
+                            <p>@Localizer["Monitor"]</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="scroll-indicator">
+        <div class="scroll-arrow"></div>
+    </div>
+</section>
+
+<!-- Target Audience Section -->
+<section class="target-section" id="target">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="section-title">@Localizer["TargetTitle"]</h2>
+                <p class="section-subtitle">@Localizer["TargetSubtitle"]</p>
+            </div>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-4 col-md-6">
+                <div class="target-card">
+                    <div class="target-icon">
+                        <i class="fas fa-child"></i>
+                    </div>
+                    <h4>@Localizer["TargetChildren"]</h4>
+                    <p>@Localizer["TargetChildrenDesc"]</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="target-card">
+                    <div class="target-icon">
+                        <i class="fas fa-female"></i>
+                    </div>
+                    <h4>@Localizer["TargetGirls"]</h4>
+                    <p>@Localizer["TargetGirlsDesc"]</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="target-card">
+                    <div class="target-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h4>@Localizer["TargetParents"]</h4>
+                    <p>@Localizer["TargetParentsDesc"]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section  py-5" id="features">
+    <div class="row text-center mb-5"></div>
+    <div class="col-12">
+        <h2 class="section-title">@Localizer["FeaturesTitle"]</h2>
+        <p class="section-subtitle">@Localizer["FeaturesSubtitle"]</p>
+    </div>
+
+    <div class="container">
+
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4>@Localizer["Track"]</h4>
+                    <p>@Localizer["TrackDescription"]</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h4>@Localizer["Portal"]</h4>
+                    <p>@Localizer["PortalDescription"]</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-book-reader"></i>
+                    </div>
+                    <h4>@Localizer["Wird"]</h4>
+                    <p>@Localizer["WirdDescription"]</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <h4>@Localizer["Dashboard"]</h4>
+                    <p>@Localizer["DashboardDescription"]</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-redo-alt"></i>
+                    </div>
+                    <h4>@Localizer["Review"]</h4>
+                    <p>@Localizer["ReviewDescription"]</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h4>@Localizer["Mobile"]</h4>
+                    <p>@Localizer["MobileDescription"]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- Programs Section -->
+<section class="programs-section" id="programs">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="section-title">@Localizer["ProgramsTitle"]</h2>
+                <p class="section-subtitle">@Localizer["ProgramsSubtitle"]</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="program-card">
+                    <div class="program-header">
+                        <h4 class="program-title">@Localizer["ProgramQuran"]</h4>
+                        <span class="program-age">@Localizer["ProgramQuranAge"]</span>
+                    </div>
+                    <div class="program-details">
+                        <div class="program-feature">
+                            <i class="fas fa-book-open"></i>
+                            <span>@Localizer["ProgramQuranF1"]</span>
+                        </div>
+                        <div class="program-feature">
+                            <i class="fas fa-redo-alt"></i>
+                            <span>@Localizer["ProgramQuranF2"]</span>
+                        </div>
+                        <div class="program-feature">
+                            <i class="fas fa-lightbulb"></i>
+                            <span>@Localizer["ProgramQuranF3"]</span>
+                        </div>
+                        <div class="program-feature">
+                            <i class="fas fa-heart"></i>
+                            <span>@Localizer["ProgramQuranF4"]</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="program-card">
+                    <div class="program-header">
+                        <h4 class="program-title">@Localizer["ProgramFaith"]</h4>
+                        <span class="program-age">@Localizer["ProgramFaithAge"]</span>
+                    </div>
+                    <div class="program-details">
+                        <div class="program-feature">
+                            <i class="fas fa-mosque"></i>
+                            <span>@Localizer["ProgramFaithF1"]</span>
+                        </div>
+                        <div class="program-feature">
+                            <i class="fas fa-star-and-crescent"></i>
+                            <span>@Localizer["ProgramFaithF2"]</span>
+                        </div>
+                        <div class="program-feature">
+                            <i class="fas fa-hands-helping"></i>
+                            <span>@Localizer["ProgramFaithF3"]</span>
+                        </div>
+                        <div class="program-feature">
+                            <i class="fas fa-balance-scale"></i>
+                            <span>@Localizer["ProgramFaithF4"]</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="program-card">
+                    <div class="program-header">
+                        <h4 class="program-title">@Localizer["ProgramFollowup"]</h4>
+                        <span class="program-age">@Localizer["ProgramFollowupAge"]</span>
+                    </div>
+                    <div class="program-details">
+                        <div class="program-feature">
+                            <i class="fas fa-sync-alt"></i>
+                            <span>@Localizer["ProgramFollowupF1"]</span>
+                        </div>
+                        <div class="program-feature">
+                            <i class="fas fa-gift"></i>
+                            <span>@Localizer["ProgramFollowupF2"]</span>
+                        </div>
+                        <div class="program-feature">
+                            <i class="fas fa-eye"></i>
+                            <span>@Localizer["ProgramFollowupF3"]</span>
+                        </div>
+                        <div class="program-feature">
+                            <i class="fas fa-trophy"></i>
+                            <span>@Localizer["ProgramFollowupF4"]</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="about-section py-5" id="about">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="about-content">
+                    <h2 class="section-title">@Localizer["Mission"]</h2>
+                    <p class="lead">@Localizer["MissionDescription"]</p>
+                    <div class="mission-points">
+                        <div class="mission-point">
+                            <i class="fas fa-check-circle"></i>
+                            <span>@Localizer["missionPoint-1"]</span>
+                        </div>
+                        <div class="mission-point">
+                            <i class="fas fa-check-circle"></i>
+                            <span>@Localizer["missionPoint-2"]</span>
+                        </div>
+                        <div class="mission-point">
+                            <i class="fas fa-check-circle"></i>
+                            <span>@Localizer["missionPoint-3"]</span>
+                        </div>
+                        <div class="mission-point">
+                            <i class="fas fa-check-circle"></i>
+                            <span>@Localizer["missionPoint-4"]</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="about-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">@Localizer["Students"]</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">25+</div>
+                        <div class="stat-label">@Localizer["QTeachers"]</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">15,000+</div>
+                        <div class="stat-label">@Localizer["PagesMemorized"]</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">200+</div>
+                        <div class="stat-label">@Localizer["Hifz"]</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Section -->
+<section class="why-choose-section" id="why-choose">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="section-title text-white">@Localizer["WhyChooseTitle"]</h2>
+                <p class="section-subtitle" style="color: rgba(255,255,255,0.9);">@Localizer["WhyChooseSubtitle"]</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="why-item">
+                    <h5>@Localizer["WhyItem1Title"]</h5>
+                    <p>@Localizer["WhyItem1Desc"]</p>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="why-item">
+                    <h5>@Localizer["WhyItem2Title"]</h5>
+                    <p>@Localizer["WhyItem2Desc"]</p>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="why-item">
+                    <h5>@Localizer["WhyItem3Title"]</h5>
+                    <p>@Localizer["WhyItem3Desc"]</p>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="why-item">
+                    <h5>@Localizer["WhyItem4Title"]</h5>
+                    <p>@Localizer["WhyItem4Desc"]</p>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="why-item">
+                    <h5>@Localizer["WhyItem5Title"]</h5>
+                    <p>@Localizer["WhyItem5Desc"]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Vision Section -->
+<section class="vision-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="section-title text-white">@Localizer["Vision"]</h2>
+                <p class="vision-text">
+                    @Localizer["VisionDescription"]
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Achievements Section -->
+<section class="achievements-section py-5" id="achievements">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="section-title">@Localizer["Achievements"]</h2>
+                <p class="section-subtitle">@Localizer["AchievementsHeader"]</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h4>@Localizer["Excellence Award"]</h4>
+                    <p>@Localizer["Best Quran Academy 2024"]</p>
+                    <span class="achievement-year">2024</span>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <h4>@Localizer["Digital Innovation"]</h4>
+                    <p>@Localizer["Technology in Education Award"]</p>
+                    <span class="achievement-year">2023</span>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h4>@Localizer["Community Impact"]</h4>
+                    <p>@Localizer["Outstanding Service Recognition"]</p>
+                    <span class="achievement-year">2023</span>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h4>@Localizer["Student Success"]</h4>
+                    <p>@Localizer["100% Completion Rate"]</p>
+                    <span class="achievement-year">2024</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Registration Section -->
+<section class="registration-section" id="registration">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="section-title">@Localizer["RegistrationTitle"]</h2>
+                <p class="section-subtitle">@Localizer["RegistrationSubtitle"]</p>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="form-card">
+                    <form id="registration-form" method="post" action="/Home/Register">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">@Localizer["FullName"] *</label>
+                                    <input type="text" class="form-control" name="FullName" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">@Localizer["ChildAge"] *</label>
+                                    <select class="form-control" name="ChildAge" required>
+                                        <option value="">@Localizer["SelectAge"]</option>
+                                        <option value="5">@Localizer["5Years"]</option>
+                                        <option value="6">@Localizer["6Years"]</option>
+                                        <option value="7">@Localizer["7Years"]</option>
+                                        <option value="8">@Localizer["8Years"]</option>
+                                        <option value="9">@Localizer["9Years"]</option>
+                                        <option value="10">@Localizer["10Years"]</option>
+                                        <option value="11">@Localizer["11Years"]</option>
+                                        <option value="12">@Localizer["12Years"]</option>
+                                        <option value="13">@Localizer["13Years"]</option>
+                                        <option value="14">@Localizer["14Years"]</option>
+                                        <option value="15">@Localizer["15Years"]</option>
+                                        <option value="16">@Localizer["16Years"]</option>
+                                        <option value="17">@Localizer["17Years"]</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">@Localizer["Country"] *</label>
+                                    <input type="text" class="form-control" name="Country" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">@Localizer["WhatsApp"] *</label>
+                                    <input type="tel" class="form-control" name="WhatsApp" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">@Localizer["Notes"]</label>
+                            <textarea class="form-control" name="Notes" rows="4"
+                                      placeholder="@Localizer["NotesPlaceholder"]"></textarea>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane"></i> @Localizer["SubmitRequest"]
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+
+<section class="cta-section py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-12">
+                <h2 class="cta-title">@Localizer["CTATitle"]</h2>
+                <p class="cta-subtitle">@Localizer["CTASubtitle"]</p>
+                <div class="cta-buttons">
+                    <a href="#registration" class="btn btn-primary btn-lg me-3">@Localizer["RegisterNow"]</a>
+                    <a class="btn btn-outline-light btn-lg" href="#contact">@Localizer["ContactUs"]</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+
+    <script src="~/js/home.js"></script>
+}

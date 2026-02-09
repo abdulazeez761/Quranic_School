@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="title" xml:space="preserve">
+    <value>Teacher Portal</value>
+  </data>
+  <data name="TeacherPortal" xml:space="preserve">
+    <value>Teacher Portal</value>
+  </data>
+  <data name="SystemName" xml:space="preserve">
+    <value>Quran School Management System</value>
+  </data>
+  <data name="TeacherRole" xml:space="preserve">
+    <value>Teacher</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="Classes" xml:space="preserve">
+    <value>Classes</value>
+  </data>
+  <data name="Students" xml:space="preserve">
+    <value>Students</value>
+  </data>
+  <data name="Wirds" xml:space="preserve">
+    <value>Wirds</value>
+  </data>
+  <data name="Meetings" xml:space="preserve">
+    <value>Meetings</value>
+  </data>
+  <data name="Attendance" xml:space="preserve">
+    <value>Attendance</value>
+  </data>
+</root>

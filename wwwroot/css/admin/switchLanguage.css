@@ -1,0 +1,120 @@
+/* Language Switcher Styles */
+.sidebar-footer {
+  padding: var(--space-md);
+  border-top: 1px solid var(--border-color);
+  margin-top: auto;
+}
+
+.language-switcher {
+  position: relative;
+}
+
+.language-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.language-btn:hover {
+  background: var(--hover-bg);
+  border-color: var(--primary-green);
+}
+
+.language-btn i:first-child {
+  font-size: 1.2rem;
+  color: var(--primary-green);
+}
+
+.language-btn i:last-child {
+  margin-left: auto;
+  transition: transform 0.2s ease;
+}
+
+body[dir='rtl'] .language-btn i:last-child {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.language-btn.active i:last-child {
+  transform: rotate(180deg);
+}
+
+body[dir='rtl'] .language-btn.active i:last-child {
+  transform: rotate(-180deg);
+}
+
+.language-menu {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  margin-bottom: var(--space-xs);
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  list-style: none;
+  padding: var(--space-xs);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.2s ease;
+  z-index: 1000;
+}
+
+.language-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.language-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  color: var(--text-primary);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transition: background 0.2s ease;
+}
+
+.language-option:hover {
+  background: var(--hover-bg);
+}
+
+.language-option i {
+  font-size: 1.2rem;
+  color: transparent;
+}
+
+.language-option.active {
+  background: var(--primary-light);
+  color: var(--primary-green);
+  font-weight: 600;
+}
+
+.language-option.active i {
+  color: var(--primary-green);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar-footer {
+    padding: var(--space-sm);
+  }
+
+  .language-btn {
+    font-size: 0.875rem;
+    padding: var(--space-xs) var(--space-sm);
+  }
+}

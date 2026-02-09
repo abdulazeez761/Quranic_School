@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+@{
+    var isArabic = System.Threading.Thread.CurrentThread.CurrentCulture.Name.StartsWith("ar");
+}
+
+<html lang="@System.Threading.Thread.CurrentThread.CurrentCulture.Name" dir="@(isArabic ? "rtl" : "ltr")">
+
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#648c51" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="#648c51" />
+    <title>@ViewData["Title"] - @Localizer["title"]</title>
+
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="~/css/admin/main.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/mobile-optimization.css" asp-append-version="true" />
+    <link rel="icon"
+          href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+</head>
+
+<body>
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
+        <i class='bx bx-menu'></i>
+    </button>
+
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="admin-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main Navigation">
+            <div class="logo">
+                <h2>@Localizer["title"]</h2>
+            </div>
+
+            <nav>
+                <ul id="navigatorContainer">
+                    <li class="@IsActive("Home", "Index", "Admin")">
+                        <a asp-area="Admin" asp-controller="Home" asp-action="Index"
+                               aria-current="@(IsActive("Home", "Index", "Admin") == "active" ? "page" : "")">
+                            <i class='bx bx-home' aria-hidden="true"></i>
+                            <span>@Localizer["Institute_Info"]</span>
+                        </a>
+                    </li>
+                    <li class="@IsActive("Teachers", "Index", "Admin")">
+                        <a asp-area="Admin" asp-controller="Teachers" asp-action="Index"
+                               aria-current="@(IsActive("Teachers", "Index", "Admin") == "active" ? "page" : "")">
+                            <i class='bx bx-chalkboard' aria-hidden="true"></i>
+                            <span>@Localizer["Teacher_Management"] </span>
+                        </a>
+                    </li>
+                    <li class="@IsActive("Students", "Index", "Admin")">
+                        <a asp-area="Admin" asp-controller="Students" asp-action="Index"
+                               aria-current="@(IsActive("Students", "Index", "Admin") == "active" ? "page" : "")">
+                            <i class='bx bx-user' aria-hidden="true"></i>
+                            <span>@Localizer["Student_Management"]</span>
+                        </a>
+                    </li>
+                    <li class="@IsActive("Parents", "Index", "Admin")">
+                        <a asp-area="Admin" asp-controller="Parents" asp-action="Index"
+                               aria-current="@(IsActive("Parents", "Index", "Admin") == "active" ? "page" : "")">
+                            <i class='bx bx-user-circle' aria-hidden="true"></i>
+                            <span>@Localizer["Parent_Management"]</span>
+                        </a>
+                    </li>
+                    <li class="@IsActive("Classes", "Index", "Admin")">
+                        <a asp-area="Admin" asp-controller="Classes" asp-action="Index"
+                               aria-current="@(IsActive("Classes", "Index", "Admin") == "active" ? "page" : "")">
+                            <i class='bx bx-group' aria-hidden="true"></i>
+                            <span>@Localizer["Session_Management"]</span>
+                        </a>
+                    </li>
+                    <li class="@IsActive("TeacherAttendance", "Index", "Admin")">
+                        <a asp-area="Admin" asp-controller="TeacherAttendance" asp-action="Index"
+                               aria-current="@(IsActive("TeacherAttendance", "Index", "Admin") == "active" ? "page" : "")">
+                            <i class='bx bx-user-check' aria-hidden="true"></i>
+                            <span>@Localizer["Teacher_Attendance"]</span>
+                        </a>
+                    </li>
+                    @* <li class="@IsActive("StudentAttendance", "Index", "Admin")">
+                        <a asp-area="Admin" asp-controller="StudentAttendance" asp-action="Index"
+                               aria-current="@(IsActive("StudentAttendance", "Index", "Admin") == "active" ? "page" : "")">
+                            <i class='bx bx-user-check' aria-hidden="true"></i>
+                            <span>@Localizer["Student_Attendance"]</span>
+                        </a>
+                    </li> *@
+                    @* <li class="@IsActive("Videos", "Index", "Admin")">
+                        <a asp-area="Admin" asp-controller="Videos" asp-action="Index"
+                            aria-current="@(IsActive("Videos", "Index", "Admin") == "active" ? "page" : "")">
+                            <i class='bx bx-video' aria-hidden="true"></i>
+                            <span>@Localizer["Post"]</span>
+                        </a>
+                    </li> *@
+                </ul>
+
+
+                <div class="sidebar-footer">
+                    <div class="language-switcher">
+                        <button class="language-btn" id="languageToggle" aria-label="Switch Language">
+                            <i class='bx bx-globe'></i>
+                            <span id="currentLang">العربية</span>
+                            <i class='bx bx-chevron-down'></i>
+                        </button>
+                        <ul class="language-menu" id="languageMenu">
+                            <li>
+                                <a href="#" data-lang="ar" class="language-option active">
+                                    <i class='bx bx-check'></i>
+                                    <span>العربية</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" data-lang="en" class="language-option">
+                                    <i class='bx bx-check'></i>
+                                    <span>English</span>
+                                </a>
+
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <a asp-area="" asp-controller="Auth" asp-action="Logout" class="logout">
+                    <i class='bx bx-log-out' aria-hidden="true"></i>
+                    <span>@Localizer["LogOut"]</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content" role="main">
+            <section class="main-content">
+                @RenderBody()
+            </section>
+        </main>
+    </div>
+
+<!-- Admin JS -->
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+<script src="~/js/admin-layout.js" asp-append-version="true"></script>
+<script src="~/js/languageSwitcher.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+
+@functions {
+    string IsActive(string controller, string action, string area = "")
+    {
+        var routeData = Context.Request.RouteValues;
+        var currentController = routeData["controller"]?.ToString();
+        var currentAction = routeData["action"]?.ToString();
+        var currentArea = routeData["area"]?.ToString() ?? "";
+
+        return (string.Equals(controller, currentController, StringComparison.OrdinalIgnoreCase)) ? "active" : "";
+    }
+}
+</body>
+
+</html>

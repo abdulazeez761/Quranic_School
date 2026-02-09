@@ -1,0 +1,138 @@
+@using Hifz.Common.Helper
+@model Hifz.Models.Student
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<link rel="stylesheet" href="~/css/student/dashboard.css" asp-append-version="true" />
+
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+<div class="dashboard-container"
+     dir="@(System.Globalization.CultureInfo.CurrentUICulture.Name.StartsWith("ar") ? "rtl" : "ltr")">
+    <div class="dashboard-header">
+        <i class='bx bx-home header-icon'></i>
+        <h1 class="dashboard-title">@Localizer["Welcome"], @Model.StudentInfo.FirstName!</h1>
+    </div>
+
+    <!-- Student Info Cards -->
+    <div class="info-cards-grid">
+        <div class="info-card">
+            <div class="card-icon">
+                <i class='bx bx-book-bookmark'></i>
+            </div>
+            <div class="card-content">
+                <h3>@Localizer["MemorizedJuz"]</h3>
+                <p class="card-value">@Model.MemorizedJuz / 30</p>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="card-icon">
+                <i class='bx bx-star'></i>
+            </div>
+            <div class="card-content">
+                <h3>@Localizer["TajwidLevel"]</h3>
+                <p class="card-value">@Localizer[Model.TajwidLevel.ToString()]</p>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="card-icon">
+                <i class='bx bx-calendar-check'></i>
+            </div>
+            <div class="card-content">
+                <h3>@Localizer["AttendanceRate"]</h3>
+                <p class="card-value">@GetAttendanceRate()%</p>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="card-icon">
+                <i class='bx bx-task'></i>
+            </div>
+            <div class="card-content">
+                <h3>@Localizer["PendingWirds"]</h3>
+                <p class="card-value">@(((IEnumerable<Hifz.Models.WirdAssignment>)ViewBag.PendingWirds).Count())</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Section -->
+    <div class="activity-section">
+        <div class="section-half">
+            <div class="section-header">
+                <h2>@Localizer["RecentAttendance"]</h2>
+                <a asp-area="Student" asp-controller="Attendance" asp-action="Index" class="view-all-link">
+                    @Localizer["ViewAll"] <i class='bx bx-right-arrow-alt'></i>
+                </a>
+            </div>
+            <div class="attendance-list">
+                @if (((IEnumerable<Hifz.Models.StudentAttendance>)ViewBag.RecentAttendance).Any())
+                {
+                    @foreach (var attendance in ViewBag.RecentAttendance)
+                    {
+                        var statusClass = attendance.Status.ToString().ToLower();
+                        <div class="attendance-item">
+                            <div class="attendance-date">
+                                <i class='bx bx-calendar'></i>
+                                @attendance.Date.ToString("MMM dd, yyyy")
+                            </div>
+                            <span class="attendance-status status-@statusClass">
+                                @Localizer[attendance.Status.ToString()]
+                            </span>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="no-data">@Localizer["NoAttendanceRecords"]</p>
+                }
+            </div>
+        </div>
+
+        <div class="section-half">
+            <div class="section-header">
+                <h2>@Localizer["PendingWirds"]</h2>
+                <a asp-area="Student" asp-controller="Wird" asp-action="Index" class="view-all-link">
+                    @Localizer["ViewAll"] <i class='bx bx-right-arrow-alt'></i>
+                </a>
+            </div>
+            <div class="wird-list">
+                @if (((IEnumerable<Hifz.Models.WirdAssignment>)ViewBag.PendingWirds).Any())
+                {
+                    @foreach (var wird in ViewBag.PendingWirds)
+                    {
+                        <div class="wird-item">
+                            <div class="wird-info">
+                                <i class='bx bx-book-open'></i>
+                                <div>
+                                    <p class="wird-title">@Formatting.GetLocalizedSurahName(wird.FromSurah) -
+                                        @Formatting.GetLocalizedSurahName(wird.ToSurah)</p>
+                                        <p class="wird-date">@Localizer["Assigned"]: @wird.AssignedDate.ToString("MMM dd, yyyy")</p>
+                                    </div>
+                                </div>
+                                <span class="wird-status">@Localizer[wird.Status.ToString()]</span>
+                            </div>
+                        }
+                    }
+                else
+                    {
+                        <p class="no-data">@Localizer["NoPendingWirds"]</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+@functions {
+    private int GetAttendanceRate()
+    {
+        var attendanceList = ViewBag.RecentAttendance as IEnumerable<Hifz.Models.StudentAttendance>;
+        if (attendanceList == null || !attendanceList.Any()) return 0;
+
+        var presentCount = attendanceList.Count(a => a.Status == Hifz.Models.AttendanceStatus.Present);
+        return (int)((double)presentCount / attendanceList.Count() * 100);
+    }
+}
