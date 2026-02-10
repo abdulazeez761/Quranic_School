@@ -61,7 +61,6 @@ Hifz/
 ├── Common/             # أدوات مساعدة (Hashing, Formatting)
 ├── Views/              # صفحات Razor المشتركة
 ├── Resources/          # ملفات الترجمة
-├── Migrations/         # ملفات ترحيل قاعدة البيانات
 └── wwwroot/            # الملفات الثابتة (CSS, JS, Icons)
 ```
 
