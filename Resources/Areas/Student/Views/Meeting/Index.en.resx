@@ -9,4 +9,5 @@
   <data name="JoinMeeting" xml:space="preserve"><value>Join Meeting</value></data>
   <data name="NoActiveMeetings" xml:space="preserve"><value>No Active Meetings</value></data>
   <data name="NoActiveMeetingsDesc" xml:space="preserve"><value>There are no active meetings at the moment. Check back later or wait for your teacher to start a meeting.</value></data>
+  <data name="PageTitle" xml:space="preserve"><value>Online Classes</value></data>
 </root>

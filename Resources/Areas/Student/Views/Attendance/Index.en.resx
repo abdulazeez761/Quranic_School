@@ -13,4 +13,5 @@
   <data name="Class" xml:space="preserve"><value>Class</value></data>
   <data name="Status" xml:space="preserve"><value>Status</value></data>
   <data name="NoAttendanceRecordsFound" xml:space="preserve"><value>No attendance records found.</value></data>
+  <data name="PageTitle" xml:space="preserve"><value>Attendance Record</value></data>
 </root>

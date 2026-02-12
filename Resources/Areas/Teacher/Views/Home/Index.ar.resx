@@ -12,4 +12,5 @@
   <data name="NoDaysSet" xml:space="preserve">
     <value>لم يتم تحديد أيام</value>
   </data>
+  <data name="PageTitle" xml:space="preserve"><value>حلقاتي</value></data>
 </root>

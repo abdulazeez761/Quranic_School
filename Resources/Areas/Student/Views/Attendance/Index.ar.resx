@@ -13,4 +13,5 @@
   <data name="Class" xml:space="preserve"><value>الحلقة</value></data>
   <data name="Status" xml:space="preserve"><value>الحالة</value></data>
   <data name="NoAttendanceRecordsFound" xml:space="preserve"><value>لا توجد سجلات حضور.</value></data>
+  <data name="PageTitle" xml:space="preserve"><value>سجل الحضور</value></data>
 </root>

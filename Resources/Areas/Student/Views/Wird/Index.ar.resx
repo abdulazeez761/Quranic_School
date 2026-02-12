@@ -35,4 +35,5 @@
   <data name="good" xml:space="preserve"><value>جيد</value></data>
   <data name="veryGood" xml:space="preserve"><value>جيد جداً</value></data>
   <data name="excellent" xml:space="preserve"><value>ممتاز</value></data>
+  <data name="PageTitle" xml:space="preserve"><value>الأوراد اليومية</value></data>
 </root>

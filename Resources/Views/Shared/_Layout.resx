@@ -161,4 +161,8 @@
     <value>Subscriptions</value>
     <comment/>
   </data>
+  <data name="AppName" xml:space="preserve">
+    <value>Hafiz Academy</value>
+    <comment/>
+  </data>
 </root>

@@ -23,4 +23,5 @@
   <data name="First" xml:space="preserve"><value>Beginner</value></data>
   <data name="Second" xml:space="preserve"><value>Intermediate</value></data>
   <data name="Third" xml:space="preserve"><value>Advanced</value></data>
+  <data name="PageTitle" xml:space="preserve"><value>Student Dashboard</value></data>
 </root>

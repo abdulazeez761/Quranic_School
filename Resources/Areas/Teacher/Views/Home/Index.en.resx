@@ -12,4 +12,5 @@
   <data name="NoDaysSet" xml:space="preserve">
     <value>No days set</value>
   </data>
+  <data name="PageTitle" xml:space="preserve"><value>My Classes</value></data>
 </root>

@@ -24,4 +24,5 @@
   <data name="First" xml:space="preserve"><value>تمهيدي/مبتدئ</value></data>
   <data name="Second" xml:space="preserve"><value>متوسط</value></data>
   <data name="Third" xml:space="preserve"><value>متقدم</value></data>
+  <data name="PageTitle" xml:space="preserve"><value>الملف الشخصي</value></data>
 </root>

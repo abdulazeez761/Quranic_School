@@ -117,4 +117,5 @@
   <data name="ConfirmDelete" xml:space="preserve">
     <value>هل أنت متأكد من حذف ورد</value>
   </data>
+  <data name="PageTitle" xml:space="preserve"><value>الأوراد</value></data>
 </root>

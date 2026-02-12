@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = "Error";
+    ViewData["Title"] = Localizer["PageTitle"].Value;
     Layout = (ViewData["Role"]?.ToString() == "Admin")
     ? "~/Views/Shared/_AdminLayout.cshtml"
     : "~/Views/Shared/_Layout.cshtml";

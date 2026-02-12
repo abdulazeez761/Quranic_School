@@ -48,4 +48,5 @@
   <data name="Third" xml:space="preserve">
     <value>متقدم</value>
   </data>
+  <data name="PageTitle" xml:space="preserve"><value>الطلاب</value></data>
 </root>

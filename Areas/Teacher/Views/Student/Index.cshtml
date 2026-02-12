@@ -3,6 +3,10 @@
 
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
+@{
+    ViewData["Title"] = Localizer["PageTitle"].Value;
+}
+
 <link rel="stylesheet" href="~/css/teacher/Students.css" />
 <link rel="stylesheet" href="~/css/teacher/AssignWirdModal.css" /> @* the append vresion for caching the page*@
 

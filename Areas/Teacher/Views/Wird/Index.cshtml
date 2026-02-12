@@ -1,6 +1,11 @@
 ﻿@using Hifz.Common.Helper
 @model IEnumerable<Hifz.Models.WirdAssignment>
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["PageTitle"].Value;
+}
+
 <link rel="stylesheet" href="~/css/teacher/Wirds.css" />
 
 

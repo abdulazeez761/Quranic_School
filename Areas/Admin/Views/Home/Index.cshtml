@@ -1,5 +1,6 @@
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 @{
-    ViewData["Title"] = "لوحة التحكم";
+    ViewData["Title"] = Localizer["PageTitle"].Value;
 }
 
 <!-- Stats Cards -->
