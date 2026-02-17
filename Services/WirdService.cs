@@ -50,11 +50,11 @@ namespace Hifz.Services
         {
             DateTime from = string.IsNullOrEmpty(fromDate)
                 ? DateTime.Today
-                : DateTime.Parse(fromDate);
+                : DateTime.Parse(fromDate).Date;
 
             DateTime to = string.IsNullOrEmpty(toDate)
-                ? DateTime.Today.AddDays(1)
-                : DateTime.Parse(toDate);
+                ? DateTime.Today
+                : DateTime.Parse(toDate).Date;
 
             return await _wirdRepository.GetWirdAssignmentsByClassIdAsync(classID, from, to);
         }

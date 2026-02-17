@@ -31,11 +31,15 @@ namespace Hifz.Repositories
             DateTime toDate
         )
         {
+            var from = fromDate.Date;
+            var toExclusive = toDate.Date.AddDays(1);
+
             var wirds = await _context
                 .WirdAssignments.Include(w => w.Student)
                 .Include(w => w.Student.StudentInfo)
                 .Where(wird => wird.Student.Classes.Any(cl => cl.Id == classID))
-                .Where(w => w.AssignedDate >= fromDate && w.AssignedDate <= toDate)
+                .Where(w => w.AssignedDate >= from && w.AssignedDate < toExclusive)
+                .OrderByDescending(w => w.AssignedDate)
                 .ToListAsync();
 
             return wirds;
