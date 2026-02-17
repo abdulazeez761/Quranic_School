@@ -41,7 +41,7 @@ namespace Hifz.Areas.Student.Controllers
             ViewBag.Student = student;
             ViewBag.RecentAttendance = attendance.OrderByDescending(a => a.Date).Take(5);
             ViewBag.PendingWirds = wirds
-                .Where(w => !w.IsCompleted)
+                .Where(w => w.Status == Models.AssignmentStatus.notSet)
                 .OrderBy(w => w.AssignedDate)
                 .Take(5);
 

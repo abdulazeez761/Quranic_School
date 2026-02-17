@@ -1,4 +1,5 @@
 @using Hifz.Common.Helper
+@using Hifz.Models
 @model Hifz.DTOs.Wird.PaginatedWirdsResponse
 
 @{
@@ -55,7 +56,7 @@
                        class="filter-tab @(string.IsNullOrEmpty(currentType) ? "active" : "")">
                     @Localizer["AllTypes"]
                 </a>
-                @foreach (var type in Enum.GetValues(typeof(Hifz.Models.AssignmentType)))
+                @foreach (var type in Enum.GetValues(typeof(AssignmentType)))
                 {
                     var typeName = type.ToString();
                     <a href="@Url.Action("Index", "Wird", new { area = "Student", status = currentStatus, type = typeName, page = 1, pageSize })"
@@ -110,7 +111,7 @@
         {
             @foreach (var wird in Model.Wirds)
             {
-                var statusClass = wird.IsCompleted ? "completed" : "pending";
+                var statusClass = wird.Status == AssignmentStatus.notSet ? "pending" : "completed";
                 var typeClass = wird.Type.ToString().ToLower();
 
                 <div class="wird-card @statusClass">
@@ -120,7 +121,7 @@
                             <span>@Localizer[wird.Type.ToString()]</span>
                         </div>
                         <span class="wird-status-badge status-@statusClass">
-                            @(wird.IsCompleted? Localizer["Completed"] : Localizer["Pending"])
+                            @(wird.Status == AssignmentStatus.notSet ? Localizer["Pending"] : Localizer["Completed"])
                         </span>
                     </div>
 
