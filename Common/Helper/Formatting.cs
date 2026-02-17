@@ -252,6 +252,7 @@ namespace Hifz.Common.Helper
         {
             var isArabic = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "ar";
             var dict = isArabic ? ArabicSurahNames : EnglishSurahNames;
+            surah = surah + 1; // Adjust for zero-based enum
             return dict.TryGetValue(surah, out var name) ? name : surah.ToString();
         }
 
