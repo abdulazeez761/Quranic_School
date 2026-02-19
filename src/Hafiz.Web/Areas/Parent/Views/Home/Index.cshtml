@@ -1,0 +1,248 @@
+@model Hafiz.Models.Parent
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["Dashboard"];
+    var children = ViewBag.Children as List<Hafiz.Models.Student> ?? new List<Hafiz.Models.Student>();
+    var childrenWithActiveMeetings = ViewBag.ChildrenWithActiveMeetings as List<Hafiz.Models.Student> ?? new
+List<Hafiz.Models.Student>();
+    var attendanceRate = (double)(ViewBag.AttendanceRate ?? 0);
+    var totalWirds = (int)(ViewBag.TotalWirds ?? 0);
+    var completedWirds = (int)(ViewBag.CompletedWirds ?? 0);
+    var totalMemorizedJuz = (int)(ViewBag.TotalMemorizedJuz ?? 0);
+    var recentActivities = ViewBag.RecentActivities as List<dynamic> ?? new List<dynamic>();
+    double wirdCompletionRate = totalWirds > 0 ? Math.Round((double)completedWirds / totalWirds * 100, 1) : 0;
+}
+
+<link rel="stylesheet" href="~/css/parent/dashboard.css" asp-append-version="true" />
+
+<div class="dashboard-container">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <div class="welcome-content">
+            <div class="welcome-text">
+                <h1 class="page-title">@Localizer["WelcomeMessage"], @Model.ParentInfo.FirstName!</h1>
+                <p class="page-subtitle">@Localizer["DashboardSubtitle"]</p>
+            </div>
+            <div class="welcome-date">
+                <i class='bx bx-calendar'></i>
+                <span>@DateTime.Now.ToString("dddd, dd MMMM yyyy")</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Meetings Alert -->
+    @if (childrenWithActiveMeetings.Any())
+    {
+        <div class="active-meetings-section">
+            <div class="section-title-row">
+                <h2 class="section-title">
+                    <i class='bx bx-broadcast bx-flashing'></i>
+                    @Localizer["ActiveMeetings"]
+                </h2>
+                <span class="live-count-badge">@childrenWithActiveMeetings.Count @Localizer["LiveNow"]</span>
+            </div>
+            <div class="meetings-grid">
+                @foreach (var child in childrenWithActiveMeetings)
+                {
+                    var activeClass = child.Classes?.FirstOrDefault(c => c.IsMeetingActive);
+                    if (activeClass != null)
+                    {
+                        <div class="meeting-card active-meeting">
+                            <div class="meeting-icon">
+                                <i class='bx bx-broadcast'></i>
+                            </div>
+                            <div class="meeting-info">
+                                <h3>@child.StudentInfo.FirstName @child.StudentInfo.SecondName</h3>
+                                <p class="meeting-class">@activeClass.Name</p>
+                                <p class="meeting-status">
+                                    <span class="pulse-dot"></span>
+                                    @Localizer["MeetingInProgress"]
+                                </p>
+                            </div>
+                            <a asp-area="Parent" asp-controller="Meeting" asp-action="Join" asp-route-classId="@activeClass.Id"
+                                   asp-route-studentId="@child.UserId" class="join-meeting-btn-small">
+                                <i class='bx bx-video-plus'></i>
+                                @Localizer["JoinNow"]
+                            </a>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Stats Overview Cards -->
+    <div class="stats-section">
+        <h2 class="section-title">
+            <i class='bx bx-bar-chart-alt-2'></i>
+            @Localizer["QuickStats"]
+        </h2>
+        <div class="stats-grid">
+            <div class="stat-card stat-card-children">
+                <div class="stat-icon stat-icon-children">
+                    <i class='bx bx-group'></i>
+                </div>
+                <div class="stat-info">
+                    <h3 class="stat-value">@children.Count</h3>
+                    <p class="stat-label">@Localizer["TotalChildren"]</p>
+                </div>
+            </div>
+
+            <div class="stat-card stat-card-attendance">
+                <div class="stat-icon stat-icon-attendance">
+                    <i class='bx bx-calendar-check'></i>
+                </div>
+                <div class="stat-info">
+                    <h3 class="stat-value">@attendanceRate%</h3>
+                    <p class="stat-label">@Localizer["AttendanceRate"]</p>
+                </div>
+                <div class="stat-progress">
+                    <div class="progress-bar" style="width: @attendanceRate%"></div>
+                </div>
+            </div>
+
+            <div class="stat-card stat-card-wirds">
+                <div class="stat-icon stat-icon-wirds">
+                    <i class='bx bx-book-bookmark'></i>
+                </div>
+                <div class="stat-info">
+                    <h3 class="stat-value">@completedWirds<span class="stat-total">/@totalWirds</span></h3>
+                    <p class="stat-label">@Localizer["CompletedWirds"]</p>
+                </div>
+                <div class="stat-progress">
+                    <div class="progress-bar progress-blue" style="width: @wirdCompletionRate%"></div>
+                </div>
+            </div>
+
+            @* <div class="stat-card stat-card-juz">
+                <div class="stat-icon stat-icon-juz">
+                    <i class='bx bx-book-open'></i>
+                </div>
+                <div class="stat-info">
+                    <h3 class="stat-value">@totalMemorizedJuz<span class="stat-total">/30</span></h3>
+                    <p class="stat-label">@Localizer["TotalMemorizedJuz"]</p>
+                </div>
+                <div class="stat-progress">
+                    <div class="progress-bar progress-amber"
+                         style="width: @(Math.Round((double)totalMemorizedJuz / Math.Max(children.Count * 30, 1) * 100))%">
+                    </div>
+                </div>
+            </div> *@
+        </div>
+    </div>
+
+    <!-- Children Summary Cards -->
+    <div class="children-section">
+        <div class="section-title-row">
+            <h2 class="section-title">
+                <i class='bx bx-group'></i>
+                @Localizer["MyChildren"]
+            </h2>
+            <a asp-area="Parent" asp-controller="Children" asp-action="Index" class="view-all-link">
+                @Localizer["ViewAll"] <i class='bx bx-chevron-right'></i>
+            </a>
+        </div>
+
+        @if (children.Any())
+        {
+            <div class="children-grid">
+                @foreach (var child in children)
+                {
+                    var childClass = child.Classes?.FirstOrDefault();
+                    bool hasMeeting = childClass?.IsMeetingActive ?? false;
+
+                    <div class="child-card @(hasMeeting ? "has-meeting" : "")">
+                        @if (hasMeeting)
+                        {
+                            <div class="card-meeting-badge">
+                                <span class="pulse-dot-sm"></span> @Localizer["LiveNow"]
+                            </div>
+                        }
+                        <div class="child-avatar">
+                            <i class='bx bx-user'></i>
+                        </div>
+                        <div class="child-info">
+                            <h3 class="child-name">@child.StudentInfo.FirstName @child.StudentInfo.SecondName</h3>
+                            <p class="child-class">
+                                <i class='bx bx-book'></i>
+                                @(childClass?.Name ?? Localizer["NoClass"].ToString())
+                            </p>
+                            <div class="child-mini-stats">
+                                <span class="mini-stat" title="@Localizer["MemorizedJuz"]">
+                                    <i class='bx bx-book-open'></i> @child.MemorizedJuz @Localizer["Juz"]
+                                </span>
+                                <span class="mini-stat" title="@Localizer["TajwidLevel"]">
+                                    <i class='bx bx-star'></i> @Localizer[$"TajwidLevel_{child.TajwidLevel}"]
+                                </span>
+                            </div>
+                        </div>
+                        <div class="child-actions">
+                            <a asp-area="Parent" asp-controller="Children" asp-action="Details"
+                                   asp-route-studentId="@child.UserId" class="view-details-btn">
+                                <i class='bx bx-show'></i>
+                                @Localizer["ViewDetails"]
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="no-children-message">
+                <div class="empty-illustration">
+                    <i class='bx bx-user-plus'></i>
+                </div>
+                <h3>@Localizer["NoChildren"]</h3>
+                <p>@Localizer["NoChildrenDescription"]</p>
+            </div>
+        }
+    </div>
+
+    <!-- Recent Activity Timeline -->
+    @if (recentActivities.Any())
+    {
+        <div class="activity-section">
+            <h2 class="section-title">
+                <i class='bx bx-time-five'></i>
+                @Localizer["RecentActivity"]
+            </h2>
+            <div class="activity-timeline">
+                @foreach (var activity in recentActivities)
+                {
+                    string actType = activity.Type;
+                    string actStatus = activity.Status;
+                    string iconClass = actType == "attendance" ? "bx-calendar-check" : "bx-book-bookmark";
+                    string colorClass = actType == "attendance"
+                        ? (actStatus == "Present" || actStatus == "Late" ? "activity-success" : "activity-danger")
+                        : (actStatus == "Completed" ? "activity-success" : "activity-warning");
+
+                    <div class="activity-item @colorClass">
+                        <div class="activity-icon">
+                            <i class='bx @iconClass'></i>
+                        </div>
+                        <div class="activity-content">
+                            <p class="activity-text">
+                                <strong>@activity.ChildName</strong> —
+                                @if (actType == "attendance")
+                                {
+                                    <span>@Localizer["AttendanceRecorded"]: @Localizer[$"AttendanceStatus_{actStatus}"]</span>
+                                }
+                                else
+                                {
+                                    <span>@Localizer["WirdAssignment"]: @Localizer[$"AssignmentType_{activity.WirdType}"]
+                                        (@Localizer[$"ActivityStatus_{actStatus}"])</span>
+                                    }
+                                </p>
+                                <span class="activity-date">
+                                    <i class='bx bx-time-five'></i>
+                                    @((DateTime)activity.Date)
+                                </span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>

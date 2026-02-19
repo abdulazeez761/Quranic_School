@@ -1,0 +1,256 @@
+@model IEnumerable<Hafiz.Models.Teacher>
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = @Localizer["Title"];
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-between align-center mb-lg flex-wrap gap-md">
+    <div>
+        <h2 class="section-title mb-sm">
+            <i class='bx bx-chalkboard' style="color: var(--primary-green);"></i>
+            @Localizer["Teachers_Management"]
+        </h2>
+        <p class="text-medium">@Localizer["Show_Manage"]</p>
+    </div>
+    <div class="btn-group">
+        <a asp-action="Create" class="btn btn-primary">
+            <i class='bx bx-plus'></i>
+            <span>@Localizer["Add"]</span>
+        </a>
+        <button class="btn btn-outline" id="exportBtn">
+            <i class='bx bx-download'></i>
+            <span>@Localizer["Export"]</span>
+        </button>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+@{
+    var totalTeachers = Model.Count();
+    var totalClasses = Model.SelectMany(t => t.Classes).Select(c => c.Id).Distinct().Count();
+    var teachersWithClasses = Model.Count(t => t.Classes.Any());
+    var teachersWithoutClasses = totalTeachers - teachersWithClasses;
+}
+
+<div class="grid-4 mb-lg">
+    <div class="card card-stat">
+        <div class="card-stat-icon">
+            <i class='bx bx-user'></i>
+        </div>
+        <div class="card-stat-content">
+            <div class="card-stat-label">@Localizer["Total_Teachers"]</div>
+            <div class="card-stat-value">@totalTeachers</div>
+        </div>
+    </div>
+
+    <div class="card card-stat">
+        <div class="card-stat-icon" style="background: var(--success);">
+            <i class='bx bx-check-circle'></i>
+        </div>
+        <div class="card-stat-content">
+            <div class="card-stat-label">@Localizer["Has_Sessions"]</div>
+            <div class="card-stat-value">@teachersWithClasses</div>
+        </div>
+    </div>
+
+    <div class="card card-stat">
+        <div class="card-stat-icon" style="background: var(--warning);">
+            <i class='bx bx-error'></i>
+        </div>
+        <div class="card-stat-content">
+            <div class="card-stat-label">@Localizer["Without_sessions"]</div>
+            <div class="card-stat-value">@teachersWithoutClasses</div>
+        </div>
+    </div>
+
+    <div class="card card-stat">
+        <div class="card-stat-icon" style="background: var(--info);">
+            <i class='bx bx-group'></i>
+        </div>
+        <div class="card-stat-content">
+            <div class="card-stat-label">@Localizer["Number_Sessions"]</div>
+            <div class="card-stat-value">@totalClasses</div>
+        </div>
+    </div>
+</div>
+
+<!-- Teachers Table -->
+<div class="table-container">
+    <!-- Search and Filter Toolbar -->
+    <div class="table-toolbar">
+        <div class="table-search">
+            <input type="text" id="searchInput" placeholder="@Localizer["Using_first_Second_Name"]">
+            <i class='bx bx-search'></i>
+        </div>
+        <div class="table-filters">
+            <select class="form-select form-input-sm" id="classFilter">
+                <option value="">@Localizer["All_Sessions"]</option>
+                @{
+                    var allClasses = Model.SelectMany(s => s.Classes)
+                    .Select(c => c.Name)
+                    .Distinct()
+                    .OrderBy(name => name);
+
+                    foreach (var className in allClasses)
+                    {
+                        <option value="@className">@className</option>
+                    }
+                }
+            </select>
+            <button id="clearFilters" class="btn btn-outline btn-sm">
+                <i class='bx bx-refresh'></i>
+                <span class="d-none d-md-inline">@Localizer["Reset"]</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrapper">
+        <table class="table table-responsive-cards">
+            <thead>
+                <tr>
+                    <th class="text-center" style="width: 50px;">#</th>
+                    <th class="sortable">
+                        <i class='bx bx-user'></i> @Localizer["First"]
+                    </th>
+                    <th class="sortable">
+                        <i class='bx bx-user'></i> @Localizer["Second"]
+                    </th>
+                    <th>
+                        <i class='bx bx-user'></i> @Localizer["Username"]
+                    </th>
+                    <th>
+                        <i class='bx bx-phone'></i> @Localizer["Phone_Number"]
+                    </th>
+                    <th>
+                        <i class='bx bx-group'></i> @Localizer["Sessions"]
+                    </th>
+                    <th class="text-center" style="width: 140px;">@Localizer["Operations"]</th>
+                </tr>
+            </thead>
+            <tbody id="teachersTableBody">
+                @if (Model != null && Model.Any())
+                {
+                    int index = 1;
+                    foreach (var teacher in Model)
+                    {
+                        var classes = string.Join(", ", teacher.Classes.Select(c => c.Name));
+                        var classesData = string.Join(",", teacher.Classes.Select(c => c.Name));
+                        var hasClasses = teacher.Classes.Any();
+
+                        <tr class="table-row" data-firstname="@teacher.TeacherInfo.FirstName.ToLower()"
+                            data-secondname="@teacher.TeacherInfo.SecondName.ToLower()" data-classes="@classesData">
+
+                            <td class="text-center text-medium" data-label="#">@index</td>
+
+                            <td data-label="@Localizer["First"]">
+                                <div class="d-flex align-center gap-sm">
+                                    <div class="avatar-sm"
+                                        style="background: var(--primary-green); color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                                        @teacher.TeacherInfo.FirstName.Substring(0, 1)
+                                    </div>
+                                    <span class="fw-medium">@teacher.TeacherInfo.FirstName</span>
+                                </div>
+                            </td>
+
+                            <td data-label="@Localizer["Second"]">
+                                <span class="fw-medium">@teacher.TeacherInfo.SecondName</span>
+                            </td>
+
+                            <td data-label="@Localizer["Username"]">
+                                <div class="d-flex align-center gap-xs">
+                                    <i class='bx bx-user text-medium'></i>
+                                    <span class="text-truncate" style="max-width: 150px;" title="@teacher.TeacherInfo.Username">
+                                        @teacher.TeacherInfo.Username
+                                    </span>
+                                </div>
+                            </td>
+
+                            <td data-label="@Localizer["Phone_Number"]">
+                                <div class="d-flex align-center gap-xs">
+                                    <i class='bx bx-phone text-medium'></i>
+                                    <span dir="ltr">@teacher.TeacherInfo.PhoneNumber</span>
+                                </div>
+                            </td>
+
+                            <td data-label="@Localizer["Sessions"]">
+                                @if (hasClasses)
+                                {
+                                    <div class="d-flex flex-wrap gap-xs">
+                                        @foreach (var className in teacher.Classes.Select(c => c.Name))
+                                        {
+                                            <span class="chip chip-primary">@className</span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-warning">
+                                        <i class='bx bx-info-circle'></i> @Localizer["NO_Sesstions"]
+                                    </span>
+                                }
+                            </td>
+
+                            <td data-label="@Localizer["Operations"]">
+                                <div class="table-actions justify-center">
+                                    <a asp-action="Details" asp-route-id="@teacher.UserId" class="table-action-btn"
+                                        data-tooltip="@Localizer["show"]">
+                                        <i class='bx bx-show'></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@teacher.UserId" class="table-action-btn"
+                                        data-tooltip="@Localizer["Edit"]">
+                                        <i class='bx bx-edit'></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@teacher.UserId" class="table-action-btn danger"
+                                        data-confirm-delete="@Localizer["Delete_confirm"] @teacher.TeacherInfo.FirstName @teacher.TeacherInfo.SecondName؟"
+                                        data-tooltip="@Localizer["Delete"]">
+                                        <i class='bx bx-trash'></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        index++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7">
+                            <div class="table-empty">
+                                <i class='bx bx-user-x'></i>
+                                <h3 class="table-empty-title">@Localizer["No_Data"]</h3>
+                                <p class="text-medium">@Localizer["Not_Added_yet"]</p>
+                                <a asp-action="Create" class="btn btn-primary mt-md">
+                                    <i class='bx bx-plus'></i> @Localizer["Add"]
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Table Footer with Pagination -->
+    <div class="table-footer">
+        <div class="table-info">
+            @Localizer["show"] <strong><span id="visibleCount">@totalTeachers</span></strong> @Localizer["outOf"]
+            <strong>@totalTeachers</strong> @Localizer["teaher"]
+        </div>
+        <!-- Optional: Add pagination here if needed -->
+    </div>
+</div>
+
+
+
+
+@section scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="~/js/teacher/search.js"></script>
+    <script src="~/js/confirmModal.js"></script>
+
+
+}

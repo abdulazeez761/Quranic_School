@@ -1,0 +1,76 @@
+@{
+    <link rel="stylesheet" href="~/css/hafiz.css" />
+}
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+<section>
+    <section class="video-section py-5" id="testimonials">
+        <div class="container">
+            <div class="row text-center mb-5">
+                <div class="col-12">
+                    <h2 class="section-title">@Localizer["Stories"]</h2>
+                    <p class="section-subtitle">@Localizer["StoriesDescription"]</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <div class="row justify-content-center mb-4">
+                <div class="col-lg-10">
+                    <ul class="nav nav-tabs hafiz-nav-tabs justify-content-center video-tabs" id="videoTabs"
+                        role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="hafiz-nav-link  nav-link active" id="all-tab" data-bs-toggle="tab"
+                                data-bs-target="#all-videos" type="button" role="tab">@Localizer["All"]</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="hafiz-nav-link nav-link" id="Hafiz-tab" data-bs-toggle="tab"
+                                data-bs-target="#Hafiz-videos" type="button" role="tab">@Localizer["Student"]</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="hafiz-nav-link nav-link" id="teachers-tab" data-bs-toggle="tab"
+                                data-bs-target="#teacher-videos" type="button"
+                                role="tab">@Localizer["Teachers"]</button>
+                        </li>
+                        <li class="nav-item " role="presentation">
+                            <button class="hafiz-nav-link nav-link" id="parents-tab" data-bs-toggle="tab"
+                                data-bs-target="#parent-videos" type="button" role="tab">@Localizer["Parents"]</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="videoTabContent">
+                <!-- All Videos Tab -->
+                <div class="tab-pane fade show active" id="all-videos" role="tabpanel">
+                    <div class="video-grid" id="allVideosGrid">
+                        <!-- Videos will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Hafiz Students Tab -->
+                <div class="tab-pane fade" id="Hafiz-videos" role="tabpanel">
+                    <div class="video-grid" id="HafizVideosGrid">
+                        <!-- Hafiz student videos will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Teachers Tab -->
+                <div class="tab-pane fade" id="teacher-videos" role="tabpanel">
+                    <div class="video-grid" id="teacherVideosGrid">
+                        <!-- Teacher videos will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Parents Tab -->
+                <div class="tab-pane fade" id="parent-videos" role="tabpanel">
+                    <div class="video-grid" id="parentVideosGrid">
+                        <!-- Parent videos will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="~/js/hafiz.js"></script>
+</section>

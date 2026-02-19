@@ -1,0 +1,259 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hafiz.Application\Hafiz.Application.csproj" />
+    <ProjectReference Include="..\Hafiz.Infrastructure\Hafiz.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\css\site.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\favicon.ico" />
+    <_ContentIncludedByDefault Remove="wwwroot\js\site.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap.css.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap.min.css.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\js\bootstrap.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\js\bootstrap.js.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\js\bootstrap.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\LICENSE" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery-validation-unobtrusive\LICENSE.txt" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery-validation\dist\additional-methods.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery-validation\dist\additional-methods.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery-validation\dist\jquery.validate.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery-validation\dist\jquery.validate.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery-validation\LICENSE.md" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\dist\jquery.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\dist\jquery.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\dist\jquery.min.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\LICENSE.txt" />
+    <_ContentIncludedByDefault Remove="Views\Home\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Home\Privacy.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\Error.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\_Layout.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\_ValidationScriptsPartial.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\_ViewImports.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\_ViewStart.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="Areas\Admin\Views\Classes\Create.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\Classes\Edit.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\Classes\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\Home\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\Parents\Create.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\Parents\Edit.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\Parents\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\Students\Create.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\Students\Edit.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\Students\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\TeacherAttendance\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\Teachers\Create.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\Teachers\Edit.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\Teachers\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\_ViewImports.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\_ViewStart.cshtml" />
+    <AdditionalFiles Include="Areas\Parent\Views\Children\Details.cshtml" />
+    <AdditionalFiles Include="Areas\Parent\Views\Children\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Parent\Views\Home\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Parent\Views\Meeting\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Parent\Views\Meeting\Room.cshtml" />
+    <AdditionalFiles Include="Areas\Parent\Views\Profile\Edit.cshtml" />
+    <AdditionalFiles Include="Areas\Parent\Views\Profile\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Parent\Views\_ViewImports.cshtml" />
+    <AdditionalFiles Include="Areas\Parent\Views\_ViewStart.cshtml" />
+    <AdditionalFiles Include="Areas\Student\Views\Attendance\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Student\Views\Home\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Student\Views\Meeting\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Student\Views\Meeting\Room.cshtml" />
+    <AdditionalFiles Include="Areas\Student\Views\Profile\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Student\Views\Wird\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Student\Views\_ViewImports.cshtml" />
+    <AdditionalFiles Include="Areas\Student\Views\_ViewStart.cshtml" />
+    <AdditionalFiles Include="Areas\Teacher\Views\Home\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Teacher\Views\Meeting\Room.cshtml" />
+    <AdditionalFiles Include="Areas\Teacher\Views\Shared\_AssignWirdModal.cshtml" />
+    <AdditionalFiles Include="Areas\Teacher\Views\Shared\_SurahOptions.cshtml" />
+    <AdditionalFiles Include="Areas\Teacher\Views\StudentAttendance\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Teacher\Views\Student\Details.cshtml" />
+    <AdditionalFiles Include="Areas\Teacher\Views\Student\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Teacher\Views\TeacherClasses\ManageMeetings.cshtml" />
+    <AdditionalFiles Include="Areas\Teacher\Views\TeacherClasses\StudentSessions.cshtml" />
+    <AdditionalFiles Include="Areas\Teacher\Views\TeacherClasses\StudentSessionsList.cshtml" />
+    <AdditionalFiles Include="Areas\Teacher\Views\Wird\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Teacher\Views\_ViewImports.cshtml" />
+    <AdditionalFiles Include="Areas\Teacher\Views\_ViewStart.cshtml" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Classes\Create.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Classes\Create.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Classes\Edit.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Classes\Edit.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Classes\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Classes\Index.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Home\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Home\Index.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Parents\Create.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Parents\Create.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Parents\Edit.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Parents\Edit.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Parents\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Parents\Index.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\StudentAttendance\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\StudentAttendance\Index.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Students\Create.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Students\Create.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Students\Edit.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Students\Edit.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Students\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Students\Index.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\TeacherAttendance\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\TeacherAttendance\Index.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Teachers\Create.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Teachers\Create.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Teachers\Edit.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Teachers\Edit.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Teachers\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Teachers\Index.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Parent\Views\Children\Details.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Parent\Views\Children\Details.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Parent\Views\Children\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Parent\Views\Children\Index.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Parent\Views\Home\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Parent\Views\Home\Index.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Parent\Views\Meeting\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Parent\Views\Meeting\Index.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Parent\Views\Meeting\Room.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Parent\Views\Meeting\Room.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Parent\Views\Profile\Edit.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Parent\Views\Profile\Edit.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Parent\Views\Profile\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Parent\Views\Profile\Index.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Student\Views\Attendance\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Student\Views\Attendance\Index.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Student\Views\Home\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Student\Views\Home\Index.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Student\Views\Meeting\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Student\Views\Meeting\Index.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Student\Views\Meeting\Room.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Student\Views\Meeting\Room.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Student\Views\Profile\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Student\Views\Profile\Index.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Student\Views\Wird\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Student\Views\Wird\Index.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Teacher\Views\Home\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Teacher\Views\Home\Index.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Teacher\Views\Meeting\Room.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Teacher\Views\Meeting\Room.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Teacher\Views\Shared\_AssignWirdModal.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Teacher\Views\Shared\_AssignWirdModal.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Teacher\Views\StudentAttendance\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Teacher\Views\StudentAttendance\Index.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Teacher\Views\Student\Details.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Teacher\Views\Student\Details.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Teacher\Views\Student\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Teacher\Views\Student\Index.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Teacher\Views\TeacherClasses\ManageMeetings.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Teacher\Views\TeacherClasses\ManageMeetings.en.resx" />
+    <AdditionalFiles Include="Resources\Areas\Teacher\Views\Wird\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Teacher\Views\Wird\Index.en.resx" />
+    <AdditionalFiles Include="Resources\DTOs\User\LoginDto.ar.resx" />
+    <AdditionalFiles Include="Resources\DTOs\User\LoginDto.en.resx" />
+    <AdditionalFiles Include="Resources\Views\Auth\Login.ar.resx" />
+    <AdditionalFiles Include="Resources\Views\Auth\Login.en.resx" />
+    <AdditionalFiles Include="Resources\Views\Auth\NotAuth.ar.resx" />
+    <AdditionalFiles Include="Resources\Views\Auth\NotAuth.en.resx" />
+    <AdditionalFiles Include="Resources\Views\Home\Contact.ar.resx" />
+    <AdditionalFiles Include="Resources\Views\Home\Contact.resx" />
+    <AdditionalFiles Include="Resources\Views\Home\Error.ar.resx" />
+    <AdditionalFiles Include="Resources\Views\Home\Error.resx" />
+    <AdditionalFiles Include="Resources\Views\Home\Hafiz.ar.resx" />
+    <AdditionalFiles Include="Resources\Views\Home\Hafiz.resx" />
+    <AdditionalFiles Include="Resources\Views\Home\Index.ar.resx" />
+    <AdditionalFiles Include="Resources\Views\Home\Index.resx" />
+    <AdditionalFiles Include="Resources\Views\Home\Plans.ar.resx" />
+    <AdditionalFiles Include="Resources\Views\Home\Plans.resx" />
+    <AdditionalFiles Include="Resources\Views\Shared\Error.ar.resx" />
+    <AdditionalFiles Include="Resources\Views\Shared\Error.en.resx" />
+    <AdditionalFiles Include="Resources\Views\Shared\_AdminLayout.ar.resx" />
+    <AdditionalFiles Include="Resources\Views\Shared\_AdminLayout.en.resx" />
+    <AdditionalFiles Include="Resources\Views\Shared\_Layout.ar.resx" />
+    <AdditionalFiles Include="Resources\Views\Shared\_Layout.resx" />
+    <AdditionalFiles Include="Resources\Views\Shared\_ParentLayout.ar.resx" />
+    <AdditionalFiles Include="Resources\Views\Shared\_ParentLayout.en.resx" />
+    <AdditionalFiles Include="Resources\Views\Shared\_StudentLayout.ar.resx" />
+    <AdditionalFiles Include="Resources\Views\Shared\_StudentLayout.en.resx" />
+    <AdditionalFiles Include="Resources\Views\Shared\_TeacherLayout.ar.resx" />
+    <AdditionalFiles Include="Resources\Views\Shared\_TeacherLayout.en.resx" />
+    <AdditionalFiles Include="Views\Auth\Login.cshtml" />
+    <AdditionalFiles Include="Views\Auth\NotAuth.cshtml" />
+    <AdditionalFiles Include="Views\Home\Contact.cshtml" />
+    <AdditionalFiles Include="Views\Home\Error.cshtml" />
+    <AdditionalFiles Include="Views\Home\Hafiz.cshtml" />
+    <AdditionalFiles Include="Views\Home\Index.cshtml" />
+    <AdditionalFiles Include="Views\Home\Plans.cshtml" />
+    <AdditionalFiles Include="Views\Shared\Error.cshtml" />
+    <AdditionalFiles Include="Views\Shared\_AdminLayout.cshtml" />
+    <AdditionalFiles Include="Views\Shared\_Layout.cshtml" />
+    <AdditionalFiles Include="Views\Shared\_ParentLayout.cshtml" />
+    <AdditionalFiles Include="Views\Shared\_StudentLayout.cshtml" />
+    <AdditionalFiles Include="Views\Shared\_TeacherLayout.cshtml" />
+    <AdditionalFiles Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
+    <AdditionalFiles Include="Views\_ViewImports.cshtml" />
+    <AdditionalFiles Include="Views\_ViewStart.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+</Project>

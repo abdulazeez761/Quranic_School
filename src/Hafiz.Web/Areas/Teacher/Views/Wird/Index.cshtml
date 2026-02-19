@@ -1,0 +1,222 @@
+@using Hafiz.Common.Helper
+@model IEnumerable<Hafiz.Models.WirdAssignment>
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["PageTitle"].Value;
+}
+
+<link rel="stylesheet" href="~/css/teacher/Wirds.css" />
+
+
+<div class="page-container">
+
+    <div class="page-header">
+        <h2>@Localizer["WirdAssignments"]</h2>
+    </div>
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+        <div class="filter-bar-header">
+
+            <div class="filter-bar-title">
+                @Localizer["Filters"]
+            </div>
+            <button class="filter-toggle" id="filterToggle">▼</button>
+        </div>
+
+        <div class="filter-content" id="filterContent">
+            <div class="filter-group">
+                <label class="filter-label" for="filterStudent">@Localizer["StudentName"]</label>
+                <input type="text" id="filterStudent" class="filter-input" placeholder="@Localizer["SearchByName"]">
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label" for="filterType">@Localizer["AssignmentType"]</label>
+                <select id="filterType" class="filter-select">
+                    <option value="">@Localizer["AllTypes"]</option>
+                    <option value="Hafiz">@Localizer["Hafiz"]</option>
+                    <option value="Wird">@Localizer["Wird"]</option>
+                    <option value="Revision">@Localizer["Revision"]</option>
+                    <option value="Memorization">@Localizer["Memorization"]</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label" for="filterStatus">@Localizer["Status"]</label>
+                <select id="filterStatus" class="filter-select">
+                    <option value="">@Localizer["AllStatuses"]</option>
+                    <option value="notset">@Localizer["NotSet"]</option>
+                    <option value="poor">@Localizer["Poor"]</option>
+                    <option value="fair">@Localizer["Fair"]</option>
+                    <option value="good">@Localizer["Good"]</option>
+                    <option value="verygood">@Localizer["VeryGood"]</option>
+                    <option value="excellent">@Localizer["Excellent"]</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label" for="filterDateFrom">@Localizer["DateFrom"]</label>
+                <input type="date" id="filterDateFrom" class="filter-input">
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label" for="filterDateTo">@Localizer["DateTo"]</label>
+                <input type="date" id="filterDateTo" class="filter-input">
+            </div>
+
+            <div class="filter-actions">
+                <button class="btn-filter btn-apply" id="applyFilters">@Localizer["ApplyFilters"]</button>
+                <button class="btn-filter btn-reset" id="resetFilters">@Localizer["Reset"]</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESULTS COUNT -->
+    <div class="results-count" id="resultsCount">
+        @Localizer["Showing"] <strong>@Model.Count()</strong> @Localizer["Assignments"]
+    </div>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert" id="successAlert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <strong>@Localizer["Success"]</strong> @TempData["SuccessMessage"]
+
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert" id="errorAlert">
+            <i class="bi bi-x-circle-fill me-2"></i>
+            <strong>@Localizer["Error"]</strong> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    <!-- WIRD CARDS -->
+    @foreach (var item in Model)
+    {
+        var statusClass = item.Status.ToString().ToLower();
+        var typeClass = item.Type.ToString().ToLower();
+
+        <div class="wird-card  @statusClass"
+             data-student="@item.Student.StudentInfo.FirstName @item.Student.StudentInfo.SecondName" data-type="@item.Type"
+             data-status="@statusClass" data-date="@item.AssignedDate.ToString("yyyy-MM-dd")">
+
+            <!-- CARD HEADER -->
+            <div class="wird-card-header">
+                <div class="wird-type">
+                    <i class='bx bx-bookmark'></i>
+                    <span>@item.Type</span>
+                </div>
+                <span class="wird-status-badge status-@statusClass">
+                    @item.Status
+                </span>
+            </div>
+
+            <!-- STUDENT NAME -->
+            <h3 class="student-name">@item.Student.StudentInfo.FirstName @item.Student.StudentInfo.SecondName</h3>
+
+            <!-- CARD BODY -->
+            <div class="wird-card-body">
+                <div class="wird-range">
+                    <div class="range-section">
+                        <label>@Localizer["From"]</label>
+                        <p>
+                            <strong>@Localizer["Surah"]</strong> @Formatting.GetLocalizedSurahName(item.FromSurah)<br />
+                            <strong>@Localizer["Ayah"]</strong> @item.FromAyah<br />
+                            <strong>@Localizer["Juz"]</strong> @item.FromJuz, <strong>@Localizer["Page"]</strong>
+                            @item.FromPage
+                        </p>
+                    </div>
+                    <div class="range-arrow">
+                        <i class='bx bx-right-arrow-alt'></i>
+                    </div>
+                    <div class="range-section">
+                        <label>@Localizer["To"]</label>
+                        <p>
+                            <strong>@Localizer["Surah"]</strong> @Formatting.GetLocalizedSurahName(item.ToSurah)<br />
+                            <strong>@Localizer["Ayah"]</strong> @item.ToAyah<br />
+                            <strong>@Localizer["Juz"]</strong> @item.ToJuz, <strong>@Localizer["Page"]</strong> @item.ToPage
+                        </p>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(item.Note))
+                {
+                    <div class="wird-note">
+                        <i class='bx bx-note'></i>
+                        <p>@Localizer["Note"] @item.Note</p>
+                    </div>
+                }
+
+                <div class="wird-footer">
+                    <div class="wird-date">
+                        <i class='bx bx-calendar'></i>
+                        @Localizer["Assigned"] @item.AssignedDate.ToString("MMM dd, yyyy")
+                    </div>
+                    <button class="edit-note-btn" data-assignment-id="@item.Id" title="Edit notes">
+                        <i class='bx bx-edit'></i>
+                    </button>
+                </div>
+
+                <!-- NOTES EDIT SECTION (Hidden by default) -->
+                <div class="notes-edit" id="notes-edit-@item.Id" style="display: none;">
+                    <textarea class="notes-textarea" id="notes-textarea-@item.Id"
+                              placeholder="@Localizer["AddNotes"]">@item.Note</textarea>
+                    <div style="margin-top: 10px; display: flex; gap: 10px;">
+                        <button class="btn btn-success save-note-btn"
+                                data-assignment-id="@item.Id">@Localizer["Save"]</button>
+                        <button class="btn btn-secondary cancel-note-btn"
+                                data-assignment-id="@item.Id">@Localizer["Cancel"]</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACTION BUTTONS -->
+            <div class="assignment-actions">
+                <div class="status-buttons">
+                    <button class="btn btn-success status-button" data-status="@AssignmentStatus.excellent"
+                            data-id="@item.Id">@Localizer["Excellent"]</button>
+                    <button class="btn btn-verygood status-button" data-status="@AssignmentStatus.veryGood"
+                            data-id="@item.Id">@Localizer["VeryGood"]</button>
+                    <button class="btn btn-good status-button" data-status="@AssignmentStatus.good"
+                            data-id="@item.Id">@Localizer["Good"]</button>
+                    <button class="btn btn-fair status-button" data-status="@AssignmentStatus.fair"
+                            data-id="@item.Id">@Localizer["Fair"]</button>
+                    <button class="btn btn-poor status-button" data-status="@AssignmentStatus.poor"
+                            data-id="@item.Id">@Localizer["Poor"]</button>
+                </div>
+
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-delete table-action-btn danger"
+                       data-confirm-delete="@Localizer["ConfirmDelete"] @item.Student.StudentInfo.FirstName @item.Student.StudentInfo.SecondName">
+                    <i class='bx bx-trash'></i>
+                    @Localizer["Delete"]
+                </a>
+            </div>
+
+        </div>
+    }
+</div>
+
+@section scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="~/js/teacher_portal/wirds.js"></script>
+    <script src="~/js/confirmModal.js"></script>
+    <script>
+        setTimeout(function () {
+        const successAlert = document.getElementById('successAlert');
+        const errorAlert = document.getElementById('errorAlert');
+
+        if (successAlert) {
+        successAlert.style.opacity = '0';
+
+        setTimeout(() => successAlert.style.display = 'none', 500);
+        }
+        if (errorAlert) {
+        errorAlert.style.opacity = '0';
+
+        setTimeout(() => errorAlert.style.display = 'none', 500);
+        }
+        }, 5000);</script>
+    }

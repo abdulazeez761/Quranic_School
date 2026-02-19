@@ -1,569 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<root>
-  <!--
-    Microsoft ResX Schema
-
-    Version 2.0
-
-    The primary goals of this format is to allow a simple XML format
-    that is mostly human readable. The generation and parsing of the
-    various data types are done through the TypeConverter classes
-    associated with the data types.
-
-    Example:
-
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-
-    There are any number of "resheader" rows that contain simple
-    name/value pairs.
-
-    Each data row contains a name, and value. The row also contains a
-    type or mimetype. Type corresponds to a .NET class that support
-    text/value conversion through the TypeConverter architecture.
-    Classes that don't support this are serialized and stored with the
-    mimetype set.
-
-    The mimetype is used for serialized objects, and tells the
-    ResXResourceReader how to depersist the object. This is currently not
-    extensible. For a given mimetype the value must be set accordingly:
-
-    Note - application/x-microsoft.net.object.binary.base64 is the format
-    that the ResXResourceWriter will generate, however the reader can
-    read any of the formats listed below.
-
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string"/>
-              <xsd:attribute name="type" type="xsd:string"/>
-              <xsd:attribute name="mimetype" type="xsd:string"/>
-              <xsd:attribute ref="xml:space"/>
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string"/>
-              <xsd:attribute name="name" type="xsd:string"/>
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
-              <xsd:attribute ref="xml:space"/>
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required"/>
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="Welcome" xml:space="preserve">
-    <value>مرحبًا بكم في منصة حافظ</value>
-    <comment/>
-  </data>
-  <data name="Heart" xml:space="preserve">
-    <value>من التربية الربانية يبدأ البناء الحقيقي</value>
-    <comment/>
-  </data>
-  <data name="PlatForm" xml:space="preserve">
-    <value>منصة شاملة تربط الطلاب وأولياء الأمور والمعلمين في رحلة جميلة لحفظ القرآن الكريم وفهمه.</value>
-    <comment/>
-  </data>
-  <data name="Track" xml:space="preserve">
-    <value>تتبع التقدم المحرز</value>
-    <comment/>
-  </data>
-  <data name="Monitor" xml:space="preserve">
-    <value>مراقبة الحفظ والمراجعة</value>
-    <comment/>
-  </data>
-  <data name="Feature" xml:space="preserve">
-    <value>ميزات المنصة</value>
-    <comment/>
-  </data>
-  <data name="TrackDescription" xml:space="preserve">
-    <value>راقب إنجاز الورد اليومي والصفحات المحفوظة ومراجعة الجداول الزمنية مع تحليلات مفصلة.</value>
-    <comment/>
-  </data>
-  <data name="Portal" xml:space="preserve">
-    <value>بوابة الوالدين</value>
-    <comment/>
-  </data>
-  <data name="PortalDescription" xml:space="preserve">
-    <value>يمكن لأولياء الأمور الاطلاع على تقدم ابنائهم والواجبات القادمة.</value>
-    <comment/>
-  </data>
-  <data name="Wird" xml:space="preserve">
-    <value>ادارة الورد</value>
-    <comment/>
-  </data>
-  <data name="WirdDescription" xml:space="preserve">
-    <value>نظِّم مهام الحفظ حسب الأجزاء أو الصفحات أو الآيات واضافة تقييمات.</value>
-    <comment/>
-  </data>
-  <data name="Dashboard" xml:space="preserve">
-    <value>لوحة تحكم للمدرس</value>
-    <comment/>
-  </data>
-  <data name="DashboardDescription" xml:space="preserve">
-    <value>أدوات شاملة للمعلمين لتعيين المهام وتتبع تقدم الطلاب وتقديم الملاحظات.</value>
-    <comment/>
-  </data>
-  <data name="Review" xml:space="preserve">
-    <value>نظام المراجعة</value>
-    <comment/>
-  </data>
-  <data name="ReviewDescription" xml:space="preserve">
-    <value>جدولة المراجعة الذكية لضمان ممارسة المحتوى المحفوظ مسبقًا بانتظام.</value>
-    <comment/>
-  </data>
-  <data name="Mobile" xml:space="preserve">
-    <value>يدعم الجوال</value>
-    <comment/>
-  </data>
-  <data name="MobileDescription" xml:space="preserve">
-    <value>تمتع بالوصول إلى منصة التعلُّم الخاصة بك في أي مكان وفي أي وقت مع تصميمنا سريع الاستجابة.</value>
-    <comment/>
-  </data>
-  <data name="Mission" xml:space="preserve">
-    <value>مهمتنا</value>
-    <comment/>
-  </data>
-  <data name="MissionDescription" xml:space="preserve">
-    <value>توفير منصة عصرية وفعّالة تقوّي الروابط بين الطلاب وأولياء الأمور والمعلمين في رحلة تحفيظ القرآن الكريم.</value>
-    <comment/>
-  </data>
-  <data name="missionPoint-1" xml:space="preserve">
-    <value>مسارات تعليمية منظمة لكل طالب</value>
-    <comment/>
-  </data>
-  <data name="missionPoint-2" xml:space="preserve">
-    <value>مراقبة التقدم المحرز في الوقت الحقيقي وإعداد التقارير</value>
-    <comment/>
-  </data>
-  <data name="missionPoint-3" xml:space="preserve">
-    <value>تواصل قوي بين الوالدين والمعلم والطالب</value>
-    <comment/>
-  </data>
-  <data name="missionPoint-4" xml:space="preserve">
-    <value>الجداول الزمنية المخصصة والمراجعة</value>
-    <comment/>
-  </data>
-  <data name="Students" xml:space="preserve">
-    <value>عدد الطلاب</value>
-    <comment/>
-  </data>
-  <data name="QTeachers" xml:space="preserve">
-    <value>المعلمون المؤهلون</value>
-    <comment/>
-  </data>
-  <data name="PagesMemorized" xml:space="preserve">
-    <value>الصفحات المحفوظة</value>
-    <comment/>
-  </data>
-  <data name="Hifz" xml:space="preserve">
-    <value>عدد الحفاظ</value>
-    <comment/>
-  </data>
-  <data name="Vision" xml:space="preserve">
-    <value>رؤيتنا</value>
-    <comment/>
-  </data>
-  <data name="VisionDescription" xml:space="preserve">
-    <value>تمكين الطلاب في جميع أنحاء العالم من التواصل مع كلام الله تعالى من خلال التكنولوجيا المبتكرة وأساليب التعليم الإسلامي التقليدية.</value>
-    <comment/>
-  </data>
-  <data name="Stories" xml:space="preserve">
-    <value>قصص نجاح الطلاب</value>
-    <comment/>
-  </data>
-  <data name="StoriesDescription" xml:space="preserve">
-    <value>استمع الى قصص نجاح الطلاب من الطلاب انفسهم</value>
-    <comment/>
-  </data>
-  <data name="Achievements" xml:space="preserve">
-    <value>انجازاتنا</value>
-    <comment/>
-  </data>
-  <data name="AchievementsHeader" xml:space="preserve">
-    <value>معالم بارزة في رحلتنا للتميز</value>
-    <comment/>
-  </data>
-  <data name="Excellence Award" xml:space="preserve">
-    <value>جائزة التميز</value>
-    <comment/>
-  </data>
-  <data name="Best Quran Academy 2024" xml:space="preserve">
-    <value>أفضل أكاديمية قرآنية 2024</value>
-    <comment/>
-  </data>
-  <data name="Digital Innovation" xml:space="preserve">
-    <value>الابتكار الرقمي</value>
-    <comment/>
-  </data>
-  <data name="Technology in Education Award" xml:space="preserve">
-    <value>جائزة التكنولوجيا في التعليم</value>
-    <comment/>
-  </data>
-  <data name="Community Impact" xml:space="preserve">
-    <value>التأثير المجتمعي</value>
-    <comment/>
-  </data>
-  <data name="Outstanding Service Recognition" xml:space="preserve">
-    <value>تقدير الخدمة المتميزة</value>
-    <comment/>
-  </data>
-  <data name="Student Success" xml:space="preserve">
-    <value>نجاح الطلاب</value>
-    <comment/>
-  </data>
-  <data name="100% Completion Rate" xml:space="preserve">
-    <value>نسبة إتمام 100%</value>
-    <comment/>
-  </data>
-  <data name="Start Learning" xml:space="preserve">
-    <value>ابدأ التعلم</value>
-    <comment/>
-  </data>
-  <data name="Learn More" xml:space="preserve">
-    <value>اعرف المزيد</value>
-    <comment/>
-  </data>
-  <data name="TargetTitle" xml:space="preserve">
-    <value>لمن هذه الأكاديمية؟</value>
-    <comment/>
-  </data>
-  <data name="TargetSubtitle" xml:space="preserve">
-    <value>برامج متخصصة لكل فئة عمرية</value>
-    <comment/>
-  </data>
-  <data name="TargetChildren" xml:space="preserve">
-    <value>الأطفال من 5-12 سنة</value>
-    <comment/>
-  </data>
-  <data name="TargetChildrenDesc" xml:space="preserve">
-    <value>برنامج تحفيظ القرآن الكريم مع فهم بسيط للمعاني وتربية إيمانية متدرجة</value>
-    <comment/>
-  </data>
-  <data name="TargetGirls" xml:space="preserve">
-    <value>الفتيات من 10-17 سنة</value>
-    <comment/>
-  </data>
-  <data name="TargetGirlsDesc" xml:space="preserve">
-    <value>برنامج التربية الإيمانية الشامل: سيرة نبوية، عقيدة، أخلاق، وفقه مبسط</value>
-    <comment/>
-  </data>
-  <data name="TargetParents" xml:space="preserve">
-    <value>الأهالي المهتمين</value>
-    <comment/>
-  </data>
-  <data name="TargetParentsDesc" xml:space="preserve">
-    <value>أولياء أمور يبحثون عن تعليم شرعي آمن وفعّال لأبنائهم من المنزل</value>
-    <comment/>
-  </data>
-  <data name="FeaturesTitle" xml:space="preserve">
-    <value>مميزات أكاديمية ذِكر</value>
-    <comment/>
-  </data>
-  <data name="FeaturesSubtitle" xml:space="preserve">
-    <value>لماذا تختار منصتنا لتعليم أبنائك؟</value>
-    <comment/>
-  </data>
-  <data name="ProgramsTitle" xml:space="preserve">
-    <value>🎓 برامجنا التعليمية</value>
-    <comment/>
-  </data>
-  <data name="ProgramsSubtitle" xml:space="preserve">
-    <value>برامج متنوعة تناسب جميع الأعمار والمستويات</value>
-    <comment/>
-  </data>
-  <data name="ProgramQuran" xml:space="preserve">
-    <value>تحفيظ القرآن الكريم</value>
-    <comment/>
-  </data>
-  <data name="ProgramQuranAge" xml:space="preserve">
-    <value>أطفال من 5 إلى 12 سنة</value>
-    <comment/>
-  </data>
-  <data name="ProgramQuranF1" xml:space="preserve">
-    <value>حفظ متدرج ومنظم</value>
-    <comment/>
-  </data>
-  <data name="ProgramQuranF2" xml:space="preserve">
-    <value>مراجعة دورية مستمرة</value>
-    <comment/>
-  </data>
-  <data name="ProgramQuranF3" xml:space="preserve">
-    <value>فهم بسيط للمعاني</value>
-    <comment/>
-  </data>
-  <data name="ProgramQuranF4" xml:space="preserve">
-    <value>تربية إيمانية متدرجة</value>
-    <comment/>
-  </data>
-  <data name="ProgramFaith" xml:space="preserve">
-    <value>التربية الإيمانية</value>
-    <comment/>
-  </data>
-  <data name="ProgramFaithAge" xml:space="preserve">
-    <value>فتيات من 10 إلى 17 سنة</value>
-    <comment/>
-  </data>
-  <data name="ProgramFaithF1" xml:space="preserve">
-    <value>السيرة النبوية الشريفة</value>
-    <comment/>
-  </data>
-  <data name="ProgramFaithF2" xml:space="preserve">
-    <value>العقيدة الصحيحة</value>
-    <comment/>
-  </data>
-  <data name="ProgramFaithF3" xml:space="preserve">
-    <value>الأخلاق والآداب الإسلامية</value>
-    <comment/>
-  </data>
-  <data name="ProgramFaithF4" xml:space="preserve">
-    <value>الفقه المبسط</value>
-    <comment/>
-  </data>
-  <data name="ProgramFollowup" xml:space="preserve">
-    <value>التثبيت والمتابعة</value>
-    <comment/>
-  </data>
-  <data name="ProgramFollowupAge" xml:space="preserve">
-    <value>لكل الأعمار</value>
-    <comment/>
-  </data>
-  <data name="ProgramFollowupF1" xml:space="preserve">
-    <value>مراجعة دورية شاملة</value>
-    <comment/>
-  </data>
-  <data name="ProgramFollowupF2" xml:space="preserve">
-    <value>نظام جوائز محفز</value>
-    <comment/>
-  </data>
-  <data name="ProgramFollowupF3" xml:space="preserve">
-    <value>متابعة حثيثة ومستمرة</value>
-    <comment/>
-  </data>
-  <data name="ProgramFollowupF4" xml:space="preserve">
-    <value>تقييم مستمر للإنجاز</value>
-    <comment/>
-  </data>
-  <data name="WhyChooseTitle" xml:space="preserve">
-    <value>💡 لماذا تختار "ذِكر"؟</value>
-    <comment/>
-  </data>
-  <data name="WhyChooseSubtitle" xml:space="preserve">
-    <value>تجربة تعليمية فريدة ومتميزة</value>
-    <comment/>
-  </data>
-  <data name="WhyItem1Title" xml:space="preserve">
-    <value>🟢 تجربة تعليمية مريحة وآمنة من المنزل</value>
-    <comment/>
-  </data>
-  <data name="WhyItem1Desc" xml:space="preserve">
-    <value>بيئة تعليمية آمنة ومريحة تضمن راحة الطالب والأهل</value>
-    <comment/>
-  </data>
-  <data name="WhyItem2Title" xml:space="preserve">
-    <value>🟢 أسلوب ممتع يجمع بين الجدية والأنشطة التربوية</value>
-    <comment/>
-  </data>
-  <data name="WhyItem2Desc" xml:space="preserve">
-    <value>منهجية متوازنة تحقق الأهداف التعليمية بطريقة محببة</value>
-    <comment/>
-  </data>
-  <data name="WhyItem3Title" xml:space="preserve">
-    <value>🟢 متابعة دقيقة لكل طالب من خلال صفحة خاصة</value>
-    <comment/>
-  </data>
-  <data name="WhyItem3Desc" xml:space="preserve">
-    <value>نظام متطور لمتابعة تقدم كل طالب بشكل فردي ومفصل</value>
-    <comment/>
-  </data>
-  <data name="WhyItem4Title" xml:space="preserve">
-    <value>🟢 إشعارات فورية لكل واجب أو تقييم</value>
-    <comment/>
-  </data>
-  <data name="WhyItem4Desc" xml:space="preserve">
-    <value>تنبيهات لحظية تبقي الأهل على اطلاع دائم بتقدم أبنائهم</value>
-    <comment/>
-  </data>
-  <data name="WhyItem5Title" xml:space="preserve">
-    <value>🟢 معلمون معتمدون في التعليم الرقمي والشرعي</value>
-    <comment/>
-  </data>
-  <data name="WhyItem5Desc" xml:space="preserve">
-    <value>كادر تعليمي مؤهل ومتخصص في التعامل مع الأطفال والتعليم الإلكتروني</value>
-    <comment/>
-  </data>
-  <data name="RegistrationTitle" xml:space="preserve">
-    <value>🎁 احصل على جلسة تعريفية مجانية!</value>
-    <comment/>
-  </data>
-  <data name="RegistrationSubtitle" xml:space="preserve">
-    <value>هل تريد تجربة أول حصة مجانًا لطفلك؟ املئ النموذج الآن وسنتواصل معك خلال 24 ساعة</value>
-    <comment/>
-  </data>
-  <data name="FullName" xml:space="preserve">
-    <value>📍 الاسم الكامل</value>
-    <comment/>
-  </data>
-  <data name="ChildAge" xml:space="preserve">
-    <value>📍 عمر الطفل</value>
-    <comment/>
-  </data>
-  <data name="SelectAge" xml:space="preserve">
-    <value>اختر العمر</value>
-    <comment/>
-  </data>
-  <data name="5Years" xml:space="preserve">
-    <value>5 سنوات</value>
-    <comment/>
-  </data>
-  <data name="6Years" xml:space="preserve">
-    <value>6 سنوات</value>
-    <comment/>
-  </data>
-  <data name="7Years" xml:space="preserve">
-    <value>7 سنوات</value>
-    <comment/>
-  </data>
-  <data name="8Years" xml:space="preserve">
-    <value>8 سنوات</value>
-    <comment/>
-  </data>
-  <data name="9Years" xml:space="preserve">
-    <value>9 سنوات</value>
-    <comment/>
-  </data>
-  <data name="10Years" xml:space="preserve">
-    <value>10 سنوات</value>
-    <comment/>
-  </data>
-  <data name="11Years" xml:space="preserve">
-    <value>11 سنة</value>
-    <comment/>
-  </data>
-  <data name="12Years" xml:space="preserve">
-    <value>12 سنة</value>
-    <comment/>
-  </data>
-  <data name="13Years" xml:space="preserve">
-    <value>13 سنة</value>
-    <comment/>
-  </data>
-  <data name="14Years" xml:space="preserve">
-    <value>14 سنة</value>
-    <comment/>
-  </data>
-  <data name="15Years" xml:space="preserve">
-    <value>15 سنة</value>
-    <comment/>
-  </data>
-  <data name="16Years" xml:space="preserve">
-    <value>16 سنة</value>
-    <comment/>
-  </data>
-  <data name="17Years" xml:space="preserve">
-    <value>17 سنة</value>
-    <comment/>
-  </data>
-  <data name="Country" xml:space="preserve">
-    <value>📍 الدولة</value>
-    <comment/>
-  </data>
-  <data name="WhatsApp" xml:space="preserve">
-    <value>📍 رقم التواصل (واتساب)</value>
-    <comment/>
-  </data>
-  <data name="Notes" xml:space="preserve">
-    <value>📍 ملاحظات</value>
-    <comment/>
-  </data>
-  <data name="NotesPlaceholder" xml:space="preserve">
-    <value>أي ملاحظات أو متطلبات خاصة...</value>
-    <comment/>
-  </data>
-  <data name="SubmitRequest" xml:space="preserve">
-    <value>إرسال الطلب</value>
-    <comment/>
-  </data>
-  <data name="CTATitle" xml:space="preserve">
-    <value>💚 ذِكْر ليست مجرد منصة تحفيظ</value>
-    <comment/>
-  </data>
-  <data name="CTASubtitle" xml:space="preserve">
-    <value>بل رفيق تربوي ينشئ أبناءك على القرآن ويحبّب إليهم الدين</value>
-    <comment/>
-  </data>
-  <data name="RegisterNow" xml:space="preserve">
-    <value>✅ سجل الآن</value>
-    <comment/>
-  </data>
-  <data name="ContactUs" xml:space="preserve">
-    <value>تواصل معنا</value>
-    <comment/>
-  </data>
-  <data name="PageTitle" xml:space="preserve"><value>حافظ</value></data>
-</root>

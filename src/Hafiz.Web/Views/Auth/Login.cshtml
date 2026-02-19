@@ -1,0 +1,97 @@
+@using Hafiz.DTOs
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["Title"];
+}
+
+@section Styles {
+
+    <link rel="stylesheet" href="~/css/login.css"/>
+}
+
+@model LoginDto;
+
+<section
+    style="display: flex; align-items: center; justify-content: center; background-color: var(--primary-background);">
+    <div class="login-container">
+        <div class="login-left">
+            <div class="logo">
+                <i class="fas fa-quran-open"></i>
+            </div>
+            <h1 class="welcome-title">@Localizer["WelcomeTitle"]</h1>
+            <p class="welcome-subtitle">
+                @Localizer["WelcomeSubtitle"]
+                <br>
+                @Localizer["UnifiedSystem"]
+            </p>
+            <div style="margin-top: 2rem; opacity: 0.8;">
+                <i class="fas fa-star" style="margin: 0 0.2rem; color: var(--primary-green);"></i>
+                <i class="fas fa-star" style="margin: 0 0.2rem; color: var(--primary-green);"></i>
+                <i class="fas fa-star" style="margin: 0 0.2rem; color: var(--primary-green);"></i>
+                <i class="fas fa-star" style="margin: 0 0.2rem; color: var(--primary-green);"></i>
+
+                <p style="margin-top: 0.5rem; font-size: 0.9rem;">@Localizer["TrustedBy"]</p>
+            </div>
+        </div>
+
+        <!-- Right Side - Login Form -->
+        <div class="login-right">
+            <div class="login-header">
+                <h2>@Localizer["LoginHeader"]</h2>
+                <p>@Localizer["LoginSubheader"]</p>
+            </div>
+
+            <!-- Login Form -->
+            <form asp-action="Login" method="post" asp-route-ReturnUrl="@Context.Request.Query["ReturnUrl"]"
+                  class="login-form" id="loginForm">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="form-group">
+                    <label asp-for="Username">@Localizer["Username"]</label>
+                    <input asp-for="Username" class="form-control" placeholder="@Localizer["UsernamePlaceholder"]"/>
+                    <i class="fas fa-user icon"></i>
+                    <span asp-validation-for="Username" class="text-danger"></span>
+
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Password">@Localizer["Password"]</label>
+                    <input asp-for="Password" type="password" class="form-control"
+                           placeholder="@Localizer["PasswordPlaceholder"]"/>
+                    <i class="fas fa-lock icon" id="passwordToggle"></i>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                    <!-- Error Message -->
+                    <div class="error-message" id="errorMessage">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span id="errorText" asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                </div>
+
+                @* <div class="remember-me">
+                    <input asp-for="RememberMe" type="checkbox" id="remember" />
+                    <label asp-for="RememberMe">تذكرني</label>
+                </div> *@
+
+                <button type="submit" class="login-button" id="loginButton">
+                    <i class="fas fa-sign-in-alt"></i>
+                    @Localizer["LoginButton"]
+                </button>
+            </form>
+
+
+            <div class="divider">
+                <span>@Localizer["Or"]</span>
+            </div>
+
+            <div class="register-link">
+                @Localizer["NoAccount"] <a href="#register">@Localizer["RegisterNow"]</a>
+            </div>
+        </div>
+    </div>
+
+    @{
+        <script src="~/js/login.js"></script>
+    }
+</section>

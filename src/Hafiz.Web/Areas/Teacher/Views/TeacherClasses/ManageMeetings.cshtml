@@ -1,0 +1,243 @@
+@model IEnumerable<Hafiz.Models.Class>
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["PageTitle"].Value;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/teacher/meeting.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/teacher/modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+}
+
+<div class="meetings-page">
+    <!-- Header Section -->
+    <div class="page-header">
+        <div class="header-wrapper">
+            <div class="header-left">
+                <h1 class="page-title">
+                    <i class="bi bi-camera-video"></i>
+                    @Localizer["PageTitle"]
+                </h1>
+                <p class="page-subtitle">@Localizer["PageSubtitle"]</p>
+            </div>
+            <div class="header-right">
+                <span class="stats-badge">
+                    <i class="bi bi-collection"></i>
+                    @Model.Count() @Localizer["TotalClasses"]
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Warning"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle me-2"></i>@TempData["Warning"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Active Meetings Summary -->
+    @{
+        var activeMeetings = Model.Count(c => c.IsMeetingActive);
+        if (activeMeetings > 0)
+        {
+            <div class="active-meetings-alert fade-in">
+                <i class="bi bi-broadcast active-meetings-icon"></i>
+                <div class="active-meetings-content">
+                    <strong>@activeMeetings @Localizer["ActiveMeetings"]</strong>
+                    <p class="mb-0">@Localizer["ActiveMeetingsNote"]</p>
+                </div>
+            </div>
+        }
+    }
+
+    <!-- Classes Table -->
+    @if (Model.Any())
+    {
+        <div class="classes-card fade-in">
+            <div class="table-responsive">
+                <table class="classes-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <i class="bi bi-book me-1"></i>@Localizer["ClassName"]
+                            </th>
+                            <th>
+                                <i class="bi bi-people me-1"></i>@Localizer["Gender"]
+                            </th>
+                            <th>
+                                <i class="bi bi-person-badge me-1"></i>@Localizer["Students"]
+                            </th>
+                            <th>
+                                <i class="bi bi-activity me-1"></i>@Localizer["Status"]
+                            </th>
+                            <th class="text-center">
+                                <i class="bi bi-gear me-1"></i>@Localizer["Actions"]
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var cls in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="class-info">
+                                        <div class="class-avatar">
+                                            @cls.Name.Substring(0, 1).ToUpper()
+                                        </div>
+                                        <div class="class-name">@cls.Name</div>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <span class="badge bg-light text-dark">
+                                        <i class="bi bi-gender-@(cls.Gender) me-1"></i>
+                                        @cls.Gender
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="text-muted">
+                                        @(cls.Students?.Count ?? 0) @Localizer["Enrolled"]
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @if (cls.IsMeetingActive)
+                                    {
+                                        <span class="status-badge active">
+                                            <i class="bi bi-circle-fill"></i>
+                                            @Localizer["Active"]
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge inactive">
+                                            <i class="bi bi-circle"></i>
+                                            @Localizer["Inactive"]
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <div class="action-buttons">
+                                        @if (cls.IsMeetingActive)
+                                        {
+                                            <a asp-area="Teacher" asp-controller="Meeting" asp-action="Room"
+                                                asp-route-classId="@cls.Id" class="btn-action btn-join">
+                                                <i class="bi bi-box-arrow-in-right"></i>
+                                                @Localizer["Join"]
+                                            </a>
+                                            <button type="button" class="btn-action btn-end"
+                                                onclick="showEndMeetingModal('@cls.Id')">
+                                                <i class="bi bi-stop-circle"></i>
+                                                @Localizer["End"]
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <form asp-action="StartMeeting" asp-route-classId="@cls.Id" method="post"
+                                                class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn-action btn-start">
+                                                    <i class="bi bi-play-circle"></i>
+                                                    @Localizer["StartAndJoin"]
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <h4>@Localizer["NoClassesFound"]</h4>
+            <p>@Localizer["NoClassesAssigned"]</p>
+        </div>
+    }
+</div>
+
+<!-- End Meeting Modal -->
+<div id="endMeetingModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-icon">
+            <i class="bi bi-exclamation-circle-fill"></i>
+        </div>
+        <h2 class="modal-title">@Localizer["EndMeeting"]</h2>
+        <p class="modal-description">
+            @Localizer["EndMeetingConfirm"]
+        </p>
+        <div class="modal-buttons">
+            <button type="button" class="btn-modal btn-cancel" onclick="closeEndMeetingModal()">
+                <i class="bi bi-arrow-left"></i>
+                @Localizer["Cancel"]
+            </button>
+            <form id="endMeetingForm" method="post" class="d-inline" style="flex: 1;">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn-modal btn-end" style="width: 100%; margin: 0;">
+                    <i class="bi bi-stop-circle"></i>
+                    @Localizer["EndMeeting"]
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentClassId = null;
+
+    function showEndMeetingModal(classId) {
+        currentClassId = classId;
+        const modal = document.getElementById('endMeetingModal');
+        const form = document.getElementById('endMeetingForm');
+
+        // Set the form action
+        form.action = '@Url.Action("EndMeeting", "TeacherClasses", new { area = "Teacher" })' + '?classId=' + classId;
+
+        if (modal) {
+            modal.classList.add('active');
+        }
+    }
+
+    function closeEndMeetingModal() {
+        const modal = document.getElementById('endMeetingModal');
+        if (modal) {
+            modal.classList.remove('active');
+        }
+        currentClassId = null;
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function (e) {
+        const modal = document.getElementById('endMeetingModal');
+        if (e.target === modal) {
+            closeEndMeetingModal();
+        }
+    });
+</script>

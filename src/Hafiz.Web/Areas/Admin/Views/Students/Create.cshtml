@@ -1,0 +1,284 @@
+@model Hafiz.DTOs.RegisterStudentDto
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = @Localizer["Title"];
+    ViewData["UseSelect2"] = true;
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-between align-center mb-lg flex-wrap gap-md">
+    <div>
+        <h2 class="section-title mb-sm">
+            <i class='bx bx-user-plus' style="color: var(--primary-green);"></i>
+            @Localizer["PageTitle"]
+        </h2>
+        <p class="text-medium">@Localizer["PageDescription"]</p>
+    </div>
+    <div>
+        <a asp-action="Index" class="btn btn-outline">
+            <i class='bx bx-arrow-back'></i>
+            <span>@Localizer["BackToList"]</span>
+        </a>
+    </div>
+</div>
+
+<!-- Validation Summary Alert -->
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger mb-lg" role="alert">
+        <i class='bx bx-error-circle'></i>
+        <div>
+            <strong>@Localizer["ValidationErrorsTitle"]</strong>
+            <div asp-validation-summary="All" class="mt-sm"></div>
+        </div>
+    </div>
+}
+
+<!-- Form Card -->
+<div class="card card-standard" style="width: 70%; margin:0 auto;">
+    <form asp-action="Create" method="post" class="form" id="studentForm" data-validate>
+
+        <!-- Personal Information Section -->
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class='bx bx-user'></i>
+                @Localizer["PersonalInformation"]
+            </h3>
+        </div>
+
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="FirstName" class="form-label required">
+                        <i class='bx bx-user'></i>
+                        @Localizer["FirstName"]
+                    </label>
+                    <input asp-for="FirstName" class="form-input" placeholder="@Localizer["FirstNamePlaceholder"]"
+                        autofocus />
+                    <span asp-validation-for="FirstName" class="form-feedback form-feedback-invalid"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="SecondName" class="form-label required">
+                        <i class='bx bx-user'></i>
+                        @Localizer["LastName"]
+                    </label>
+                    <input asp-for="SecondName" class="form-input" placeholder="@Localizer["LastNamePlaceholder"]" />
+                    <span asp-validation-for="SecondName" class="form-feedback form-feedback-invalid"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="sex" class="form-label required">
+                        <i class='bx bx-male-female'></i>
+                        @Localizer["Gender"]
+                    </label>
+                    <select asp-for="sex" class="form-select">
+                        <option value="">@Localizer["SelectGender"]</option>
+                        <option value="male">@Localizer["Male"]</option>
+                        <option value="female">@Localizer["Female"]</option>
+                    </select>
+                    <span asp-validation-for="sex" class="form-feedback form-feedback-invalid"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DateOfBirth" class="form-label">
+                        <i class='bx bx-calendar'></i>
+                        @Localizer["DateOfBirth"]
+                    </label>
+                    <input asp-for="DateOfBirth" type="date" class="form-input"
+                        max="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    <span asp-validation-for="DateOfBirth" class="form-feedback form-feedback-invalid"></span>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Contact Information -->
+            <h4 class="mb-md mt-lg d-flex align-center gap-sm">
+                <i class='bx bx-phone' style="color: var(--primary-green);"></i>
+                @Localizer["ContactInformation"]
+            </h4>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="PhoneNumber" class="form-label required">
+                        <i class='bx bx-phone'></i>
+                        @Localizer["PhoneNumber"]
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">+962</span>
+                        <input asp-for="PhoneNumber" class="form-input"
+                            placeholder="@Localizer["PhoneNumberPlaceholder"]" pattern="[0-9]{9,10}"
+                            title="@Localizer["PhoneNumberTitle"]" />
+                    </div>
+                    <small class="helper-text">@Localizer["PhoneNumberHelper"]</small>
+                    <span asp-validation-for="PhoneNumber" class="form-feedback form-feedback-invalid"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Username" class="form-label required">
+                        <i class='bx bx-user'></i>
+                        @Localizer["Username"]
+                    </label>
+                    <input asp-for="Username" class="form-input"
+                        placeholder="@Localizer["UsernamePlaceholder"]" />
+                    <small class="helper-text">@Localizer["UsernameHelper"]</small>
+                    <span asp-validation-for="Username" class="form-feedback form-feedback-invalid"></span>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Account Security -->
+            <h4 class="mb-md mt-lg d-flex align-center gap-sm">
+                <i class='bx bx-lock-alt' style="color: var(--primary-green);"></i>
+                @Localizer["PasswordSection"]
+            </h4>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Password" class="form-label required">
+                        <i class='bx bx-lock'></i>
+                        @Localizer["Password"]
+                    </label>
+                    <div class="input-group">
+                        <input asp-for="Password" type="password" class="form-input" id="passwordInput"
+                            placeholder="@Localizer["PasswordPlaceholder"]" minlength="6" />
+                        <button type="button" class="input-group-text" onclick="togglePassword('passwordInput', this)"
+                            style="cursor: pointer;">
+                            <i class='bx bx-show'></i>
+                        </button>
+                    </div>
+                    <small class="helper-text">@Localizer["PasswordHelper"]</small>
+                    <span asp-validation-for="Password" class="form-feedback form-feedback-invalid"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword" class="form-label required">
+                        <i class='bx bx-lock-open'></i>
+                        @Localizer["ConfirmPassword"]
+                    </label>
+                    <div class="input-group">
+                        <input asp-for="ConfirmPassword" type="password" class="form-input" id="confirmPasswordInput"
+                            placeholder="@Localizer["ConfirmPasswordPlaceholder"]" />
+                        <button type="button" class="input-group-text"
+                            onclick="togglePassword('confirmPasswordInput', this)" style="cursor: pointer;">
+                            <i class='bx bx-show'></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="form-feedback form-feedback-invalid"></span>
+                </div>
+            </div>
+
+            <input type="hidden" name="Role" value="Student" />
+
+            <div class="divider"></div>
+
+            <!-- Academic Information -->
+            <h4 class="mb-md mt-lg d-flex align-center gap-sm">
+                <i class='bx bx-book-reader' style="color: var(--primary-green);"></i>
+                @Localizer["AcademicInformation"]
+            </h4>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="MemorizedJuz" class="form-label required">
+                        <i class='bx bx-book-bookmark'></i>
+                        @Localizer["MemorizedJuz"]
+                    </label>
+                    <input asp-for="MemorizedJuz" type="number" class="form-input" min="0" max="30"
+                        placeholder="@Localizer["MemorizedJuzPlaceholder"]" value="0" />
+                    <small class="helper-text">@Localizer["MemorizedJuzHelper"]</small>
+                    <span asp-validation-for="MemorizedJuz" class="form-feedback form-feedback-invalid"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="TajwidLevel" class="form-label">
+                        <i class='bx bx-star'></i>
+                        @Localizer["TajwidLevel"]
+                    </label>
+                    <select asp-for="TajwidLevel" class="form-select">
+                        <option value="0">@Localizer["TajwidLevelNone"]</option>
+                        <option value="1">@Localizer["TajwidLevelFirst"]</option>
+                        <option value="2">@Localizer["TajwidLevelSecond"]</option>
+                        <option value="3">@Localizer["TajwidLevelThird"]</option>
+                    </select>
+                    <small class="helper-text">@Localizer["TajwidLevelHelper"]</small>
+                    <span asp-validation-for="TajwidLevel" class="form-feedback form-feedback-invalid"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ParentId" class="form-label">
+                    <i class='bx bx-user-circle'></i>
+                    @Localizer["Parent"]
+                </label>
+                <select asp-for="ParentId" class="form-select" asp-items="ViewBag.Parents">
+                    <option value="">@Localizer["SelectParent"]</option>
+                </select>
+                <small class="helper-text">
+                    <i class='bx bx-info-circle'></i>
+                    @Localizer["ParentHelper"]
+                </small>
+                <span asp-validation-for="ParentId" class="form-feedback form-feedback-invalid"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ClassesIds" class="form-label">
+                    <i class='bx bx-group'></i>
+                    @Localizer["Classes"]
+                </label>
+                <select asp-for="ClassesIds" class="form-select select2-classes" multiple asp-items="ViewBag.Classes">
+                </select>
+                <small class="helper-text">
+                    <i class='bx bx-info-circle'></i>
+                    @Localizer["ClassesHelper"]
+                </small>
+                <span asp-validation-for="ClassesIds" class="form-feedback form-feedback-invalid"></span>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="card-footer">
+            <div class="form-actions form-actions-right">
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <i class='bx bx-save'></i>
+                    <span>@Localizer["SaveData"]</span>
+                </button>
+                <a asp-action="Index" class="btn btn-outline">
+                    <i class='bx bx-x'></i>
+                    <span>@Localizer["Cancel"]</span>
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Help Card (Optional) -->
+<div class="card card-standard" style="width: 70%; margin:0 auto;">
+    <div class="card-body">
+        <h4 class="mb-md">
+            <i class='bx bx-help-circle' style="color: var(--info);"></i>
+            @Localizer["FillInstructions"]
+        </h4>
+        <ul class="list-disc" style="margin-right: var(--space-lg); line-height: 1.8;">
+            <li>@Localizer["HelpInstruction1"]</li>
+            <li>@Localizer["HelpInstruction2"]</li>
+            <li>@Localizer["HelpInstruction3"]</li>
+            <li>@Localizer["HelpInstruction4"]</li>
+            <li>@Localizer["HelpInstruction5"]</li>
+            <li>@Localizer["HelpInstruction6"]</li>
+        </ul>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="~/js/student/forms.js"></script>
+}
