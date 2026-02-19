@@ -364,3 +364,31 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# ── Environment & Secrets ──────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+secrets.json
+usersecrets.json
+
+# ASP.NET Core User Secrets (stored locally, never commit)
+# Override connection strings locally instead of putting them in appsettings
+# %APPDATA%\Microsoft\UserSecrets\ is already outside the repo
+
+# ── Database files ─────────────────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+
+# ── Runtime Upload folders ─────────────────────────────────────────────────
+**/wwwroot/uploads/
+**/Uploads/
+ExcelUploads/
+
+# ── OS generated files ─────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
