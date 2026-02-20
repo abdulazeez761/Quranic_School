@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Hafiz.Application;
 using Hafiz.Application.Extensions;
 using Hafiz.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -7,7 +8,14 @@ using Microsoft.AspNetCore.Localization;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews().AddViewLocalization().AddDataAnnotationsLocalization();
+builder
+    .Services.AddControllersWithViews()
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization(options =>
+    {
+        options.DataAnnotationLocalizerProvider = (type, factory) =>
+            factory.Create(typeof(SharedDtoResource));
+    });
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 builder

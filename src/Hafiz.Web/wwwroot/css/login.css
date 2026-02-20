@@ -94,6 +94,7 @@
 
 .form-group {
   position: relative;
+  direction: inherit;
 }
 
 .form-group label {
@@ -121,7 +122,7 @@
 
 .form-group .icon {
   position: absolute;
-  left: 1rem;
+  inset-inline-end: 1rem;
   top: 70%;
   transform: translateY(-50%);
   color: #999;
