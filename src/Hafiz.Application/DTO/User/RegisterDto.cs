@@ -6,37 +6,37 @@ namespace Hafiz.DTOs;
 
 public class RegisterDto
 {
-    [Required]
-    [StringLength(50, MinimumLength = 3)]
-    [RegularExpression(@"^[a-zA-Z0-9_-]+$", ErrorMessage = "Username can only contain letters, numbers, underscores, and hyphens")]
+    [Required(ErrorMessage = "UsernameRequired")]
+    [StringLength(50, MinimumLength = 3, ErrorMessage = "UsernameLength")]
+    [RegularExpression(@"^[a-zA-Z0-9_-]+$", ErrorMessage = "UsernameFormat")]
     public string Username { get; set; }
 
-    [Required]
-    [StringLength(50)]
+    [Required(ErrorMessage = "FirstNameRequired")]
+    [StringLength(50, ErrorMessage = "FirstNameLength")]
     public string FirstName { get; set; }
 
-    [Required]
-    [StringLength(50)]
+    [Required(ErrorMessage = "SecondNameRequired")]
+    [StringLength(50, ErrorMessage = "SecondNameLength")]
     public string SecondName { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "PhoneRequired")]
     [Phone]
-    [StringLength(20)]
+    [StringLength(20, ErrorMessage = "PhoneLength")]
     public string PhoneNumber { get; set; }
 
-    [EmailAddress]
+    [EmailAddress(ErrorMessage = "EmailFormat")]
     [StringLength(100)]
     public string? Email { get; set; }
 
-    [Required]
-    [MinLength(6)]
+    [Required(ErrorMessage = "PasswordRequired")]
+    [MinLength(6, ErrorMessage = "PasswordMinLength")]
     [RegularExpression(
         @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\-=/\\|])[A-Za-z\d!@#$%^&*()_+{}\[\]:;<>,.?~\-=/\\|]{8,}$",
-        ErrorMessage = "Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, and one number."
+        ErrorMessage = "PasswordFormat"
     )]
     public string Password { get; set; }
 
-    [Compare("Password")]
+    [Compare("Password", ErrorMessage = "PasswordMismatch")]
     public string ConfirmPassword { get; set; }
 
     [Required]

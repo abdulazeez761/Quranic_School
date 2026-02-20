@@ -19,9 +19,9 @@ namespace Hafiz.DTOs
 
         public Sex sex { get; set; }
 
-        [Required(ErrorMessage = "Date of Birth is required.")]
+        [Required(ErrorMessage = "DateOfBirthRequired")]
         [DataType(DataType.Date)]
-        [Display(Name = "Date of Birth")]
+        [Display(Name = "DateOfBirth")]
         public DateTime DateOfBirth { get; set; }
 
         public List<Guid>? ClassesIds { get; set; } = new();

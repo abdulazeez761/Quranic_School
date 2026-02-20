@@ -7,25 +7,25 @@ namespace Hafiz.DTOs;
 
 public class StudentDto
 {
-    [Required]
-    [StringLength(50, MinimumLength = 3)]
-    [RegularExpression(@"^[a-zA-Z0-9_-]+$")]
+    [Required(ErrorMessage = "UsernameRequired")]
+    [StringLength(50, MinimumLength = 3, ErrorMessage = "UsernameLength")]
+    [RegularExpression(@"^[a-zA-Z0-9_-]+$", ErrorMessage = "UsernameFormat")]
     public string Username { get; set; }
 
-    [Required]
-    [StringLength(50)]
+    [Required(ErrorMessage = "FirstNameRequired")]
+    [StringLength(50, ErrorMessage = "FirstNameLength")]
     public string FirstName { get; set; }
 
-    [Required]
-    [StringLength(50)]
+    [Required(ErrorMessage = "SecondNameRequired")]
+    [StringLength(50, ErrorMessage = "SecondNameLength")]
     public string SecondName { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "PhoneRequired")]
     [Phone]
-    [StringLength(20)]
+    [StringLength(20, ErrorMessage = "PhoneLength")]
     public string PhoneNumber { get; set; }
 
-    [EmailAddress]
+    [EmailAddress(ErrorMessage = "EmailFormat")]
     [StringLength(100)]
     public string? Email { get; set; }
 
@@ -49,9 +49,9 @@ public class StudentDto
     [Required]
     public Sex sex { get; set; }
 
-    [Required(ErrorMessage = "Date of Birth is required.")]
+    [Required(ErrorMessage = "DateOfBirthRequired")]
     [DataType(DataType.Date)]
-    [Display(Name = "Date of Birth")]
+    [Display(Name = "DateOfBirth")]
     public DateTime DateOfBirth { get; set; }
 
     public List<Guid>? ClassesIds { get; set; } = new();

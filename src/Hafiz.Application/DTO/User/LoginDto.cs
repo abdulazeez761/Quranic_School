@@ -4,14 +4,14 @@ namespace Hafiz.DTOs;
 
 public class LoginDto
 {
-    [Required(ErrorMessage = "Username is Required")]
-    [StringLength(50, MinimumLength = 3)]
+    [Required(ErrorMessage = "UsernameRequired")]
+    [StringLength(50, MinimumLength = 3, ErrorMessage = "UsernameLength")]
     public string Username { get; set; }
 
-    [Required(ErrorMessage = "Password")]
+    [Required(ErrorMessage = "PasswordRequired")]
     [RegularExpression(
         @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\-=/\\|])[A-Za-z\d!@#$%^&*()_+{}\[\]:;<>,.?~\-=/\\|]{8,}$",
-        ErrorMessage = "PasswordRegex"
+        ErrorMessage = "PasswordFormat"
     )]
     public string Password { get; set; }
 

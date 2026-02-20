@@ -6,38 +6,38 @@ namespace Hafiz.DTOs
 {
     public class RegisterParentDto
     {
-        [Required(ErrorMessage = "First name is required.")]
-        [StringLength(50)]
+        [Required(ErrorMessage = "FirstNameRequired")]
+        [StringLength(50, ErrorMessage = "FirstNameLength")]
         public string FirstName { get; set; }
 
-        [Required(ErrorMessage = "Second name is required.")]
-        [StringLength(50)]
+        [Required(ErrorMessage = "SecondNameRequired")]
+        [StringLength(50, ErrorMessage = "SecondNameLength")]
         public string SecondName { get; set; }
 
-        [Required(ErrorMessage = "Username is required.")]
-        [StringLength(50, MinimumLength = 3)]
-        [RegularExpression(@"^[a-zA-Z0-9_-]+$", ErrorMessage = "Username can only contain letters, numbers, underscores, and hyphens")]
+        [Required(ErrorMessage = "UsernameRequired")]
+        [StringLength(50, MinimumLength = 3, ErrorMessage = "UsernameLength")]
+        [RegularExpression(@"^[a-zA-Z0-9_-]+$", ErrorMessage = "UsernameFormat")]
         public string Username { get; set; }
 
-        [Required(ErrorMessage = "Phone number is required.")]
+        [Required(ErrorMessage = "PhoneRequired")]
         [Phone]
-        [StringLength(20)]
+        [StringLength(20, ErrorMessage = "PhoneLength")]
         public string PhoneNumber { get; set; }
 
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "EmailFormat")]
         [StringLength(100)]
         public string? Email { get; set; }
 
-        [Required(ErrorMessage = "Password is required.")]
-        [MinLength(6, ErrorMessage = "Password must be at least 6 characters long.")]
+        [Required(ErrorMessage = "PasswordRequired")]
+        [MinLength(6, ErrorMessage = "PasswordMinLength")]
         [RegularExpression(
             @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\-=/\\|])[A-Za-z\d!@#$%^&*()_+{}\[\]:;<>,.?~\-=/\\|]{8,}$",
-            ErrorMessage = "Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, and one number."
+            ErrorMessage = "PasswordFormat"
         )]
         public string Password { get; set; }
 
-        [Required(ErrorMessage = "Password confirmation is required.")]
-        [Compare("Password", ErrorMessage = "Password and confirmation password do not match.")]
+        [Required(ErrorMessage = "ConfirmPasswordRequired")]
+        [Compare("Password", ErrorMessage = "PasswordMismatch")]
         public string ConfirmPassword { get; set; }
 
         public UserRole Role { get; set; } = UserRole.Parent;

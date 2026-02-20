@@ -13,24 +13,20 @@ namespace Hafiz.DTOs
     {
         public Guid? Id { get; set; }
 
-        [Required(ErrorMessage = "Class name is required.")]
-        [StringLength(
-            100,
-            MinimumLength = 3,
-            ErrorMessage = "The name must be between 3 and 100 characters."
-        )]
+        [Required(ErrorMessage = "ClassNameRequired")]
+        [StringLength(100, MinimumLength = 3, ErrorMessage = "ClassNameLength")]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "Class gender is required.")]
+        [Required(ErrorMessage = "ClassGenderRequired")]
         public Sex Gender { get; set; }
 
-        [Required(ErrorMessage = "Class days are required.")]
+        [Required(ErrorMessage = "ClassDaysRequired")]
         public List<ClassDaysEnum> ClassDays { get; set; } = new List<ClassDaysEnum>();
 
         public List<Teacher>? Teachers { get; set; } = new();
         public List<StudentModel>? Students { get; set; } = new();
 
-        [Required(ErrorMessage = "Class time is required.")]
+        [Required(ErrorMessage = "ClassTimeRequired")]
         public DateTime ClassTime { get; set; }
     }
 }

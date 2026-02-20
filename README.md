@@ -93,6 +93,7 @@ Hifz.sln
     │   │   └── Services/              # واجهات الخدمات
     │   ├── Services/                  # منطق الأعمال
     │   ├── DTO/                       # كائنات نقل البيانات
+        ├── Resources/                 # ملفات الترجمة (.resx)
     │   ├── Common/Helper/             # أدوات مساعدة
     │   └── Extensions/                # Extension Methods للـ DI
     │

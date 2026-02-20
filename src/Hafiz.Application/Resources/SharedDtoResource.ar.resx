@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msOccurs="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- ==================== General ==================== -->
+  <data name="FieldRequired" xml:space="preserve">
+    <value>هذا الحقل مطلوب</value>
+  </data>
+
+  <!-- ==================== Username ==================== -->
+  <data name="UsernameRequired" xml:space="preserve">
+    <value>اسم المستخدم مطلوب</value>
+  </data>
+  <data name="UsernameFormat" xml:space="preserve">
+    <value>اسم المستخدم يمكن أن يحتوي فقط على حروف وأرقام وشرطات سفلية وواصلات</value>
+  </data>
+  <data name="UsernameLength" xml:space="preserve">
+    <value>اسم المستخدم يجب أن يكون بين {2} و {1} حرفًا</value>
+  </data>
+
+  <!-- ==================== Name ==================== -->
+  <data name="FirstNameRequired" xml:space="preserve">
+    <value>الاسم الأول مطلوب</value>
+  </data>
+  <data name="FirstNameLength" xml:space="preserve">
+    <value>الاسم الأول لا يمكن أن يزيد عن {1} حرفًا</value>
+  </data>
+  <data name="SecondNameRequired" xml:space="preserve">
+    <value>الاسم الثاني مطلوب</value>
+  </data>
+  <data name="SecondNameLength" xml:space="preserve">
+    <value>الاسم الثاني لا يمكن أن يزيد عن {1} حرفًا</value>
+  </data>
+
+  <!-- ==================== Phone ==================== -->
+  <data name="PhoneRequired" xml:space="preserve">
+    <value>رقم الهاتف مطلوب</value>
+  </data>
+  <data name="PhoneLength" xml:space="preserve">
+    <value>رقم الهاتف لا يمكن أن يزيد عن {1} رقمًا</value>
+  </data>
+  <data name="PhoneFormat" xml:space="preserve">
+    <value>يرجى إدخال رقم هاتف أردني صالح</value>
+  </data>
+
+  <!-- ==================== Email ==================== -->
+  <data name="EmailFormat" xml:space="preserve">
+    <value>يرجى إدخال بريد إلكتروني صالح</value>
+  </data>
+
+  <!-- ==================== Password ==================== -->
+  <data name="PasswordRequired" xml:space="preserve">
+    <value>كلمة المرور مطلوبة</value>
+  </data>
+  <data name="PasswordFormat" xml:space="preserve">
+    <value>كلمة المرور يجب أن تتكون من 8 أحرف على الأقل وتحتوي على حرف كبير وحرف صغير ورقم ورمز خاص</value>
+  </data>
+  <data name="PasswordMinLength" xml:space="preserve">
+    <value>كلمة المرور يجب أن تتكون من {1} أحرف على الأقل</value>
+  </data>
+  <data name="PasswordLength" xml:space="preserve">
+    <value>كلمة المرور يجب أن تكون بين {2} و {1} حرفًا</value>
+  </data>
+  <data name="ConfirmPasswordRequired" xml:space="preserve">
+    <value>تأكيد كلمة المرور مطلوب</value>
+  </data>
+  <data name="PasswordMismatch" xml:space="preserve">
+    <value>كلمة المرور وتأكيد كلمة المرور غير متطابقين</value>
+  </data>
+
+  <!-- ==================== Date of Birth ==================== -->
+  <data name="DateOfBirthRequired" xml:space="preserve">
+    <value>تاريخ الميلاد مطلوب</value>
+  </data>
+
+  <!-- ==================== Class ==================== -->
+  <data name="ClassNameRequired" xml:space="preserve">
+    <value>اسم الحلقة مطلوب</value>
+  </data>
+  <data name="ClassNameLength" xml:space="preserve">
+    <value>اسم الحلقة يجب أن يكون بين {2} و {1} حرفًا</value>
+  </data>
+  <data name="ClassGenderRequired" xml:space="preserve">
+    <value>جنس الحلقة مطلوب</value>
+  </data>
+  <data name="ClassDaysRequired" xml:space="preserve">
+    <value>أيام الحلقة مطلوبة</value>
+  </data>
+  <data name="ClassTimeRequired" xml:space="preserve">
+    <value>وقت الحلقة مطلوب</value>
+  </data>
+
+  <!-- ==================== Display Names ==================== -->
+  <data name="FirstName" xml:space="preserve">
+    <value>الاسم الأول</value>
+  </data>
+  <data name="SecondName" xml:space="preserve">
+    <value>الاسم الثاني</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>رقم الهاتف</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>اسم المستخدم</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>كلمة المرور</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>تأكيد كلمة المرور</value>
+  </data>
+  <data name="DateOfBirth" xml:space="preserve">
+    <value>تاريخ الميلاد</value>
+  </data>
+  <data name="ClassName" xml:space="preserve">
+    <value>اسم الحلقة</value>
+  </data>
+  <data name="ClassGender" xml:space="preserve">
+    <value>جنس الحلقة</value>
+  </data>
+  <data name="ClassDays" xml:space="preserve">
+    <value>أيام الحلقة</value>
+  </data>
+  <data name="ClassTime" xml:space="preserve">
+    <value>وقت الحلقة</value>
+  </data>
+</root>

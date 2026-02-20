@@ -12,28 +12,28 @@ namespace Hafiz.DTOs
     {
         public Guid? StudentID { get; set; }
 
-        [StringLength(50)]
+        [StringLength(50, ErrorMessage = "FirstNameLength")]
         public string? FirstName { get; set; }
 
-        [StringLength(50)]
+        [StringLength(50, ErrorMessage = "SecondNameLength")]
         public string? SecondName { get; set; }
 
         [Phone]
-        [StringLength(20)]
+        [StringLength(20, ErrorMessage = "PhoneLength")]
         public string? PhoneNumber { get; set; }
 
-        [StringLength(50, MinimumLength = 3)]
-        [RegularExpression(@"^[a-zA-Z0-9_-]+$")]
+        [StringLength(50, MinimumLength = 3, ErrorMessage = "UsernameLength")]
+        [RegularExpression(@"^[a-zA-Z0-9_-]+$", ErrorMessage = "UsernameFormat")]
         public string? Username { get; set; }
 
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "EmailFormat")]
         [StringLength(100)]
         public string? Email { get; set; }
 
-        [MinLength(6)]
+        [MinLength(6, ErrorMessage = "PasswordMinLength")]
         [RegularExpression(
             @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\-=/\\|])[A-Za-z\d!@#$%^&*()_+{}\[\]:;<>,.?~\-=/\\|]{8,}$",
-            ErrorMessage = "Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, and one number."
+            ErrorMessage = "PasswordFormat"
         )]
         public string? Password { get; set; }
 
@@ -50,9 +50,9 @@ namespace Hafiz.DTOs
 
         public Sex sex { get; set; }
 
-        [Required(ErrorMessage = "Date of Birth is required.")]
+        [Required(ErrorMessage = "DateOfBirthRequired")]
         [DataType(DataType.Date)]
-        [Display(Name = "Date of Birth")]
+        [Display(Name = "DateOfBirth")]
         public DateTime DateOfBirth { get; set; }
 
         public List<Guid>? ClassesIds { get; set; } = new();
