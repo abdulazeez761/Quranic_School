@@ -31,7 +31,7 @@ namespace Hafiz.Controllers
 
             if (user is null)
             {
-                ModelState.AddModelError("", "no such a user");
+                ModelState.AddModelError("", "كلمة السر أو اسم المستخدم غير صحيح.");
                 return View(dto);
             }
 

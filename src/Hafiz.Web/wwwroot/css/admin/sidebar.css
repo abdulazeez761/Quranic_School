@@ -2,6 +2,40 @@
    Sidebar Component
    =================================== */
 
+/* ---- Keyframes ---- */
+@keyframes sidebarSlideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes sidebarSlideInRtl {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes navItemFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .sidebar {
   position: fixed;
   top: 0;
@@ -14,10 +48,8 @@
   display: flex !important;
   flex-direction: column;
   z-index: var(--z-fixed);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow-y: auto;
   box-shadow: var(--shadow-lg);
-  will-change: transform;
   visibility: visible !important;
 }
 
@@ -76,7 +108,10 @@ body[dir='rtl'] .sidebar {
   border-radius: var(--radius-lg);
   color: rgba(255, 255, 255, 0.85);
   font-size: var(--font-size-base);
-  transition: all var(--transition-base);
+  transition:
+    background var(--transition-base),
+    color var(--transition-base),
+    transform var(--transition-base);
   position: relative;
   overflow: hidden;
   white-space: nowrap;
@@ -108,7 +143,6 @@ body[dir='rtl'] .sidebar a::before {
   background: rgba(255, 255, 255, 0.1);
   color: var(--white);
   transform: translateX(4px);
-  margin: var(--space-sm);
 }
 
 body[dir='rtl'] .sidebar a:hover,
@@ -127,7 +161,6 @@ body[dir='rtl'] .sidebar a:focus-visible {
   background: var(--secondary-green);
   color: var(--white);
   font-weight: 600;
-  margin: var(--space-sm);
 }
 
 .sidebar .active a::before,
@@ -148,7 +181,6 @@ body[dir='rtl'] .sidebar a:focus-visible {
 
 /* Logout Button */
 .sidebar .logout {
-  margin-top: auto;
   background: linear-gradient(
     135deg,
     var(--primary-green),
@@ -161,6 +193,9 @@ body[dir='rtl'] .sidebar a:focus-visible {
   margin: var(--space-sm);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .sidebar .logout:hover {
@@ -185,6 +220,11 @@ body[dir='rtl'] .sidebar a:focus-visible {
   font-size: var(--font-size-xl);
   box-shadow: var(--shadow-lg);
   cursor: pointer;
+  transition: transform var(--transition-base);
+}
+
+.sidebar-toggle:hover {
+  transform: scale(1.08);
 }
 
 body[dir='rtl'] .sidebar-toggle {
@@ -196,7 +236,13 @@ body[dir='rtl'] .sidebar-toggle {
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
-    transition: transform var(--transition-base) ease-in-out;
+    opacity: 0;
+    visibility: hidden;
+    will-change: transform;
+    transition:
+      transform 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.32s ease,
+      visibility 0s linear 0.32s;
   }
 
   body[dir='rtl'] .sidebar {
@@ -204,11 +250,46 @@ body[dir='rtl'] .sidebar-toggle {
   }
 
   .sidebar.active {
-    transform: translateX(0) !important;
+    animation: sidebarSlideIn 0.32s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    visibility: visible;
+    transition: none;
   }
 
   body[dir='rtl'] .sidebar.active {
-    transform: translateX(0) !important;
+    animation: sidebarSlideInRtl 0.32s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    visibility: visible;
+    transition: none;
+  }
+
+  /* Staggered fade-in for nav items — only when sidebar is opening */
+  .sidebar.active ul li {
+    opacity: 0;
+    animation: navItemFadeIn 0.25s ease forwards;
+  }
+
+  .sidebar.active ul li:nth-child(1) {
+    animation-delay: 0.08s;
+  }
+  .sidebar.active ul li:nth-child(2) {
+    animation-delay: 0.13s;
+  }
+  .sidebar.active ul li:nth-child(3) {
+    animation-delay: 0.18s;
+  }
+  .sidebar.active ul li:nth-child(4) {
+    animation-delay: 0.23s;
+  }
+  .sidebar.active ul li:nth-child(5) {
+    animation-delay: 0.28s;
+  }
+  .sidebar.active ul li:nth-child(6) {
+    animation-delay: 0.33s;
+  }
+  .sidebar.active ul li:nth-child(7) {
+    animation-delay: 0.38s;
+  }
+  .sidebar.active ul li:nth-child(8) {
+    animation-delay: 0.43s;
   }
 
   .sidebar-toggle {
@@ -238,13 +319,7 @@ body[dir='rtl'] .sidebar-toggle {
 
 @media (max-width: 480px) {
   .sidebar {
-    width: var(--sidebar-width);
-    transform: translateX(-100%);
     max-width: 85vw;
-  }
-
-  body[dir='rtl'] .sidebar {
-    transform: translateX(100%);
   }
 
   .sidebar .logo {
@@ -283,18 +358,54 @@ body[dir='rtl'] .sidebar-toggle {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sidebar ul li,
+  .sidebar a,
+  .sidebar a::before,
+  .sidebar .logout,
+  .sidebar-toggle,
+  .sidebar-overlay {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* Ensure sidebar and items are visible when active, even without animation */
+  .sidebar.active,
+  .sidebar.active ul li {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateX(0) !important;
+  }
+
+  .sidebar a:hover,
+  .sidebar a:focus-visible,
+  body[dir='rtl'] .sidebar a:hover,
+  body[dir='rtl'] .sidebar a:focus-visible {
+    transform: none;
+  }
+}
+
 /* Desktop Sidebar - Always Visible */
 @media (min-width: 769px) {
   .sidebar {
     transform: translateX(0) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    animation: none !important;
     transition: none;
+    will-change: auto;
+  }
+
+  /* Kill ALL animations on nav items on desktop */
+  .sidebar ul li,
+  .sidebar.active ul li {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
   }
 
   body[dir='rtl'] .sidebar {
-    transform: translateX(0) !important;
-  }
-
-  .sidebar.active {
     transform: translateX(0) !important;
   }
 
