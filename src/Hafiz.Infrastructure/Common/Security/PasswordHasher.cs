@@ -1,6 +1,5 @@
-using System.Security.Cryptography;
-using System.Text;
 using Hafiz.Application.Interfaces;
+using Isopoh.Cryptography.Argon2;
 
 namespace Hafiz.Infrastructure.Security
 {
@@ -8,10 +7,13 @@ namespace Hafiz.Infrastructure.Security
     {
         public string HashPassword(string password)
         {
-            using var sha = SHA256.Create();
-            var bytes = Encoding.UTF8.GetBytes(password);
-            var hash = sha.ComputeHash(bytes);
-            return Convert.ToBase64String(hash);
+            // Generate a random salt
+            return Argon2.Hash(password);
+        }
+
+        public bool VerifyPassword(string password, string hash)
+        {
+            return Argon2.Verify(hash, password);
         }
     }
 }

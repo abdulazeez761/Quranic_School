@@ -31,11 +31,12 @@ public class AuthService : IAuthService
 
     public async Task<User?> LoginAsync(LoginDto dto)
     {
-        var hashedPassword = _passwordHasher.HashPassword(dto.Password);
-        return await _userRepository.GetUserByUsernameAndPasswordAsync(
-            dto.Username,
-            hashedPassword
-        );
+        User? user = await _userRepository.GetByUsernameAsync(dto.Username);
+        if (user is null)
+            return null;
+        if (_passwordHasher.VerifyPassword(dto.Password, user.Password))
+            return user;
+        return null;
     }
 
     public async Task<(bool Success, string ErrorMessage)> RegisterAsync(RegisterDto dto)
