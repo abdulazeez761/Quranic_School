@@ -1,10 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
-  const deleteLinks = document.querySelectorAll('[data-confirm-delete]');
+  const deleteElements = document.querySelectorAll('[data-confirm-delete]');
 
-  deleteLinks.forEach((link) => {
-    link.addEventListener('click', function (event) {
+  deleteElements.forEach((el) => {
+    el.addEventListener('click', function (event) {
       event.preventDefault();
       const message = this.getAttribute('data-confirm-delete');
+      const form = this.closest('form');
       const url = this.getAttribute('href');
       Swal.fire({
         title: 'تأكيد الحذف',
@@ -17,7 +18,11 @@ document.addEventListener('DOMContentLoaded', function () {
         cancelButtonText: 'إلغاء',
       }).then((result) => {
         if (result.isConfirmed) {
-          window.location.href = url;
+          if (form) {
+            form.submit(); // POST with AntiForgeryToken
+          } else {
+            window.location.href = url; // fallback for <a> links
+          }
         }
       });
     });

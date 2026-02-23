@@ -103,6 +103,7 @@ namespace Hafiz.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
             await _ClassService.DeleteClass(id);

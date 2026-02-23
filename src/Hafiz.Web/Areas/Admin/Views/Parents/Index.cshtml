@@ -133,7 +133,7 @@
                             <td data-label="@Localizer["FirstName"]">
                                 <div class="d-flex align-center gap-sm">
                                     <div class="avatar-sm"
-                                        style="background: var(--primary-green); color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                                         style="background: var(--primary-green); color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
                                         @parent.ParentInfo.FirstName.Substring(0, 1)
                                     </div>
                                     <span class="fw-medium">@parent.ParentInfo.FirstName</span>
@@ -178,14 +178,18 @@
                             <td data-label="@Localizer["Actions"]">
                                 <div class="table-actions justify-center">
                                     <a asp-action="Edit" asp-route-id="@parent.UserId" class="table-action-btn"
-                                        data-tooltip="@Localizer["Edit"]">
+                                           data-tooltip="@Localizer["Edit"]">
                                         <i class='bx bx-edit'></i>
                                     </a>
-                                    <a asp-action="Delete" asp-route-id="@parent.UserId" class="table-action-btn danger"
-                                        data-confirm-delete="@string.Format(Localizer["DeleteConfirmation"].Value, parent.ParentInfo.FirstName, parent.ParentInfo.SecondName)"
-                                        data-tooltip="@Localizer["Delete"]">
-                                        <i class='bx bx-trash'></i>
-                                    </a>
+                                    <form asp-action="Delete" asp-route-id="@parent.UserId" method="post"
+                                          class="d-inline delete-form">
+                                        <button type="submit" class="table-action-btn danger"
+                                                data-confirm-delete="@string.Format(Localizer["DeleteConfirmation"].Value, parent.ParentInfo.FirstName, parent.ParentInfo.SecondName)"
+                                                data-tooltip="@Localizer["Delete"]">
+                                            <i class='bx bx-trash'></i>
+                                        </button>
+                                    </form>
+
                                 </div>
                             </td>
                         </tr>

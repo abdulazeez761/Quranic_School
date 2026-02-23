@@ -73,6 +73,7 @@ namespace Hafiz.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
             await _studentService.DeleteAsync(id);
@@ -148,10 +149,10 @@ namespace Hafiz.Areas.Admin.Controllers
 
             // Create SelectListItem collection
             ViewBag.Parents = parents
-                .Select(p => new SelectListItem 
-                { 
-                    Value = p.UserId.ToString(), 
-                    Text = $"{p.ParentInfo.FirstName} {p.ParentInfo.SecondName}" 
+                .Select(p => new SelectListItem
+                {
+                    Value = p.UserId.ToString(),
+                    Text = $"{p.ParentInfo.FirstName} {p.ParentInfo.SecondName}",
                 })
                 .ToList();
         }

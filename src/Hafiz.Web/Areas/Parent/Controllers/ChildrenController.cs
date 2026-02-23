@@ -160,7 +160,6 @@ namespace Hafiz.Areas.Parent.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteNote(Guid noteId, Guid studentId)
         {
             Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

@@ -65,6 +65,7 @@ namespace Hafiz.Areas.Teacher.Controllers
             return Json(new { success = isWIrdUpdated });
         }
 
+        [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
             bool isWirdDeleted = await _wirdService.DeleteWirdAssignment(id);

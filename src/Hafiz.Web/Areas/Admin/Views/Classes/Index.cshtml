@@ -154,13 +154,17 @@
                             <td data-label="@Localizer["Time"]">@cl.ClassTime.ToString("HH:mm")</td>
                             <td data-label="@Localizer["Actions"]">
                                 <div class="table-actions">
-                                    <a asp-action="Edit" asp-route-id="@cl.Id" class="table-action-btn" data-tooltip="@Localizer["Edit"]">
+                                    <a asp-action="Edit" asp-route-id="@cl.Id" class="table-action-btn"
+                                           data-tooltip="@Localizer["Edit"]">
                                         <i class='bx bx-edit'></i>
                                     </a>
-                                    <a asp-action="Delete" asp-route-id="@cl.Id" class="table-action-btn danger"
-                                        data-confirm-delete="@Localizer["DeleteConfirmation"] @cl.Name؟" data-tooltip="@Localizer["Delete"]">
-                                        <i class='bx bx-trash'></i>
-                                    </a>
+                                    <form asp-action="Delete" asp-route-id="@cl.Id" method="post" class="d-inline delete-form">
+                                        <button type="submit" class="table-action-btn danger"
+                                                data-confirm-delete="@Localizer["DeleteConfirmation"] @cl.Name؟"
+                                                data-tooltip="@Localizer["Delete"]">
+                                            <i class='bx bx-trash'></i>
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
@@ -188,7 +192,8 @@
     <!-- Table Footer -->
     <div class="table-footer">
         <div class="table-info">
-            @Localizer["ShowingResults"] <strong><span id="visibleCount">@Model.Count()</span></strong> @Localizer["Of"] <strong>@Model.Count()</strong> @Localizer["Class"]
+            @Localizer["ShowingResults"] <strong><span id="visibleCount">@Model.Count()</span></strong> @Localizer["Of"]
+            <strong>@Model.Count()</strong> @Localizer["Class"]
         </div>
     </div>
 </div>

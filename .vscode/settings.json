@@ -1,4 +1,7 @@
 {
-  "dataworkspace.excludedProjects": ["Hafiz/Hafiz.sqlproj", "Hafz/Hafz.sqlproj"],
-  "cSpell.words": ["Hafiz", "Hsts", "Jitsi", "Wird", "Wirds"]
+  "dataworkspace.excludedProjects": [
+    "Hafiz/Hafiz.sqlproj",
+    "Hafz/Hafz.sqlproj"
+  ],
+  "cSpell.words": ["Antiforgery", "Hafiz", "Hsts", "Jitsi", "Wird", "Wirds"]
 }

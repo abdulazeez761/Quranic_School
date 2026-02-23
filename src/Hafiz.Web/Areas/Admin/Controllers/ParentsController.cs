@@ -67,7 +67,7 @@ namespace Hafiz.Areas.Admin.Controllers
                 SecondName = parent.SecondName,
                 Email = parent.Email,
                 PhoneNumber = parent.PhoneNumber,
-                Username = parent.Username
+                Username = parent.Username,
             };
 
             return View(editParentDto);
@@ -91,6 +91,7 @@ namespace Hafiz.Areas.Admin.Controllers
             }
         }
 
+        [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
             await _parentService.DeleteAsync(id);

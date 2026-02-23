@@ -36,13 +36,19 @@ namespace Hafiz.Areas.Teacher.Controllers
         {
             try
             {
-                _logger.LogInformation($"Attempting to create note for student {studentId} with content length {content?.Length}");
+                _logger.LogInformation(
+                    $"Attempting to create note for student {studentId} with content length {content?.Length}"
+                );
 
                 if (string.IsNullOrWhiteSpace(content))
                 {
                     _logger.LogWarning("Note content is empty");
                     TempData["Error"] = "Note content cannot be empty.";
-                    return RedirectToAction("Details", "Student", new { area = "Teacher", id = studentId });
+                    return RedirectToAction(
+                        "Details",
+                        "Student",
+                        new { area = "Teacher", id = studentId }
+                    );
                 }
 
                 var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -50,23 +56,38 @@ namespace Hafiz.Areas.Teacher.Controllers
                 {
                     _logger.LogError("User ID claim is missing");
                     TempData["Error"] = "User not identified.";
-                    return RedirectToAction("Details", "Student", new { area = "Teacher", id = studentId });
+                    return RedirectToAction(
+                        "Details",
+                        "Student",
+                        new { area = "Teacher", id = studentId }
+                    );
                 }
 
                 Guid userId = Guid.Parse(userIdClaim);
                 _logger.LogInformation($"User ID: {userId}");
-                
+
                 await _parentNoteService.CreateNoteAsync(studentId, content, userId);
-                
+
                 _logger.LogInformation("Note created successfully");
                 TempData["Success"] = "Note added successfully.";
-                return RedirectToAction("Details", "Student", new { area = "Teacher", id = studentId });
+                return RedirectToAction(
+                    "Details",
+                    "Student",
+                    new { area = "Teacher", id = studentId }
+                );
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error creating parent note for student {studentId}. Message: {ex.Message}");
+                _logger.LogError(
+                    ex,
+                    $"Error creating parent note for student {studentId}. Message: {ex.Message}"
+                );
                 TempData["Error"] = $"Failed to create note: {ex.Message}";
-                return RedirectToAction("Details", "Student", new { area = "Teacher", id = studentId });
+                return RedirectToAction(
+                    "Details",
+                    "Student",
+                    new { area = "Teacher", id = studentId }
+                );
             }
         }
 
@@ -82,11 +103,15 @@ namespace Hafiz.Areas.Teacher.Controllers
                 }
 
                 Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-                
+
                 var note = await _parentNoteService.UpdateNoteAsync(noteId, content, userId);
-                
+
                 TempData["Success"] = "Note updated successfully.";
-                return RedirectToAction("Details", "Student", new { area = "Teacher", id = note.StudentId });
+                return RedirectToAction(
+                    "Details",
+                    "Student",
+                    new { area = "Teacher", id = note.StudentId }
+                );
             }
             catch (UnauthorizedAccessException)
             {
@@ -107,22 +132,34 @@ namespace Hafiz.Areas.Teacher.Controllers
             try
             {
                 Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-                
+
                 await _parentNoteService.DeleteNoteAsync(noteId, userId);
-                
+
                 TempData["Success"] = "Note deleted successfully.";
-                return RedirectToAction("Details", "Student", new { area = "Teacher", id = studentId });
+                return RedirectToAction(
+                    "Details",
+                    "Student",
+                    new { area = "Teacher", id = studentId }
+                );
             }
             catch (UnauthorizedAccessException)
             {
                 TempData["Error"] = "You don't have permission to delete this note.";
-                return RedirectToAction("Details", "Student", new { area = "Teacher", id = studentId });
+                return RedirectToAction(
+                    "Details",
+                    "Student",
+                    new { area = "Teacher", id = studentId }
+                );
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting parent note");
                 TempData["Error"] = "Failed to delete note.";
-                return RedirectToAction("Details", "Student", new { area = "Teacher", id = studentId });
+                return RedirectToAction(
+                    "Details",
+                    "Student",
+                    new { area = "Teacher", id = studentId }
+                );
             }
         }
     }

@@ -187,11 +187,13 @@
                             data-id="@item.Id">@Localizer["Poor"]</button>
                 </div>
 
-                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-delete table-action-btn danger"
-                       data-confirm-delete="@Localizer["ConfirmDelete"] @item.Student.StudentInfo.FirstName @item.Student.StudentInfo.SecondName">
-                    <i class='bx bx-trash'></i>
-                    @Localizer["Delete"]
-                </a>
+                <form method="post" asp-action="Delete" asp-route-id="@item.Id" class="d-inline delete-form">
+                    <button type="submit" class="btn btn-delete table-action-btn danger"
+                            data-confirm-delete="@Localizer["ConfirmDelete"] @item.Student.StudentInfo.FirstName @item.Student.StudentInfo.SecondName">
+                        <i class='bx bx-trash'></i>
+                        @Localizer["Delete"]
+                    </button>
+                </form>
             </div>
 
         </div>
