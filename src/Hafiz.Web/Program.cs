@@ -1,10 +1,12 @@
 using System.Security.Claims;
+using System.Threading.RateLimiting;
 using Hafiz.Application;
 using Hafiz.Application.Extensions;
 using Hafiz.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,7 +58,58 @@ builder.Services.AddAuthorization(op =>
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
+    // Static files (css, js, images...) are excluded from rate limiting
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+    {
+        var path = context.Request.Path.Value ?? "";
+        if (
+            path.Contains("/css/")
+            || path.Contains("/js/")
+            || path.Contains("/lib/")
+            || path.Contains("/images/")
+            || path.Contains("/icons/")
+            || path.Contains("/fonts/")
+            || path.EndsWith(".ico")
+            || path.EndsWith(".webmanifest")
+        )
+        {
+            return RateLimitPartition.GetNoLimiter("static");
+        }
+
+        return RateLimitPartition.GetTokenBucketLimiter(
+            partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new TokenBucketRateLimiterOptions
+            {
+                TokenLimit = 30,
+                ReplenishmentPeriod = TimeSpan.FromSeconds(10),
+                TokensPerPeriod = 10,
+                AutoReplenishment = true,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0,
+            }
+        );
+    });
+
+    // Auth: Fixed Window per IP → max 5 login/register attempts per minute (anti brute-force)
+    options.AddPolicy(
+        "Auth",
+        context =>
+            RateLimitPartition.GetFixedWindowLimiter(
+                partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                factory: _ => new FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = 5,
+                    Window = TimeSpan.FromMinutes(1),
+                    QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                    QueueLimit = 0,
+                }
+            )
+    );
+});
 var app = builder.Build();
 
 string[]? supportedCultures = { "en", "ar" };
@@ -129,6 +182,8 @@ if (app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();

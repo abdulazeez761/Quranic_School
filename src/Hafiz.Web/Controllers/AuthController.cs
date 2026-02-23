@@ -5,6 +5,7 @@ using Hafiz.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Hafiz.Controllers
 {
@@ -22,6 +23,7 @@ namespace Hafiz.Controllers
         public ActionResult Login() => View();
 
         [HttpPost]
+        [EnableRateLimiting("Auth")]
         public async Task<IActionResult> Login(LoginDto dto, string? ReturnUrl)
         {
             if (!ModelState.IsValid)
@@ -76,6 +78,7 @@ namespace Hafiz.Controllers
         public ActionResult Register() => View();
 
         [HttpPost]
+        [EnableRateLimiting("Auth")]
         public async Task<IActionResult> Register(RegisterDto dto)
         {
             if (!ModelState.IsValid)
