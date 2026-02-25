@@ -37,7 +37,24 @@ namespace Hafiz.Web.Extensions
                 new QueryStringRequestCultureProvider()
             );
             app.UseRequestLocalization(localizationOptions);
+            app.Use(
+                async (context, next) =>
+                {
+                    if (!context.Response.Headers.ContainsKey("x-content-type-options"))
+                    {
+                        context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+                        context.Response.Headers.Append("X-Frame-Options", "DENY");
+                        context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");
+                        context.Response.Headers.Append(
+                            "Referrer-Policy",
+                            "strict-origin-when-cross-origin"
+                        );
+                    }
 
+                    await next();
+                    ;
+                }
+            );
             // 4. Smart cache control (الكود الخاص بك هنا صحيح طالما أنه يضيف الـ Headers ويستدعي next)
             app.Use(
                 async (context, next) =>
