@@ -117,8 +117,104 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="PasswordRegex" xml:space="preserve">
-    <value>Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.</value>
+  <data name="AssignWirdTo" xml:space="preserve">
+    <value>تعديل الورد لـ</value>
+    <comment/>
+  </data>
+  <data name="AssignmentType" xml:space="preserve">
+    <value>نوع الورد</value>
+    <comment/>
+  </data>
+  <data name="SelectType" xml:space="preserve">
+    <value>اختر نوع الورد</value>
+    <comment/>
+  </data>
+  <data name="Memorization" xml:space="preserve">
+    <value>حفظ</value>
+    <comment/>
+  </data>
+  <data name="Revision" xml:space="preserve">
+    <value>مراجعة</value>
+    <comment/>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>من</value>
+    <comment/>
+  </data>
+  <data name="To" xml:space="preserve">
+    <value>إلى</value>
+    <comment/>
+  </data>
+  <data name="Juz" xml:space="preserve">
+    <value>الجزء</value>
+    <comment/>
+  </data>
+  <data name="Page" xml:space="preserve">
+    <value>الصفحة</value>
+    <comment/>
+  </data>
+  <data name="Surah" xml:space="preserve">
+    <value>السورة</value>
+    <comment/>
+  </data>
+  <data name="Ayah" xml:space="preserve">
+    <value>الآية</value>
+    <comment/>
+  </data>
+  <data name="AyahNumber" xml:space="preserve">
+    <value>رقم الآية</value>
+    <comment/>
+  </data>
+  <data name="PageNumber" xml:space="preserve">
+    <value>رقم الصفحة</value>
+    <comment/>
+  </data>
+  <data name="Grade" xml:space="preserve">
+    <value>التقييم (اختياري - للواجبات المكتملة)</value>
+    <comment/>
+  </data>
+  <data name="NotGraded" xml:space="preserve">
+    <value>لم يُقيّم</value>
+    <comment/>
+  </data>
+  <data name="Poor" xml:space="preserve">
+    <value>ضعيف</value>
+    <comment/>
+  </data>
+  <data name="Fair" xml:space="preserve">
+    <value>مقبول</value>
+    <comment/>
+  </data>
+  <data name="Good" xml:space="preserve">
+    <value>جيد</value>
+    <comment/>
+  </data>
+  <data name="VeryGood" xml:space="preserve">
+    <value>جيد جداً</value>
+    <comment/>
+  </data>
+  <data name="Excellent" xml:space="preserve">
+    <value>ممتاز</value>
+    <comment/>
+  </data>
+  <data name="NoteOptional" xml:space="preserve">
+    <value>ملاحظة (اختياري)</value>
+    <comment/>
+  </data>
+  <data name="NotePlaceholder" xml:space="preserve">
+    <value>أضف أي ملاحظات أو تعليمات...</value>
+    <comment/>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+    <comment/>
+  </data>
+  <data name="AssignWird" xml:space="preserve">
+    <value>تخصيص الورد</value>
+    <comment/>
+  </data>
+  <data name="SelectSurah" xml:space="preserve">
+    <value>اختر السورة</value>
     <comment/>
   </data>
 </root>

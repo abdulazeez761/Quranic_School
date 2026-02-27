@@ -39,6 +39,11 @@ namespace Hafiz.Services
             return isWirdDeleted;
         }
 
+        public async Task<WirdAssignment?> GetWirdAssignmentByIdAsync(Guid id)
+        {
+            return await _wirdRepository.GetWirdByID(id);
+        }
+
         public async Task<List<WirdAssignment>?> GetWirdAssignmentsByClassIdAsync(
             Guid classID,
             string? fromDate,

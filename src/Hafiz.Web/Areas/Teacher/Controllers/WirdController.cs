@@ -42,6 +42,14 @@ namespace Hafiz.Areas.Teacher.Controllers
             return View(assignmentList);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetWirdAssignmentById(Guid id)
+        {
+            var assignment = await _wirdService.GetWirdAssignmentByIdAsync(id);
+
+            return Json(assignment);
+        }
+
         [HttpPost]
         public async Task<IActionResult> UpdateStatus([FromBody] UpdateStatusRequest receivedData)
         {

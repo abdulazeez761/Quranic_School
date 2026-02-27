@@ -117,56 +117,64 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="WirdAssignments" xml:space="preserve">
-    <value>Wird Assignments</value>
-    <comment/>
-  </data>
-  <data name="Filters" xml:space="preserve">
-    <value>Filters</value>
-    <comment/>
-  </data>
-  <data name="StudentName" xml:space="preserve">
-    <value>Student Name</value>
-    <comment/>
-  </data>
-  <data name="SearchByName" xml:space="preserve">
-    <value>Search by name...</value>
+  <data name="AssignWirdTo" xml:space="preserve">
+    <value>Edit sWird to</value>
     <comment/>
   </data>
   <data name="AssignmentType" xml:space="preserve">
     <value>Assignment Type</value>
     <comment/>
   </data>
-  <data name="AllTypes" xml:space="preserve">
-    <value>All Types</value>
-    <comment/>
-  </data>
-  <data name="Hafiz" xml:space="preserve">
-    <value>Hafiz</value>
-    <comment/>
-  </data>
-  <data name="Wird" xml:space="preserve">
-    <value>Wird</value>
-    <comment/>
-  </data>
-  <data name="Revision" xml:space="preserve">
-    <value>Revision</value>
+  <data name="SelectType" xml:space="preserve">
+    <value>Select assignment type</value>
     <comment/>
   </data>
   <data name="Memorization" xml:space="preserve">
     <value>Memorization</value>
     <comment/>
   </data>
-  <data name="Status" xml:space="preserve">
-    <value>Status</value>
+  <data name="Revision" xml:space="preserve">
+    <value>Revision</value>
     <comment/>
   </data>
-  <data name="AllStatuses" xml:space="preserve">
-    <value>All Statuses</value>
+  <data name="From" xml:space="preserve">
+    <value>From</value>
     <comment/>
   </data>
-  <data name="NotSet" xml:space="preserve">
-    <value>Not Set</value>
+  <data name="To" xml:space="preserve">
+    <value>To</value>
+    <comment/>
+  </data>
+  <data name="Juz" xml:space="preserve">
+    <value>Juz</value>
+    <comment/>
+  </data>
+  <data name="Page" xml:space="preserve">
+    <value>Page</value>
+    <comment/>
+  </data>
+  <data name="Surah" xml:space="preserve">
+    <value>Surah</value>
+    <comment/>
+  </data>
+  <data name="Ayah" xml:space="preserve">
+    <value>Ayah</value>
+    <comment/>
+  </data>
+  <data name="AyahNumber" xml:space="preserve">
+    <value>Ayah number</value>
+    <comment/>
+  </data>
+  <data name="PageNumber" xml:space="preserve">
+    <value>Page number</value>
+    <comment/>
+  </data>
+  <data name="Grade" xml:space="preserve">
+    <value>Grade (Optional - for completed assignments)</value>
+    <comment/>
+  </data>
+  <data name="NotGraded" xml:space="preserve">
+    <value>Not Graded</value>
     <comment/>
   </data>
   <data name="Poor" xml:space="preserve">
@@ -189,96 +197,24 @@
     <value>Excellent</value>
     <comment/>
   </data>
-  <data name="DateFrom" xml:space="preserve">
-    <value>Date From</value>
+  <data name="NoteOptional" xml:space="preserve">
+    <value>Note (Optional)</value>
     <comment/>
   </data>
-  <data name="DateTo" xml:space="preserve">
-    <value>Date To</value>
-    <comment/>
-  </data>
-  <data name="ApplyFilters" xml:space="preserve">
-    <value>✓ Apply Filters</value>
-    <comment/>
-  </data>
-  <data name="Reset" xml:space="preserve">
-    <value>↺ Reset</value>
-    <comment/>
-  </data>
-  <data name="Showing" xml:space="preserve">
-    <value>Showing</value>
-    <comment/>
-  </data>
-  <data name="Assignments" xml:space="preserve">
-    <value>assignments</value>
-    <comment/>
-  </data>
-  <data name="Success" xml:space="preserve">
-    <value>Success!</value>
-    <comment/>
-  </data>
-  <data name="Error" xml:space="preserve">
-    <value>Error!</value>
-    <comment/>
-  </data>
-  <data name="From" xml:space="preserve">
-    <value>From:</value>
-    <comment/>
-  </data>
-  <data name="To" xml:space="preserve">
-    <value>To:</value>
-    <comment/>
-  </data>
-  <data name="Surah" xml:space="preserve">
-    <value>Surah:</value>
-    <comment/>
-  </data>
-  <data name="Ayah" xml:space="preserve">
-    <value>Ayah:</value>
-    <comment/>
-  </data>
-  <data name="Juz" xml:space="preserve">
-    <value>Juz:</value>
-    <comment/>
-  </data>
-  <data name="Page" xml:space="preserve">
-    <value>Page:</value>
-    <comment/>
-  </data>
-  <data name="Note" xml:space="preserve">
-    <value>Note:</value>
-    <comment/>
-  </data>
-  <data name="Assigned" xml:space="preserve">
-    <value>Assigned:</value>
-    <comment/>
-  </data>
-  <data name="AddNotes" xml:space="preserve">
-    <value>Add notes...</value>
-    <comment/>
-  </data>
-  <data name="Save" xml:space="preserve">
-    <value>Save</value>
+  <data name="NotePlaceholder" xml:space="preserve">
+    <value>Add any notes or instructions...</value>
     <comment/>
   </data>
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
     <comment/>
   </data>
-  <data name="Delete" xml:space="preserve">
-    <value>Delete</value>
+  <data name="AssignWird" xml:space="preserve">
+    <value>Assign Wird</value>
     <comment/>
   </data>
-  <data name="ConfirmDelete" xml:space="preserve">
-    <value>Are you sure you want to delete</value>
-    <comment/>
-  </data>
-  <data name="PageTitle" xml:space="preserve">
-    <value>Wirds</value>
-    <comment/>
-  </data>
-  <data name="Edit" xml:space="preserve">
-    <value>Edit</value>
+  <data name="SelectSurah" xml:space="preserve">
+    <value>Select Surah</value>
     <comment/>
   </data>
 </root>

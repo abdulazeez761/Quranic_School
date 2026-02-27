@@ -15,8 +15,10 @@
             </button>
         </div>
 
-        <form id="wirdAssignmentForm" asp-action="AssignWird" asp-controller="Student" method="post">
+        <form id="wirdAssignmentForm" asp-action="EditWird" asp-controller="Student" method="post">
             <input type="hidden" id="StudentId" asp-for="StudentId" />
+
+            <input type="hidden" id="AssignmentId" asp-for="Id" />
 
             <div class="modal-body">
                 <!-- Assignment Type -->

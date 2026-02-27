@@ -120,6 +120,19 @@ namespace Hafiz.Areas.Teacher.Controllers
             return RedirectToAction("Index", "Student", new { area = "Teacher" });
         }
 
+        [HttpPost]
+        public async Task<IActionResult> EditWird(WirdAssignment model)
+        {
+            // (bool isUpdated, string message) = await _wirdService.UpdateWirdAsync(model);
+
+            // if (isUpdated)
+            //     TempData["SuccessMessage"] = message;
+            // else
+            //     TempData["ErrorMessage"] = message;
+
+            return RedirectToAction("Index", "Wird", new { area = "Teacher" });
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

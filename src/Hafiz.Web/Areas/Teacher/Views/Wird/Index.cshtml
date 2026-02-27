@@ -6,7 +6,7 @@
     ViewData["Title"] = Localizer["PageTitle"].Value;
 }
 
-<link rel="stylesheet" href="~/css/teacher/Wirds.css" />
+<link rel="stylesheet" href="~/css/teacher/Wirds.css" asp-append-version="true" />
 
 
 <div class="page-container">
@@ -187,6 +187,16 @@
                             data-id="@item.Id">@Localizer["Poor"]</button>
                 </div>
 
+                <button type="submit" class="btn btn-success table-action-btn"
+                        onclick="
+                            fetchWirdAssignmentById('@item.Id');
+                            openWirdModal('@item.StudentId', '@item.Student.StudentInfo.FirstName @item.Student.StudentInfo.SecondName');
+                        ">
+                    <i class='bx bx-edit'></i>
+                    @Localizer["Edit"]
+                </button>
+
+
                 <form method="post" asp-action="Delete" asp-route-id="@item.Id" class="d-inline delete-form">
                     <button type="submit" class="btn btn-delete table-action-btn danger"
                             data-confirm-delete="@Localizer["ConfirmDelete"] @item.Student.StudentInfo.FirstName @item.Student.StudentInfo.SecondName">
@@ -194,6 +204,7 @@
                         @Localizer["Delete"]
                     </button>
                 </form>
+
             </div>
 
         </div>
@@ -201,11 +212,12 @@
 </div>
 
 @section scripts {
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src=" https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script src="~/js/teacher_portal/wirds.js"></script>
     <script src="~/js/confirmModal.js"></script>
     <script>
+
         setTimeout(function () {
         const successAlert = document.getElementById('successAlert');
         const errorAlert = document.getElementById('errorAlert');
@@ -220,5 +232,45 @@
 
         setTimeout(() => errorAlert.style.display = 'none', 500);
         }
-        }, 5000);</script>
-    }
+        }, 5000);
+        //fetching assignment
+        function fetchWirdAssignmentById(id) {
+            fetch(`/Teacher/Wird/GetWirdAssignmentById?id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Fetched assignment data:", data);
+
+                    // 1. تعبئة الـ ID الخاص بالواجب (لغايات التعديل)
+                    document.getElementById('AssignmentId').value = data.id;
+
+                    // 2. تعبئة نوع الواجب
+                    document.getElementById('Type').value = data.type;
+
+                    // 3. تعبئة قسم "من" (From)
+                    document.getElementById('FromJuz').value = data.fromJuz;
+                    document.getElementById('FromPage').value = data.fromPage;
+                    document.getElementById('FromSurah').value = data.fromSurah;
+                    document.getElementById('FromAyah').value = data.fromAyah;
+
+                    // 4. تعبئة قسم "إلى" (To)
+                    document.getElementById('ToJuz').value = data.toJuz;
+                    document.getElementById('ToPage').value = data.toPage;
+                    document.getElementById('ToSurah').value = data.toSurah;
+                    document.getElementById('ToAyah').value = data.toAyah;
+
+                    // 5. تعبئة التقييم (الـ ID في كودك هو Grade)
+                    document.getElementById('Grade').value = data.status;
+
+                    // 6. تعبئة الملاحظات (نضع نصاً فارغاً إذا كانت الملاحظة غير موجودة لتجنب طباعة 'null')
+                    document.getElementById('Note').value = data.note || '';
+                })
+                .catch(error => {
+                    console.error("Error fetching assignment:", error);
+                    // يفضل هنا إضافة Alert تخبر المستخدم بوجود خطأ في جلب البيانات
+                });
+        }
+    </script>
+
+}
+<!-- Include the modal partial view -->
+@await Html.PartialAsync("_EditWirdModal", new WirdAssignment());

@@ -17,5 +17,6 @@ namespace Hafiz.Services.Interfaces
         Task<bool> UpdateStatus(Guid id, AssignmentStatus status);
         Task<bool> UpdateWirdNote(Guid Id, string Note);
         Task<bool> DeleteWirdAssignment(Guid id);
+        Task<WirdAssignment?> GetWirdAssignmentByIdAsync(Guid id);
     }
 }

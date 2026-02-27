@@ -262,8 +262,7 @@
                                                                     }
                                                                 </div>
                                                             </div>
-                                                            @if (note.CreatedBy ==
-                                                                                                    Guid.Parse(User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier)!))
+                                                            @if (note.CreatedBy == Guid.Parse(User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier)!))
                                                             {
                                                                 <form asp-area="Teacher" asp-controller="ParentNotes" asp-action="Delete" method="post"
                                                                       style="display: inline;" onsubmit="return confirm('@Localizer["ConfirmDeleteNote"]');">
