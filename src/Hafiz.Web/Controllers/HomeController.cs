@@ -49,6 +49,7 @@ public class HomeController : Controller
     }
 
     [HttpPost]
+    [IgnoreAntiforgeryToken]
     public IActionResult SetLanguage(string culture, string returnUrl)
     {
         Response.Cookies.Append(

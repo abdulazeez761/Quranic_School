@@ -73,12 +73,11 @@
 
     const url = window.location.pathname + window.location.search;
     const encodedReturnUrl = encodeURIComponent(url);
-
     await fetch(
       `/Home/SetLanguage?culture=${lang}&returnUrl=${encodedReturnUrl}`,
       {
         method: 'POST',
-      }
+      },
     )
       .then(() => {
         if (reload) window.location.reload();
