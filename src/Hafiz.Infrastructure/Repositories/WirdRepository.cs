@@ -25,6 +25,28 @@ namespace Hafiz.Repositories
             return result > 0;
         }
 
+        public async Task<bool> UpdateWirdAsync(WirdAssignment wird)
+        {
+            var updatedRowsCount = await _context
+                .WirdAssignments.Where(w => w.Id == wird.Id)
+                .ExecuteUpdateAsync(setters =>
+                    setters
+                        .SetProperty(w => w.Type, wird.Type)
+                        .SetProperty(w => w.FromJuz, wird.FromJuz)
+                        .SetProperty(w => w.FromPage, wird.FromPage)
+                        .SetProperty(w => w.FromSurah, wird.FromSurah)
+                        .SetProperty(w => w.FromAyah, wird.FromAyah)
+                        .SetProperty(w => w.ToJuz, wird.ToJuz)
+                        .SetProperty(w => w.ToPage, wird.ToPage)
+                        .SetProperty(w => w.ToSurah, wird.ToSurah)
+                        .SetProperty(w => w.ToAyah, wird.ToAyah)
+                        .SetProperty(w => w.Status, wird.Status)
+                        .SetProperty(w => w.Note, wird.Note)
+                );
+
+            return updatedRowsCount > 0;
+        }
+
         public async Task<List<WirdAssignment>> GetWirdAssignmentsByClassIdAsync(
             Guid classID,
             DateTime fromDate,

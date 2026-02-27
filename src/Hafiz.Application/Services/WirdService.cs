@@ -30,6 +30,17 @@ namespace Hafiz.Services
             );
         }
 
+        public async Task<(bool IsSuccess, string Message)> UpdateWirdAsync(WirdAssignment wird)
+        {
+            bool isUpdated = await _wirdRepository.UpdateWirdAsync(wird);
+            return (
+                isUpdated,
+                isUpdated
+                    ? "Wird has been successfully updated!"
+                    : "Failed to update wird. No changes were made."
+            );
+        }
+
         public async Task<bool> DeleteWirdAssignment(Guid id)
         {
             var Wird = await _wirdRepository.GetWirdByID(id);

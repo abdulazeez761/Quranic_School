@@ -123,12 +123,12 @@ namespace Hafiz.Areas.Teacher.Controllers
         [HttpPost]
         public async Task<IActionResult> EditWird(WirdAssignment model)
         {
-            // (bool isUpdated, string message) = await _wirdService.UpdateWirdAsync(model);
+            (bool isUpdated, string message) = await _wirdService.UpdateWirdAsync(model);
 
-            // if (isUpdated)
-            //     TempData["SuccessMessage"] = message;
-            // else
-            //     TempData["ErrorMessage"] = message;
+            if (isUpdated)
+                TempData["SuccessMessage"] = message;
+            else
+                TempData["ErrorMessage"] = message;
 
             return RedirectToAction("Index", "Wird", new { area = "Teacher" });
         }

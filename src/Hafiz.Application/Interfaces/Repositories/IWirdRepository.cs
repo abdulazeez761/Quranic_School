@@ -9,6 +9,7 @@ namespace Hafiz.Repositories.Interfaces
     public interface IWirdRepository
     {
         Task<bool> AddWirdAsync(WirdAssignment wird);
+        Task<bool> UpdateWirdAsync(WirdAssignment wird);
         Task<List<WirdAssignment>> GetWirdAssignmentsByClassIdAsync(
             Guid classID,
             DateTime from,

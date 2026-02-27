@@ -9,6 +9,7 @@ namespace Hafiz.Services.Interfaces
     public interface IWirdService
     {
         Task<(bool IsSuccess, string Message)> AddWirdAsync(WirdAssignment wird);
+        Task<(bool IsSuccess, string Message)> UpdateWirdAsync(WirdAssignment wird);
         Task<List<WirdAssignment>?> GetWirdAssignmentsByClassIdAsync(
             Guid classID,
             string? fromDate,
