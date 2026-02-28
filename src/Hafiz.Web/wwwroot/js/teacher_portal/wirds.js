@@ -128,10 +128,14 @@ document.querySelectorAll('.save-note-btn').forEach((btn) => {
     ).value;
 
     try {
+      let token = document.querySelector(
+        'input[name="__RequestVerificationToken"]',
+      ).value;
       const response = await fetch(`/Teacher/Wird/UpdateWirdNote`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          RequestVerificationToken: token,
         },
         body: JSON.stringify({ Id: assignmentId, Note: noteText }),
       }).then((res) => res.json());
