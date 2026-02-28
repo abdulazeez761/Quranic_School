@@ -66,9 +66,8 @@ document
     });
 
     // Update results count
-    document.getElementById(
-      'resultsCount'
-    ).innerHTML = `Showing <strong>${visibleCount}</strong> of <strong>${cards.length}</strong> assignments`;
+    document.getElementById('resultsCount').innerHTML =
+      `Showing <strong>${visibleCount}</strong> of <strong>${cards.length}</strong> assignments`;
   });
 
 // Reset filters
@@ -85,9 +84,8 @@ document.getElementById('resetFilters')?.addEventListener('click', function () {
   });
 
   // Update results count
-  document.getElementById(
-    'resultsCount'
-  ).innerHTML = `Showing <strong>${cards.length}</strong> assignments`;
+  document.getElementById('resultsCount').innerHTML =
+    `Showing <strong>${cards.length}</strong> assignments`;
 });
 
 // Real-time search on student name
@@ -126,7 +124,7 @@ document.querySelectorAll('.save-note-btn').forEach((btn) => {
   btn.addEventListener('click', async function () {
     const assignmentId = this.dataset.assignmentId;
     const noteText = document.getElementById(
-      `notes-textarea-${assignmentId}`
+      `notes-textarea-${assignmentId}`,
     ).value;
 
     try {
@@ -159,9 +157,8 @@ document.querySelectorAll('.save-note-btn').forEach((btn) => {
         const wirdNoteSection = card.querySelector('.wird-note');
         if (noteText.trim()) {
           if (wirdNoteSection) {
-            wirdNoteSection.querySelector(
-              'p'
-            ).textContent = `Note: ${noteText}`;
+            wirdNoteSection.querySelector('p').textContent =
+              `Note: ${noteText}`;
           } else {
             // Create note section if it doesn't exist
             const wirdFooter = card.querySelector('.wird-footer');
@@ -204,13 +201,15 @@ document.querySelectorAll('.status-button').forEach((btn) => {
   btn.addEventListener('click', async () => {
     let id = btn.getAttribute('data-id');
     let status = btn.getAttribute('data-status');
-    console.log(id + ' ' + status);
     await fetch('/Teacher/Wird/UpdateStatus', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ Id: id, Status: status }),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        console.log(res);
+        return res.json();
+      })
       .then((data) => {
         if (data.success) {
           const card = btn.closest('.wird-card');
@@ -220,7 +219,7 @@ document.querySelectorAll('.status-button').forEach((btn) => {
 
           cardStatus.classList.replace(
             currentStyleClass,
-            `status-${status.toLocaleLowerCase()}`
+            `status-${status.toLocaleLowerCase()}`,
           );
 
           // Update card border color based on status
