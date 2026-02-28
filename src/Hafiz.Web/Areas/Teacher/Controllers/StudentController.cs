@@ -37,6 +37,7 @@ namespace Hafiz.Areas.Teacher.Controllers
             //     User.FindFirstValue(ClaimTypes.NameIdentifier)! //always exist because he cant teach the page if he is not logged in
             // );
             string? selectedClassFromCookies = Request.Cookies["selectedClassId"];
+            ViewBag.ClassId = selectedClassFromCookies;
             Guid? selectedClass;
             if (selectedClassFromCookies is not null)
                 selectedClass = Guid.Parse(selectedClassFromCookies);

@@ -12,7 +12,8 @@
 
 <div class="class-header">
     <div class="class-header-left">
-        <h2>@Localizer["MorningBoysClass"]</h2>
+        <h2>@Model.First().Classes.FirstOrDefault(c => c.Id == Guid.Parse(ViewBag.ClassId.ToString()))?.Name</h2>
+
         <p>@Model.Count() @Localizer["Students"]</p>
     </div>
     <a class="change-class-btn" asp-action="Index" asp-controller="Home">@Localizer["ChangeClass"]</a>
