@@ -201,9 +201,15 @@ document.querySelectorAll('.status-button').forEach((btn) => {
   btn.addEventListener('click', async () => {
     let id = btn.getAttribute('data-id');
     let status = btn.getAttribute('data-status');
+    let token = document.querySelector(
+      'input[name="__RequestVerificationToken"]',
+    ).value;
     await fetch('/Teacher/Wird/UpdateStatus', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        RequestVerificationToken: token,
+      },
       body: JSON.stringify({ Id: id, Status: status }),
     })
       .then((res) => {

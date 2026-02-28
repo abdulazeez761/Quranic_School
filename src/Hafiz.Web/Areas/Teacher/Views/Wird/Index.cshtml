@@ -8,6 +8,8 @@
 
 <link rel="stylesheet" href="~/css/teacher/Wirds.css" asp-append-version="true" />
 
+@* this token for sending the token within the fetch request *@
+@Html.AntiForgeryToken()
 
 <div class="page-container">
 
@@ -187,7 +189,7 @@
                             data-id="@item.Id">@Localizer["Poor"]</button>
                 </div>
 
-                <button type="submit" class="btn btn-success table-action-btn"              onclick="
+                <button type="submit" class="btn btn-success table-action-btn" onclick="
                     fetchWirdAssignmentById('@item.Id');
                     openWirdModal('@item.StudentId', '@item.Student.StudentInfo.FirstName @item.Student.StudentInfo.SecondName');
                     ">
