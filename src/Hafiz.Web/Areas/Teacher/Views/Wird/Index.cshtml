@@ -99,7 +99,8 @@
     {
         var statusClass = item.Status.ToString().ToLower();
         var typeClass = item.Type.ToString().ToLower();
-
+        var statusKey = item.Status.ToString();
+        var localizedStatus = Localizer[char.ToUpper(statusKey[0]) + statusKey.Substring(1)];
         <div class="wird-card  @statusClass"
              data-student="@item.Student.StudentInfo.FirstName @item.Student.StudentInfo.SecondName" data-type="@item.Type"
              data-status="@statusClass" data-date="@item.AssignedDate.ToString("yyyy-MM-dd")">
@@ -112,7 +113,7 @@
                 </div>
                 <span class="wird-status-badge status-@statusClass">
                     @* this is because we uses the status as lowercase this should be replaced with extension or enhancing it some how *@
-                    @Localizer[item.Status.ToString().First().ToString().ToUpper() + item.Status.ToString().Substring(1)]
+                    @localizedStatus
                 </span>
             </div>
 

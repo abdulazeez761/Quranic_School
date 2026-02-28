@@ -205,6 +205,7 @@ document.querySelectorAll('.status-button').forEach((btn) => {
   btn.addEventListener('click', async () => {
     let id = btn.getAttribute('data-id');
     let status = btn.getAttribute('data-status');
+    let originalText = btn.innerText;
     let token = document.querySelector(
       'input[name="__RequestVerificationToken"]',
     ).value;
@@ -217,14 +218,14 @@ document.querySelectorAll('.status-button').forEach((btn) => {
       body: JSON.stringify({ Id: id, Status: status }),
     })
       .then((res) => {
-        console.log(res);
         return res.json();
       })
       .then((data) => {
         if (data.success) {
           const card = btn.closest('.wird-card');
           let cardStatus = card.querySelector('.wird-status-badge');
-          cardStatus.innerText = status;
+
+          cardStatus.innerText = originalText;
           const currentStyleClass = cardStatus.classList.item(1);
 
           cardStatus.classList.replace(
