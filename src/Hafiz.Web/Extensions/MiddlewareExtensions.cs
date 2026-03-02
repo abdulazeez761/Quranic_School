@@ -27,15 +27,22 @@ namespace Hafiz.Web.Extensions
             // 3. الترجمة واللغات
             string[]? supportedCultures = { "en", "ar" };
             var localizationOptions = new RequestLocalizationOptions()
-                .SetDefaultCulture("ar")
                 .AddSupportedCultures(supportedCultures)
                 .AddSupportedUICultures(supportedCultures)
                 .AddInitialRequestCultureProvider(new CookieRequestCultureProvider());
 
-            localizationOptions.RequestCultureProviders.Insert(
-                0,
-                new QueryStringRequestCultureProvider()
+            // Set default culture and default UI culture independently
+            localizationOptions.DefaultRequestCulture = new RequestCulture(
+                culture: "ar",
+                uiCulture: "ar"
             );
+
+            localizationOptions.RequestCultureProviders = new IRequestCultureProvider[]
+            {
+                new CookieRequestCultureProvider(), // المستخدم العادي (الموقع)
+                new QueryStringRequestCultureProvider(), // تغيير اللغة عبر URL
+                // new AcceptLanguageHeaderRequestCultureProvider(), // طلبات الـ API
+            };
             app.UseRequestLocalization(localizationOptions);
             app.Use(
                 async (context, next) =>
