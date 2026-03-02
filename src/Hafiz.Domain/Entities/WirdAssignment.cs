@@ -17,29 +17,29 @@ namespace Hafiz.Models
         public AssignmentType Type { get; set; }
 
         [Range(1, 30, ErrorMessage = "FromJuz must be between 1 and 30.")]
-        public int FromJuz { get; set; }
+        public int? FromJuz { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "FromPage must be positive.")]
-        public int FromPage { get; set; }
+        public int? FromPage { get; set; }
 
-        [Required(ErrorMessage = "FromSurah is required.")]
-        public Surah FromSurah { get; set; }
+        // [Required(ErrorMessage = "FromSurah is required.")]
+        public Surah? FromSurah { get; set; }
 
-        [Required(ErrorMessage = "FromAyah is required.")]
+        // [Required(ErrorMessage = "FromAyah is required.")]
         [StringLength(10, ErrorMessage = "FromAyah length can't be more than 10.")]
-        public string FromAyah { get; set; }
+        public string? FromAyah { get; set; }
 
         [Range(1, 30, ErrorMessage = "ToJuz must be between 1 and 30.")]
-        public int ToJuz { get; set; }
+        public int? ToJuz { get; set; }
 
-        [Required(ErrorMessage = "ToSurah is required.")]
-        public Surah ToSurah { get; set; }
+        // [Required(ErrorMessage = "ToSurah is required.")]
+        public Surah? ToSurah { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "ToAyah must be positive.")]
-        public int ToAyah { get; set; }
+        public int? ToAyah { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "ToPage must be positive.")]
-        public int ToPage { get; set; }
+        public int? ToPage { get; set; }
 
         [Required]
         public DateTime AssignedDate { get; set; } = DateTime.Now;

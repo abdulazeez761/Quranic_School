@@ -13,6 +13,7 @@ namespace Hafiz.Common.Helper
         private static readonly Dictionary<Surah, string> ArabicSurahNames =
             new()
             {
+                { Surah.NONE, "غير محدد" },
                 { Surah.Al_Fatiha, "الفاتحة" },
                 { Surah.Al_Baqara, "البقرة" },
                 { Surah.Aal_Imran, "آل عمران" },
@@ -132,6 +133,7 @@ namespace Hafiz.Common.Helper
         private static readonly Dictionary<Surah, string> EnglishSurahNames =
             new()
             {
+                { Surah.NONE, "None" },
                 { Surah.Al_Fatiha, "Al-Fatiha" },
                 { Surah.Al_Baqara, "Al-Baqarah" },
                 { Surah.Aal_Imran, "Ali 'Imran" },
@@ -252,7 +254,7 @@ namespace Hafiz.Common.Helper
         {
             var isArabic = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "ar";
             var dict = isArabic ? ArabicSurahNames : EnglishSurahNames;
-            surah = surah + 1; // Adjust for zero-based enum
+            surah = surah == Surah.NONE ? 0 : surah + 1; // Adjust for zero-based enum
             return dict.TryGetValue(surah, out var name) ? name : surah.ToString();
         }
 

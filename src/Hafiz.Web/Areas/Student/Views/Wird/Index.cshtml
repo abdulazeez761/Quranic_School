@@ -131,7 +131,7 @@
                                 <label>@Localizer["From"]:</label>
                                 <p>
                                     <strong>@Localizer["Surah"]:</strong>
-                                    @Formatting.GetLocalizedSurahName(wird.FromSurah)<br />
+                                    @Formatting.GetLocalizedSurahName(wird.FromSurah ?? Surah.NONE)<br />
                                     <strong>@Localizer["Ayah"]:</strong> @wird.FromAyah<br />
                                     <strong>@Localizer["Juz"]:</strong> @wird.FromJuz, <strong>@Localizer["Page"]:</strong>
                                     @wird.FromPage
@@ -143,7 +143,8 @@
                             <div class="range-section">
                                 <label>@Localizer["To"]:</label>
                                 <p>
-                                    <strong>@Localizer["Surah"]:</strong> @Formatting.GetLocalizedSurahName(wird.ToSurah)<br />
+                                    <strong>@Localizer["Surah"]:</strong> @Formatting.GetLocalizedSurahName(wird.ToSurah ??
+                                                                Surah.NONE)<br />
                                     <strong>@Localizer["Ayah"]:</strong> @wird.ToAyah<br />
                                     <strong>@Localizer["Juz"]:</strong> @wird.ToJuz, <strong>@Localizer["Page"]:</strong>
                                     @wird.ToPage

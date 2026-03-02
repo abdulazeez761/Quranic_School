@@ -128,7 +128,7 @@
                                         <div
                                             style="margin-left: var(--space-lg); margin-top: var(--space-xs); color: var(--text-medium);">
                                             <div><i class="bi bi-book"></i> @Localizer["Surah"] <span
-                                                style="color: var(--secondary-green); font-weight: 500;">@Formatting.GetLocalizedSurahName(wird.FromSurah)</span>
+                                                style="color: var(--secondary-green); font-weight: 500;">@Formatting.GetLocalizedSurahName(wird.FromSurah ?? Surah.NONE)</span>
                                             </div>
                                             <div><i class="bi bi-collection"></i> @Localizer["Juz"] <span
                                                 style="color: var(--secondary-green); font-weight: 500;">@wird.FromJuz</span></div>
@@ -143,7 +143,7 @@
                                                     <div
                                                         style="margin-left: var(--space-lg); margin-top: var(--space-xs); color: var(--text-medium);">
                                                         <div><i class="bi bi-book"></i> @Localizer["Surah"] <span
-                                                            style="color: var(--secondary-green); font-weight: 500;">@Formatting.GetLocalizedSurahName(wird.ToSurah)</span></div>
+                                                            style="color: var(--secondary-green); font-weight: 500;">@Formatting.GetLocalizedSurahName(wird.ToSurah ?? Surah.NONE)</span></div>
                                                             <div><i class="bi bi-collection"></i> @Localizer["Juz"] <span
                                                                 style="color: var(--secondary-green); font-weight: 500;">@wird.ToJuz</span></div>
                                                                 <div><i class="bi bi-bookmark"></i> @Localizer["Page"] <span

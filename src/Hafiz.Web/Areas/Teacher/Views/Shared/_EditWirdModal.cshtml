@@ -24,7 +24,7 @@
                 <!-- Assignment Type -->
                 <div class="form-group">
                     <label class="form-label" for="Type">@Localizer["AssignmentType"]</label>
-                    <select class="form-control" id="Type" asp-for="Type" required>
+                    <select class="form-control" id="Type" asp-for="Type">
                         <option value="">@Localizer["SelectType"]</option>
                         <option value="1">@Localizer["Memorization"]</option>
                         <option value="2">@Localizer["Revision"]</option>
@@ -38,13 +38,13 @@
                 <div class="form-row">
                     <div class="form-group half-width">
                         <label class="form-label" for="FromJuz">@Localizer["Juz"]</label>
-                        <input type="number" class="form-control" id="FromJuz" asp-for="FromJuz" min="1" max="30" required
+                        <input type="number" class="form-control" id="FromJuz" asp-for="FromJuz" min="1" max="30"
                                placeholder="1-30" />
                         <span class="text-danger field-validation-valid" data-valmsg-for="FromJuz"></span>
                     </div>
                     <div class="form-group half-width">
                         <label class="form-label" for="FromPage">@Localizer["Page"]</label>
-                        <input type="number" class="form-control" id="FromPage" asp-for="FromPage" min="1" required
+                        <input type="number" class="form-control" id="FromPage" asp-for="FromPage" min="1"
                                placeholder="@Localizer["PageNumber"]" />
                         <span class="text-danger field-validation-valid" data-valmsg-for="FromPage"></span>
                     </div>
@@ -52,7 +52,7 @@
 
                 <div class="form-group">
                     <label class="form-label" for="FromSurah">@Localizer["Surah"]</label>
-                    <select class="form-control" id="FromSurah" asp-for="FromSurah" required>
+                    <select class="form-control" id="FromSurah" asp-for="FromSurah">
                         @await Html.PartialAsync("_SurahOptions")
                     </select>
                     <span class="text-danger field-validation-valid" data-valmsg-for="FromSurah"></span>
@@ -60,7 +60,7 @@
 
                 <div class="form-group">
                     <label class="form-label" for="FromAyah">@Localizer["Ayah"]</label>
-                    <input type="text" class="form-control" id="FromAyah" asp-for="FromAyah" maxlength="10" required
+                    <input type="text" class="form-control" id="FromAyah" asp-for="FromAyah" maxlength="10"
                            placeholder="@Localizer["AyahNumber"]" />
                     <span class="text-danger field-validation-valid" data-valmsg-for="FromAyah"></span>
                 </div>
@@ -71,13 +71,13 @@
                 <div class="form-row">
                     <div class="form-group half-width">
                         <label class="form-label" for="ToJuz">@Localizer["Juz"]</label>
-                        <input type="number" class="form-control" id="ToJuz" asp-for="ToJuz" min="1" max="30" required
+                        <input type="number" class="form-control" id="ToJuz" asp-for="ToJuz" min="1" max="30"
                                placeholder="1-30" />
                         <span class="text-danger field-validation-valid" data-valmsg-for="ToJuz"></span>
                     </div>
                     <div class="form-group half-width">
                         <label class="form-label" for="ToPage">@Localizer["Page"]</label>
-                        <input type="number" class="form-control" id="ToPage" asp-for="ToPage" min="1" required
+                        <input type="number" class="form-control" id="ToPage" asp-for="ToPage" min="1"
                                placeholder="@Localizer["PageNumber"]" />
                         <span class="text-danger field-validation-valid" data-valmsg-for="ToPage"></span>
                     </div>
@@ -85,7 +85,7 @@
 
                 <div class="form-group">
                     <label class="form-label" for="ToSurah">@Localizer["Surah"]</label>
-                    <select class="form-control" id="ToSurah" asp-for="ToSurah" required>
+                    <select class="form-control" id="ToSurah" asp-for="ToSurah">
                         @await Html.PartialAsync("_SurahOptions")
                     </select>
                     <span class="text-danger field-validation-valid" data-valmsg-for="ToSurah"></span>
@@ -93,7 +93,7 @@
 
                 <div class="form-group">
                     <label class="form-label" for="ToAyah">@Localizer["Ayah"]</label>
-                    <input type="number" class="form-control" id="ToAyah" asp-for="ToAyah" min="1" required
+                    <input type="number" class="form-control" id="ToAyah" asp-for="ToAyah" min="1"
                            placeholder="@Localizer["AyahNumber"]" />
                     <span class="text-danger field-validation-valid" data-valmsg-for="ToAyah"></span>
                 </div>

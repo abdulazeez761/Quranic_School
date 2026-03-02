@@ -10,6 +10,7 @@ namespace Hafiz.Models;
 
 public enum Surah
 {
+    NONE = 0,
     Al_Fatiha = 1,
     Al_Baqara = 2,
     Aal_Imran = 3,
