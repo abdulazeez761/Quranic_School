@@ -46,8 +46,26 @@ namespace Hafiz.Areas.Teacher.Controllers
         public async Task<IActionResult> GetWirdAssignmentById(Guid id)
         {
             var assignment = await _wirdService.GetWirdAssignmentByIdAsync(id);
+            if (assignment == null)
+                return NotFound();
 
-            return Json(assignment);
+            return Json(
+                new
+                {
+                    assignment.Id,
+                    assignment.Type,
+                    assignment.FromJuz,
+                    assignment.FromPage,
+                    assignment.FromSurah,
+                    assignment.FromAyah,
+                    assignment.ToJuz,
+                    assignment.ToPage,
+                    assignment.ToSurah,
+                    assignment.ToAyah,
+                    assignment.Status,
+                    assignment.Note,
+                }
+            );
         }
 
         [HttpPost]

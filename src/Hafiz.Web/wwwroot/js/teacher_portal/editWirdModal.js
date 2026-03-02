@@ -21,20 +21,17 @@ document.addEventListener('DOMContentLoaded', function () {
 // دالة حفظ التعديل عبر AJAX
 async function saveWirdEdit(actionUrl, formData) {
   try {
-    let token = document.getElementById(); // جلب الـ AntiForgeryToken من FormData
     const response = await fetch(actionUrl, {
       method: 'POST',
-      body: formData, // لا داعي لإضافة Headers هنا، FormData تتكفل بكل شيء
-      reques,
+      body: formData,
     });
 
     if (response.ok) {
-      // السيرفر سيرجع كود HTML الخاص بالـ Card الجديد
       const newCardHtml = await response.text();
 
       // جلب الـ ID الخاص بالورد لتحديث الكارد المناسب
       const wirdId = formData.get('Id');
-      const oldCard = document.getElementById(`wird-card-${wirdId}`);
+      let oldCard = document.getElementById(`wird-card-${wirdId}`);
 
       // استبدال الكارد القديم بالكارد الجديد
       if (oldCard) {
@@ -47,15 +44,11 @@ async function saveWirdEdit(actionUrl, formData) {
       }
 
       Swal.fire('تم!', 'تم حفظ التعديلات بنجاح', 'success');
-
-      // تحديث الفلاتر إذا لزم الأمر
-      // if (typeof applyFilters === 'function') applyFilters();
     } else {
       // في حال أرجع السيرفر 400 BadRequest أو غيره
       Swal.fire('خطأ!', 'تأكد من إدخال جميع البيانات بشكل صحيح.', 'error');
     }
   } catch (error) {
-    console.error('Error:', error);
     Swal.fire('خطأ!', 'حدث مشكلة في الاتصال بالخادم.', 'error');
   }
 }

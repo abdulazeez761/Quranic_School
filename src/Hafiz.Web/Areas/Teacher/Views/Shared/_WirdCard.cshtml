@@ -7,7 +7,7 @@
     var statusKey = Model.Status.ToString();
     var localizedStatus = Localizer[char.ToUpper(statusKey[0]) + statusKey.Substring(1)];
 }
-<div class="wird-card  @statusClass"
+<div id="wird-card-@Model.Id" class="wird-card  @statusClass"
      data-student="@Model.Student.StudentInfo.FirstName @Model.Student.StudentInfo.SecondName" data-type="@Model.Type"
      data-status="@statusClass" data-date="@Model.AssignedDate.ToString("yyyy-MM-dd")">
 
@@ -33,7 +33,7 @@
                 <label>@Localizer["From"]</label>
                 <p>
                     <strong>@Localizer["Surah"]</strong> @Formatting.GetLocalizedSurahName(Model.FromSurah??
-                                                                                                                                                                                        Surah.NONE)<br />
+                                                                                                                                                                                                                                                    Surah.NONE)<br />
                     <strong>@Localizer["Ayah"]</strong> @Model.FromAyah<br />
                     <strong>@Localizer["Juz"]</strong> @Model.FromJuz, <strong>@Localizer["Page"]</strong>
                     @Model.FromPage
@@ -46,7 +46,7 @@
                 <label>@Localizer["To"]</label>
                 <p>
                     <strong>@Localizer["Surah"]</strong> @Formatting.GetLocalizedSurahName(Model.ToSurah ??
-                                                                                                                                                                                        Surah.NONE)<br />
+                                                                                                                                                                                                                                                    Surah.NONE)<br />
                     <strong>@Localizer["Ayah"]</strong> @Model.ToAyah<br />
                     <strong>@Localizer["Juz"]</strong> @Model.ToJuz, <strong>@Localizer["Page"]</strong> @Model.ToPage
                 </p>
@@ -76,7 +76,7 @@
             <textarea class="notes-textarea" id="notes-textarea-@Model.Id"
                       placeholder="@Localizer["AddNotes"]">@Model.Note</textarea>
             <div style="margin-top: 10px; display: flex; gap: 10px;">
-                <button class="btn btn-success save-note-btn"  data-assignment-id="@Model.Id">@Localizer["Save"]</button>
+                <button class="btn btn-success save-note-btn" data-assignment-id="@Model.Id">@Localizer["Save"]</button>
                 <button class="btn btn-secondary cancel-note-btn"
                         data-assignment-id="@Model.Id">@Localizer["Cancel"]</button>
             </div>

@@ -74,7 +74,11 @@ namespace Hafiz.Repositories
 
         public async Task<WirdAssignment?> GetWirdByID(Guid Id)
         {
-            return await _context.WirdAssignments.Where(c => c.Id == Id).FirstOrDefaultAsync();
+            return await _context
+                .WirdAssignments.Include(w => w.Student)
+                .ThenInclude(s => s.StudentInfo)
+                .Where(c => c.Id == Id)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<bool> UpdateStatus(Guid Id, AssignmentStatus status)
