@@ -49,7 +49,19 @@ fromAyah.addEventListener('change', function () {
 });
 
 // do not allow to send an empty form
+form.addEventListener('submit', function (event) {
+  if (!fromJuz.value && !fromSurah.value && !fromAyah.value) {
+    event.preventDefault();
+    Swal.fire({
+      icon: 'warning',
+      title: 'خطأ',
+      text: 'الرجاء اختيار جزء أو سورة أو آية لتعيين ورد',
+      confirmButtonText: 'OK',
+    });
+  }
+});
 
+//utility function to set the required attribute and toggle the required class on the label
 function setRequired(field, isRequired) {
   field.required = isRequired;
   field

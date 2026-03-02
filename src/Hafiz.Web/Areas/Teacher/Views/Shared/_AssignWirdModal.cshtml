@@ -14,7 +14,7 @@
                 </svg>
             </button>
         </div>
-
+        <span id="form-error" class="text-danger" style="display:none"></span>
         <form id="wirdAssignmentForm" asp-action="AssignWird" asp-controller="Student" method="post">
             <input type="hidden" id="StudentId" asp-for="StudentId" />
 
@@ -126,6 +126,6 @@
     </div>
 </div>
 
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="~/js/teacher_portal/assignWirdModal.js" asp-append-version="true"></script>
 <script src="~/js/teacher_portal/assignWirdModalValidation.js" asp-append-version="true"></script>
