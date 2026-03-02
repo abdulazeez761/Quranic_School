@@ -26,3 +26,8 @@ fromSurah.addEventListener('change', function () {
     }
   }
 });
+//if the user picked from ayah should enter to ayah number and only shows the ayahs after the from ayah
+fromAyah.addEventListener('change', function () {
+  if (fromAyah.value) toAyah.required = true;
+  else toAyah.required = false;
+});
