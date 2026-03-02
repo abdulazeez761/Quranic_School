@@ -108,8 +108,8 @@
                             <div class="wird-info">
                                 <i class='bx bx-book-open'></i>
                                 <div>
-                                    <p class="wird-title">@Formatting.GetLocalizedSurahName(wird.FromSurah) -
-                                        @Formatting.GetLocalizedSurahName(wird.ToSurah)</p>
+                                    <p class="wird-title">@Formatting.GetLocalizedSurahName(wird.FromSurah ?? Surah.NONE) -
+                                        @Formatting.GetLocalizedSurahName(wird.ToSurah ?? Surah.NONE)</p>
                                         <p class="wird-date">@Localizer["Assigned"]: @wird.AssignedDate.ToString("MMM dd, yyyy")</p>
                                     </div>
                                 </div>
