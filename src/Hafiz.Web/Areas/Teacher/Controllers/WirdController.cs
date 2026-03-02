@@ -98,13 +98,13 @@ namespace Hafiz.Areas.Teacher.Controllers
             if (isWirdDeleted)
             {
                 TempData["SuccessMessage"] = "Wird assignment deleted successfully.";
+                return Json(new { success = true, message = "تم الحذف بنجاح" });
             }
             else
             {
                 TempData["ErrorMessage"] = "Failed to delete wird assignment.";
+                return Json(new { success = false, message = "حدث خطأ أثناء محاولة حذف السجل" });
             }
-
-            return RedirectToAction("Index");
         }
     }
 }
