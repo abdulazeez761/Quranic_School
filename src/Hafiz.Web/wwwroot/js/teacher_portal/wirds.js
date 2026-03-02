@@ -278,3 +278,53 @@ document.querySelectorAll('.cancel-note-btn').forEach((btn) => {
       'none';
   });
 });
+
+setTimeout(function () {
+  const successAlert = document.getElementById('successAlert');
+  const errorAlert = document.getElementById('errorAlert');
+
+  if (successAlert) {
+    successAlert.style.opacity = '0';
+
+    setTimeout(() => (successAlert.style.display = 'none'), 500);
+  }
+  if (errorAlert) {
+    errorAlert.style.opacity = '0';
+
+    setTimeout(() => (errorAlert.style.display = 'none'), 500);
+  }
+}, 5000);
+//fetching assignment
+function fetchWirdAssignmentById(id) {
+  fetch(`/Teacher/Wird/GetWirdAssignmentById?id=${id}`)
+    .then((response) => response.json())
+    .then((data) => {
+      // 1. تعبئة الـ ID الخاص بالواجب (لغايات التعديل)
+      document.getElementById('AssignmentId').value = data.id;
+
+      // 2. تعبئة نوع الواجب
+      document.getElementById('Type').value = data.type;
+
+      // 3. تعبئة قسم "من" (From)
+      document.getElementById('FromJuz').value = data.fromJuz;
+      document.getElementById('FromPage').value = data.fromPage;
+      document.getElementById('FromSurah').value = data.fromSurah;
+      document.getElementById('FromAyah').value = data.fromAyah;
+
+      // 4. تعبئة قسم "إلى" (To)
+      document.getElementById('ToJuz').value = data.toJuz;
+      document.getElementById('ToPage').value = data.toPage;
+      document.getElementById('ToSurah').value = data.toSurah;
+      document.getElementById('ToAyah').value = data.toAyah;
+
+      // 5. تعبئة التقييم (الـ ID في كودك هو Grade)
+      document.getElementById('Grade').value = data.status;
+
+      // 6. تعبئة الملاحظات (نضع نصاً فارغاً إذا كانت الملاحظة غير موجودة لتجنب طباعة 'null')
+      document.getElementById('Note').value = data.note || '';
+    })
+    .catch((error) => {
+      console.error('Error fetching assignment:', error);
+      // يفضل هنا إضافة Alert تخبر المستخدم بوجود خطأ في جلب البيانات
+    });
+}
