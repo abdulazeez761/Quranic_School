@@ -124,14 +124,19 @@ namespace Hafiz.Areas.Teacher.Controllers
         [HttpPost]
         public async Task<IActionResult> EditWird(WirdAssignment model)
         {
-            (bool isUpdated, string message) = await _wirdService.UpdateWirdAsync(model);
+            if (ModelState.IsValid)
+            {
+                (bool isUpdated, string message) = await _wirdService.UpdateWirdAsync(model);
 
-            if (isUpdated)
-                TempData["SuccessMessage"] = message;
-            else
-                TempData["ErrorMessage"] = message;
+                if (isUpdated)
+                    TempData["SuccessMessage"] = message;
+                else
+                    TempData["ErrorMessage"] = message;
+                var updatedWird = await _wirdService.GetWirdAssignmentByIdAsync(model.Id);
+                return PartialView("_WirdCard", updatedWird);
+            }
 
-            return RedirectToAction("Index", "Wird", new { area = "Teacher" });
+            return BadRequest("Invalid data provided.");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

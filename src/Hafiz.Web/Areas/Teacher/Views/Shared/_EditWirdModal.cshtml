@@ -14,7 +14,7 @@
                 </svg>
             </button>
         </div>
-
+        @Html.AntiForgeryToken()
         <form id="wirdAssignmentForm" asp-action="EditWird" asp-controller="Student" method="post">
             <input type="hidden" id="StudentId" asp-for="StudentId" />
 
@@ -131,3 +131,4 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="~/js/teacher_portal/assignWirdModal.js" asp-append-version="true"></script>
 <script src="~/js/teacher_portal/assignWirdModalValidation.js" asp-append-version="true"></script>
+<script src="~/js/teacher_portal/editWirdModal.js" asp-append-version="true"></script>
