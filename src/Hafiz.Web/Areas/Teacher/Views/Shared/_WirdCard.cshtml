@@ -1,0 +1,120 @@
+@using Hafiz.Common.Helper
+@model Hafiz.Models.WirdAssignment
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    var statusClass = Model.Status.ToString().ToLower();
+    var statusKey = Model.Status.ToString();
+    var localizedStatus = Localizer[char.ToUpper(statusKey[0]) + statusKey.Substring(1)];
+}
+<div class="wird-card  @statusClass"
+     data-student="@Model.Student.StudentInfo.FirstName @Model.Student.StudentInfo.SecondName" data-type="@Model.Type"
+     data-status="@statusClass" data-date="@Model.AssignedDate.ToString("yyyy-MM-dd")">
+
+    <!-- CARD HEADER -->
+    <div class="wird-card-header">
+        <div class="wird-type">
+            <i class='bx bx-bookmark'></i>
+            <span>@Localizer[Model.Type.ToString()]</span>
+        </div>
+        <span class="wird-status-badge status-@statusClass">
+            @* this is because we uses the status as lowercase this should be replaced with extension or enhancing it some how *@
+            @localizedStatus
+        </span>
+    </div>
+
+    <!-- STUDENT NAME -->
+    <h3 class="student-name">@Model.Student.StudentInfo.FirstName @Model.Student.StudentInfo.SecondName</h3>
+
+    <!-- CARD BODY -->
+    <div class="wird-card-body">
+        <div class="wird-range">
+            <div class="range-section">
+                <label>@Localizer["From"]</label>
+                <p>
+                    <strong>@Localizer["Surah"]</strong> @Formatting.GetLocalizedSurahName(Model.FromSurah??
+                                                                                                                                                                                        Surah.NONE)<br />
+                    <strong>@Localizer["Ayah"]</strong> @Model.FromAyah<br />
+                    <strong>@Localizer["Juz"]</strong> @Model.FromJuz, <strong>@Localizer["Page"]</strong>
+                    @Model.FromPage
+                </p>
+            </div>
+            <div class="range-arrow">
+                <i class='bx bx-right-arrow-alt'></i>
+            </div>
+            <div class="range-section">
+                <label>@Localizer["To"]</label>
+                <p>
+                    <strong>@Localizer["Surah"]</strong> @Formatting.GetLocalizedSurahName(Model.ToSurah ??
+                                                                                                                                                                                        Surah.NONE)<br />
+                    <strong>@Localizer["Ayah"]</strong> @Model.ToAyah<br />
+                    <strong>@Localizer["Juz"]</strong> @Model.ToJuz, <strong>@Localizer["Page"]</strong> @Model.ToPage
+                </p>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.Note))
+        {
+            <div class="wird-note">
+                <i class='bx bx-note'></i>
+                <p>@Localizer["Note"] @Model.Note</p>
+            </div>
+        }
+
+        <div class="wird-footer">
+            <div class="wird-date">
+                <i class='bx bx-calendar'></i>
+                @Localizer["Assigned"] @Model.AssignedDate.ToString("MMM dd, yyyy")
+            </div>
+            <button class="edit-note-btn" data-assignment-id="@Model.Id" title="Edit notes">
+                <i class='bx bx-edit'></i>
+            </button>
+        </div>
+
+        <!-- NOTES EDIT SECTION (Hidden by default) -->
+        <div class="notes-edit" id="notes-edit-@Model.Id" style="display: none;">
+            <textarea class="notes-textarea" id="notes-textarea-@Model.Id"
+                      placeholder="@Localizer["AddNotes"]">@Model.Note</textarea>
+            <div style="margin-top: 10px; display: flex; gap: 10px;">
+                <button class="btn btn-success save-note-btn"  data-assignment-id="@Model.Id">@Localizer["Save"]</button>
+                <button class="btn btn-secondary cancel-note-btn"
+                        data-assignment-id="@Model.Id">@Localizer["Cancel"]</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="assignment-actions">
+        <div class="status-buttons">
+            <button class="btn btn-success status-button" data-status="@AssignmentStatus.excellent"
+                    data-id="@Model.Id">@Localizer["Excellent"]</button>
+            <button class="btn btn-verygood status-button" data-status="@AssignmentStatus.veryGood"
+                    data-id="@Model.Id">@Localizer["VeryGood"]</button>
+            <button class="btn btn-good status-button" data-status="@AssignmentStatus.good"
+                    data-id="@Model.Id">@Localizer["Good"]</button>
+            <button class="btn btn-fair status-button" data-status="@AssignmentStatus.fair"
+                    data-id="@Model.Id">@Localizer["Fair"]</button>
+            <button class="btn btn-poor status-button" data-status="@AssignmentStatus.poor"
+                    data-id="@Model.Id">@Localizer["Poor"]</button>
+        </div>
+
+        <button type="submit" class="btn btn-success table-action-btn" onclick="
+            fetchWirdAssignmentById('@Model.Id');
+            openWirdModal('@Model.StudentId', '@Model.Student.StudentInfo.FirstName @Model.Student.StudentInfo.SecondName');
+            ">
+            <i class='bx bx-edit'></i>
+            @Localizer["Edit"]
+        </button>
+
+
+        <form method="post" asp-action="Delete" asp-route-id="@Model.Id" class="d-inline delete-form">
+            <button type="submit" class="btn btn-delete table-action-btn danger"
+                    data-confirm-delete="@Localizer["ConfirmDelete"] @Model.Student.StudentInfo.FirstName @Model.Student.StudentInfo.SecondName">
+                <i class='bx bx-trash'></i>
+                @Localizer["Delete"]
+            </button>
+        </form>
+
+    </div>
+
+</div>
