@@ -24,7 +24,7 @@
                 <!-- Assignment Type -->
                 <div class="form-group">
                     <label class="form-label" for="Type">@Localizer["AssignmentType"]</label>
-                    <select class="form-control" id="Type" asp-for="Type">
+                    <select class="form-control" id="Type" asp-for="Type" required>
                         <option value="">@Localizer["SelectType"]</option>
                         <option value="1">@Localizer["Memorization"]</option>
                         <option value="2">@Localizer["Revision"]</option>
