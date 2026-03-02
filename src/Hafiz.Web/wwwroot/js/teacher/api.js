@@ -20,9 +20,15 @@ async function saveAttendance(TeacherId, Status, Hours = 0) {
   }
 
   try {
+    let token = document.querySelector(
+      'input[name="__RequestVerificationToken"]',
+    ).value;
     const response = await fetch('TeacherAttendance/SaveAttendance', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        RequestVerificationToken: token,
+      },
       body: JSON.stringify(data),
     });
 
@@ -66,7 +72,7 @@ async function getTeachers(classID) {
   try {
     const url = 'TeacherAttendance/GetTeachersByClass';
     const res = await fetch(
-      `${url}?classId=${classID}&date=${attendanceDateForSelection}`
+      `${url}?classId=${classID}&date=${attendanceDateForSelection}`,
     );
 
     const teachers = await res.json();

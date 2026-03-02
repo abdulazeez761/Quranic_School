@@ -35,6 +35,8 @@
 </div>
 <div id="saveIndicator" class="save-indicator"></div>
 
+@* adding an antiforgery token *@
+@Html.AntiForgeryToken()
 <!-- Statistics Cards -->
 <div class="grid-4 mb-lg  ">
     <div class="card card-stat">
@@ -131,125 +133,121 @@
     <div class="table-wrapper">
         <table class="table table-attendance">
             <thead>
-            <tr>
-                <th style="width: 50px;">#</th>
-                <th>
-                    <i class='bx bx-user'></i> @Localizer["StudentName"]
-                </th>
-                <th class="text-center" style="width: 100px;">
-                    <i class='bx bx-check-circle' style="color: var(--success);"></i>
-                    <span class="d-none d-md-inline">@Localizer["Present"]</span>
-                </th>
-                <th class="text-center" style="width: 100px;">
-                    <i class='bx bx-time-five' style="color: var(--warning);"></i>
-                    <span class="d-none d-md-inline">@Localizer["Late"]</span>
-                </th>
-                <th class="text-center" style="width: 100px;">
-                    <i class='bx bx-x-circle' style="color: var(--danger);"></i>
-                    <span class="d-none d-md-inline">@Localizer["Absent"]</span>
-                </th>
-                <th class="text-center" style="width: 100px;">
-                    <i class='bx bx-message-square-dots' style="color: var(--info);"></i>
-                    <span class="d-none d-md-inline">@Localizer["Excuse"]</span>
-                </th>
-            </tr>
+                <tr>
+                    <th style="width: 50px;">#</th>
+                    <th>
+                        <i class='bx bx-user'></i> @Localizer["StudentName"]
+                    </th>
+                    <th class="text-center" style="width: 100px;">
+                        <i class='bx bx-check-circle' style="color: var(--success);"></i>
+                        <span class="d-none d-md-inline">@Localizer["Present"]</span>
+                    </th>
+                    <th class="text-center" style="width: 100px;">
+                        <i class='bx bx-time-five' style="color: var(--warning);"></i>
+                        <span class="d-none d-md-inline">@Localizer["Late"]</span>
+                    </th>
+                    <th class="text-center" style="width: 100px;">
+                        <i class='bx bx-x-circle' style="color: var(--danger);"></i>
+                        <span class="d-none d-md-inline">@Localizer["Absent"]</span>
+                    </th>
+                    <th class="text-center" style="width: 100px;">
+                        <i class='bx bx-message-square-dots' style="color: var(--info);"></i>
+                        <span class="d-none d-md-inline">@Localizer["Excuse"]</span>
+                    </th>
+                </tr>
             </thead>
 
             <tbody id="studentsTable">
-            @if (Model != null && Model.Any())
-            {
-                int index = 1;
-                foreach (var student in Model)
+                @if (Model != null && Model.Any())
                 {
-                    var presentChecked = "";
-                    var lateChecked = "";
-                    var absentChecked = "";
-                    var excuseChecked = "";
-                    var rowClass = "";
-
-                    if (student.PrevAttendance != null)
+                    int index = 1;
+                    foreach (var student in Model)
                     {
-                        rowClass = "has-attendance";
-                        switch (student.PrevAttendance.Status)
-                        {
-                            case 0:
-                                presentChecked = "checked";
-                                rowClass += " status-present";
-                                break;
-                            case 1:
-                                lateChecked = "checked";
-                                rowClass += " status-late";
-                                break;
-                            case 2:
-                                absentChecked = "checked";
-                                rowClass += " status-absent";
-                                break;
-                            case 3:
-                                excuseChecked = "checked";
-                                rowClass += " status-excuse";
-                                break;
-                        }
-                    }
+                        var presentChecked = "";
+                        var lateChecked = "";
+                        var absentChecked = "";
+                        var excuseChecked = "";
+                        var rowClass = "";
 
-                    <tr data-student-id="@student.Id" class="@rowClass">
-                        <td class="text-center text-medium">@index</td>
-                        <td>
-                            <div class="d-flex align-center gap-sm">
-                                <div
-                                    class="avatar-sm bg-primary text-white d-flex align-center justify-center rounded-full">
-                                    @(student?.FirstName?.Substring(0, 1) ?? "?")
+                        if (student.PrevAttendance != null)
+                        {
+                            rowClass = "has-attendance";
+                            switch (student.PrevAttendance.Status)
+                            {
+                                case 0:
+                                    presentChecked = "checked";
+                                    rowClass += " status-present";
+                                    break;
+                                case 1:
+                                    lateChecked = "checked";
+                                    rowClass += " status-late";
+                                    break;
+                                case 2:
+                                    absentChecked = "checked";
+                                    rowClass += " status-absent";
+                                    break;
+                                case 3:
+                                    excuseChecked = "checked";
+                                    rowClass += " status-excuse";
+                                    break;
+                            }
+                        }
+
+                        <tr data-student-id="@student.Id" class="@rowClass">
+                            <td class="text-center text-medium">@index</td>
+                            <td>
+                                <div class="d-flex align-center gap-sm">
+                                    <div
+                                        class="avatar-sm bg-primary text-white d-flex align-center justify-center rounded-full">
+                                        @(student?.FirstName?.Substring(0, 1) ?? "?")
+                                    </div>
+                                    <span class="fw-medium">@student?.FirstName @student?.SecondName</span>
                                 </div>
-                                <span class="fw-medium">@student?.FirstName @student?.SecondName</span>
+                            </td>
+                            <td class="text-center">
+                                <label class="attendance-radio">
+                                    <input type="radio" name="attendance_@student.Id"                                     class="attendance-checkbox status-present"
+                                           data-student-id="@student.Id" data-status="0" @presentChecked>
+                                    <span class="radio-custom present"></span>
+                                </label>
+                            </td>
+                            <td class="text-center">
+                                <label class="attendance-radio">
+                                    <input type="radio" name="attendance_@student.Id"     class="attendance-checkbox status-late"
+                                           data-student-id="@student.Id" data-status="1" @lateChecked>
+                                    <span class="radio-custom late"></span>
+                                </label>
+                            </td>
+                            <td class="text-center">
+                                <label class="attendance-radio">
+                                    <input type="radio" name="attendance_@student.Id"                        class="attendance-checkbox status-absent"
+                                           data-student-id="@student.Id" data-status="2" @absentChecked>
+                                    <span class="radio-custom absent"></span>
+                                </label>
+                            </td>
+                            <td class="text-center">
+                                <label class="attendance-radio">
+                                    <input type="radio" name="attendance_@student.Id"                  class="attendance-checkbox status-excuse"
+                                           data-student-id="@student.Id" data-status="3" @excuseChecked>
+                                    <span class="radio-custom excuse"></span>
+                                </label>
+                            </td>
+                        </tr>
+                        index++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6">
+                            <div class="table-empty">
+                                <i class='bx bx-user-x'></i>
+                                <h3 class="table-empty-title">@Localizer["NoData"]</h3>
+                                <p class="text-medium">@Localizer["NoStudentsFound"]</p>
                             </div>
                         </td>
-                        <td class="text-center">
-                            <label class="attendance-radio">
-                                <input type="radio" name="attendance_@student.Id"
-                                       class="attendance-checkbox status-present"
-                                       data-student-id="@student.Id" data-status="0" @presentChecked>
-                                <span class="radio-custom present"></span>
-                            </label>
-                        </td>
-                        <td class="text-center">
-                            <label class="attendance-radio">
-                                <input type="radio" name="attendance_@student.Id"
-                                       class="attendance-checkbox status-late"
-                                       data-student-id="@student.Id" data-status="1" @lateChecked>
-                                <span class="radio-custom late"></span>
-                            </label>
-                        </td>
-                        <td class="text-center">
-                            <label class="attendance-radio">
-                                <input type="radio" name="attendance_@student.Id"
-                                       class="attendance-checkbox status-absent"
-                                       data-student-id="@student.Id" data-status="2" @absentChecked>
-                                <span class="radio-custom absent"></span>
-                            </label>
-                        </td>
-                        <td class="text-center">
-                            <label class="attendance-radio">
-                                <input type="radio" name="attendance_@student.Id"
-                                       class="attendance-checkbox status-excuse"
-                                       data-student-id="@student.Id" data-status="3" @excuseChecked>
-                                <span class="radio-custom excuse"></span>
-                            </label>
-                        </td>
                     </tr>
-                    index++;
                 }
-            }
-            else
-            {
-                <tr>
-                    <td colspan="6">
-                        <div class="table-empty">
-                            <i class='bx bx-user-x'></i>
-                            <h3 class="table-empty-title">@Localizer["NoData"]</h3>
-                            <p class="text-medium">@Localizer["NoStudentsFound"]</p>
-                        </div>
-                    </td>
-                </tr>
-            }
             </tbody>
         </table>
     </div>
