@@ -27,10 +27,10 @@ fromSurah.addEventListener('change', function () {
     setRequired(toSurah, false);
   }
   //show only the suras after the from surah
-  let fromSurahNumber = parseInt(fromSurah.value) - 1;
+  let fromSurahNumber = parseInt(fromSurah.value);
   for (let i = 0; i < toSurah.options.length; i++) {
     let option = toSurah.options[i];
-    if (parseInt(option.value) <= fromSurahNumber) {
+    if (parseInt(option.value) < fromSurahNumber) {
       option.style.display = 'none';
     } else {
       option.style.display = 'block';
