@@ -9,12 +9,20 @@ let assignmentType = document.getElementById('Type');
 fromJuz.addEventListener('change', function () {
   if (fromJuz.value) toJuz.required = true;
   else toJuz.required = false;
-  console.log(
-    'From Juz changed:',
-    fromJuz.value,
-    'To Juz required:',
-    toJuz.required,
-  );
 });
 
-//if the user picked from surah should enter to surah number
+//if the user picked from surah should enter to surah number and only shows the suras after the from surah
+fromSurah.addEventListener('change', function () {
+  if (fromSurah.value) toSurah.required = true;
+  else toSurah.required = false;
+  //show only the suras after the from surah
+  let fromSurahNumber = parseInt(fromSurah.value) - 1;
+  for (let i = 0; i < toSurah.options.length; i++) {
+    let option = toSurah.options[i];
+    if (parseInt(option.value) <= fromSurahNumber) {
+      option.style.display = 'none';
+    } else {
+      option.style.display = 'block';
+    }
+  }
+});
