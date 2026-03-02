@@ -33,7 +33,7 @@
                 <label>@Localizer["From"]</label>
                 <p>
                     <strong>@Localizer["Surah"]</strong> @Formatting.GetLocalizedSurahName(Model.FromSurah??
-                                                                                                                                                                                                                                                    Surah.NONE)<br />
+                                                                                                                                                                                                                                                                                            Surah.NONE)<br />
                     <strong>@Localizer["Ayah"]</strong> @Model.FromAyah<br />
                     <strong>@Localizer["Juz"]</strong> @Model.FromJuz, <strong>@Localizer["Page"]</strong>
                     @Model.FromPage
@@ -46,7 +46,7 @@
                 <label>@Localizer["To"]</label>
                 <p>
                     <strong>@Localizer["Surah"]</strong> @Formatting.GetLocalizedSurahName(Model.ToSurah ??
-                                                                                                                                                                                                                                                    Surah.NONE)<br />
+                                                                                                                                                                                                                                                                                            Surah.NONE)<br />
                     <strong>@Localizer["Ayah"]</strong> @Model.ToAyah<br />
                     <strong>@Localizer["Juz"]</strong> @Model.ToJuz, <strong>@Localizer["Page"]</strong> @Model.ToPage
                 </p>
@@ -107,7 +107,8 @@
         </button>
 
 
-        <form method="post" asp-action="Delete" asp-route-id="@Model.Id" class="d-inline delete-form">
+        <form method="post" asp-controller="Wird" asp-action="Delete" asp-route-id="@Model.Id"
+              class="d-inline delete-form">
             <button type="submit" class="btn btn-delete table-action-btn danger"
                     data-confirm-delete="@Localizer["ConfirmDelete"] @Model.Student.StudentInfo.FirstName @Model.Student.StudentInfo.SecondName">
                 <i class='bx bx-trash'></i>

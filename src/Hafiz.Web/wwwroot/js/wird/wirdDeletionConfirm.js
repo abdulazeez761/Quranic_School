@@ -1,12 +1,13 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // العثور على جميع فورمات الحذف في الصفحة
-  const deleteForms = document.querySelectorAll('.delete-form');
+  // نضع مستمع الأحداث على الصفحة بالكامل (document)
+  document.addEventListener('submit', async function (e) {
+    // نتحقق مما إذا كان العنصر الذي أطلق الحدث هو فورم الحذف الخاص بنا
+    const formElement = e.target.closest('.delete-form');
 
-  deleteForms.forEach((form) => {
-    form.addEventListener('submit', async function (e) {
-      e.preventDefault(); // إيقاف إعادة تحميل الصفحة
+    // إذا كان هو فورم الحذف، ننفذ كودنا
+    if (formElement) {
+      e.preventDefault();
 
-      const formElement = this;
       const actionUrl = formElement.getAttribute('action');
       const submitBtn = formElement.querySelector('button[type="submit"]');
       const confirmMessage = submitBtn.getAttribute('data-confirm-delete');
@@ -17,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
       // إظهار رسالة التأكيد باستخدام SweetAlert2
       Swal.fire({
         title: 'تأكيد الحذف',
-        text: confirmMessage, // الرسالة القادمة من الداتا الخاصة بالزر
+        text: confirmMessage,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
@@ -27,7 +28,6 @@ document.addEventListener('DOMContentLoaded', function () {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            // نستخدم FormData لكي نرسل الـ Token الأمني تلقائياً مع الطلب
             const formData = new FormData(formElement);
 
             const response = await fetch(actionUrl, {
@@ -36,12 +36,11 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             if (response.ok) {
-              // إذا نجح الحذف في السيرفر، نخفي الـ Card بحركة سلسة
               if (cardElement) {
                 cardElement.style.transition = 'opacity 0.4s ease';
                 cardElement.style.opacity = 0;
                 setTimeout(() => {
-                  cardElement.remove(); // مسح العنصر من الـ HTML
+                  cardElement.remove();
                 }, 400);
               }
 
@@ -55,6 +54,6 @@ document.addEventListener('DOMContentLoaded', function () {
           }
         }
       });
-    });
+    }
   });
 });
