@@ -206,28 +206,28 @@
                             </td>
                             <td class="text-center">
                                 <label class="attendance-radio">
-                                    <input type="radio" name="attendance_@student.Id"                                     class="attendance-checkbox status-present"
+                                    <input type="radio" name="attendance_@student.Id" class="attendance-checkbox status-present"
                                            data-student-id="@student.Id" data-status="0" @presentChecked>
                                     <span class="radio-custom present"></span>
                                 </label>
                             </td>
                             <td class="text-center">
                                 <label class="attendance-radio">
-                                    <input type="radio" name="attendance_@student.Id"     class="attendance-checkbox status-late"
+                                    <input type="radio" name="attendance_@student.Id" class="attendance-checkbox status-late"
                                            data-student-id="@student.Id" data-status="1" @lateChecked>
                                     <span class="radio-custom late"></span>
                                 </label>
                             </td>
                             <td class="text-center">
                                 <label class="attendance-radio">
-                                    <input type="radio" name="attendance_@student.Id"                        class="attendance-checkbox status-absent"
+                                    <input type="radio" name="attendance_@student.Id" class="attendance-checkbox status-absent"
                                            data-student-id="@student.Id" data-status="2" @absentChecked>
                                     <span class="radio-custom absent"></span>
                                 </label>
                             </td>
                             <td class="text-center">
                                 <label class="attendance-radio">
-                                    <input type="radio" name="attendance_@student.Id"                  class="attendance-checkbox status-excuse"
+                                    <input type="radio" name="attendance_@student.Id" class="attendance-checkbox status-excuse"
                                            data-student-id="@student.Id" data-status="3" @excuseChecked>
                                     <span class="radio-custom excuse"></span>
                                 </label>
@@ -261,8 +261,8 @@
 
 @section Scripts {
 
-    <script src="~/js/student/utils.js"></script>
-    <script src="~/js/student/api.js"></script>
-    <script src="~/js/student/events.js"></script>
-    <script src="~/js/student/init.js"></script>
+    <script src="~/js/student/utils.js" asp-append-version="true"></script>
+    <script src="~/js/student/api.js" asp-append-version="true"></script>
+    <script src="~/js/student/events.js" asp-append-version="true"></script>
+    <script src="~/js/student/init.js" asp-append-version="true"></script>
 }
