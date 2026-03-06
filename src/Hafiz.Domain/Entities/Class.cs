@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Hafiz.Domain.Entities;
 using Hafiz.Models.enums;
 
 namespace Hafiz.Models;
@@ -26,6 +27,12 @@ public class Class
     public ICollection<Student> Students { get; set; } = new List<Student>();
 
     public ICollection<Teacher> Teachers { get; set; } = new List<Teacher>();
+
+    [Required]
+    public Guid InstituteId { get; set; }
+
+    [ForeignKey(nameof(InstituteId))]
+    public Institute Institute { get; set; }
     public ICollection<StudentAttendance> StudentAttendances { get; set; } =
         new List<StudentAttendance>();
     public ICollection<TeacherAttendance> TeacherAttendance { get; set; } =
