@@ -8,6 +8,7 @@ namespace Hafiz.Domain.Entities
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid? ManagerId { get; set; }
 
         [Required]
         [StringLength(100, MinimumLength = 2)]
@@ -33,8 +34,9 @@ namespace Hafiz.Domain.Entities
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation
-        public ICollection<User> Users { get; set; }
-        public ICollection<Class> Classes { get; set; }
-        public User Admin { get; set; }
+        [ForeignKey(nameof(ManagerId))]
+        public User? Manager { get; set; }
+        public ICollection<User> Users { get; set; } = new List<User>();
+        public ICollection<Class> Classes { get; set; } = new List<Class>();
     }
 }

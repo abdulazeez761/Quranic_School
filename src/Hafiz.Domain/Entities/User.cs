@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Hafiz.Domain.Entities;
 
 namespace Hafiz.Models
 {
@@ -47,7 +48,11 @@ namespace Hafiz.Models
         [StringLength(255)]
         public string? ProfileImage { get; set; }
 
+        public Guid? InstituteId { get; set; }
+
         // Navigation properties
+        [ForeignKey(nameof(InstituteId))]
+        public Institute? Institute { get; set; }
 
         public Teacher? Teacher { get; set; }
 
