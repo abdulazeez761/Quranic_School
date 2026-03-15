@@ -6,9 +6,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.9" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="11.0.0-preview.1.26104.118" />
-    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="11.0.0-preview.1.26104.118" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="11.0.0-preview.1.26104.118" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -10,6 +10,7 @@ using Hafiz.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 
 namespace Hafiz.Areas.Teacher.Controllers
 {
@@ -42,8 +43,16 @@ namespace Hafiz.Areas.Teacher.Controllers
             else
                 await PopulateClassesDropdown(Guid.Empty);
 
+            var classes = ViewBag.Classes as List<SelectListItem>;
+            var firstClassValue = classes?.FirstOrDefault()?.Value;
+
+            if (!Guid.TryParse(firstClassValue, out var classId))
+            {
+                return View(Enumerable.Empty<StudentAttendanceDto>());
+            }
+
             var students = await _studentAttendanceService.GetStudentsByClass(
-                Guid.Parse(ViewBag.Classes[0].Value),
+                classId,
                 DateTime.Now.Date
             );
 
@@ -67,7 +76,7 @@ namespace Hafiz.Areas.Teacher.Controllers
         {
             var classes = await _classService.GetClassesAsync();
             if (id != Guid.Empty)
-                classes = classes.Where(c => c.TeacherIds.Contains(id)).ToList();
+                classes = classes.Where(c => c.TeacherIds != null && c.TeacherIds.Contains(id)).ToList();
 
             ViewBag.Classes = classes
                 .Select(cl => new SelectListItem { Value = cl.Id.ToString(), Text = $"{cl.Name}" })

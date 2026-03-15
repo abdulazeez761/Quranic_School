@@ -59,9 +59,14 @@
                 @foreach (var type in Enum.GetValues(typeof(AssignmentType)))
                 {
                     var typeName = type.ToString();
+                    if (string.IsNullOrWhiteSpace(typeName))
+                    {
+                        continue;
+                    }
+
                     <a href="@Url.Action("Index", "Wird", new { area = "Student", status = currentStatus, type = typeName, page = 1, pageSize })"
                            class="filter-tab @(currentType == typeName ? "active" : "")">
-                        @Localizer[type.ToString()]
+                        @Localizer[typeName]
                     </a>
                 }
             </div>

@@ -158,6 +158,13 @@
                     int index = 1;
                     foreach (var teacher in Model)
                     {
+                        if (teacher is null)
+                        {
+                            continue;
+                        }
+
+                        var teacherId = teacher.Id;
+
                         var presentChecked = "";
                         var lateChecked = "";
                         var absentChecked = "";
@@ -210,36 +217,36 @@
                             </td>
                             <td class="text-center">
                                 <label class="attendance-radio">
-                                    <input type="radio" name="attendance_@teacher.Id" class="attendance-checkbox status-present"
-                                           data-teacher-id="@teacher.Id" data-status="0" @presentChecked>
+                                    <input type="radio" name="attendance_@teacherId" class="attendance-checkbox status-present"
+                                           data-teacher-id="@teacherId" data-status="0" @presentChecked>
                                     <span class="radio-custom present"></span>
                                 </label>
                             </td>
                             <td class="text-center">
                                 <label class="attendance-radio">
-                                    <input type="radio" name="attendance_@teacher.Id" class="attendance-checkbox status-late"
-                                           data-teacher-id="@teacher.Id" data-status="1" @lateChecked>
+                                    <input type="radio" name="attendance_@teacherId" class="attendance-checkbox status-late"
+                                           data-teacher-id="@teacherId" data-status="1" @lateChecked>
                                     <span class="radio-custom late"></span>
                                 </label>
                             </td>
                             <td class="text-center">
                                 <label class="attendance-radio">
-                                    <input type="radio" name="attendance_@teacher.Id" class="attendance-checkbox status-absent"
-                                           data-teacher-id="@teacher.Id" data-status="2" @absentChecked>
+                                    <input type="radio" name="attendance_@teacherId" class="attendance-checkbox status-absent"
+                                           data-teacher-id="@teacherId" data-status="2" @absentChecked>
                                     <span class="radio-custom absent"></span>
                                 </label>
                             </td>
                             <td class="text-center">
                                 <label class="attendance-radio">
-                                    <input type="radio" name="attendance_@teacher.Id" class="attendance-checkbox status-excuse"
-                                           data-teacher-id="@teacher.Id" data-status="3" @excuseChecked>
+                                    <input type="radio" name="attendance_@teacherId" class="attendance-checkbox status-excuse"
+                                           data-teacher-id="@teacherId" data-status="3" @excuseChecked>
                                     <span class="radio-custom excuse"></span>
                                 </label>
                             </td>
                             <td>
                                 <div class="input-group">
                                     <input type="number" class="form-input form-input-sm hours-input"
-                                           data-teacher-id="@teacher.Id" data-hours="@hoursValue" min="0" max="24" step="0.5"
+                                           data-teacher-id="@teacherId" data-hours="@hoursValue" min="0" max="24" step="0.5"
                                            value="@hoursValue" placeholder="0" style="text-align: center;">
                                     <span class="input-group-text">
                                         <i class='bx bx-time'></i>
