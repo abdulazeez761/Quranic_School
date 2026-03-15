@@ -67,7 +67,7 @@ namespace Hafiz.Areas.Teacher.Controllers
         {
             var classes = await _classService.GetClassesAsync();
             if (id != Guid.Empty)
-                classes = classes.Where(c => c.TeacherIds.Contains(id)).ToList();
+                classes = classes.Where(c => c.TeacherIds?.Contains(id) == true).ToList();
 
             ViewBag.Classes = classes
                 .Select(cl => new SelectListItem { Value = cl.Id.ToString(), Text = $"{cl.Name}" })

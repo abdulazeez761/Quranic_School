@@ -192,8 +192,9 @@
     <!-- Table Footer -->
     <div class="table-footer">
         <div class="table-info">
-            @Localizer["ShowingResults"] <strong><span id="visibleCount">@Model.Count()</span></strong> @Localizer["Of"]
-            <strong>@Model.Count()</strong> @Localizer["Class"]
+            @Localizer["ShowingResults"] <strong><span id="visibleCount">@Model!.Count()</span></strong>
+            @Localizer["Of"]
+            <strong>@Model!.Count()</strong> @Localizer["Class"]
         </div>
     </div>
 </div>
