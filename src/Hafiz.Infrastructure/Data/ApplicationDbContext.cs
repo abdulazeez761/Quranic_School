@@ -1,4 +1,5 @@
 using System;
+using Hafiz.Domain.Entities;
 using Hafiz.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<TeacherAttendance> teacherAttendances { get; set; }
     public DbSet<Video> Videos { get; set; }
     public DbSet<ParentNote> ParentNotes { get; set; }
+    public DbSet<Institute> Institutes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -157,5 +159,18 @@ public class ApplicationDbContext : DbContext
             .HasMany(c => c.TeacherAttendance)
             .WithOne(sa => sa.Class)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder
+            .Entity<Institute>()
+            .HasMany(i => i.Users)
+            .WithOne(u => u.Institute)
+            .HasForeignKey(u => u.InstituteId)
+            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder
+            .Entity<Institute>()
+            .HasMany(i => i.Classes)
+            .WithOne(c => c.Institute)
+            .HasForeignKey(c => c.InstituteId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
