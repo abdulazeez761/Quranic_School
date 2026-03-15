@@ -61,7 +61,7 @@
                     var typeName = type.ToString();
                     <a href="@Url.Action("Index", "Wird", new { area = "Student", status = currentStatus, type = typeName, page = 1, pageSize })"
                            class="filter-tab @(currentType == typeName ? "active" : "")">
-                        @Localizer[type.ToString()!]
+                        @Localizer[type.ToString()]
                     </a>
                 }
             </div>
@@ -144,7 +144,7 @@
                                 <label>@Localizer["To"]:</label>
                                 <p>
                                     <strong>@Localizer["Surah"]:</strong> @Formatting.GetLocalizedSurahName(wird.ToSurah ??
-                                                                                                    Surah.NONE)<br />
+                                                                Surah.NONE)<br />
                                     <strong>@Localizer["Ayah"]:</strong> @wird.ToAyah<br />
                                     <strong>@Localizer["Juz"]:</strong> @wird.ToJuz, <strong>@Localizer["Page"]:</strong>
                                     @wird.ToPage
