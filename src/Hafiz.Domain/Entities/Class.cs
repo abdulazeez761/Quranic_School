@@ -28,11 +28,10 @@ public class Class
 
     public ICollection<Teacher> Teachers { get; set; } = new List<Teacher>();
 
-    [Required]
-    public Guid InstituteId { get; set; }
+    public Guid? InstituteId { get; set; }
 
     [ForeignKey(nameof(InstituteId))]
-    public Institute Institute { get; set; }
+    public Institute? Institute { get; set; }
     public ICollection<StudentAttendance> StudentAttendances { get; set; } =
         new List<StudentAttendance>();
     public ICollection<TeacherAttendance> TeacherAttendance { get; set; } =

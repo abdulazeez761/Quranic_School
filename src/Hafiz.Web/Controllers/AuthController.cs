@@ -68,6 +68,8 @@ namespace Hafiz.Controllers
                     return RedirectToAction("Index", "Student");
                 case UserRole.Parent:
                     return RedirectToAction("Index", "Parent");
+                case UserRole.SuperAdmin:
+                    return RedirectToAction("Index", "Home", new { area = "SuperAdmin" });
                 default:
                     return RedirectToAction("Index", "Home");
             }
