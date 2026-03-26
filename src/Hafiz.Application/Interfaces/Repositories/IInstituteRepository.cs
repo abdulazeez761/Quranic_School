@@ -11,7 +11,7 @@ namespace Hafiz.Application.Interfaces.Repositories
     {
         Task<Institute> GetByIdAsync(Guid id);
         Task<List<Institute>> GetAllAsync();
-        Task<bool> CreateAsync(Institute institute);
+        Task<Institute> CreateAsync(Institute institute);
         Task UpdateAsync(Institute institute);
         Task DeleteAsync(Guid id);
         Task<List<User>> GetInstituteAdminsAsync(Guid instituteId);

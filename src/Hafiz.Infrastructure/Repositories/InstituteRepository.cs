@@ -14,19 +14,21 @@ namespace Hafiz.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<bool> CreateAsync(Institute institute)
+        public async Task<Institute> CreateAsync(Institute institute)
         {
             if (institute == null)
                 throw new ArgumentNullException(nameof(institute));
             try
             {
                 await _context.Institutes.AddAsync(institute);
-                int rowAffected = await _context.SaveChangesAsync();
-                return rowAffected > 0;
+                await _context.SaveChangesAsync();
+                return institute;
             }
             catch (Exception ex)
             {
-                return false;
+                // Log the exception (you can use a logging framework like Serilog, NLog, etc.)
+                Console.WriteLine($"An error occurred while creating the institute: {ex.Message}");
+                return null;
             }
         }
 
