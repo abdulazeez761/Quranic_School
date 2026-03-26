@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Hafiz.Application.Interfaces.Repositories;
+using Hafiz.Data;
 using Hafiz.Domain.Entities;
 using Hafiz.Models;
 
@@ -10,9 +7,27 @@ namespace Hafiz.Infrastructure.Repositories
 {
     public class InstituteRepository : IInstituteRepository
     {
-        public Task<Institute> CreateAsync(Institute institute)
+        private readonly ApplicationDbContext _context;
+
+        public InstituteRepository(ApplicationDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
+        }
+
+        public async Task<bool> CreateAsync(Institute institute)
+        {
+            if (institute == null)
+                throw new ArgumentNullException(nameof(institute));
+            try
+            {
+                await _context.Institutes.AddAsync(institute);
+                int rowAffected = await _context.SaveChangesAsync();
+                return rowAffected > 0;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         public Task DeleteAsync(Guid id)
