@@ -44,6 +44,11 @@ namespace Hafiz.Controllers
                 new Claim("Username", user.Username),
                 new Claim(ClaimTypes.Role, user.Role.ToString()),
             };
+
+            if (user.InstituteId.HasValue)
+            {
+                claims.Add(new Claim("InstituteId", user.InstituteId.Value.ToString()));
+            }
             var identity = new ClaimsIdentity(
                 claims,
                 CookieAuthenticationDefaults.AuthenticationScheme

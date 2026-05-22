@@ -133,5 +133,16 @@ namespace Hafiz.Repositories
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<Student>> GetAllByInstituteAsync(Guid instituteId)
+        {
+            return await _context
+                .Students.Include(t => t.StudentInfo)
+                .Include(s => s.Classes)
+                .Include(s => s.Attendances)
+                .Include(s => s.wirds)
+                .Where(s => s.StudentInfo.InstituteId == instituteId)
+                .ToListAsync();
+        }
     }
 }

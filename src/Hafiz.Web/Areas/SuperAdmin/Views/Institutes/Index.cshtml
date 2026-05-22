@@ -1,0 +1,85 @@
+@model List<Hafiz.Domain.Entities.Institute>
+@{
+    ViewData["Title"] = "إدارة المراكز";
+}
+
+<div class="d-flex justify-between align-center mb-lg">
+    <h2>إدارة المراكز</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class='bx bx-plus'></i> إنشاء مركز جديد
+    </a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mb-md">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<div class="card card-standard">
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>اسم المركز</th>
+                            <th>الوصف</th>
+                            <th>العنوان</th>
+                            <th>الهاتف</th>
+                            <th>المدير</th>
+                            <th>الحالة</th>
+                            <th>تاريخ الإنشاء</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var institute in Model)
+                        {
+                            <tr>
+                                <td><strong>@institute.Name</strong></td>
+                                <td>@(institute.Description ?? "—")</td>
+                                <td>@(institute.Address ?? "—")</td>
+                                <td>@(institute.PhoneNumber ?? "—")</td>
+                                <td>@(institute.Manager != null ? $"{institute.Manager.FirstName} {institute.Manager.SecondName}" : "—")</td>
+                                <td>
+                                    @if (institute.IsActive)
+                                    {
+                                        <span class="badge badge-success">نشط</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger">غير نشط</span>
+                                    }
+                                </td>
+                                <td>@institute.CreatedAt.ToString("yyyy/MM/dd")</td>
+                                <td>
+                                    <div class="d-flex" style="gap: 0.5rem;">
+                                        <a asp-action="Details" asp-route-id="@institute.Id" class="btn btn-sm btn-ghost">
+                                            <i class='bx bx-show'></i>
+                                        </a>
+                                        <form asp-action="Delete" asp-route-id="@institute.Id" method="post"
+                                              onsubmit="return confirm('هل أنت متأكد من حذف هذا المركز؟');">
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class='bx bx-trash'></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center" style="padding: 2rem;">
+                <i class='bx bx-building-house' style="font-size: 3rem; color: var(--text-muted);"></i>
+                <p class="text-muted mt-md">لا توجد مراكز بعد.</p>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,211 @@
+@model Hafiz.Areas.SuperAdmin.Controllers.CreateInstituteViewModel
+@{
+    ViewData["Title"] = "إنشاء مركز جديد";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-between align-center mb-lg flex-wrap gap-md">
+    <div>
+        <h2 class="section-title mb-sm">
+            <i class='bx bx-building-house' style="color: var(--primary-green);"></i>
+            إنشاء مركز جديد
+        </h2>
+        <p class="text-medium">أدخل تفاصيل المركز الجديد ومعلومات حساب المدير المسؤول عنه.</p>
+    </div>
+    <div>
+        <a asp-action="Index" class="btn btn-outline">
+            <i class='bx bx-arrow-back'></i>
+            <span>العودة للقائمة</span>
+        </a>
+    </div>
+</div>
+
+<!-- Validation Summary Alert -->
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger mb-lg" role="alert">
+        <i class='bx bx-error-circle'></i>
+        <div>
+            <strong>يرجى تصحيح الأخطاء التالية:</strong>
+            <div asp-validation-summary="All" class="mt-sm"></div>
+        </div>
+    </div>
+}
+
+<!-- Form Card -->
+<div class="card card-standard" style="width: 80%; margin: 0 auto;">
+    <form asp-action="Create" method="post" class="form" id="createInstituteForm">
+        
+        <!-- Institute Information Section -->
+        <div class="card-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: var(--space-md); margin-bottom: var(--space-lg);">
+            <h3 class="card-title">
+                <i class='bx bx-building-house'></i>
+                معلومات المركز
+            </h3>
+        </div>
+
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="InstituteName" class="form-label required">
+                        <i class='bx bx-edit'></i>
+                        اسم المركز
+                    </label>
+                    <input asp-for="InstituteName" class="form-input" placeholder="مثال: مركز الهداية القرآني" autofocus />
+                    <span asp-validation-for="InstituteName" class="form-feedback form-feedback-invalid"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="InstitutePhone" class="form-label">
+                        <i class='bx bx-phone'></i>
+                        هاتف المركز
+                    </label>
+                    <input asp-for="InstitutePhone" class="form-input" placeholder="مثال: 079XXXXXXXX" />
+                    <span asp-validation-for="InstitutePhone" class="form-feedback form-feedback-invalid"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Address" class="form-label">
+                        <i class='bx bx-map'></i>
+                        العنوان
+                    </label>
+                    <input asp-for="Address" class="form-input" placeholder="مثال: عمان، الأردن" />
+                    <span asp-validation-for="Address" class="form-feedback form-feedback-invalid"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Description" class="form-label">
+                    <i class='bx bx-detail'></i>
+                    الوصف
+                </label>
+                <textarea asp-for="Description" class="form-input" style="height: 100px; resize: vertical;" placeholder="تفاصيل إضافية عن المركز، رؤيته أو أهدافه..."></textarea>
+                <span asp-validation-for="Description" class="form-feedback form-feedback-invalid"></span>
+            </div>
+
+            <!-- Admin Account Section -->
+            <div class="card-header mt-xl mb-lg" style="border-bottom: 1px solid var(--border-color); padding-bottom: var(--space-md);">
+                <h3 class="card-title">
+                    <i class='bx bx-user-pin'></i>
+                    حساب مدير المركز
+                </h3>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="AdminFirstName" class="form-label required">
+                        <i class='bx bx-user'></i>
+                        الاسم الأول
+                    </label>
+                    <input asp-for="AdminFirstName" class="form-input" placeholder="الاسم الأول للمدير" />
+                    <span asp-validation-for="AdminFirstName" class="form-feedback form-feedback-invalid"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="AdminSecondName" class="form-label required">
+                        <i class='bx bx-user'></i>
+                        اسم العائلة
+                    </label>
+                    <input asp-for="AdminSecondName" class="form-input" placeholder="اسم العائلة للمدير" />
+                    <span asp-validation-for="AdminSecondName" class="form-feedback form-feedback-invalid"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="AdminUsername" class="form-label required">
+                        <i class='bx bx-at'></i>
+                        اسم المستخدم للولوج
+                    </label>
+                    <input asp-for="AdminUsername" class="form-input" placeholder="اسم المستخدم بالإنجليزية" />
+                    <span asp-validation-for="AdminUsername" class="form-feedback form-feedback-invalid"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="AdminPhoneNumber" class="form-label required">
+                        <i class='bx bx-phone'></i>
+                        رقم هاتف المدير
+                    </label>
+                    <input asp-for="AdminPhoneNumber" class="form-input" placeholder="رقم الهاتف الشخصي للمدير" />
+                    <span asp-validation-for="AdminPhoneNumber" class="form-feedback form-feedback-invalid"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="AdminEmail" class="form-label">
+                        <i class='bx bx-envelope'></i>
+                        البريد الإلكتروني
+                    </label>
+                    <input asp-for="AdminEmail" type="email" class="form-input" placeholder="البريد الإلكتروني للمدير" />
+                    <span asp-validation-for="AdminEmail" class="form-feedback form-feedback-invalid"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="AdminPassword" class="form-label required">
+                        <i class='bx bx-lock-alt'></i>
+                        كلمة المرور
+                    </label>
+                    <div class="input-group">
+                        <input asp-for="AdminPassword" type="password" class="form-input" id="adminPasswordInput" placeholder="أدخل كلمة مرور قوية" />
+                        <button type="button" class="input-group-text" onclick="togglePassword('adminPasswordInput', this)" style="cursor: pointer;">
+                            <i class='bx bx-show'></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="AdminPassword" class="form-feedback form-feedback-invalid"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="AdminConfirmPassword" class="form-label required">
+                        <i class='bx bx-lock-open'></i>
+                        تأكيد كلمة المرور
+                    </label>
+                    <div class="input-group">
+                        <input asp-for="AdminConfirmPassword" type="password" class="form-input" id="adminConfirmPasswordInput" placeholder="أعد إدخال كلمة المرور" />
+                        <button type="button" class="input-group-text" onclick="togglePassword('adminConfirmPasswordInput', this)" style="cursor: pointer;">
+                            <i class='bx bx-show'></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="AdminConfirmPassword" class="form-feedback form-feedback-invalid"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="card-footer" style="margin-top: var(--space-lg); border-top: 1px solid var(--border-color); padding-top: var(--space-md);">
+            <div class="form-actions form-actions-right">
+                <button type="submit" class="btn btn-primary">
+                    <i class='bx bx-save'></i>
+                    <span>حفظ وإنشاء</span>
+                </button>
+                <a asp-action="Index" class="btn btn-outline">
+                    <i class='bx bx-x'></i>
+                    <span>إلغاء</span>
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function togglePassword(inputId, button) {
+            var x = document.getElementById(inputId);
+            var icon = button.querySelector('i');
+            if (x.type === "password") {
+                x.type = "text";
+                icon.className = "bx bx-hide";
+            } else {
+                x.type = "password";
+                icon.className = "bx bx-show";
+            }
+        }
+    </script>
+}

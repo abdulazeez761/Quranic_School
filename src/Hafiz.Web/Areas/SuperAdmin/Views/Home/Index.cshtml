@@ -1,0 +1,102 @@
+@model List<Hafiz.Domain.Entities.Institute>
+@{
+    ViewData["Title"] = "لوحة تحكم السوبر أدمن";
+}
+
+<!-- Stats Cards -->
+<div class="grid-4 mb-lg">
+    <div class="card card-stat">
+        <div class="card-stat-icon" style="background: linear-gradient(135deg, #17a2b8, #138496);">
+            <i class='bx bx-building-house'></i>
+        </div>
+        <div class="card-stat-content">
+            <div class="card-stat-label">عدد المراكز</div>
+            <div class="card-stat-value">@Model.Count</div>
+        </div>
+    </div>
+
+    <div class="card card-stat">
+        <div class="card-stat-icon">
+            <i class='bx bx-check-circle'></i>
+        </div>
+        <div class="card-stat-content">
+            <div class="card-stat-label">المراكز النشطة</div>
+            <div class="card-stat-value">@Model.Count(i => i.IsActive)</div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="card card-standard mb-lg">
+    <div class="card-header">
+        <h3 class="card-title">إجراءات سريعة</h3>
+    </div>
+    <div class="card-body">
+        <a asp-area="SuperAdmin" asp-controller="Institutes" asp-action="Create" class="btn btn-primary">
+            <i class='bx bx-plus'></i> إنشاء مركز جديد
+        </a>
+        <a asp-area="SuperAdmin" asp-controller="Institutes" asp-action="Index" class="btn btn-ghost" style="margin-right: 10px;">
+            <i class='bx bx-list-ul'></i> عرض جميع المراكز
+        </a>
+    </div>
+</div>
+
+<!-- Institutes List -->
+<div class="card card-standard">
+    <div class="card-header">
+        <h3 class="card-title">المراكز</h3>
+    </div>
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>اسم المركز</th>
+                            <th>المدير</th>
+                            <th>الحالة</th>
+                            <th>تاريخ الإنشاء</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var institute in Model)
+                        {
+                            <tr>
+                                <td>@institute.Name</td>
+                                <td>@(institute.Manager != null ? $"{institute.Manager.FirstName} {institute.Manager.SecondName}" : "—")</td>
+                                <td>
+                                    @if (institute.IsActive)
+                                    {
+                                        <span class="badge badge-success">نشط</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger">غير نشط</span>
+                                    }
+                                </td>
+                                <td>@institute.CreatedAt.ToString("yyyy/MM/dd")</td>
+                                <td>
+                                    <a asp-area="SuperAdmin" asp-controller="Institutes" asp-action="Details" asp-route-id="@institute.Id" class="btn btn-sm btn-ghost">
+                                        <i class='bx bx-show'></i> تفاصيل
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center" style="padding: 2rem;">
+                <i class='bx bx-building-house' style="font-size: 3rem; color: var(--text-muted);"></i>
+                <p class="text-muted mt-md">لا توجد مراكز بعد. قم بإنشاء أول مركز!</p>
+                <a asp-area="SuperAdmin" asp-controller="Institutes" asp-action="Create" class="btn btn-primary mt-md">
+                    <i class='bx bx-plus'></i> إنشاء مركز جديد
+                </a>
+            </div>
+        }
+    </div>
+</div>

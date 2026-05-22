@@ -33,6 +33,8 @@ public class HomeController : Controller
                 return RedirectToAction("Index", "Home", new { area = "Student" });
             case nameof(UserRole.Parent):
                 return RedirectToAction("Index", "Home", new { area = "Parent" });
+            case nameof(UserRole.SuperAdmin):
+                return RedirectToAction("Index", "Home", new { area = "SuperAdmin" });
             default:
                 return View();
         }

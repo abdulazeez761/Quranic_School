@@ -23,7 +23,7 @@ namespace Hafiz.Services
             _passwordHasher = passwordHasher;
         }
 
-        public async Task<(bool Success, string ErrorMessage)> AddAsync(RegisterParentDto parent)
+        public async Task<(bool Success, string ErrorMessage)> AddAsync(RegisterParentDto parent, Guid? instituteId = null)
         {
             if (parent is null)
                 throw new ArgumentNullException(nameof(parent));
@@ -46,6 +46,7 @@ namespace Hafiz.Services
                     PhoneNumber = parent.PhoneNumber,
                     Password = _passwordHasher.HashPassword(parent.Password),
                     Role = UserRole.Parent,
+                    InstituteId = instituteId,
                 };
 
                 Parent parentEntity = new Parent { UserId = user.Id, ParentInfo = user };
@@ -64,6 +65,11 @@ namespace Hafiz.Services
         public Task<IEnumerable<Parent>> GetAllAsync()
         {
             return _parentRepository.GetAllAsync();
+        }
+
+        public Task<IEnumerable<Parent>> GetAllByInstituteAsync(Guid instituteId)
+        {
+            return _parentRepository.GetAllByInstituteAsync(instituteId);
         }
 
         public async Task<ParentDto?> GetByIdAsync(Guid id)

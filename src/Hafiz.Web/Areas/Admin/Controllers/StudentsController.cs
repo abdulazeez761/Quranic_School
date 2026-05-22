@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Hafiz.DTOs;
 using Hafiz.Models;
@@ -36,10 +37,22 @@ namespace Hafiz.Areas.Admin.Controllers
             _parentService = parentService;
         }
 
+        private Guid? GetInstituteId()
+        {
+            var claim = User.FindFirstValue("InstituteId");
+            return claim != null ? Guid.Parse(claim) : null;
+        }
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            IEnumerable<StudentModel>? students = await _studentService.GetAllAsync();
+            var instituteId = GetInstituteId();
+            IEnumerable<StudentModel> students;
+
+            if (instituteId.HasValue)
+                students = await _studentService.GetAllByInstituteAsync(instituteId.Value);
+            else
+                students = await _studentService.GetAllAsync();
 
             return View(students);
         }
@@ -61,7 +74,8 @@ namespace Hafiz.Areas.Admin.Controllers
                 await PopulateParentsDropdown();
                 return View(registerDto);
             }
-            var (Success, ErrorMessage) = await _studentService.AddAsync(registerDto);
+            var instituteId = GetInstituteId();
+            var (Success, ErrorMessage) = await _studentService.AddAsync(registerDto, instituteId);
             if (!Success)
             {
                 ModelState.AddModelError("", ErrorMessage);
@@ -133,10 +147,14 @@ namespace Hafiz.Areas.Admin.Controllers
 
         private async Task PopulateClassesDropdown()
         {
-            // Fetch all classes from your repository
-            var classes = await _classService.GetClassesAsync();
+            var instituteId = GetInstituteId();
+            IEnumerable<ClassDto> classes;
 
-            // Create SelectListItem collection
+            if (instituteId.HasValue)
+                classes = await _classService.GetClassesByInstituteAsync(instituteId.Value);
+            else
+                classes = await _classService.GetClassesAsync();
+
             ViewBag.Classes = classes
                 .Select(cl => new SelectListItem { Value = cl.Id.ToString(), Text = $"{cl.Name}" })
                 .ToList();
@@ -144,10 +162,14 @@ namespace Hafiz.Areas.Admin.Controllers
 
         private async Task PopulateParentsDropdown()
         {
-            // Fetch all parents from the repository
-            var parents = await _parentService.GetAllAsync();
+            var instituteId = GetInstituteId();
+            IEnumerable<Hafiz.Models.Parent> parents;
 
-            // Create SelectListItem collection
+            if (instituteId.HasValue)
+                parents = await _parentService.GetAllByInstituteAsync(instituteId.Value);
+            else
+                parents = await _parentService.GetAllAsync();
+
             ViewBag.Parents = parents
                 .Select(p => new SelectListItem
                 {

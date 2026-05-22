@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Hafiz.DTOs;
 using Hafiz.Models;
@@ -32,10 +33,22 @@ namespace Hafiz.Areas.Admin.Controllers
             _studentsService = studentService;
         }
 
+        private Guid? GetInstituteId()
+        {
+            var claim = User.FindFirstValue("InstituteId");
+            return claim != null ? Guid.Parse(claim) : null;
+        }
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            IEnumerable<Class>? classes = await _ClassService.ViewClasses();
+            var instituteId = GetInstituteId();
+            IEnumerable<Class> classes;
+
+            if (instituteId.HasValue)
+                classes = await _ClassService.ViewClassesByInstitute(instituteId.Value);
+            else
+                classes = await _ClassService.ViewClasses();
 
             return View(classes);
         }
@@ -60,7 +73,8 @@ namespace Hafiz.Areas.Admin.Controllers
 
             try
             {
-                await _ClassService.CreateAsync(dto);
+                var instituteId = GetInstituteId();
+                await _ClassService.CreateAsync(dto, instituteId);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -112,10 +126,14 @@ namespace Hafiz.Areas.Admin.Controllers
 
         private async Task PopulateTeachersDropdown()
         {
-            // Fetch all teachers from your repository
-            var teachers = await _teacherService.GetAllTeachersAsync();
+            var instituteId = GetInstituteId();
+            IEnumerable<Hafiz.Models.Teacher> teachers;
 
-            // Create SelectListItem collection
+            if (instituteId.HasValue)
+                teachers = await _teacherService.GetAllTeachersByInstituteAsync(instituteId.Value);
+            else
+                teachers = await _teacherService.GetAllTeachersAsync();
+
             ViewBag.Teachers = teachers
                 .Select(t => new SelectListItem
                 {
@@ -127,10 +145,14 @@ namespace Hafiz.Areas.Admin.Controllers
 
         private async Task PopulateStudentsDropDown()
         {
-            // Fetch all classes from your repository
-            var students = await _studentsService.GetAllAsync();
+            var instituteId = GetInstituteId();
+            IEnumerable<Hafiz.Models.Student> students;
 
-            // Create SelectListItem collection
+            if (instituteId.HasValue)
+                students = await _studentsService.GetAllByInstituteAsync(instituteId.Value);
+            else
+                students = await _studentsService.GetAllAsync();
+
             ViewBag.Students = students
                 .Select(stude => new SelectListItem
                 {

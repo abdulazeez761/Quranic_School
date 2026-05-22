@@ -39,7 +39,7 @@ public class AuthService : IAuthService
         return null;
     }
 
-    public async Task<(bool Success, string ErrorMessage)> RegisterAsync(RegisterDto dto)
+    public async Task<(bool Success, string ErrorMessage)> RegisterAsync(RegisterDto dto, Guid? instituteId = null)
     {
         if (await _userRepository.GetByUsernameAsync(dto.Username) is not null)
             return (false, "اسم المستخدم مستخدم بالفعل.");
@@ -55,6 +55,7 @@ public class AuthService : IAuthService
             PhoneNumber = dto.PhoneNumber,
             Password = _passwordHasher.HashPassword(dto.Password),
             Role = dto.Role,
+            InstituteId = instituteId,
         };
         await _userRepository.AddAsync(user);
 

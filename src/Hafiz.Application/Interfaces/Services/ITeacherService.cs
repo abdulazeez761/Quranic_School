@@ -10,6 +10,7 @@ namespace Hafiz.Services.Interfaces
     public interface ITeacherService
     {
         Task<IEnumerable<Teacher>> GetAllTeachersAsync();
+        Task<IEnumerable<Teacher>> GetAllTeachersByInstituteAsync(Guid instituteId);
         Task<bool> DeleteTeacherAsync(Guid teacherId);
         Task<TeacherDto?> GetTeacherByIDAsync(Guid teacherId);
         Task UpdateTeacherAsync(TeacherDto teacher);

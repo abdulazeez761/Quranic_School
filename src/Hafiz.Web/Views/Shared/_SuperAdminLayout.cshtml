@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+@{
+    var isArabic = System.Threading.Thread.CurrentThread.CurrentCulture.Name.StartsWith("ar");
+}
+
+<html lang="@System.Threading.Thread.CurrentThread.CurrentCulture.Name" dir="@(isArabic ? "rtl" : "ltr")">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#2e8b57" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="#2e8b57" />
+    <title>@ViewData["Title"] - لوحة تحكم السوبر أدمن</title>
+
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="~/css/admin/main.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/mobile-optimization.css" asp-append-version="true" />
+    <link rel="icon" type="image/svg+xml"
+          href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'><path fill='%232e8b57' d='M249.6 471.5c10.8 3.8 22.4-4.1 22.4-15.5V78.6c0-4.2-1.6-8.4-5-11C247.4 52 202.4 32 144 32C93.5 32 46.3 45.3 18.1 56.2C6.5 60.9 0 71.7 0 83.8V394.1c0 11.9 12.8 20.2 24.1 16.5C55.6 399.8 95.2 384 144 384c46.6 0 80.4 11.6 105.6 23.5zM288 78.6V456c0 11.4 11.7 19.3 22.4 15.5C335.6 459.6 369.4 448 416 448c48.8 0 84.4 15.8 119.9 26.6C547.2 478.3 560 470 560 458.1V83.8c0-12.1-6.5-22.9-18.1-27.6C513.7 45.3 466.5 32 416 32c-58.4 0-103.4 20-123 35.6c-3.3 2.6-5 6.8-5 11z'/></svg>" />
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+</head>
+
+<body>
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar" style="background-color: var(--primary-green);">
+        <i class='bx bx-menu'></i>
+    </button>
+
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="admin-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main Navigation" style="background-color: #1e3d2f;">
+            <div class="logo" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <h2 style="color: #fff; font-size: 1.3rem;"><i class='bx bxs-shield' style="color: var(--primary-green);"></i> إدارة النظام</h2>
+            </div>
+
+            <nav>
+                <ul id="navigatorContainer">
+                    <li class="@IsActive("Home", "Index")">
+                        <a asp-area="SuperAdmin" asp-controller="Home" asp-action="Index"
+                               aria-current="@(IsActive("Home", "Index") == "active" ? "page" : "")">
+                            <i class='bx bx-grid-alt' aria-hidden="true"></i>
+                            <span>لوحة التحكم</span>
+                        </a>
+                    </li>
+                    <li class="@IsActive("Institutes", "Index")">
+                        <a asp-area="SuperAdmin" asp-controller="Institutes" asp-action="Index"
+                               aria-current="@(IsActive("Institutes", "Index") == "active" ? "page" : "")">
+                            <i class='bx bx-building-house' aria-hidden="true"></i>
+                            <span>إدارة المراكز</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <a asp-area="" asp-controller="Auth" asp-action="Logout" class="logout" style="margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: var(--space-md);">
+                    <i class='bx bx-log-out' aria-hidden="true"></i>
+                    <span>تسجيل الخروج</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content" role="main">
+            <section class="main-content">
+                @RenderBody()
+            </section>
+        </main>
+    </div>
+
+    <!-- JS Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/admin-layout.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+
+@functions {
+    string IsActive(string controller, string action)
+    {
+        var routeData = Context.Request.RouteValues;
+        var currentController = routeData["controller"]?.ToString();
+        var currentAction = routeData["action"]?.ToString();
+        var currentArea = routeData["area"]?.ToString() ?? "";
+
+        return (string.Equals(controller, currentController, StringComparison.OrdinalIgnoreCase) && 
+                string.Equals("SuperAdmin", currentArea, StringComparison.OrdinalIgnoreCase)) ? "active" : "";
+    }
+}
+</body>
+
+</html>

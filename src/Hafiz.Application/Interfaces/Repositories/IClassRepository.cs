@@ -14,5 +14,6 @@ namespace Hafiz.Repositories.Interfaces
         Task<Class> GetById(Guid id);
         Task<bool> Delete(Guid Id);
         Task<bool> UpdateAsync(Class newClass);
+        Task<IEnumerable<Class>> GetAllByInstituteAsync(Guid instituteId);
     }
 }

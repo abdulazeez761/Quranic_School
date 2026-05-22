@@ -22,7 +22,7 @@ namespace Hafiz.Services
             _studentRepo = studentService;
         }
 
-        public async Task CreateAsync(CreateClassDto classDto)
+        public async Task CreateAsync(CreateClassDto classDto, Guid? instituteId = null)
         {
             if (classDto is null)
                 throw new ArgumentNullException(nameof(classDto));
@@ -49,6 +49,7 @@ namespace Hafiz.Services
                     Teachers = classTeachers,
                     ClassDays = classDto.ClassDays,
                     ClassTime = classDto.ClassTime,
+                    InstituteId = instituteId,
                 };
                 await _classRepository.AddAsync(cls);
             }
@@ -155,6 +156,30 @@ namespace Hafiz.Services
             };
             var isUpdated = await _classRepository.UpdateAsync(newClass);
             return isUpdated;
+        }
+
+        public async Task<List<ClassDto>> GetClassesByInstituteAsync(Guid instituteId)
+        {
+            var classes = await _classRepository.GetAllByInstituteAsync(instituteId);
+
+            var classDtos = classes
+                .Select(c => new ClassDto
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Gender = c.Gender,
+                    ClassTime = c.ClassTime,
+                    ClassDays = c.ClassDays.ToList(),
+                    TeacherIds = c.Teachers.Select(t => t.UserId).ToList(),
+                })
+                .ToList();
+
+            return classDtos;
+        }
+
+        public async Task<IEnumerable<Class>> ViewClassesByInstitute(Guid instituteId)
+        {
+            return await _classRepository.GetAllByInstituteAsync(instituteId);
         }
     }
 }

@@ -15,5 +15,6 @@ namespace Hafiz.Repositories.Interfaces
         Task<Student?> GetByEmailAsync(string email);
         Task DeleteAsync(Guid id);
         Task UpdateAsync(EditStudentDto student);
+        Task<IEnumerable<Student>> GetAllByInstituteAsync(Guid instituteId);
     }
 }

@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Hafiz.Data;
 using Hafiz.DTOs;
@@ -34,9 +35,21 @@ namespace Hafiz.Areas.Admin.Controllers
             _logger = logger;
         }
 
+        private Guid? GetInstituteId()
+        {
+            var claim = User.FindFirstValue("InstituteId");
+            return claim != null ? Guid.Parse(claim) : null;
+        }
+
         public async Task<IActionResult> Index()
         {
-            IEnumerable<Models.Teacher>? list = await _teacherService.GetAllTeachersAsync();
+            var instituteId = GetInstituteId();
+            IEnumerable<Models.Teacher> list;
+
+            if (instituteId.HasValue)
+                list = await _teacherService.GetAllTeachersByInstituteAsync(instituteId.Value);
+            else
+                list = await _teacherService.GetAllTeachersAsync();
 
             return View(list);
         }
@@ -55,7 +68,8 @@ namespace Hafiz.Areas.Admin.Controllers
                 await PopulateClassesDropdown();
                 return View(model);
             }
-            var (Success, ErrorMessage) = _authService.RegisterAsync(model).Result;
+            var instituteId = GetInstituteId();
+            var (Success, ErrorMessage) = _authService.RegisterAsync(model, instituteId).Result;
             if (!Success)
             {
                 ModelState.AddModelError(string.Empty, ErrorMessage);
@@ -98,10 +112,14 @@ namespace Hafiz.Areas.Admin.Controllers
 
         private async Task PopulateClassesDropdown()
         {
-            // Fetch all classes from your repository
-            var classes = await _classService.GetClassesAsync();
+            var instituteId = GetInstituteId();
+            IEnumerable<ClassDto> classes;
 
-            // Create SelectListItem collection
+            if (instituteId.HasValue)
+                classes = await _classService.GetClassesByInstituteAsync(instituteId.Value);
+            else
+                classes = await _classService.GetClassesAsync();
+
             ViewBag.Classes = classes
                 .Select(cl => new SelectListItem { Value = cl.Id.ToString(), Text = $"{cl.Name}" })
                 .ToList();

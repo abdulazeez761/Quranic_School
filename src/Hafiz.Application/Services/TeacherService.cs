@@ -22,6 +22,11 @@ namespace Hafiz.Services
             return _teacherRepository.GetAllAsync();
         }
 
+        public Task<IEnumerable<Teacher>> GetAllTeachersByInstituteAsync(Guid instituteId)
+        {
+            return _teacherRepository.GetAllByInstituteAsync(instituteId);
+        }
+
         public async Task<bool> DeleteTeacherAsync(Guid teacherId)
         {
             var teachers = await _teacherRepository.GetAllAsync();

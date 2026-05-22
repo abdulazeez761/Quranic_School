@@ -30,7 +30,7 @@ namespace Hafiz.Services
             _passwordHasher = passwordHasher;
         }
 
-        public async Task<(bool Success, string ErrorMessage)> AddAsync(RegisterStudentDto student)
+        public async Task<(bool Success, string ErrorMessage)> AddAsync(RegisterStudentDto student, Guid? instituteId = null)
         {
             if (student is null)
                 throw new ArgumentNullException(nameof(student));
@@ -51,6 +51,7 @@ namespace Hafiz.Services
                     PhoneNumber = student.PhoneNumber,
                     Password = _passwordHasher.HashPassword(student.Password),
                     Role = student.Role,
+                    InstituteId = instituteId,
                 };
                 var studentClasses = new List<Class>();
                 var classesFromDb = await _classService.ViewClasses();
@@ -115,6 +116,11 @@ namespace Hafiz.Services
         public Task<IEnumerable<Student>> GetAllAsync()
         {
             return _studentRepository.GetAllAsync();
+        }
+
+        public Task<IEnumerable<Student>> GetAllByInstituteAsync(Guid instituteId)
+        {
+            return _studentRepository.GetAllByInstituteAsync(instituteId);
         }
 
         public Task UpdateAsync(EditStudentDto student)

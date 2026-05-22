@@ -1,0 +1,155 @@
+@model Hafiz.Domain.Entities.Institute
+@{
+    ViewData["Title"] = $"تفاصيل مركز: {Model.Name}";
+    var admins = ViewBag.Admins as List<Hafiz.Models.User> ?? new List<Hafiz.Models.User>();
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-between align-center mb-lg flex-wrap gap-md">
+    <div>
+        <h2 class="section-title mb-sm">
+            <i class='bx bx-building' style="color: var(--primary-green);"></i>
+            تفاصيل المركز: @Model.Name
+        </h2>
+        <p class="text-medium">تاريخ الإنشاء: @Model.CreatedAt.ToString("yyyy/MM/dd")</p>
+    </div>
+    <div class="d-flex gap-sm">
+        <form asp-action="Delete" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('هل أنت متأكد من حذف هذا المركز بالكامل وكل البيانات المرتبطة به؟');">
+            <button type="submit" class="btn btn-danger">
+                <i class='bx bx-trash'></i> حذف المركز
+            </button>
+        </form>
+        <a asp-action="Index" class="btn btn-outline">
+            <i class='bx bx-arrow-back'></i> العودة للقائمة
+        </a>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mb-md">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<div class="grid-3 mb-lg">
+    <!-- Stat Card: Students -->
+    <div class="card card-stat">
+        <div class="card-stat-icon" style="background: linear-gradient(135deg, var(--primary-green), #2e8b57);">
+            <i class='bx bx-user-voice'></i>
+        </div>
+        <div class="card-stat-content">
+            <div class="card-stat-label">عدد الطلاب</div>
+            <div class="card-stat-value">@ViewBag.StudentCount</div>
+        </div>
+    </div>
+
+    <!-- Stat Card: Teachers -->
+    <div class="card card-stat">
+        <div class="card-stat-icon" style="background: linear-gradient(135deg, #e0a800, #c69500);">
+            <i class='bx bx-group'></i>
+        </div>
+        <div class="card-stat-content">
+            <div class="card-stat-label">عدد المعلمين</div>
+            <div class="card-stat-value">@ViewBag.TeacherCount</div>
+        </div>
+    </div>
+
+    <!-- Stat Card: Classes -->
+    <div class="card card-stat">
+        <div class="card-stat-icon" style="background: linear-gradient(135deg, #17a2b8, #138496);">
+            <i class='bx bx-book-open'></i>
+        </div>
+        <div class="card-stat-content">
+            <div class="card-stat-label">عدد الحلقات</div>
+            <div class="card-stat-value">@ViewBag.ClassCount</div>
+        </div>
+    </div>
+</div>
+
+<div class="grid-3-2 mb-lg" style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-lg);">
+    <!-- Left Column: Details -->
+    <div class="card card-standard">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class='bx bx-info-circle'></i> معلومات المركز الأساسية
+            </h3>
+        </div>
+        <div class="card-body">
+            <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                <div class="d-flex align-center py-sm" style="border-bottom: 1px solid var(--border-color);">
+                    <div style="width: 150px; font-weight: bold; color: var(--text-medium);">اسم المركز:</div>
+                    <div>@Model.Name</div>
+                </div>
+                
+                <div class="d-flex align-center py-sm" style="border-bottom: 1px solid var(--border-color);">
+                    <div style="width: 150px; font-weight: bold; color: var(--text-medium);">حالة النشاط:</div>
+                    <div>
+                        @if (Model.IsActive)
+                        {
+                            <span class="badge badge-success">نشط</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-danger">غير نشط</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="d-flex align-center py-sm" style="border-bottom: 1px solid var(--border-color);">
+                    <div style="width: 150px; font-weight: bold; color: var(--text-medium);">رقم هاتف المركز:</div>
+                    <div>@(Model.PhoneNumber ?? "—")</div>
+                </div>
+
+                <div class="d-flex align-center py-sm" style="border-bottom: 1px solid var(--border-color);">
+                    <div style="width: 150px; font-weight: bold; color: var(--text-medium);">العنوان:</div>
+                    <div>@(Model.Address ?? "—")</div>
+                </div>
+
+                <div class="py-sm">
+                    <div style="font-weight: bold; color: var(--text-medium); margin-bottom: var(--space-xs);">الوصف:</div>
+                    <p style="line-height: 1.6; color: var(--text-dark);">@(Model.Description ?? "لا يوجد وصف لهذا المركز.")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Managers / Admins -->
+    <div class="card card-standard">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class='bx bx-user-check'></i> إدارة المركز
+            </h3>
+        </div>
+        <div class="card-body">
+            @if (admins.Any())
+            {
+                <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                    @foreach (var admin in admins)
+                    {
+                        <div class="d-flex align-center" style="gap: var(--space-sm); padding: var(--space-sm); border-radius: var(--border-radius-sm); background-color: var(--bg-hover);">
+                            <div style="font-size: 2rem; color: var(--primary-green);">
+                                <i class='bx bxs-user-badge'></i>
+                            </div>
+                            <div style="flex-grow: 1;">
+                                <div style="font-weight: bold;">@admin.FirstName @admin.SecondName</div>
+                                <div style="font-size: 0.85rem; color: var(--text-muted);">@@@admin.Username</div>
+                            </div>
+                            @if (Model.ManagerId == admin.Id)
+                            {
+                                <span class="badge badge-success" style="font-size: 0.75rem;">المدير الأساسي</span>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center" style="padding: var(--space-lg);">
+                    <i class='bx bx-user-x' style="font-size: 2.5rem; color: var(--text-muted);"></i>
+                    <p class="text-muted mt-sm">لا يوجد مدراء معينين لهذا المركز.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

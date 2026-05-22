@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Hafiz.DTOs;
 using Hafiz.Models;
@@ -21,10 +22,23 @@ namespace Hafiz.Areas.Admin.Controllers
             _parentService = parentService;
         }
 
+        private Guid? GetInstituteId()
+        {
+            var claim = User.FindFirstValue("InstituteId");
+            return claim != null ? Guid.Parse(claim) : null;
+        }
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            IEnumerable<Models.Parent>? parents = await _parentService.GetAllAsync();
+            var instituteId = GetInstituteId();
+            IEnumerable<Models.Parent> parents;
+
+            if (instituteId.HasValue)
+                parents = await _parentService.GetAllByInstituteAsync(instituteId.Value);
+            else
+                parents = await _parentService.GetAllAsync();
+
             return View(parents);
         }
 
@@ -42,7 +56,8 @@ namespace Hafiz.Areas.Admin.Controllers
                 return View(registerDto);
             }
 
-            var (Success, ErrorMessage) = await _parentService.AddAsync(registerDto);
+            var instituteId = GetInstituteId();
+            var (Success, ErrorMessage) = await _parentService.AddAsync(registerDto, instituteId);
             if (!Success)
             {
                 ModelState.AddModelError("", ErrorMessage);

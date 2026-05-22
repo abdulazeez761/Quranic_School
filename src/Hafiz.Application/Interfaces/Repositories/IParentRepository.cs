@@ -15,5 +15,6 @@ namespace Hafiz.Repositories.Interfaces
         Task<Parent?> GetByUserIdAsync(Guid userId);
         Task UpdateAsync(EditParentDto dto);
         Task DeleteAsync(Guid id);
+        Task<IEnumerable<Parent>> GetAllByInstituteAsync(Guid instituteId);
     }
 }

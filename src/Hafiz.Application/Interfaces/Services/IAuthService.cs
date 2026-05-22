@@ -6,6 +6,6 @@ namespace Hafiz.Services.Interfaces;
 
 public interface IAuthService
 {
-    Task<(bool Success, string ErrorMessage)> RegisterAsync(RegisterDto dto);
+    Task<(bool Success, string ErrorMessage)> RegisterAsync(RegisterDto dto, Guid? instituteId = null);
     Task<User?> LoginAsync(LoginDto dto);
 }

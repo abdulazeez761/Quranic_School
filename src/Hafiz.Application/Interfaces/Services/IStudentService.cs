@@ -10,7 +10,8 @@ namespace Hafiz.Services.Interfaces
     public interface IStudentService
     {
         public Task<IEnumerable<Student>> GetAllAsync();
-        public Task<(bool Success, string ErrorMessage)> AddAsync(RegisterStudentDto student);
+        public Task<IEnumerable<Student>> GetAllByInstituteAsync(Guid instituteId);
+        public Task<(bool Success, string ErrorMessage)> AddAsync(RegisterStudentDto student, Guid? instituteId = null);
         public Task DeleteAsync(Guid id);
         public Task<StudentDto?> GetByIdAsync(Guid id);
 
