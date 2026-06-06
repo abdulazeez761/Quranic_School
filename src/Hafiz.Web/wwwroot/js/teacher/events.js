@@ -16,10 +16,10 @@ function attachEventListeners() {
       const statusClass = this.classList.contains('status-present')
         ? 'status-present'
         : this.classList.contains('status-late')
-        ? 'status-late'
-        : this.classList.contains('status-absent')
-        ? 'status-absent'
-        : 'status-excuse';
+          ? 'status-late'
+          : this.classList.contains('status-absent')
+            ? 'status-absent'
+            : 'status-excuse';
       row.classList.add(statusClass);
 
       // Update hours display
@@ -106,20 +106,14 @@ function attachEventListeners() {
 // ===================================
 
 // Class selection change
-$('#classSession').on('select2:select', async function (e) {
-  const classId = e.params.data.id;
-  await getTeachers(classId);
+$(document).ready(function () {
+  $('#classSession').on('select2:select', async function (e) {
+    const classId = e.params.data.id;
+    await getTeachers(classId);
+  });
 });
 
-// Date change
-let attDate = document.getElementById('attendanceDate');
-attDate.addEventListener('change', (e) => {
-  attendanceDateForSelection = e.target.value;
-  const currentClassId = classSession.value;
-  if (currentClassId) {
-    getTeachers(currentClassId);
-  }
-});
+
 
 // Search functionality
 const teacherSearch = document.getElementById('teacherSearch');
