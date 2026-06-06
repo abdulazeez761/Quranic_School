@@ -10,6 +10,7 @@ namespace Hafiz.DTOs
         public Guid Id { get; set; }
         public string FirstName { get; set; }
         public string SecondName { get; set; }
+        public Guid? InstituteId { get; set; }
         public PreviousTeacherAttendanceDto? PrevAttendance { get; set; }
     }
 }

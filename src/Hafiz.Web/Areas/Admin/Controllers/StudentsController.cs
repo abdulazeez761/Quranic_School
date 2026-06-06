@@ -16,7 +16,7 @@ using StudentModel = Hafiz.Models.Student;
 namespace Hafiz.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Teacher")]
     public class StudentsController : Controller
     {
         private readonly IAuthService _authService;

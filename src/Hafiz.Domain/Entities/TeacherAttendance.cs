@@ -25,7 +25,7 @@ namespace Hafiz.Models
         [DataType(DataType.Date)]
         public DateTime Date { get; set; }
 
-        public int WorkingHours { get; set; }
+        public float WorkingHours { get; set; }
 
         [Required]
         public AttendanceStatus Status { get; set; }

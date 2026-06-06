@@ -31,16 +31,24 @@ namespace Hafiz.Areas.Admin.Controllers
             _teacherAttendanceService = teacherAttendance;
         }
 
+        private Guid? GetInstituteId()
+        {
+            var claim = User.FindFirst("InstituteId");
+            return claim != null ? Guid.Parse(claim.Value) : null;
+        }
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             await PopulateClassesDropdown();
 
-            var teachers = await _teacherAttendanceService.GetTeachersByClass(
-                Guid.Parse(ViewBag.Classes[0].Value),
-                DateTime.Now.Date
-            );
-
+            IEnumerable<TeacherAttendanceDto> teachers =
+                await _teacherAttendanceService.GetTeachersByClass(
+                    Guid.Parse(ViewBag.Classes[0].Value),
+                    DateTime.Now.Date
+                );
+            Guid? instituteId = GetInstituteId();
+            teachers = teachers.Where(t => t.InstituteId == instituteId);
             return View(teachers);
         }
 
@@ -61,7 +69,8 @@ namespace Hafiz.Areas.Admin.Controllers
 
         private async Task PopulateClassesDropdown()
         {
-            var classes = await _classService.GetClassesAsync();
+            List<ClassDto>? classes = await _classService.GetClassesAsync();
+            classes = classes.Where(c => c.InstituteId == GetInstituteId()).ToList();
             ViewBag.Classes = classes
                 .Select(cl => new SelectListItem { Value = cl.Id.ToString(), Text = $"{cl.Name}" })
                 .ToList();

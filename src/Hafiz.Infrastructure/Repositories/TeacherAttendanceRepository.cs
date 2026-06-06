@@ -50,6 +50,7 @@ namespace Hafiz.Repositories
                     Id = t.UserId,
                     FirstName = t.TeacherInfo.FirstName,
                     SecondName = t.TeacherInfo.SecondName,
+                    InstituteId = t.TeacherInfo.InstituteId,
                     PrevAttendance = t
                         .Attendances.Where(a => a.Date == date.Date && a.ClassId == classId)
                         .Select(a => new PreviousTeacherAttendanceDto

@@ -72,6 +72,7 @@ namespace Hafiz.Services
                     ClassTime = c.ClassTime,
                     ClassDays = c.ClassDays.ToList(),
                     TeacherIds = c.Teachers.Select(t => t.UserId).ToList(),
+                    InstituteId = c.InstituteId,
                 })
                 .ToList();
 
