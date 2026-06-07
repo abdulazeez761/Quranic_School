@@ -8,10 +8,15 @@ namespace Hafiz.Services
     public class TeacherAttendanceService : ITeacherAttendanceService
     {
         private readonly ITeacherAttendanceRepository _teacherAttendanceRepository;
+        private readonly ITeacherRepository _teacherRepository;
 
-        public TeacherAttendanceService(ITeacherAttendanceRepository teacherAttendance)
+        public TeacherAttendanceService(
+            ITeacherAttendanceRepository teacherAttendance,
+            ITeacherRepository teacherRepository
+        )
         {
             _teacherAttendanceRepository = teacherAttendance;
+            _teacherRepository = teacherRepository;
         }
 
         public async Task<(bool Success, string ErrorMessage)> AttendTeacher(
@@ -58,6 +63,18 @@ namespace Hafiz.Services
             catch (Exception ex)
             {
                 return (false, "" + ex.Message);
+            }
+        }
+
+        public async Task AttendTeacherToAllClasses(SaveTeacherAttendanceDto saveAttendanceDto)
+        {
+            IList<Class>? teacherClasses = await _teacherRepository.GetTeacherClasses(
+                saveAttendanceDto.TeacherId
+            );
+            foreach (var teacherClass in teacherClasses)
+            {
+                saveAttendanceDto.ClassID = teacherClass.Id;
+                await AttendTeacher(saveAttendanceDto);
             }
         }
 

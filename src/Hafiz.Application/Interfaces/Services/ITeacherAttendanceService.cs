@@ -13,5 +13,6 @@ namespace Hafiz.Services.Interfaces
             DateTime date,
             Guid instituteId
         );
+        Task AttendTeacherToAllClasses(SaveTeacherAttendanceDto saveAttendanceDto);
     }
 }
