@@ -6,7 +6,6 @@
 
 @{
     ViewData["Title"] = Localizer["PageTitle"];
-    ViewData["UseSelect2"] = true;
 }
 
 <!-- Page Header -->
@@ -284,12 +283,16 @@
 
 <!-- Load Required Libraries -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 @section Scripts {
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script src="~/js/teacher/utils.js" asp-append-version="true"></script>
     <script src="~/js/teacher/api.js" asp-append-version="true"></script>
     <script src="~/js/teacher/init.js" asp-append-version="true"></script>
     <script src="~/js/teacher/events.js" asp-append-version="true"></script>
+    
 }

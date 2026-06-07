@@ -1,6 +1,7 @@
 @using Hafiz.DTOs
 @using Hafiz.Models.enums
 @using Microsoft.Extensions.Localization
+@using Hafiz.Common.Helper
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 @{
@@ -58,7 +59,7 @@
                         @Localizer["ClassName"]
                     </label>
                     <input asp-for="Name" class="form-input" placeholder="@Localizer["ClassNamePlaceholder"]"
-                        autofocus />
+                           autofocus />
                     <span asp-validation-for="Name" class="form-feedback form-feedback-invalid"></span>
                 </div>
 
@@ -100,63 +101,26 @@
                     @Localizer["SelectDays"]
                 </label>
                 <div class="days-container"
-                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--space-md); margin-top: var(--space-md);">
-                    <label class="day-checkbox" for="sun">
-                        <input type="checkbox" name="ClassDays" value="0" id="sun" />
-                        <span class="day-checkbox-custom">
-                            <i class='bx bx-check'></i>
-                        </span>
-                        <span class="day-label">@Localizer["Sunday"]</span>
-                    </label>
-                    <label class="day-checkbox" for="mon">
-                        <input type="checkbox" name="ClassDays" value="2" id="mon" />
-                        <span class="day-checkbox-custom">
-                            <i class='bx bx-check'></i>
-                        </span>
-                        <span class="day-label">@Localizer["Monday"]</span>
-                    </label>
-                    <label class="day-checkbox" for="tue">
-                        <input type="checkbox" name="ClassDays" value="3" id="tue" />
-                        <span class="day-checkbox-custom">
-                            <i class='bx bx-check'></i>
-                        </span>
-                        <span class="day-label">@Localizer["Tuesday"]</span>
-                    </label>
-                    <label class="day-checkbox" for="wed">
-                        <input type="checkbox" name="ClassDays" value="4" id="wed" />
-                        <span class="day-checkbox-custom">
-                            <i class='bx bx-check'></i>
-                        </span>
-                        <span class="day-label">@Localizer["Wednesday"]</span>
-                    </label>
-                    <label class="day-checkbox" for="thu">
-                        <input type="checkbox" name="ClassDays" value="5" id="thu" />
-                        <span class="day-checkbox-custom">
-                            <i class='bx bx-check'></i>
-                        </span>
-                        <span class="day-label">@Localizer["Thursday"]</span>
-                    </label>
-                    <label class="day-checkbox" for="fri">
-                        <input type="checkbox" name="ClassDays" value="6" id="fri" />
-                        <span class="day-checkbox-custom">
-                            <i class='bx bx-check'></i>
-                        </span>
-                        <span class="day-label">@Localizer["Friday"]</span>
-                    </label>
-                    <label class="day-checkbox" for="sat">
-                        <input type="checkbox" name="ClassDays" value="7" id="sat" />
-                        <span class="day-checkbox-custom">
-                            <i class='bx bx-check'></i>
-                        </span>
-                        <span class="day-label">@Localizer["Saturday"]</span>
-                    </label>
+                     style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--space-md); margin-top: var(--space-md);">
+                    @foreach (ClassDaysEnum day in Enum.GetValues(typeof(ClassDaysEnum)))
+                    {
+                        <label class="day-checkbox" for="@day">
+                            <input type="checkbox" name="ClassDays" value="@((int)day)" id="@day"
+                            @(Model.ClassDays.Contains(day) ? "checked" : "") />
+                            <span class="day-checkbox-custom">
+                                <i class='bx bx-check'></i>
+                            </span>
+                            <span class="day-label">@Formatting.GetLocalizedDayName(day)</span>
+                        </label>
+                    }
                 </div>
                 <small class="helper-text">
                     <i class='bx bx-info-circle'></i>
-                    @Localizer["DaysHelper"]
+                    @Localizer["SelectDaysHelper"]
                 </small>
                 <span asp-validation-for="ClassDays" class="form-feedback form-feedback-invalid"></span>
             </div>
+
 
             <div class="divider"></div>
 
@@ -186,7 +150,7 @@
                     @Localizer["Students"]
                 </label>
                 <select asp-for="StudentsIds" class="form-select select2-students" multiple
-                    asp-items="ViewBag.Students">
+                        asp-items="ViewBag.Students">
                 </select>
                 <small class="helper-text">
                     <i class='bx bx-info-circle'></i>
