@@ -17,5 +17,9 @@ namespace Hafiz.Repositories.Interfaces
             Guid teacherId
         );
         Task<IEnumerable<TeacherAttendanceDto>> GetTeachersByClass(Guid classId, DateTime date);
+        Task<IEnumerable<TeacherAttendanceDto>> GetAllTeachersByDateAndInstitute(
+            DateTime date,
+            Guid instituteId
+        );
     }
 }

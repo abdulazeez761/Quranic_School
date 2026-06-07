@@ -68,5 +68,15 @@ namespace Hafiz.Services
         {
             return await _teacherAttendanceRepository.GetTeachersByClass(classId, date);
         }
+
+        Task<
+            IEnumerable<TeacherAttendanceDto>
+        > ITeacherAttendanceService.GetAllTeachersByDateAndInstitute(
+            DateTime date,
+            Guid instituteId
+        )
+        {
+            return _teacherAttendanceRepository.GetAllTeachersByDateAndInstitute(date, instituteId);
+        }
     }
 }

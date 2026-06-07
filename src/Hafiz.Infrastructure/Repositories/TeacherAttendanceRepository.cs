@@ -25,6 +25,37 @@ namespace Hafiz.Repositories
             return _context.SaveChangesAsync();
         }
 
+        public async Task<IEnumerable<TeacherAttendanceDto>> GetAllTeachersByDateAndInstitute(
+            DateTime date,
+            Guid instituteId
+        )
+        {
+            var teachers = await _context
+                .Teachers.Include(t => t.Attendances)
+                .Where(t => t.TeacherInfo.InstituteId == instituteId)
+                .Select(t => new TeacherAttendanceDto
+                {
+                    Id = t.UserId,
+                    FirstName = t.TeacherInfo.FirstName,
+                    SecondName = t.TeacherInfo.SecondName,
+                    InstituteId = t.TeacherInfo.InstituteId,
+                    PrevAttendance = t
+                        .Attendances.Where(a => a.Date == date.Date)
+                        .Select(a => new PreviousTeacherAttendanceDto
+                        {
+                            TeacherId = a.TeacherId,
+                            Status = (int)a.Status, // convert enum to int
+                            ClassId = a.ClassId,
+                            WorkingHours = a.WorkingHours,
+                            Date = a.Date,
+                        })
+                        .FirstOrDefault(),
+                })
+                .ToListAsync();
+
+            return teachers;
+        }
+
         public async Task<TeacherAttendance?> GetAttendanceByClassIdAndDateAndTeacherId(
             Guid classId,
             DateTime date,

@@ -10,6 +10,17 @@
 <!-- Stats Cards -->
 <div class="grid-auto-fit mb-lg" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
 
+    <!-- بطاقة الحلقات -->
+    <div class="card card-stat">
+        <div class="card-stat-icon" style="background: linear-gradient(135deg, #7c4dbe, #5a2d9e);">
+            <i class='bx bx-group'></i>
+        </div>
+        <div class="card-stat-content">
+            <div class="card-stat-label">عدد الحلقات</div>
+            <div class="card-stat-value">@Model.CirclesCount</div>
+        </div>
+    </div>
+
     <!-- بطاقة المعلمين -->
     <div class="card card-stat">
         <div class="card-stat-icon" style="background: linear-gradient(135deg, #85a67c, #648c51);">
@@ -46,28 +57,22 @@
     <!-- بطاقة الحفظ: صفحات أو آيات متفرقة -->
     <div class="card card-stat">
         <div class="card-stat-icon" style="background: linear-gradient(135deg, #bf913b, #a67c2e);">
-            <i class='bx bx-book-open'></i>
+            <i class='bx bx-book-heart'></i>
         </div>
         <div class="card-stat-content">
-            @if (Model.MemorizationPages > 0)
-            {
+            
                 <div class="card-stat-label">صفحات الحفظ</div>
                 <div class="card-stat-value">@Model.MemorizationPages</div>
                 <div style="font-size:0.78rem; color: var(--text-muted, #888); margin-top:2px;">صفحة محفوظة</div>
-            }
-            else
-            {
-                <div class="card-stat-label">آيات الحفظ المتفرقة</div>
-                <div class="card-stat-value">@Model.MemorizationAyahs</div>
-                <div style="font-size:0.78rem; color: var(--text-muted, #888); margin-top:2px;">لا توجد صفحات كاملة</div>
-            }
+            
+           
         </div>
     </div>
    
     <!-- بطاقة المراجعة -->
     <div class="card card-stat">
         <div class="card-stat-icon" style="background: linear-gradient(135deg, #17a2b8, #138496);">
-            <i class='bx bx-revision'></i>
+            <i class='bx bx-rotate-left'></i>
         </div>
         <div class="card-stat-content">
             <div class="card-stat-label">صفحات المراجعة</div>
@@ -91,7 +96,7 @@
     <!-- بطاقة عدد أجزاء الحفظ -->
     <div class="card card-stat">
         <div class="card-stat-icon" style="background: linear-gradient(135deg, #9b6b3a, #7a4e22);">
-            <i class='bx bx-bookmark-star'></i>
+            <i class='bx bx-award'></i>
         </div>
         <div class="card-stat-content">
             <div class="card-stat-label">أجزاء الحفظ</div>
@@ -103,7 +108,7 @@
     <!-- بطاقة الأجزاء المستقلة من المراجعة -->
     <div class="card card-stat">
         <div class="card-stat-icon" style="background: linear-gradient(135deg, #5e3b8a, #43296b);">
-            <i class='bx bx-book-bookmark'></i>
+            <i class='bx bx-check-shield'></i>
         </div>
         <div class="card-stat-content">
             <div class="card-stat-label">الأجزاء المستقلة للمراجعة</div>
@@ -115,7 +120,7 @@
     <!-- بطاقة إجمالي أجزاء المراجعة (صفحات + أجزاء مستقلة) -->
     <div class="card card-stat">
         <div class="card-stat-icon" style="background: linear-gradient(135deg, #0f7a8a, #0b5e6e);">
-            <i class='bx bx-layer'></i>
+            <i class='bx bx-bar-chart-alt-2'></i>
         </div>
         <div class="card-stat-content">
             <div class="card-stat-label">إجمالي  المراجعة</div>

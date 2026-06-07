@@ -2,6 +2,9 @@ namespace Hafiz.DTOs.Dashboard
 {
     public class DashboardStatsDto
     {
+        /// <summary>عدد الحلقات</summary>
+        public int CirclesCount { get; set; }
+
         /// <summary>عدد المعلمين</summary>
         public int TeachersCount { get; set; }
 

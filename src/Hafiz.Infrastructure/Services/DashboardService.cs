@@ -31,6 +31,10 @@ namespace Hafiz.Infrastructure.Services
                 ? _context.WirdAssignments.Where(w => w.Student.StudentInfo.InstituteId == instituteId)
                 : _context.WirdAssignments.AsQueryable();
 
+            var classesQuery = instituteId.HasValue
+                ? _context.Classes.Where(c => c.InstituteId == instituteId)
+                : _context.Classes.AsQueryable();
+
             // ── عدد المعلمين ────────────────────────────────────────────────
             var teachersCount = await teachersQuery.CountAsync();
 
@@ -81,8 +85,12 @@ namespace Hafiz.Infrastructure.Services
                 .Where(w => w.FromJuz.HasValue && w.ToJuz.HasValue)
                 .Sum(w => (double)(w.ToJuz!.Value - w.FromJuz!.Value + 1));
 
+            // ── عدد الحلقات ─────────────────────────────────────────────────
+            var circlesCount = await classesQuery.CountAsync();
+
             return new DashboardStatsDto
             {
+                CirclesCount        = circlesCount,
                 TeachersCount       = teachersCount,
                 MaleStudentsCount   = maleCount,
                 FemaleStudentsCount = femaleCount,
