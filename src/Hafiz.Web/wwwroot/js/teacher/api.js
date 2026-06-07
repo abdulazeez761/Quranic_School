@@ -15,8 +15,8 @@ async function saveAttendance(TeacherId, Status, Hours = 0) {
     return showSaveIndicator('✗ يجب تحديد رقم أكبر من 0', 'error');
   }
 
-  if (!ClassID) {
-    return showSaveIndicator('✗ يجب اختيار الحلقة أولاً', 'error');
+  if (data.ClassID === 'all') {
+    data.ClassID = '00000000-0000-0000-0000-000000000000'; // Send empty GUID to indicate all classes
   }
 
   try {
@@ -71,6 +71,9 @@ async function getTeachers(classID) {
 
   try {
     const url = 'TeacherAttendance/GetTeachersByClass';
+    if (classID === 'all') {
+      classID = '00000000-0000-0000-0000-000000000000'; // Use empty GUID to indicate all classes
+    }
     const res = await fetch(
       `${url}?classId=${classID}&date=${attendanceDateForSelection}`,
     );

@@ -44,19 +44,15 @@ namespace Hafiz.Areas.Admin.Controllers
             Guid? instituteId = GetInstituteId();
             IEnumerable<TeacherAttendanceDto> teachers;
             if (ViewBag.Classes[0].Value != "all")
-            {
                 teachers = await _teacherAttendanceService.GetTeachersByClass(
                     Guid.Parse(ViewBag.Classes[0].Value),
                     DateTime.Now.Date
                 );
-            }
             else
-            {
                 teachers = await _teacherAttendanceService.GetAllTeachersByDateAndInstitute(
                     DateTime.Now.Date,
                     instituteId.Value
                 );
-            }
 
             teachers = teachers.Where(t => t.InstituteId == instituteId);
             return View(teachers);
@@ -65,14 +61,27 @@ namespace Hafiz.Areas.Admin.Controllers
         [HttpPost]
         public async Task SaveAttendance([FromBody] SaveTeacherAttendanceDto saveAttendance)
         {
-            await _teacherAttendanceService.AttendTeacher(saveAttendance);
+            if (saveAttendance.ClassID == Guid.Empty)
+                await _teacherAttendanceService.AttendTeacherToAllClasses(saveAttendance);
+            else
+                await _teacherAttendanceService.AttendTeacher(saveAttendance);
         }
 
         // [Area("Admin")]
 
         public async Task<IActionResult> GetTeachersByClass(Guid classId, DateTime date)
         {
-            var result = await _teacherAttendanceService.GetTeachersByClass(classId, date);
+            IEnumerable<TeacherAttendanceDto> result;
+            if (classId == Guid.Empty)
+            {
+                Guid? instituteId = GetInstituteId();
+                result = await _teacherAttendanceService.GetAllTeachersByDateAndInstitute(
+                    date,
+                    instituteId.Value
+                );
+                return Json(result);
+            }
+            result = await _teacherAttendanceService.GetTeachersByClass(classId, date);
 
             return Json(result);
         }
