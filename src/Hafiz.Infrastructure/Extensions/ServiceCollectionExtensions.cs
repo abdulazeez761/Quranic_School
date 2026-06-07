@@ -39,6 +39,7 @@ namespace Hafiz.Infrastructure.Extensions
             // Infrastructure services
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IMeetingService, MeetingService>();
+            services.AddScoped<IDashboardService, DashboardService>();
 
             return services;
         }
