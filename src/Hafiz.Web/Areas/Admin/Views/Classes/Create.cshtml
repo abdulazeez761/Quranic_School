@@ -105,8 +105,7 @@
                     @foreach (ClassDaysEnum day in Enum.GetValues(typeof(ClassDaysEnum)))
                     {
                         <label class="day-checkbox" for="@day">
-                            <input type="checkbox" name="ClassDays" value="@((int)day)" id="@day"
-                            @(Model.ClassDays.Contains(day) ? "checked" : "") />
+                            <input type="checkbox" name="ClassDays" value="@((int)day)" id="@day" />
                             <span class="day-checkbox-custom">
                                 <i class='bx bx-check'></i>
                             </span>
