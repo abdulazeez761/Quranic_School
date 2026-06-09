@@ -195,12 +195,12 @@
 
                             <td data-label="@Localizer["Operations"]">
                                 <div class="table-actions justify-center">
-                                    <a asp-action="Details" asp-route-id="@teacher.UserId" class="table-action-btn"
+                                    @* <a asp-action="Details" asp-route-id="@teacher.UserId" class="table-action-btn"
                                            data-tooltip="@Localizer["show"]">
                                         <i class='bx bx-show'></i>
-                                    </a>
+                                    </a> *@
                                     <a asp-action="Edit" asp-route-id="@teacher.UserId" class="table-action-btn"
-                                           data-tooltip="@Localizer["Edit"]">
+                                       data-tooltip="@Localizer["Edit"]">
                                         <i class='bx bx-edit'></i>
                                     </a>
                                     <form method="post" asp-action="Delete" asp-route-id="@teacher.UserId"

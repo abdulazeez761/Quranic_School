@@ -2,8 +2,8 @@
 @model Hafiz.DTOs.Dashboard.DashboardStatsDto
 @{
     ViewData["Title"] = Localizer["PageTitle"].Value;
-    int totalStudents  = Model.MaleStudentsCount + Model.FemaleStudentsCount;
-    double malePercent   = totalStudents > 0 ? Math.Round((double)Model.MaleStudentsCount   / totalStudents * 100, 1) : 0;
+    int totalStudents = Model.MaleStudentsCount + Model.FemaleStudentsCount;
+    double malePercent = totalStudents > 0 ? Math.Round((double)Model.MaleStudentsCount / totalStudents * 100, 1) : 0;
     double femalePercent = totalStudents > 0 ? Math.Round((double)Model.FemaleStudentsCount / totalStudents * 100, 1) : 0;
 }
 
@@ -60,15 +60,15 @@
             <i class='bx bx-book-heart'></i>
         </div>
         <div class="card-stat-content">
+
+            <div class="card-stat-label">صفحات الحفظ</div>
+            <div class="card-stat-value">@Model.MemorizationPages</div>
+            <div style="font-size:0.78rem; color: var(--text-muted, #888); margin-top:2px;">صفحة محفوظة</div>
+
             
-                <div class="card-stat-label">صفحات الحفظ</div>
-                <div class="card-stat-value">@Model.MemorizationPages</div>
-                <div style="font-size:0.78rem; color: var(--text-muted, #888); margin-top:2px;">صفحة محفوظة</div>
-            
-           
         </div>
     </div>
-   
+
     <!-- بطاقة المراجعة -->
     <div class="card card-stat">
         <div class="card-stat-icon" style="background: linear-gradient(135deg, #17a2b8, #138496);">
@@ -80,7 +80,7 @@
             <div style="font-size:0.78rem; color: var(--text-muted, #888); margin-top:2px;">صفحة مراجعة</div>
         </div>
     </div>
- <!-- <div class="card card-stat">
+    <!-- <div class="card card-stat">
         <div class="card-stat-icon" style="background: linear-gradient(135deg, #bf913b, #a67c2e);">
             <i class='bx bx-book-open'></i>
         </div>
@@ -101,108 +101,110 @@
         <div class="card-stat-content">
             <div class="card-stat-label">أجزاء الحفظ</div>
             <div class="card-stat-value">@Model.MemorizationParts.ToString("0.##")</div>
-            <div style="font-size:0.78rem; color: var(--text-muted, #888); margin-top:2px;">كل 20 صفحة = جزء</div>
+            <div style="font-size:0.78rem; color: var(--text-muted, #888); margin-top:2px;">عدد الاجزاء اللتي تم حفظها
+                في المركز</div>
+            </div>
         </div>
-    </div>
 
-    <!-- بطاقة الأجزاء المستقلة من المراجعة -->
-    <div class="card card-stat">
-        <div class="card-stat-icon" style="background: linear-gradient(135deg, #5e3b8a, #43296b);">
-            <i class='bx bx-check-shield'></i>
+        <!-- بطاقة الأجزاء المستقلة من المراجعة -->
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #5e3b8a, #43296b);">
+                <i class='bx bx-check-shield'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">الأجزاء المستقلة للمراجعة</div>
+                <div class="card-stat-value">@Model.RevisionJuzParts.ToString("0.##")</div>
+                <div style="font-size:0.78rem; color: var(--text-muted, #888); margin-top:2px;">من جزء إلى جزء</div>
+            </div>
         </div>
-        <div class="card-stat-content">
-            <div class="card-stat-label">الأجزاء المستقلة للمراجعة</div>
-            <div class="card-stat-value">@Model.RevisionJuzParts.ToString("0.##")</div>
-            <div style="font-size:0.78rem; color: var(--text-muted, #888); margin-top:2px;">من جزء إلى جزء</div>
-        </div>
-    </div>
 
-    <!-- بطاقة إجمالي أجزاء المراجعة (صفحات + أجزاء مستقلة) -->
-    <div class="card card-stat">
-        <div class="card-stat-icon" style="background: linear-gradient(135deg, #0f7a8a, #0b5e6e);">
-            <i class='bx bx-bar-chart-alt-2'></i>
-        </div>
-        <div class="card-stat-content">
-            <div class="card-stat-label">إجمالي  المراجعة</div>
-            <div class="card-stat-value">@Model.RevisionParts.ToString("0.##")</div>
-            <div style="font-size:0.78rem; color: var(--text-muted, #888); margin-top:2px;">أجزاء الصفحات + الأجزاء المستقلة</div>
-        </div>
-    </div>
+        <!-- بطاقة إجمالي أجزاء المراجعة (صفحات + أجزاء مستقلة) -->
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #0f7a8a, #0b5e6e);">
+                <i class='bx bx-bar-chart-alt-2'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">إجمالي المراجعة</div>
+                <div class="card-stat-value">@Model.RevisionParts.ToString("0.##")</div>
+                <div style="font-size:0.78rem; color: var(--text-muted, #888); margin-top:2px;">أجزاء الصفحات + الأجزاء
+                    المستقلة</div>
+                </div>
+            </div>
 
 
    
-</div>
-
-<!-- Recent Activity -->
-<div class="grid-2">
-    <div class="card card-standard">
-        <div class="card-header">
-            <h3 class="card-title">النشاط الأخير</h3>
-            <a href="#" class="btn btn-sm btn-ghost">عرض الكل</a>
         </div>
-        <div class="card-body">
-            <div class="card-list">
-                <div class="card-list-item">
-                    <div class="card-list-icon">
-                        <i class='bx bx-user-plus'></i>
-                    </div>
-                    <div class="card-list-content">
-                        <div class="card-list-title">طالب جديد</div>
-                        <div class="card-list-subtitle">تم إضافة محمد أحمد إلى الحلقة الأولى</div>
-                    </div>
-                    <span class="text-medium fs-sm">منذ ساعة</span>
+
+        <!-- Recent Activity -->
+        <div class="grid-2">
+            <div class="card card-standard">
+                <div class="card-header">
+                    <h3 class="card-title">النشاط الأخير</h3>
+                    <a href="#" class="btn btn-sm btn-ghost">عرض الكل</a>
                 </div>
+                <div class="card-body">
+                    <div class="card-list">
+                        <div class="card-list-item">
+                            <div class="card-list-icon">
+                                <i class='bx bx-user-plus'></i>
+                            </div>
+                            <div class="card-list-content">
+                                <div class="card-list-title">طالب جديد</div>
+                                <div class="card-list-subtitle">تم إضافة محمد أحمد إلى الحلقة الأولى</div>
+                            </div>
+                            <span class="text-medium fs-sm">منذ ساعة</span>
+                        </div>
 
-                <div class="card-list-item">
-                    <div class="card-list-icon" style="background: rgba(255, 193, 7, 0.1); color: #ffc107;">
-                        <i class='bx bx-edit'></i>
+                        <div class="card-list-item">
+                            <div class="card-list-icon" style="background: rgba(255, 193, 7, 0.1); color: #ffc107;">
+                                <i class='bx bx-edit'></i>
+                            </div>
+                            <div class="card-list-content">
+                                <div class="card-list-title">تحديث بيانات</div>
+                                <div class="card-list-subtitle">تم تحديث معلومات المعلم أحمد</div>
+                            </div>
+                            <span class="text-medium fs-sm">منذ ساعتين</span>
+                        </div>
+
+                        <div class="card-list-item">
+                            <div class="card-list-icon" style="background: rgba(220, 53, 69, 0.1); color: #dc3545;">
+                                <i class='bx bx-trash'></i>
+                            </div>
+                            <div class="card-list-content">
+                                <div class="card-list-title">حذف حلقة</div>
+                                <div class="card-list-subtitle">تم حذف الحلقة المسائية</div>
+                            </div>
+                            <span class="text-medium fs-sm">منذ 3 ساعات</span>
+                        </div>
                     </div>
-                    <div class="card-list-content">
-                        <div class="card-list-title">تحديث بيانات</div>
-                        <div class="card-list-subtitle">تم تحديث معلومات المعلم أحمد</div>
-                    </div>
-                    <span class="text-medium fs-sm">منذ ساعتين</span>
                 </div>
+            </div>
 
-                <div class="card-list-item">
-                    <div class="card-list-icon" style="background: rgba(220, 53, 69, 0.1); color: #dc3545;">
-                        <i class='bx bx-trash'></i>
+            <div class="card card-standard">
+                <div class="card-header">
+                    <h3 class="card-title">إحصائيات الطلاب</h3>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-between align-center mb-md">
+                        <span class="text-medium">الذكور</span>
+                        <span class="fw-bold">@malePercent%</span>
                     </div>
-                    <div class="card-list-content">
-                        <div class="card-list-title">حذف حلقة</div>
-                        <div class="card-list-subtitle">تم حذف الحلقة المسائية</div>
+                    <div style="height: 8px; background: var(--light-gray); border-radius: 4px; overflow: hidden;">
+                        <div style="width: @(malePercent)%; height: 100%; background: #4a90d9;"></div>
                     </div>
-                    <span class="text-medium fs-sm">منذ 3 ساعات</span>
+
+                    <div class="d-flex justify-between align-center mb-md mt-lg">
+                        <span class="text-medium">الإناث</span>
+                        <span class="fw-bold">@femalePercent%</span>
+                    </div>
+                    <div style="height: 8px; background: var(--light-gray); border-radius: 4px; overflow: hidden;">
+                        <div style="width: @(femalePercent)%; height: 100%; background: #e07b9a;"></div>
+                    </div>
+
+                    <div class="d-flex justify-between align-center mb-md mt-lg">
+                        <span class="text-medium">إجمالي الطلاب</span>
+                        <span class="fw-bold">@totalStudents</span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="card card-standard">
-        <div class="card-header">
-            <h3 class="card-title">إحصائيات الطلاب</h3>
-        </div>
-        <div class="card-body">
-            <div class="d-flex justify-between align-center mb-md">
-                <span class="text-medium">الذكور</span>
-                <span class="fw-bold">@malePercent%</span>
-            </div>
-            <div style="height: 8px; background: var(--light-gray); border-radius: 4px; overflow: hidden;">
-                <div style="width: @(malePercent)%; height: 100%; background: #4a90d9;"></div>
-            </div>
-
-            <div class="d-flex justify-between align-center mb-md mt-lg">
-                <span class="text-medium">الإناث</span>
-                <span class="fw-bold">@femalePercent%</span>
-            </div>
-            <div style="height: 8px; background: var(--light-gray); border-radius: 4px; overflow: hidden;">
-                <div style="width: @(femalePercent)%; height: 100%; background: #e07b9a;"></div>
-            </div>
-
-            <div class="d-flex justify-between align-center mb-md mt-lg">
-                <span class="text-medium">إجمالي الطلاب</span>
-                <span class="fw-bold">@totalStudents</span>
-            </div>
-        </div>
-    </div>
-</div>
