@@ -30,10 +30,13 @@ namespace Hafiz.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(DashboardPeriod period = DashboardPeriod.AllTime)
         {
             var instituteId = GetInstituteId();
-            DashboardStatsDto stats = await _dashboardService.GetDashboardStatsAsync(instituteId);
+            DashboardStatsDto stats = await _dashboardService.GetDashboardStatsAsync(
+                instituteId,
+                period
+            );
             return View(stats);
         }
 

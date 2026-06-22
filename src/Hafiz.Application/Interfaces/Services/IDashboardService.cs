@@ -7,7 +7,11 @@ namespace Hafiz.Services.Interfaces
         /// <summary>
         /// يجلب إحصائيات الداشبورد الإدارية من قاعدة البيانات.
         /// إذا تم تمرير instituteId يتم الفلترة على مركز معين فقط، وإلا يجلب كل المنصة.
+        /// أما <paramref name="period"/> فتُحدد الفترة الزمنية التي تُحسب عليها إحصائيات الأوراد.
         /// </summary>
-        Task<DashboardStatsDto> GetDashboardStatsAsync(Guid? instituteId = null);
+        Task<DashboardStatsDto> GetDashboardStatsAsync(
+            Guid? instituteId = null,
+            DashboardPeriod period = DashboardPeriod.AllTime
+        );
     }
 }

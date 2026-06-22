@@ -2,6 +2,9 @@ namespace Hafiz.DTOs.Dashboard
 {
     public class DashboardStatsDto
     {
+        /// <summary>عدد الصفحات في الجزء الواحد (مصحف المدينة).</summary>
+        private const double PagesPerJuz = 20.0;
+
         /// <summary>عدد الحلقات</summary>
         public int CirclesCount { get; set; }
 
@@ -14,35 +17,45 @@ namespace Hafiz.DTOs.Dashboard
         /// <summary>عدد الطلاب الإناث</summary>
         public int FemaleStudentsCount { get; set; }
 
-        /// <summary>
-        /// إجمالي صفحات الحفظ المكتملة اليوم.
-        /// إذا كانت صفراً، يُعرض عدد الآيات بدلاً منها.
-        /// </summary>
-        public int MemorizationPages { get; set; }
+        // ── الحفظ ─────────────────────────────────────────────────────────────
 
-        /// <summary>
-        /// عدد آيات الحفظ المتفرقة (تُستخدم عندما تكون MemorizationPages == 0).
-        /// </summary>
+        /// <summary>إجمالي صفحات الحفظ (الأوراد المُسجَّلة بوحدة "صفحات").</summary>
+        public double MemorizationPages { get; set; }
+
+        /// <summary>عدد أجزاء الحفظ المُسجَّلة مباشرةً بوحدة "أجزاء".</summary>
+        public double MemorizationJuz { get; set; }
+
+        /// <summary>عدد آيات الحفظ المُسجَّلة بوحدة "آيات".</summary>
         public int MemorizationAyahs { get; set; }
 
-        /// <summary>عدد صفحات المراجعة المكتملة اليوم</summary>
-        public int RevisionPages { get; set; }
+        // ── المراجعة ──────────────────────────────────────────────────────────
+
+        /// <summary>إجمالي صفحات المراجعة (الأوراد المُسجَّلة بوحدة "صفحات").</summary>
+        public double RevisionPages { get; set; }
 
         /// <summary>
-        /// عدد الأجزاء المستقلة من المراجعة (من جزء إلى جزء)
-        /// مثال: من جزء 2 إلى جزء 4 = 3 أجزاء
+        /// عدد أجزاء المراجعة المُسجَّلة بوحدة "أجزاء" (مثال: من جزء 1 إلى جزء 5 = 5 أجزاء).
         /// </summary>
         public double RevisionJuzParts { get; set; }
 
-        /// <summary>
-        /// عدد أجزاء الحفظ (كل 20 صفحة = جزء واد)
-        /// الحساب: ToPage - FromPage (من ص1 إلى ص21 = 20 صفحة)
-        /// </summary>
-        public double MemorizationParts => MemorizationPages > 0 ? Math.Round((double)MemorizationPages / 20.0, 2) : 0;
+        /// <summary>عدد آيات المراجعة المُسجَّلة بوحدة "آيات".</summary>
+        public int RevisionAyahs { get; set; }
+
+        // ── الإجماليات المحسوبة (توحيد إلى أجزاء) ───────────────────────────────
 
         /// <summary>
-        /// إجمالي أجزاء المراجعة = أجزاء الصفحات + الأجزاء المستقلة
+        /// إجمالي أجزاء الحفظ = (صفحات الحفظ ÷ 20) + الأجزاء المُسجَّلة بوحدة أجزاء.
         /// </summary>
-        public double RevisionParts => Math.Round((RevisionPages > 0 ? (double)RevisionPages / 20.0 : 0) + RevisionJuzParts, 2);
+        public double MemorizationParts =>
+            Math.Round(MemorizationPages / PagesPerJuz + MemorizationJuz, 2);
+
+        /// <summary>
+        /// إجمالي أجزاء المراجعة = (صفحات المراجعة ÷ 20) + الأجزاء المُسجَّلة بوحدة أجزاء.
+        /// </summary>
+        public double RevisionParts =>
+            Math.Round(RevisionPages / PagesPerJuz + RevisionJuzParts, 2);
+
+        /// <summary>الفترة الزمنية المُطبَّقة على إحصائيات الأوراد (لإبراز الزر المختار في الواجهة).</summary>
+        public DashboardPeriod SelectedPeriod { get; set; } = DashboardPeriod.AllTime;
     }
 }

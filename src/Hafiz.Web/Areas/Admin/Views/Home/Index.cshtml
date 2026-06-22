@@ -1,3 +1,4 @@
+@using Hafiz.DTOs.Dashboard
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 @model Hafiz.DTOs.Dashboard.DashboardStatsDto
 @{
@@ -6,6 +7,31 @@
     double malePercent = totalStudents > 0 ? Math.Round((double)Model.MaleStudentsCount / totalStudents * 100, 1) : 0;
     double femalePercent = totalStudents > 0 ? Math.Round((double)Model.FemaleStudentsCount / totalStudents * 100, 1) : 0;
 }
+
+<!-- فلتر الفترة الزمنية لإحصائيات الحفظ والمراجعة -->
+<div class="d-flex justify-between align-center mb-lg flex-wrap gap-md">
+    <div>
+        <h2 class="section-title mb-sm">
+            <i class='bx bx-bar-chart-alt-2' style="color: var(--primary-green);"></i>
+            إحصائيات المركز
+        </h2>
+        <p class="text-medium">إحصائيات الحفظ والمراجعة محسوبة حسب وحدات الورد (صفحات / أجزاء / آيات)</p>
+    </div>
+    <div class="btn-group">
+        <a asp-action="Index" asp-route-period="@DashboardPeriod.AllTime"
+           class="btn @(Model.SelectedPeriod == DashboardPeriod.AllTime ? "btn-primary" : "btn-outline")">
+            إجمالي تراكمي
+        </a>
+        <a asp-action="Index" asp-route-period="@DashboardPeriod.Month"
+           class="btn @(Model.SelectedPeriod == DashboardPeriod.Month ? "btn-primary" : "btn-outline")">
+            هذا الشهر
+        </a>
+        <a asp-action="Index" asp-route-period="@DashboardPeriod.Today"
+           class="btn @(Model.SelectedPeriod == DashboardPeriod.Today ? "btn-primary" : "btn-outline")">
+            اليوم
+        </a>
+    </div>
+</div>
 
 <!-- Stats Cards -->
 <div class="grid-auto-fit mb-lg" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
@@ -62,7 +88,7 @@
         <div class="card-stat-content">
 
             <div class="card-stat-label">صفحات الحفظ</div>
-            <div class="card-stat-value">@Model.MemorizationPages</div>
+            <div class="card-stat-value">@Model.MemorizationPages.ToString("0.##")</div>
             <div style="font-size:0.78rem; color: var(--text-muted, #888); margin-top:2px;">صفحة محفوظة</div>
 
             
@@ -76,7 +102,7 @@
         </div>
         <div class="card-stat-content">
             <div class="card-stat-label">صفحات المراجعة</div>
-            <div class="card-stat-value">@Model.RevisionPages</div>
+            <div class="card-stat-value">@Model.RevisionPages.ToString("0.##")</div>
             <div style="font-size:0.78rem; color: var(--text-muted, #888); margin-top:2px;">صفحة مراجعة</div>
         </div>
     </div>
