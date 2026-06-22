@@ -1,4 +1,5 @@
 using Hafiz.Domain.Entities;
+using Hafiz.DTOs;
 using Hafiz.Models;
 
 namespace Hafiz.Services.Interfaces
@@ -7,13 +8,17 @@ namespace Hafiz.Services.Interfaces
     {
         Task<List<Institute>> GetAllAsync();
         Task<Institute> GetByIdAsync(Guid id);
-        Task<Institute> CreateAsync(string name, string? description, string? address, string? phoneNumber);
-        Task UpdateAsync(Institute institute);
+        Task<Institute> CreateAsync(
+            string name,
+            string? description,
+            string? address,
+            string? phoneNumber
+        );
+        Task<(bool Success, string ErrorMessage)> UpdateAsync(UpdateInstituteDto dto);
         Task DeleteAsync(Guid id);
         Task<(bool Success, string ErrorMessage)> CreateInstituteWithAdminAsync(
-            string instituteName, string? description, string? address, string? phoneNumber,
-            string adminUsername, string adminFirstName, string adminSecondName,
-            string adminPhoneNumber, string? adminEmail, string adminPassword);
+            CreateInstituteDto dto
+        );
         Task<List<User>> GetInstituteAdminsAsync(Guid instituteId);
         Task<int> GetStudentCountAsync(Guid instituteId);
         Task<int> GetTeacherCountAsync(Guid instituteId);

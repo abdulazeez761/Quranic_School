@@ -1,6 +1,7 @@
 using Hafiz.Application.Interfaces;
 using Hafiz.Application.Interfaces.Repositories;
 using Hafiz.Domain.Entities;
+using Hafiz.DTOs;
 using Hafiz.Models;
 using Hafiz.Repositories.Interfaces;
 using Hafiz.Services.Interfaces;
@@ -16,7 +17,8 @@ namespace Hafiz.Services
         public InstituteService(
             IInstituteRepository instituteRepository,
             IUserRepository userRepository,
-            IPasswordHasher passwordHasher)
+            IPasswordHasher passwordHasher
+        )
         {
             _instituteRepository = instituteRepository;
             _userRepository = userRepository;
@@ -33,7 +35,12 @@ namespace Hafiz.Services
             return _instituteRepository.GetByIdAsync(id);
         }
 
-        public async Task<Institute> CreateAsync(string name, string? description, string? address, string? phoneNumber)
+        public async Task<Institute> CreateAsync(
+            string name,
+            string? description,
+            string? address,
+            string? phoneNumber
+        )
         {
             var institute = new Institute
             {
@@ -45,9 +52,23 @@ namespace Hafiz.Services
             return await _instituteRepository.CreateAsync(institute);
         }
 
-        public Task UpdateAsync(Institute institute)
+        public async Task<(bool Success, string ErrorMessage)> UpdateAsync(UpdateInstituteDto dto)
         {
-            return _instituteRepository.UpdateAsync(institute);
+            var institute = await _instituteRepository.GetByIdAsync(dto.Id);
+            if (institute == null)
+                return (false, "المركز غير موجود.");
+
+            if (!string.Equals(institute.Name, dto.Name, StringComparison.Ordinal)
+                && await _instituteRepository.NameExistsAsync(dto.Name))
+                return (false, "اسم المركز مستخدم بالفعل.");
+
+            institute.Name = dto.Name;
+            institute.Description = dto.Description;
+            institute.Address = dto.Address;
+            institute.PhoneNumber = dto.PhoneNumber;
+
+            await _instituteRepository.UpdateAsync(institute);
+            return (true, "تم تحديث المركز بنجاح.");
         }
 
         public Task DeleteAsync(Guid id)
@@ -56,25 +77,24 @@ namespace Hafiz.Services
         }
 
         public async Task<(bool Success, string ErrorMessage)> CreateInstituteWithAdminAsync(
-            string instituteName, string? description, string? address, string? phoneNumber,
-            string adminUsername, string adminFirstName, string adminSecondName,
-            string adminPhoneNumber, string? adminEmail, string adminPassword)
+            CreateInstituteDto dto
+        )
         {
             // Check if institute name already exists
-            if (await _instituteRepository.NameExistsAsync(instituteName))
+            if (await _instituteRepository.NameExistsAsync(dto.InstituteName))
                 return (false, "اسم المركز مستخدم بالفعل.");
 
             // Check if admin username already exists
-            if (await _userRepository.GetByUsernameAsync(adminUsername) is not null)
+            if (await _userRepository.GetByUsernameAsync(dto.AdminUsername) is not null)
                 return (false, "اسم المستخدم مستخدم بالفعل.");
 
             // Create the institute
             var institute = new Institute
             {
-                Name = instituteName,
-                Description = description,
-                Address = address,
-                PhoneNumber = phoneNumber,
+                Name = dto.InstituteName,
+                Description = dto.Description,
+                Address = dto.Address,
+                PhoneNumber = dto.InstitutePhone,
             };
 
             var createdInstitute = await _instituteRepository.CreateAsync(institute);
@@ -84,12 +104,12 @@ namespace Hafiz.Services
             // Create the admin user for this institute
             var adminUser = new User
             {
-                Username = adminUsername,
-                FirstName = adminFirstName,
-                SecondName = adminSecondName,
-                PhoneNumber = adminPhoneNumber,
-                Email = adminEmail,
-                Password = _passwordHasher.HashPassword(adminPassword),
+                Username = dto.AdminUsername,
+                FirstName = dto.AdminFirstName,
+                SecondName = dto.AdminSecondName,
+                PhoneNumber = dto.AdminPhoneNumber,
+                Email = dto.AdminEmail,
+                Password = _passwordHasher.HashPassword(dto.AdminPassword),
                 Role = UserRole.Admin,
                 InstituteId = createdInstitute.Id,
             };

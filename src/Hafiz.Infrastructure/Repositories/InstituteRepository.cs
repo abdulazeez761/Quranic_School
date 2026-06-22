@@ -61,17 +61,13 @@ namespace Hafiz.Infrastructure.Repositories
 
         public async Task<List<Institute>> GetAllAsync()
         {
-            return await _context
-                .Institutes
-                .Include(i => i.Manager)
-                .ToListAsync();
+            return await _context.Institutes.Include(i => i.Manager).ToListAsync();
         }
 
         public async Task<Institute> GetByIdAsync(Guid id)
         {
             return await _context
-                .Institutes
-                .Include(i => i.Manager)
+                .Institutes.Include(i => i.Manager)
                 .Include(i => i.Users)
                 .Include(i => i.Classes)
                 .FirstOrDefaultAsync(i => i.Id == id);
@@ -80,37 +76,32 @@ namespace Hafiz.Infrastructure.Repositories
         public async Task<List<User>> GetInstituteAdminsAsync(Guid instituteId)
         {
             return await _context
-                .Users
-                .Where(u => u.InstituteId == instituteId && u.Role == UserRole.Admin)
+                .Users.Where(u => u.InstituteId == instituteId && u.Role == UserRole.Admin)
                 .ToListAsync();
         }
 
         public async Task<int> GetInstituteClassCountAsync(Guid instituteId)
         {
-            return await _context
-                .Classes
-                .CountAsync(c => c.InstituteId == instituteId);
+            return await _context.Classes.CountAsync(c => c.InstituteId == instituteId);
         }
 
         public async Task<int> GetInstituteStudentCountAsync(Guid instituteId)
         {
-            return await _context
-                .Users
-                .CountAsync(u => u.InstituteId == instituteId && u.Role == UserRole.Student);
+            return await _context.Users.CountAsync(u =>
+                u.InstituteId == instituteId && u.Role == UserRole.Student
+            );
         }
 
         public async Task<int> GetInstituteTeacherCountAsync(Guid instituteId)
         {
-            return await _context
-                .Users
-                .CountAsync(u => u.InstituteId == instituteId && u.Role == UserRole.Teacher);
+            return await _context.Users.CountAsync(u =>
+                u.InstituteId == instituteId && u.Role == UserRole.Teacher
+            );
         }
 
         public async Task<bool> NameExistsAsync(string name)
         {
-            return await _context
-                .Institutes
-                .AnyAsync(i => i.Name == name);
+            return await _context.Institutes.AnyAsync(i => i.Name == name);
         }
     }
 }
