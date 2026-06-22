@@ -138,6 +138,16 @@ function fetchWirdAssignmentById(id) {
       // 2. تعبئة نوع الواجب
       document.getElementById('Type').value = data.type;
 
+      // 2.1 تعبئة المقدار والوحدة
+      const amountEl = document.getElementById('Amount');
+      const amountUnitEl = document.getElementById('AmountUnit');
+      if (amountEl) amountEl.value = data.amount ?? '';
+      if (amountUnitEl) {
+        amountUnitEl.value = data.amountUnit ?? '';
+        // Re-apply the min/step rules for the loaded unit (whole vs. fractional).
+        amountUnitEl.dispatchEvent(new Event('change'));
+      }
+
       // 3. تعبئة قسم "من" (From)
       document.getElementById('FromJuz').value = data.fromJuz;
       document.getElementById('FromPage').value = data.fromPage;

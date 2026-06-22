@@ -167,6 +167,42 @@ textarea.form-control {
   flex: 1;
 }
 
+/* Required field marker */
+.form-label.required::after {
+  content: " *";
+  color: var(--danger);
+}
+
+/* Collapsible advanced (optional) details */
+.advanced-details {
+  margin-top: var(--space-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0 var(--space-lg);
+}
+
+.advanced-details > summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text-medium);
+  padding: var(--space-md) 0;
+  list-style-position: inside;
+  user-select: none;
+}
+
+.advanced-details > summary:hover {
+  color: var(--primary-green);
+}
+
+.advanced-details[open] {
+  padding-bottom: var(--space-lg);
+}
+
+.advanced-details[open] > summary {
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: var(--space-lg);
+}
+
 /* Validation Messages */
 .text-danger {
   color: var(--danger);

@@ -32,6 +32,26 @@
                     <span class="text-danger field-validation-valid" data-valmsg-for="Type"></span>
                 </div>
 
+                <!-- Quantity -->
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label class="form-label" for="Amount">@Localizer["Quantity"]</label>
+                        <input type="number" class="form-control" id="Amount" asp-for="Amount" min="0.5" step="0.5"
+                               placeholder="@Localizer["Quantity"]" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Amount"></span>
+                    </div>
+                    <div class="form-group half-width">
+                        <label class="form-label" for="AmountUnit">@Localizer["Unit"]</label>
+                        <select class="form-control" id="AmountUnit" asp-for="AmountUnit">
+                            <option value="">@Localizer["SelectUnit"]</option>
+                            <option value="0">@Localizer["Pages"]</option>
+                            <option value="1">@Localizer["Ayahs"]</option>
+                            <option value="2">@Localizer["Juzs"]</option>
+                        </select>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="AmountUnit"></span>
+                    </div>
+                </div>
+
                 <!-- From Section -->
                 <div class="section-header">@Localizer["From"]</div>
 

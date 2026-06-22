@@ -281,4 +281,16 @@
     <value>تعديل</value>
     <comment/>
   </data>
+  <data name="UnitPages" xml:space="preserve">
+    <value>صفحات</value>
+    <comment/>
+  </data>
+  <data name="UnitAyahs" xml:space="preserve">
+    <value>آيات</value>
+    <comment/>
+  </data>
+  <data name="UnitJuz" xml:space="preserve">
+    <value>أجزاء</value>
+    <comment/>
+  </data>
 </root>

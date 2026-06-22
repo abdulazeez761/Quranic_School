@@ -26,6 +26,21 @@
     <!-- STUDENT NAME -->
     <h3 class="student-name">@Model.Student.StudentInfo.FirstName @Model.Student.StudentInfo.SecondName</h3>
 
+    @if (Model.Amount.HasValue && Model.AmountUnit.HasValue)
+    {
+        var unitKey = Model.AmountUnit.Value switch
+        {
+            WirdUnit.Pages => "UnitPages",
+            WirdUnit.Ayahs => "UnitAyahs",
+            WirdUnit.Juz => "UnitJuz",
+            _ => ""
+        };
+        <div class="wird-amount">
+            <i class='bx bx-collection'></i>
+            <span>@Model.Amount.Value.ToString("0.##") @Localizer[unitKey]</span>
+        </div>
+    }
+
     <!-- CARD BODY -->
     <div class="wird-card-body">
         <div class="wird-range">

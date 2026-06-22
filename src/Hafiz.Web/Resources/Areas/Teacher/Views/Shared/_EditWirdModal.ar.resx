@@ -217,4 +217,24 @@
     <value>اختر السورة</value>
     <comment/>
   </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>المقدار</value>
+    <comment/>
+  </data>
+  <data name="Unit" xml:space="preserve">
+    <value>الوحدة</value>
+    <comment/>
+  </data>
+  <data name="SelectUnit" xml:space="preserve">
+    <value>اختر الوحدة</value>
+    <comment/>
+  </data>
+  <data name="Pages" xml:space="preserve">
+    <value>صفحات</value>
+    <comment/>
+  </data>
+  <data name="Ayahs" xml:space="preserve">
+    <value>آيات</value>
+    <comment/>
+  </data>
 </root>

@@ -244,6 +244,23 @@
   text-transform: capitalize;
 }
 
+.wird-amount {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: var(--space-sm) 0 var(--space-md);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: var(--light-green, #e8f5e9);
+  color: var(--dark-green);
+  font-weight: 700;
+  font-size: var(--font-size-base);
+}
+
+.wird-amount i {
+  font-size: 1.1rem;
+}
+
 /* Status badge colors */
 .wird-status-badge.status-notset {
   background: #f5f5f5;

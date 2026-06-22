@@ -217,4 +217,24 @@
     <value>Select Surah</value>
     <comment/>
   </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Quantity</value>
+    <comment/>
+  </data>
+  <data name="Unit" xml:space="preserve">
+    <value>Unit</value>
+    <comment/>
+  </data>
+  <data name="SelectUnit" xml:space="preserve">
+    <value>Select unit</value>
+    <comment/>
+  </data>
+  <data name="Pages" xml:space="preserve">
+    <value>Pages</value>
+    <comment/>
+  </data>
+  <data name="Ayahs" xml:space="preserve">
+    <value>Ayahs</value>
+    <comment/>
+  </data>
 </root>

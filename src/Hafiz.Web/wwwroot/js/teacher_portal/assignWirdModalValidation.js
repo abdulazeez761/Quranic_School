@@ -1,71 +1,124 @@
-let form = document.getElementById('wirdAssignmentForm');
-let fromJuz = document.getElementById('FromJuz');
-let toJuz = document.getElementById('ToJuz');
-let fromSurah = document.getElementById('FromSurah');
-let toSurah = document.getElementById('ToSurah');
-let fromAyah = document.getElementById('FromAyah');
-let toAyah = document.getElementById('ToAyah');
-let assignmentType = document.getElementById('Type');
-//if the user picked from juz should enter to juz number
-fromJuz.addEventListener('change', function () {
-  if (fromJuz.value) {
-    toJuz.required = true;
-    setRequired(toJuz, true);
-  } else {
-    toJuz.required = false;
-    setRequired(toJuz, false);
-  }
-});
+// Validation for the Assign Wird modal.
+// The first step is intentionally simple: a teacher only has to choose a type and
+// enter a quantity (+ unit). The From/To location fields live in the collapsed
+// "More details" section and are entirely optional.
+(function () {
+  const form = document.getElementById('wirdAssignmentForm');
+  if (!form) return;
 
-//if the user picked from surah should enter to surah number and only shows the suras after the from surah
-fromSurah.addEventListener('change', function () {
-  if (fromSurah.value) {
-    toSurah.required = true;
-    setRequired(toSurah, true);
-  } else {
-    toSurah.required = false;
-    setRequired(toSurah, false);
-  }
-  //show only the suras after the from surah
-  let fromSurahNumber = parseInt(fromSurah.value);
-  for (let i = 0; i < toSurah.options.length; i++) {
-    let option = toSurah.options[i];
-    if (parseInt(option.value) < fromSurahNumber) {
-      option.style.display = 'none';
-    } else {
-      option.style.display = 'block';
+  // The same script is loaded by the Edit modal, which posts via AJAX and may carry
+  // legacy wirds that predate the amount field. Detect it and stay lenient there.
+  const isEditMode = !!document.getElementById('AssignmentId');
+
+  const typeField = document.getElementById('Type');
+  const amount = document.getElementById('Amount');
+  const amountUnit = document.getElementById('AmountUnit');
+  const fromJuz = document.getElementById('FromJuz');
+  const toJuz = document.getElementById('ToJuz');
+  const fromPage = document.getElementById('FromPage');
+  const toPage = document.getElementById('ToPage');
+  const fromSurah = document.getElementById('FromSurah');
+  const toSurah = document.getElementById('ToSurah');
+  const fromAyah = document.getElementById('FromAyah');
+  const toAyah = document.getElementById('ToAyah');
+
+  // Juz can be fractional (e.g. 1.5); pages and ayahs are whole numbers.
+  // Note: the browser anchors valid step values to `min`, so min and step must
+  // agree — otherwise min="0.5" + step="1" makes whole numbers like 3 invalid.
+  function applyUnitConstraints(roundExisting) {
+    if (!amount || !amountUnit) return;
+    if (amountUnit.value === '2') {
+      amount.min = '0.5';
+      amount.step = '0.5';
+    } else if (amountUnit.value === '0' || amountUnit.value === '1') {
+      amount.min = '1';
+      amount.step = '1';
+      if (roundExisting && amount.value) {
+        amount.value = Math.round(parseFloat(amount.value));
+      }
     }
   }
-});
-//if the user picked from ayah should enter to ayah number and only shows the ayahs after the from ayah
-fromAyah.addEventListener('change', function () {
-  if (fromAyah.value) {
-    toAyah.required = true;
-    setRequired(toAyah, true);
-  } else {
-    toAyah.required = false;
-    setRequired(toAyah, false);
-  }
-});
 
-// do not allow to send an empty form
-form.addEventListener('submit', function (event) {
-  if (!fromJuz.value && !fromSurah.value && !fromAyah.value) {
-    event.preventDefault();
-    Swal.fire({
-      icon: 'warning',
-      title: 'خطأ',
-      text: 'الرجاء اختيار جزء أو سورة أو آية لتعيين ورد',
-      confirmButtonText: 'OK',
-    });
-  }
-});
+  amountUnit?.addEventListener('change', function () {
+    applyUnitConstraints(true);
+  });
 
-//utility function to set the required attribute and toggle the required class on the label
-function setRequired(field, isRequired) {
-  field.required = isRequired;
-  field
-    .closest('.form-group')
-    ?.querySelector('.form-label')
-    ?.classList.toggle('required', isRequired);
-}
+  // Initialize on load too: the Edit modal may already have a unit selected.
+  applyUnitConstraints(false);
+
+  // In the advanced section, only offer "to" surahs at or after the chosen "from" surah.
+  fromSurah?.addEventListener('change', function () {
+    if (!toSurah) return;
+    const fromNum = parseInt(fromSurah.value);
+    for (const option of toSurah.options) {
+      option.style.display =
+        option.value && fromNum && parseInt(option.value) < fromNum ? 'none' : '';
+    }
+  });
+
+  // The "To" side of a range must never come before the "From" side.
+  // Only checks pairs where both values are present; empty fields are ignored.
+  function getRangeErrors() {
+    const errors = [];
+    const num = (el) => {
+      const v = parseFloat(el ? el.value : '');
+      return isNaN(v) ? null : v;
+    };
+
+    const fJuz = num(fromJuz),
+      tJuz = num(toJuz);
+    if (fJuz !== null && tJuz !== null && fJuz > tJuz) errors.push('الجزء');
+
+    const fPage = num(fromPage),
+      tPage = num(toPage);
+    if (fPage !== null && tPage !== null && fPage > tPage) errors.push('الصفحة');
+
+    const fSurah = num(fromSurah),
+      tSurah = num(toSurah);
+    if (fSurah !== null && tSurah !== null && fSurah > tSurah) errors.push('السورة');
+
+    // Ayah order is only meaningful within the same surah (or when none is chosen).
+    const fAyah = num(fromAyah),
+      tAyah = num(toAyah);
+    const sameSurah = (fSurah === null && tSurah === null) || fSurah === tSurah;
+    if (sameSurah && fAyah !== null && tAyah !== null && fAyah > tAyah) {
+      errors.push('الآية');
+    }
+
+    return errors;
+  }
+
+  // Only the quantity is required to assign a wird.
+  form.addEventListener('submit', function (event) {
+    const rangeErrors = getRangeErrors();
+    if (rangeErrors.length) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      Swal.fire({
+        icon: 'warning',
+        title: 'ترتيب غير صحيح',
+        text:
+          'قيمة "إلى" يجب ألا تكون قبل قيمة "من" في: ' + rangeErrors.join('، '),
+        confirmButtonText: 'حسناً',
+      });
+      return;
+    }
+
+    if (isEditMode) return;
+
+    const missingType = !typeField || !typeField.value;
+    const missingAmount = !amount || !amount.value || parseFloat(amount.value) <= 0;
+    const missingUnit = !amountUnit || !amountUnit.value;
+
+    if (missingType || missingAmount || missingUnit) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      Swal.fire({
+        icon: 'warning',
+        title: 'تنبيه',
+        text: 'الرجاء اختيار نوع الورد وإدخال المقدار والوحدة',
+        confirmButtonText: 'حسناً',
+      });
+    }
+  });
+})();

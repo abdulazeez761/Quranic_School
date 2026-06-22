@@ -281,4 +281,16 @@
     <value>Edit</value>
     <comment/>
   </data>
+  <data name="UnitPages" xml:space="preserve">
+    <value>Pages</value>
+    <comment/>
+  </data>
+  <data name="UnitAyahs" xml:space="preserve">
+    <value>Ayahs</value>
+    <comment/>
+  </data>
+  <data name="UnitJuz" xml:space="preserve">
+    <value>Juz</value>
+    <comment/>
+  </data>
 </root>
