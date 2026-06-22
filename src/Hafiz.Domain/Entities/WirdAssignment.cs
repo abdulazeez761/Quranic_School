@@ -16,6 +16,14 @@ namespace Hafiz.Models
         [Required(ErrorMessage = "Assignment Type is required.")]
         public AssignmentType Type { get; set; }
 
+        // The quantity to memorize/revise (e.g. 3 pages, 20 ayahs, 1.5 juz).
+        // This is the primary input when assigning a wird; the From/To range below is optional detail.
+        [Column(TypeName = "decimal(4,2)")]
+        [Range(0.01, 9999, ErrorMessage = "Amount must be greater than 0.")]
+        public decimal? Amount { get; set; }
+
+        public WirdUnit? AmountUnit { get; set; }
+
         [Range(1, 30, ErrorMessage = "FromJuz must be between 1 and 30.")]
         public int? FromJuz { get; set; }
 
