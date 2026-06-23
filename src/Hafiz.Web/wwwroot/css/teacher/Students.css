@@ -37,7 +37,11 @@
   height: 48px;
   min-width: 48px;
   border-radius: var(--radius-md);
-  background: linear-gradient(135deg, rgba(141, 242, 156, 0.18) 0%, rgba(141, 242, 156, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(141, 242, 156, 0.18) 0%,
+    rgba(141, 242, 156, 0.05) 100%
+  );
   color: var(--dark-green);
   display: inline-flex;
   align-items: center;
@@ -230,6 +234,281 @@
   margin-bottom: var(--space-2xl);
 }
 
+/* Table view — hidden on desktop, shown on mobile via @media query */
+.students-table-wrap {
+  display: none;
+  width: 100%;
+  max-width: 100%;
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-lg);
+  -webkit-overflow-scrolling: touch;
+}
+
+.students-table {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  table-layout: fixed; /* enforces column widths so name truncates instead of overflowing */
+}
+
+.students-table thead {
+  background: var(--light-gray);
+}
+
+.students-table th {
+  text-align: start;
+  padding: 10px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.students-table th.col-juz,
+.students-table th.col-active {
+  text-align: center;
+}
+
+.students-table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+  overflow: hidden;
+}
+
+.students-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.students-table tbody tr:active {
+  background: rgba(141, 242, 156, 0.06);
+}
+
+/* Columns — col-student has no width so it consumes the remainder.
+   Other widths shrink with viewport via the @media blocks below. */
+.col-student {
+  min-width: 0;
+}
+
+.col-juz {
+  width: 84px;
+  text-align: center;
+}
+
+.col-active {
+  width: 46px;
+  text-align: center;
+}
+
+.col-actions {
+  width: 80px;
+  text-align: end;
+}
+
+.row-student {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.row-avatar {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--white);
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.row-avatar.avatar-male {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+}
+
+.row-avatar.avatar-female {
+  background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+}
+
+.row-avatar i {
+  font-size: 18px;
+}
+
+.row-identity {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+  gap: 2px;
+}
+
+.row-name {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text-dark);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.25;
+}
+
+.row-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  align-items: center;
+  font-size: 10px;
+  color: var(--text-medium);
+}
+
+.row-chip {
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  font-weight: 600;
+  border: 1px solid var(--border-color);
+  background: var(--light-gray);
+  color: var(--text-medium);
+  white-space: nowrap;
+}
+
+.row-chip.tajwid-first {
+  background: #e0f2fe;
+  color: #075985;
+  border-color: #bae6fd;
+}
+
+.row-chip.tajwid-second {
+  background: #fef3c7;
+  color: #92400e;
+  border-color: #fde68a;
+}
+
+.row-chip.tajwid-third {
+  background: rgba(141, 242, 156, 0.25);
+  color: var(--dark-green);
+  border-color: var(--primary-green);
+}
+
+.row-age {
+  white-space: nowrap;
+}
+
+.row-juz {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.row-juz-value {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text-dark);
+  line-height: 1;
+}
+
+.row-juz-total {
+  font-weight: 500;
+  font-size: 10px;
+  color: var(--text-medium);
+}
+
+.row-juz-bar {
+  width: 100%;
+  max-width: 56px;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.row-juz-fill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--primary-green) 0%,
+    var(--dark-green) 100%
+  );
+}
+
+.row-active-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: var(--radius-full);
+  background: rgba(141, 242, 156, 0.3);
+  color: var(--dark-green);
+  border: 1px solid var(--primary-green);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.row-active-badge.zero {
+  background: rgba(156, 163, 175, 0.15);
+  color: var(--text-medium);
+  border-color: var(--border-color);
+}
+
+.row-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.row-icon-btn {
+  width: 31px;
+  height: 31px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--white);
+  color: var(--text-dark);
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+  padding: 0;
+}
+
+.row-icon-btn i {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.row-icon-btn.primary {
+  background: var(--primary-green);
+  border-color: var(--primary-green);
+  color: var(--text-dark);
+}
+
+.row-icon-btn:active {
+  transform: scale(0.94);
+}
+
 /* Card */
 .student-card {
   background: var(--white);
@@ -397,7 +676,11 @@
 
 /* Memorization progress */
 .memorization-block {
-  background: linear-gradient(135deg, rgba(141, 242, 156, 0.06) 0%, rgba(141, 242, 156, 0.02) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(141, 242, 156, 0.06) 0%,
+    rgba(141, 242, 156, 0.02) 100%
+  );
   border: 1px solid rgba(141, 242, 156, 0.25);
   border-radius: var(--radius-md);
   padding: 12px var(--space-md);
@@ -440,7 +723,11 @@
 
 .memorization-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--primary-green) 0%, var(--dark-green) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--primary-green) 0%,
+    var(--dark-green) 100%
+  );
   border-radius: var(--radius-full);
   transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -547,7 +834,9 @@
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.3);
   transform: translate(-50%, -50%);
-  transition: width var(--transition-slow), height var(--transition-slow);
+  transition:
+    width var(--transition-slow),
+    height var(--transition-slow);
 }
 
 .btn:hover::before {
@@ -645,7 +934,9 @@
   padding: 1rem 1.25rem;
   margin-bottom: 1rem;
   animation: slideDown 0.3s ease-out;
-  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  transition:
+    opacity 0.5s ease-out,
+    transform 0.5s ease-out;
   align-items: baseline !important;
 }
 
@@ -802,9 +1093,13 @@
     min-height: 36px;
   }
 
+  /* Swap cards → table on phones */
   .students-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-sm);
+    display: none;
+  }
+
+  .students-table-wrap {
+    display: block;
   }
 
   .student-card {
@@ -897,8 +1192,8 @@
 
   .btn {
     padding: 11px 8px;
-    font-size: 13px;
-    min-height: 44px; /* touch target */
+    font-size: 10px;
+    min-height: 40px; /* touch target */
     gap: 4px;
   }
 
@@ -1058,6 +1353,60 @@
     font-size: 12px;
     min-height: 34px;
   }
+
+  /* Table — compact for small phones */
+  .students-table {
+    font-size: 12px;
+  }
+
+  .students-table th,
+  .students-table td {
+    padding: 8px 6px;
+  }
+
+  .row-student {
+    gap: 8px;
+  }
+
+  .row-avatar {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    font-size: 12px;
+  }
+
+  .row-avatar i {
+    font-size: 16px;
+  }
+
+  .row-name {
+    font-size: 12px;
+  }
+
+  .row-juz-bar {
+    max-width: 48px;
+  }
+
+  .col-juz {
+    width: 70px;
+  }
+
+  .col-active {
+    width: 42px;
+  }
+
+  .col-actions {
+    width: 74px;
+  }
+
+  .row-icon-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .row-icon-btn i {
+    font-size: 16px;
+  }
 }
 
 /* Tiny phones */
@@ -1133,6 +1482,142 @@
     justify-content: space-between;
     gap: 10px;
   }
+
+  /* Table — tiniest screens: hide age, shrink chip-only meta */
+  .students-table th,
+  .students-table td {
+    padding: 7px 4px;
+  }
+
+  .row-student {
+    gap: 6px;
+  }
+
+  .row-avatar {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    font-size: 11px;
+  }
+
+  .row-age {
+    display: none;
+  }
+
+  .row-name {
+    font-size: 12px;
+  }
+
+  .row-juz-bar {
+    max-width: 40px;
+  }
+
+  .row-juz-total {
+    display: none;
+  }
+
+  .col-juz {
+    width: 56px;
+  }
+
+  .col-active {
+    width: 36px;
+  }
+
+  .col-actions {
+    width: 68px;
+  }
+
+  .row-actions {
+    gap: 4px;
+  }
+
+  .row-icon-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .row-icon-btn i {
+    font-size: 15px;
+  }
+
+  .students-table th {
+    font-size: 10px;
+    letter-spacing: 0.02em;
+  }
+}
+
+/* Ultra-small phones (320px — iPhone SE 1st gen, old Androids) */
+@media (max-width: 320px) {
+  .students-table th,
+  .students-table td {
+    padding: 6px 3px;
+  }
+
+  .students-table th {
+    font-size: 9px;
+  }
+
+  .row-avatar {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    font-size: 10px;
+  }
+
+  .row-avatar i {
+    font-size: 14px;
+  }
+
+  .row-name {
+    font-size: 11px;
+  }
+
+  /* Drop the tajwid chip on the smallest phones — keep only the name */
+  .row-chip {
+    display: none;
+  }
+
+  .row-juz-bar {
+    display: none;
+  }
+
+  .row-juz-value {
+    font-size: 12px;
+  }
+
+  .col-juz {
+    width: 38px;
+  }
+
+  .col-active {
+    width: 32px;
+  }
+
+  .col-actions {
+    width: 64px;
+  }
+
+  .row-actions {
+    gap: 3px;
+  }
+
+  .row-icon-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+  }
+
+  .row-icon-btn i {
+    font-size: 14px;
+  }
+
+  .row-active-badge {
+    min-width: 24px;
+    height: 22px;
+    padding: 0 6px;
+    font-size: 11px;
+  }
 }
 
 /* Touch / mobile interactions */
@@ -1151,7 +1636,9 @@
   .student-card:active {
     transform: scale(0.99);
     box-shadow: var(--shadow-md);
-    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    transition:
+      transform 0.1s ease,
+      box-shadow 0.1s ease;
   }
 
   .btn:hover,

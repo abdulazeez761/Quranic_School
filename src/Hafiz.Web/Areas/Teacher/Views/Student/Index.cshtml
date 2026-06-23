@@ -185,6 +185,87 @@
         }
     </div>
 
+    <div class="students-table-wrap" id="studentsTableWrap">
+        <table class="students-table">
+            <thead>
+                <tr>
+                    <th class="col-student">@Localizer["Students"]</th>
+                    <th class="col-juz">@Localizer["JuzMemorized"]</th>
+                    <th class="col-active">@Localizer["ActiveWirds"]</th>
+                    <th class="col-actions" aria-label="actions"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Student student in students)
+                {
+                    var rAge = DateTime.Now.Year - student.DateOfBirth.Year;
+                    var rActive = student.wirds?.Count(w => w.Status == AssignmentStatus.notSet) ?? 0;
+                    var rFirstName = student.StudentInfo?.FirstName ?? string.Empty;
+                    var rSecondName = student.StudentInfo?.SecondName ?? string.Empty;
+                    var rFullName = $"{rFirstName} {rSecondName}".Trim();
+                    var rInitials = ((rFirstName.Length > 0 ? rFirstName[0].ToString() : "")
+                                     + (rSecondName.Length > 0 ? rSecondName[0].ToString() : "")).ToUpper();
+                    var rGenderClass = student.sex == Sex.female ? "female" : "male";
+                    var rTajwidClass = student.TajwidLevel.ToString().ToLower();
+                    var rJuzPercent = Math.Min(100, (int)((student.MemorizedJuz / 30.0) * 100));
+                    var rSearchKey = rFullName.ToLower();
+
+                    <tr class="student-row"
+                        data-name="@rSearchKey"
+                        data-level="@student.TajwidLevel">
+                        <td class="col-student">
+                            <div class="row-student">
+                                <div class="row-avatar avatar-@rGenderClass" aria-hidden="true">
+                                    @if (!string.IsNullOrWhiteSpace(rInitials))
+                                    {
+                                        <span>@rInitials</span>
+                                    }
+                                    else
+                                    {
+                                        <i class='bx bx-user'></i>
+                                    }
+                                </div>
+                                <div class="row-identity">
+                                    <span class="row-name" title="@rFullName">@rFullName</span>
+                                    <span class="row-meta">
+                                        <span class="row-chip tajwid-@rTajwidClass">@Localizer[student.TajwidLevel.ToString()]</span>
+                                        <span class="row-age">@rAge @Localizer["Years"]</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-juz">
+                            <div class="row-juz">
+                                <span class="row-juz-value">@student.MemorizedJuz<span class="row-juz-total">/30</span></span>
+                                <div class="row-juz-bar" role="progressbar"
+                                     aria-valuenow="@student.MemorizedJuz" aria-valuemin="0" aria-valuemax="30">
+                                    <div class="row-juz-fill" style="width: @rJuzPercent%"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-active">
+                            <span class="row-active-badge @(rActive == 0 ? "zero" : "")">@rActive</span>
+                        </td>
+                        <td class="col-actions">
+                            <div class="row-actions">
+                                <a asp-action="Details" asp-route-id="@student.UserId"
+                                   class="row-icon-btn outline" aria-label="@Localizer["ViewDetails"]"
+                                   title="@Localizer["ViewDetails"]">
+                                    <i class='bx bx-show'></i>
+                                </a>
+                                <button type="button" class="row-icon-btn primary"
+                                        aria-label="@Localizer["AddWird"]" title="@Localizer["AddWird"]"
+                                        onclick="openWirdModal('@student.UserId', '@rFullName')">
+                                    <i class='bx bx-plus'></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
     <div class="students-empty" id="studentsEmpty" style="display: @(totalStudents == 0 ? "flex" : "none");">
         <div class="empty-icon"><i class='bx bx-user-x'></i></div>
         <h3>@Localizer["NoStudents"]</h3>
@@ -217,25 +298,37 @@
         const searchInput = document.getElementById('studentSearch');
         const pills = document.querySelectorAll('.filter-pill');
         const cards = document.querySelectorAll('#studentsGrid .student-card');
+        const rows = document.querySelectorAll('#studentsTableWrap .student-row');
         const noMatch = document.getElementById('studentsNoMatch');
         const grid = document.getElementById('studentsGrid');
+        const tableWrap = document.getElementById('studentsTableWrap');
 
         let activeLevel = 'all';
         let activeQuery = '';
 
+        function matches(el) {
+            const name = el.getAttribute('data-name') || '';
+            const level = el.getAttribute('data-level') || '';
+            const okQuery = activeQuery === '' || name.indexOf(activeQuery) !== -1;
+            const okLevel = activeLevel === 'all' || level === activeLevel;
+            return okQuery && okLevel;
+        }
+
         function applyFilters() {
             let visible = 0;
             cards.forEach(card => {
-                const name = card.getAttribute('data-name') || '';
-                const level = card.getAttribute('data-level') || '';
-                const matchesQuery = activeQuery === '' || name.indexOf(activeQuery) !== -1;
-                const matchesLevel = activeLevel === 'all' || level === activeLevel;
-                const show = matchesQuery && matchesLevel;
+                const show = matches(card);
                 card.style.display = show ? '' : 'none';
                 if (show) visible++;
             });
-            if (noMatch) noMatch.style.display = visible === 0 && cards.length > 0 ? 'flex' : 'none';
-            if (grid) grid.style.display = visible === 0 && cards.length > 0 ? 'none' : '';
+            rows.forEach(row => {
+                row.style.display = matches(row) ? '' : 'none';
+            });
+            const total = cards.length || rows.length;
+            const empty = visible === 0 && total > 0;
+            if (noMatch) noMatch.style.display = empty ? 'flex' : 'none';
+            if (grid) grid.style.display = empty ? 'none' : '';
+            if (tableWrap) tableWrap.style.display = empty ? 'none' : '';
         }
 
         if (searchInput) {
