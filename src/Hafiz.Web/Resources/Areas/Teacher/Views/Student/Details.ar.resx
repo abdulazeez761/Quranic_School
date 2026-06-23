@@ -120,4 +120,49 @@
   <data name="Third" xml:space="preserve">
     <value>متقدم</value>
   </data>
+  <data name="Wird" xml:space="preserve">
+    <value>ورد</value>
+  </data>
+  <data name="Memorization" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="Revision" xml:space="preserve">
+    <value>مراجعة</value>
+  </data>
+  <data name="Tajwid" xml:space="preserve">
+    <value>تجويد</value>
+  </data>
+  <data name="Tafsir" xml:space="preserve">
+    <value>تفسير</value>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="notSet" xml:space="preserve">
+    <value>غير محدد</value>
+  </data>
+  <data name="poor" xml:space="preserve">
+    <value>ضعيف</value>
+  </data>
+  <data name="fair" xml:space="preserve">
+    <value>مقبول</value>
+  </data>
+  <data name="good" xml:space="preserve">
+    <value>جيد</value>
+  </data>
+  <data name="veryGood" xml:space="preserve">
+    <value>جيد جداً</value>
+  </data>
+  <data name="excellent" xml:space="preserve">
+    <value>ممتاز</value>
+  </data>
+  <data name="male" xml:space="preserve">
+    <value>ذكر</value>
+  </data>
+  <data name="female" xml:space="preserve">
+    <value>أنثى</value>
+  </data>
+  <data name="NotSpecified" xml:space="preserve">
+    <value>غير محدد</value>
+  </data>
 </root>

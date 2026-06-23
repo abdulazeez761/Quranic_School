@@ -22,17 +22,44 @@
     @Localizer["BackToStudents"]
 </a>
 
+@{
+    var memorizationPercent = (int)Math.Round((Model.Student.MemorizedJuz / 30.0) * 100);
+}
+
 <!-- Student Details Header -->
 <div class="details-header">
+    <div class="details-header-pattern"></div>
     <div class="details-header-content">
         <div class="student-avatar">
             @(Model.Student.StudentInfo.FirstName.Length > 0 ? Model.Student.StudentInfo.FirstName[0] : "S")
         </div>
         <div class="student-basic-info">
             <h1>@studentFullName</h1>
-            <p><i class="bi bi-calendar"></i> @Localizer["Age"]: @age @Localizer["Years"]</p>
-            <p><i class="bi bi-telephone"></i> @Model.Student.StudentInfo.PhoneNumber</p>
-            <p><i class="bi bi-envelope"></i> @Model.Student.StudentInfo.Email</p>
+            <div class="student-meta-chips">
+                <span class="meta-chip"><i class="bi bi-calendar"></i> @age @Localizer["Years"]</span>
+                @if (!string.IsNullOrEmpty(Model.Student.StudentInfo.PhoneNumber))
+                {
+                    <span class="meta-chip"><i class="bi bi-telephone"></i> @Model.Student.StudentInfo.PhoneNumber</span>
+                }
+                @if (!string.IsNullOrEmpty(Model.Student.StudentInfo.Email))
+                {
+                    <span class="meta-chip"><i class="bi bi-envelope"></i> @Model.Student.StudentInfo.Email</span>
+                }
+            </div>
+        </div>
+        <div class="student-progress-card">
+            <div class="progress-card-label">
+                <i class="bi bi-book-half"></i>
+                @Localizer["MemorizedJuz"]
+            </div>
+            <div class="progress-card-value">
+                <span class="progress-current">@Model.Student.MemorizedJuz</span>
+                <span class="progress-total">/ 30</span>
+            </div>
+            <div class="progress-card-bar">
+                <div class="progress-card-fill" style="width: @memorizationPercent%"></div>
+            </div>
+            <div class="progress-card-percent">@memorizationPercent%</div>
         </div>
     </div>
 </div>
@@ -40,9 +67,9 @@
 <!-- Student Information -->
 <div class="details-container">
     <!-- Academic Info -->
-    <div class="info-card">
+    <div class="info-card info-card-academic">
         <h3>
-            <i class="bi bi-book"></i>
+            <span class="info-card-icon"><i class="bi bi-book"></i></span>
             @Localizer["AcademicInformation"]
         </h3>
         <div class="info-row">
@@ -55,7 +82,7 @@
         </div>
         <div class="info-row">
             <span class="info-label">@Localizer["Gender"]:</span>
-            <span class="info-value">@Model.Student.sex.ToString()</span>
+            <span class="info-value">@Localizer[Model.Student.sex.ToString()]</span>
         </div>
         <div class="info-row">
             <span class="info-label">@Localizer["DateOfBirth"]:</span>
@@ -64,9 +91,9 @@
     </div>
 
     <!-- Contact & Family Info -->
-    <div class="info-card">
+    <div class="info-card info-card-contact">
         <h3>
-            <i class="bi bi-person-heart"></i>
+            <span class="info-card-icon"><i class="bi bi-person-heart"></i></span>
             @Localizer["ContactInformation"]
         </h3>
         <div class="info-row">
@@ -81,213 +108,238 @@
         {
             <div class="info-row">
                 <span class="info-label">@Localizer["Parent"]:</span>
-                <span class="info-value">@Model.Student.Parent.ParentInfo?.FirstName
-                    @Model.Student.Parent.ParentInfo?.SecondName</span>
-                </div>
-            }
-            <div class="info-row">
-                <span class="info-label">@Localizer["ClassesEnrolled"]:</span>
-                <span class="info-value">@(Model.Student.Classes?.Count ?? 0)</span>
+                <span class="info-value">@Model.Student.Parent.ParentInfo?.FirstName @Model.Student.Parent.ParentInfo?.SecondName</span>
             </div>
+        }
+        <div class="info-row">
+            <span class="info-label">@Localizer["ClassesEnrolled"]:</span>
+            <span class="info-value">@(Model.Student.Classes?.Count ?? 0)</span>
         </div>
     </div>
+</div>
 
-    <!-- Wirds Section -->
-    <div class="wirds-section">
-        <h3>
-            <i class="bi bi-list-check"></i>
-            @Localizer["AssignedWirds"] (@Model.TotalWirds)
-        </h3>
+<!-- Wirds Section -->
+<div class="wirds-section">
+    <h3>
+        <span class="section-icon section-icon-wirds"><i class="bi bi-list-check"></i></span>
+        @Localizer["AssignedWirds"]
+        <span class="section-count-pill">@Model.TotalWirds</span>
+    </h3>
 
-        @if (Model.PaginatedWirds != null && Model.PaginatedWirds.Any())
-        {
-            <div class="wirds-list">
-                @foreach (var wird in Model.PaginatedWirds)
-                {
-                    <div class="wird-item">
-                        <div class="wird-details">
-                            <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-sm);">
-                                <h4 style="margin: 0;">@wird.Type</h4>
-                                <span
-                                    style="background: var(--border-color); padding: var(--space-xs) var(--space-md); border-radius: var(--radius-full); font-size: var(--font-size-xs); color: var(--text-medium);">
-                                    @wird.Status
-                                </span>
-                            </div>
-                            <div class="wird-meta" style="margin-bottom: var(--space-md);">
-                                <span><i class="bi bi-calendar"></i> @Localizer["Assigned"] @wird.AssignedDate.ToString("MMM dd,                  yyyy")</span>
-                                @if (wird.IsCompleted)
-                                {
-                                    <span style="color: var(--success);"><i class="bi bi-check-circle"></i>
-                                        @Localizer["Completed"]</span>
-                                    }
+    @if (Model.PaginatedWirds != null && Model.PaginatedWirds.Any())
+    {
+        <div class="wirds-list">
+            @foreach (var wird in Model.PaginatedWirds)
+            {
+                var fromSurahName = wird.FromSurah != null && wird.FromSurah != Surah.NONE
+                    ? Formatting.GetLocalizedSurahName(wird.FromSurah.Value)
+                    : null;
+                var toSurahName = wird.ToSurah != null && wird.ToSurah != Surah.NONE
+                    ? Formatting.GetLocalizedSurahName(wird.ToSurah.Value)
+                    : null;
+
+                var hasFromData = fromSurahName != null || wird.FromJuz != null || wird.FromPage != null || !string.IsNullOrEmpty(wird.FromAyah);
+                var hasToData = toSurahName != null || wird.ToJuz != null || wird.ToPage != null || wird.ToAyah != null;
+
+                <div class="wird-item">
+                    <div class="wird-header">
+                        <h4>@Localizer[wird.Type.ToString()]</h4>
+                        <span class="wird-status-badge @(wird.IsCompleted ? "status-completed" : wird.Status == AssignmentStatus.notSet ? "status-pending" : "")">
+                            @Localizer[wird.Status.ToString()]
+                        </span>
+                    </div>
+
+                    <div class="wird-meta-row">
+                        <span><i class="bi bi-calendar3"></i> @Localizer["Assigned"] @wird.AssignedDate.ToString("MMM dd, yyyy")</span>
+                        @if (wird.IsCompleted)
+                        {
+                            <span class="wird-completed-badge"><i class="bi bi-check-circle-fill"></i> @Localizer["Completed"]</span>
+                        }
+                    </div>
+
+                    @if (hasFromData || hasToData)
+                    {
+                        <div class="wird-range-compact">
+                            @if (hasFromData)
+                            {
+                                <div class="wird-range-line">
+                                    <strong>@Localizer["From"]</strong>
+                                    <span class="wird-range-values">
+                                        @if (fromSurahName != null)
+                                        {
+                                            <span>@Localizer["Surah"] <b>@fromSurahName</b></span>
+                                        }
+                                        @if (wird.FromJuz != null)
+                                        {
+                                            <span>@Localizer["Juz"] <b>@wird.FromJuz</b></span>
+                                        }
+                                        @if (wird.FromPage != null)
+                                        {
+                                            <span>@Localizer["Page"] <b>@wird.FromPage</b></span>
+                                        }
+                                        @if (!string.IsNullOrEmpty(wird.FromAyah))
+                                        {
+                                            <span>@Localizer["Ayah"] <b>@wird.FromAyah</b></span>
+                                        }
+                                    </span>
                                 </div>
-                                <div
-                                    style="background: var(--light-gray); padding: var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-md);">
-                                    <div style="margin-bottom: var(--space-md);">
-                                        <strong style="color: var(--secondary-green);">@Localizer["From"]</strong>
-                                        <div
-                                            style="margin-left: var(--space-lg); margin-top: var(--space-xs); color: var(--text-medium);">
-                                            <div><i class="bi bi-book"></i> @Localizer["Surah"] <span
-                                                style="color: var(--secondary-green); font-weight: 500;">@Formatting.GetLocalizedSurahName(wird.FromSurah ?? Surah.NONE)</span>
-                                            </div>
-                                            <div><i class="bi bi-collection"></i> @Localizer["Juz"] <span
-                                                style="color: var(--secondary-green); font-weight: 500;">@wird.FromJuz</span></div>
-                                                <div><i class="bi bi-bookmark"></i> @Localizer["Page"] <span
-                                                    style="color: var(--secondary-green); font-weight: 500;">@wird.FromPage</span></div>
-                                                    <div><i class="bi bi-list-ol"></i> @Localizer["Ayah"] <span
-                                                        style="color: var(--secondary-green); font-weight: 500;">@wird.FromAyah</span></div>
-                                                    </div>
-                                                </div>
-                                                <div style="border-top: 1px solid var(--border-color); padding-top: var(--space-md);">
-                                                    <strong style="color: var(--secondary-green);">@Localizer["To"]</strong>
-                                                    <div
-                                                        style="margin-left: var(--space-lg); margin-top: var(--space-xs); color: var(--text-medium);">
-                                                        <div><i class="bi bi-book"></i> @Localizer["Surah"] <span
-                                                            style="color: var(--secondary-green); font-weight: 500;">@Formatting.GetLocalizedSurahName(wird.ToSurah ?? Surah.NONE)</span></div>
-                                                            <div><i class="bi bi-collection"></i> @Localizer["Juz"] <span
-                                                                style="color: var(--secondary-green); font-weight: 500;">@wird.ToJuz</span></div>
-                                                                <div><i class="bi bi-bookmark"></i> @Localizer["Page"] <span
-                                                                    style="color: var(--secondary-green); font-weight: 500;">@wird.ToPage</span></div>
-                                                                    <div><i class="bi bi-list-ol"></i> @Localizer["Ayah"] <span
-                                                                        style="color: var(--secondary-green); font-weight: 500;">@wird.ToAyah</span></div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            @if (!string.IsNullOrEmpty(wird.Note))
-                                                            {
-                                                                <div
-                                                                    style="background: rgba(23, 162, 184, 0.1); padding: var(--space-md); border-left: 3px solid var(--info); border-radius: var(--radius-sm);">
-                                                                    <strong style="color: var(--info);">@Localizer["Notes"]</strong>
-                                                                    <p style="margin: var(--space-xs) 0 0 0; color: var(--text-dark);">@wird.Note</p>
-                                                                </div>
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                }
-                                            </div>
-
-                                            <!-- Pagination Controls -->
-                                            @if (Model.TotalPages > 1)
-                                            {
-                                                <div
-                                                    style="display: flex; justify-content: center; align-items: center; gap: var(--space-md); margin-top: var(--space-xl); padding-top: var(--space-lg); border-top: 1px solid var(--border-color);">
-                                                    @if (Model.HasPrevious)
-                                                    {
-                                                        <a href="@Url.Action("Details", "Student", new { id = Model.Student.UserId, page = Model.CurrentPage - 1 })"
-                                                               style="display: inline-flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); background: var(--secondary-green); color: var(--white); border-radius: var(--radius-md); text-decoration: none; transition: background var(--transition-base);"
-                                                               onmouseover="this.style.background='var(--dark-green)'"
-                                                               onmouseout="this.style.background='var(--secondary-green)'">
-                                                            <i class="bi bi-chevron-left"></i>
-                                                            @Localizer["Previous"]
-                                                        </a>
-                                                    }
-
-                                                    <span style="color: var(--text-medium); font-weight: 600;">
-                                                        @string.Format(Localizer["PageOf"].Value, Model.CurrentPage, Model.TotalPages)
-                                                    </span>
-
-                                                    @if (Model.HasNext)
-                                                    {
-                                                        <a href="@Url.Action("Details", "Student", new { id = Model.Student.UserId, page = Model.CurrentPage + 1 })"
-                                                               style="display: inline-flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); background: var(--secondary-green); color: var(--white); border-radius: var(--radius-md); text-decoration: none; transition: background var(--transition-base);"
-                                                               onmouseover="this.style.background='var(--dark-green)'"
-                                                               onmouseout="this.style.background='var(--secondary-green)'">
-                                                            @Localizer["Next"]
-                                                            <i class="bi bi-chevron-right"></i>
-                                                        </a>
-                                                    }
-                                                </div>
-                                            }
+                            }
+                            @if (hasToData)
+                            {
+                                <div class="wird-range-line">
+                                    <strong>@Localizer["To"]</strong>
+                                    <span class="wird-range-values">
+                                        @if (toSurahName != null)
+                                        {
+                                            <span>@Localizer["Surah"] <b>@toSurahName</b></span>
                                         }
+                                        @if (wird.ToJuz != null)
+                                        {
+                                            <span>@Localizer["Juz"] <b>@wird.ToJuz</b></span>
+                                        }
+                                        @if (wird.ToPage != null)
+                                        {
+                                            <span>@Localizer["Page"] <b>@wird.ToPage</b></span>
+                                        }
+                                        @if (wird.ToAyah != null)
+                                        {
+                                            <span>@Localizer["Ayah"] <b>@wird.ToAyah</b></span>
+                                        }
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="wird-range-compact">
+                            <span class="wird-not-specified">@Localizer["NotSpecified"]</span>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(wird.Note))
+                    {
+                        <div class="wird-note-compact">
+                            <strong>@Localizer["Notes"]</strong>
+                            <span>@wird.Note</span>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Pagination Controls -->
+        @if (Model.TotalPages > 1)
+        {
+            <div class="pagination-controls">
+                @if (Model.HasPrevious)
+                {
+                    <a href="@Url.Action("Details", "Student", new { id = Model.Student.UserId, page = Model.CurrentPage - 1 })"
+                       class="pagination-btn">
+                        <i class="bi bi-chevron-left"></i>
+                        @Localizer["Previous"]
+                    </a>
+                }
+
+                <span class="pagination-info">
+                    @string.Format(Localizer["PageOf"].Value, Model.CurrentPage, Model.TotalPages)
+                </span>
+
+                @if (Model.HasNext)
+                {
+                    <a href="@Url.Action("Details", "Student", new { id = Model.Student.UserId, page = Model.CurrentPage + 1 })"
+                       class="pagination-btn">
+                        @Localizer["Next"]
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                }
+            </div>
+        }
+    }
     else
-                                        {
-                                            <div class="empty-state">
-                                                <i class="bi bi-inbox"></i>
-                                                <p>@Localizer["NoWirdsYet"]</p>
-                                            </div>
-                                        }
-                                    </div>
+    {
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <p>@Localizer["NoWirdsYet"]</p>
+        </div>
+    }
+</div>
 
-                                    <!-- Parent Notes Section -->
-                                    <div class="wirds-section" style="margin-top: var(--space-xl);">
-                                        <h3>
-                                            <i class="bi bi-sticky"></i>
-                                            @Localizer["ParentNotes"]
-                                        </h3>
+<!-- Parent Notes Section -->
+<div class="wirds-section notes-section">
+    <h3>
+        <span class="section-icon section-icon-notes"><i class="bi bi-sticky"></i></span>
+        @Localizer["ParentNotes"]
+        @if (ViewBag.ParentNotes is IEnumerable<Hafiz.Models.ParentNote> notesForCount)
+        {
+            <span class="section-count-pill">@notesForCount.Count()</span>
+        }
+    </h3>
 
-                                        @{
-                                            var parentNotes = ViewBag.ParentNotes as IEnumerable<Hafiz.Models.ParentNote> ?? new List<Hafiz.Models.ParentNote>();
-                                        }
+    @{
+        var parentNotes = ViewBag.ParentNotes as IEnumerable<Hafiz.Models.ParentNote> ?? new List<Hafiz.Models.ParentNote>();
+    }
 
-                                        <!-- Add New Note Form -->
-                                        <div
-                                            style="background: var(--light-gray); padding: var(--space-lg); border-radius: var(--radius-md); margin-bottom: var(--space-lg);">
-                                            <h4 style="margin: 0 0 var(--space-md) 0; color: var(--text-dark);">@Localizer["AddNewNote"]</h4>
-                                            <form asp-area="Teacher" asp-controller="ParentNotes" asp-action="Create" method="post">
-                                                <input type="hidden" name="studentId" value="@Model.Student.UserId" />
-                                                <div style="margin-bottom: var(--space-md);">
-                                                    <textarea name="content" rows="3"
-                                                              style="width: 100%; padding: var(--space-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; resize: vertical;"
-                                                              placeholder="@Localizer["WritePlaceholder"]" required></textarea>
-                                                </div>
-                                                <button type="submit"
-                                                        style="padding: var(--space-sm) var(--space-lg); background: var(--secondary-green); color: var(--white); border: none; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; transition: background var(--transition-base);"
-                                                        onmouseover="this.style.background='var(--dark-green)'"
-                                                        onmouseout="this.style.background='var(--secondary-green)'">
-                                                    <i class="bi bi-plus-circle"></i> @Localizer["AddNote"]
-                                                </button>
-                                            </form>
-                                        </div>
+    <!-- Add New Note Form -->
+    <div class="note-form-container">
+        <h4>@Localizer["AddNewNote"]</h4>
+        <form asp-area="Teacher" asp-controller="ParentNotes" asp-action="Create" method="post">
+            <input type="hidden" name="studentId" value="@Model.Student.UserId" />
+            <div class="note-form-field">
+                <textarea name="content" rows="2"
+                          class="note-textarea"
+                          placeholder="@Localizer["WritePlaceholder"]" required></textarea>
+            </div>
+            <button type="submit" class="note-submit-btn">
+                <i class="bi bi-plus-circle"></i> @Localizer["AddNote"]
+            </button>
+        </form>
+    </div>
 
-                                        <!-- Display Existing Notes -->
-                                        @if (parentNotes.Any())
-                                        {
-                                            <div class="wirds-list">
-                                                @foreach (var note in parentNotes)
-                                                {
-                                                    <div class="wird-item" style="border-left-color: #17a2b8;">
-                                                        <div
-                                                            style="display: flex; justify-content: space-between; align-items: start; margin-bottom: var(--space-md);">
-                                                            <div>
-                                                                <div
-                                                                    style="font-size: var(--font-size-sm); color: var(--text-medium); margin-bottom: var(--space-xs);">
-                                                                    <i class="bi bi-person-circle"></i> @Localizer["By"] @note.CreatedByUser.FirstName
-                                                                    @note.CreatedByUser.SecondName
-                                                                </div>
-                                                                <div style="font-size: var(--font-size-xs); color: var(--text-light);">
-                                                                    <i class="bi bi-calendar"></i> @note.CreatedAt.ToString("MMM dd, yyyy 'at' h:mm tt")
-                                                                    @if (note.UpdatedAt != null)
-                                                                    {
-                                                                        <span> @Localizer["Updated"] @note.UpdatedAt.Value.ToString("MMM dd, yyyy"))</span>
-                                                                    }
-                                                                </div>
-                                                            </div>
-                                                            @if (note.CreatedBy == Guid.Parse(User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier)!))
-                                                            {
-                                                                <form asp-area="Teacher" asp-controller="ParentNotes" asp-action="Delete" method="post"
-                                                                      style="display: inline;" onsubmit="return confirm('@Localizer["ConfirmDeleteNote"]');">
-                                                                    <input type="hidden" name="noteId" value="@note.Id" />
-                                                                    <input type="hidden" name="studentId" value="@Model.Student.UserId" />
-                                                                    <button type="submit"
-                                                                            style="padding: var(--space-xs) var(--space-sm); background: var(--danger); color: var(--white); border: none; border-radius: var(--radius-sm); cursor: pointer; font-size: var(--font-size-xs);"
-                                                                            title="Delete note">
-                                                                        <i class="bi bi-trash"></i>
-                                                                    </button>
-                                                                </form>
-                                                            }
-                                                        </div>
-                                                        <div style="background: var(--white); padding: var(--space-md); border-radius: var(--radius-sm);">
-                                                            <p style="margin: 0; color: var(--text-dark); white-space: pre-wrap;">@note.Content</p>
-                                                        </div>
-                                                    </div>
-                                                }
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <div class="empty-state">
-                                                <i class="bi bi-sticky"></i>
-                                                <p>@Localizer["NoNotesYet"]</p>
-                                            </div>
-                                        }
-                                    </div>
+    <!-- Display Existing Notes -->
+    @if (parentNotes.Any())
+    {
+        <div class="wirds-list">
+            @foreach (var note in parentNotes)
+            {
+                <div class="note-item">
+                    <div class="note-header">
+                        <div>
+                            <div class="note-author">
+                                <i class="bi bi-person-circle"></i> @Localizer["By"] @note.CreatedByUser.FirstName @note.CreatedByUser.SecondName
+                            </div>
+                            <div class="note-date">
+                                <i class="bi bi-calendar"></i> @note.CreatedAt.ToString("MMM dd, yyyy 'at' h:mm tt")
+                                @if (note.UpdatedAt != null)
+                                {
+                                    <span> @Localizer["Updated"] @note.UpdatedAt.Value.ToString("MMM dd, yyyy"))</span>
+                                }
+                            </div>
+                        </div>
+                        @if (note.CreatedBy == Guid.Parse(User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier)!))
+                        {
+                            <form asp-area="Teacher" asp-controller="ParentNotes" asp-action="Delete" method="post"
+                                  style="display: inline;" onsubmit="return confirm('@Localizer["ConfirmDeleteNote"]');">
+                                <input type="hidden" name="noteId" value="@note.Id" />
+                                <input type="hidden" name="studentId" value="@Model.Student.UserId" />
+                                <button type="submit" class="note-delete-btn" title="Delete note">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        }
+                    </div>
+                    <div class="note-content">
+                        <p>@note.Content</p>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <i class="bi bi-sticky"></i>
+            <p>@Localizer["NoNotesYet"]</p>
+        </div>
+    }
+</div>

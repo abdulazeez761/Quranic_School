@@ -120,4 +120,49 @@
   <data name="Third" xml:space="preserve">
     <value>Advanced</value>
   </data>
+  <data name="Wird" xml:space="preserve">
+    <value>Wird</value>
+  </data>
+  <data name="Memorization" xml:space="preserve">
+    <value>Memorization</value>
+  </data>
+  <data name="Revision" xml:space="preserve">
+    <value>Revision</value>
+  </data>
+  <data name="Tajwid" xml:space="preserve">
+    <value>Tajwid</value>
+  </data>
+  <data name="Tafsir" xml:space="preserve">
+    <value>Tafsir</value>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="notSet" xml:space="preserve">
+    <value>Not Set</value>
+  </data>
+  <data name="poor" xml:space="preserve">
+    <value>Poor</value>
+  </data>
+  <data name="fair" xml:space="preserve">
+    <value>Fair</value>
+  </data>
+  <data name="good" xml:space="preserve">
+    <value>Good</value>
+  </data>
+  <data name="veryGood" xml:space="preserve">
+    <value>Very Good</value>
+  </data>
+  <data name="excellent" xml:space="preserve">
+    <value>Excellent</value>
+  </data>
+  <data name="male" xml:space="preserve">
+    <value>Male</value>
+  </data>
+  <data name="female" xml:space="preserve">
+    <value>Female</value>
+  </data>
+  <data name="NotSpecified" xml:space="preserve">
+    <value>Not Specified</value>
+  </data>
 </root>
