@@ -19,63 +19,65 @@
     <!-- FILTER BAR -->
     <div class="filter-bar">
         <div class="filter-bar-header">
-
-            <div class="filter-bar-title">
-                @Localizer["Filters"]
+            <div class="filter-bar-left">
+                <i class='bx bx-filter-alt'></i>
+                <div class="filter-search-wrapper">
+                    <i class='bx bx-search'></i>
+                    <input type="text" id="filterStudent" class="filter-search-input" placeholder="@Localizer["SearchByName"]">
+                </div>
             </div>
-            <button class="filter-toggle" id="filterToggle">▼</button>
-        </div>
-
-        <div class="filter-content" id="filterContent">
-            <div class="filter-group">
-                <label class="filter-label" for="filterStudent">@Localizer["StudentName"]</label>
-                <input type="text" id="filterStudent" class="filter-input" placeholder="@Localizer["SearchByName"]">
-            </div>
-
-            <div class="filter-group">
-                <label class="filter-label" for="filterType">@Localizer["AssignmentType"]</label>
-                <select id="filterType" class="filter-select">
-                    <option value="">@Localizer["AllTypes"]</option>
-                    <option value="Hafiz">@Localizer["Hafiz"]</option>
-                    <option value="Wird">@Localizer["Wird"]</option>
-                    <option value="Revision">@Localizer["Revision"]</option>
-                    <option value="Memorization">@Localizer["Memorization"]</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label class="filter-label" for="filterStatus">@Localizer["Status"]</label>
-                <select id="filterStatus" class="filter-select">
-                    <option value="">@Localizer["AllStatuses"]</option>
-                    <option value="notset">@Localizer["NotSet"]</option>
-                    <option value="poor">@Localizer["Poor"]</option>
-                    <option value="fair">@Localizer["Fair"]</option>
-                    <option value="good">@Localizer["Good"]</option>
-                    <option value="verygood">@Localizer["VeryGood"]</option>
-                    <option value="excellent">@Localizer["Excellent"]</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label class="filter-label" for="filterDateFrom">@Localizer["DateFrom"]</label>
-                <input type="date" id="filterDateFrom" class="filter-input">
-            </div>
-
-            <div class="filter-group">
-                <label class="filter-label" for="filterDateTo">@Localizer["DateTo"]</label>
-                <input type="date" id="filterDateTo" class="filter-input">
-            </div>
-
-            <div class="filter-actions">
-                <button class="btn-filter btn-apply" id="applyFilters">@Localizer["ApplyFilters"]</button>
-                <button class="btn-filter btn-reset" id="resetFilters">@Localizer["Reset"]</button>
+            <div class="filter-bar-right">
+                <div class="results-count" id="resultsCount">
+                    <strong>@Model.Count()</strong> @Localizer["Assignments"]
+                </div>
+                <button class="filter-toggle" id="filterToggle">
+                    <i class='bx bx-chevron-down'></i>
+                </button>
             </div>
         </div>
-    </div>
 
-    <!-- RESULTS COUNT -->
-    <div class="results-count" id="resultsCount">
-        @Localizer["Showing"] <strong>@Model.Count()</strong> @Localizer["Assignments"]
+        <div class="filter-content" id="filterContent" style="display: none;">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label class="filter-label" for="filterType">@Localizer["AssignmentType"]</label>
+                    <select id="filterType" class="filter-select">
+                        <option value="">@Localizer["AllTypes"]</option>
+                        <option value="Hafiz">@Localizer["Hafiz"]</option>
+                        <option value="Wird">@Localizer["Wird"]</option>
+                        <option value="Revision">@Localizer["Revision"]</option>
+                        <option value="Memorization">@Localizer["Memorization"]</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label" for="filterStatus">@Localizer["Status"]</label>
+                    <select id="filterStatus" class="filter-select">
+                        <option value="">@Localizer["AllStatuses"]</option>
+                        <option value="notset">@Localizer["NotSet"]</option>
+                        <option value="poor">@Localizer["Poor"]</option>
+                        <option value="fair">@Localizer["Fair"]</option>
+                        <option value="good">@Localizer["Good"]</option>
+                        <option value="verygood">@Localizer["VeryGood"]</option>
+                        <option value="excellent">@Localizer["Excellent"]</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label" for="filterDateFrom">@Localizer["DateFrom"]</label>
+                    <input type="date" id="filterDateFrom" class="filter-input">
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label" for="filterDateTo">@Localizer["DateTo"]</label>
+                    <input type="date" id="filterDateTo" class="filter-input">
+                </div>
+
+                <div class="filter-actions">
+                    <button class="btn-filter btn-apply" id="applyFilters">@Localizer["ApplyFilters"]</button>
+                    <button class="btn-filter btn-reset" id="resetFilters">@Localizer["Reset"]</button>
+                </div>
+            </div>
+        </div>
     </div>
     @if (TempData["SuccessMessage"] != null)
     {
@@ -95,11 +97,12 @@
         </div>
     }
     <!-- WIRD CARDS -->
-    @foreach (var item in Model)
-    {
-
-        @await Html.PartialAsync("_WirdCard", item)
-    }
+    <div class="wird-cards-grid">
+        @foreach (var item in Model)
+        {
+            @await Html.PartialAsync("_WirdCard", item)
+        }
+    </div>
 </div>
 
 @section scripts {

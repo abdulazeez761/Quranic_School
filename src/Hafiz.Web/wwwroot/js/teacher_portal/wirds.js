@@ -2,19 +2,17 @@
 // NOTES EDITING FUNCTIONALITY
 // ===================================
 
-// Edit note button click
-document.querySelectorAll('.edit-note-btn').forEach((btn) => {
+// Edit note button click (icon buttons with data-assignment-id)
+document.querySelectorAll('.card-action-btn[data-assignment-id]').forEach((btn) => {
   btn.addEventListener('click', function () {
     const assignmentId = this.dataset.assignmentId;
     const editSection = document.getElementById(`notes-edit-${assignmentId}`);
 
-    // Toggle the edit section visibility
     if (
       editSection.style.display === 'none' ||
       editSection.style.display === ''
     ) {
       editSection.style.display = 'block';
-      // Scroll to the edit section
       editSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     } else {
       editSection.style.display = 'none';
@@ -46,14 +44,10 @@ document.querySelectorAll('.save-note-btn').forEach((btn) => {
       if (response.success) {
         const card = btn.closest('.wird-card');
 
-        // Add success effect with border color change
         card.classList.add('updated');
-        const originalBorderColor = card.style.borderLeftColor;
-        card.style.borderLeftColor = '#28a745'; // Green for success
 
         setTimeout(() => {
           card.classList.remove('updated');
-          card.style.borderLeftColor = originalBorderColor;
         }, 1500);
 
         // Hide edit section, show note display
@@ -64,18 +58,16 @@ document.querySelectorAll('.save-note-btn').forEach((btn) => {
         const wirdNoteSection = card.querySelector('.wird-note');
         if (noteText.trim()) {
           if (wirdNoteSection) {
-            wirdNoteSection.querySelector('p').textContent =
-              `Note: ${noteText}`;
+            wirdNoteSection.querySelector('p').textContent = noteText;
           } else {
-            // Create note section if it doesn't exist
-            const wirdFooter = card.querySelector('.wird-footer');
+            const notesEdit = document.getElementById(`notes-edit-${assignmentId}`);
             const noteHtml = `
               <div class="wird-note">
                 <i class='bx bx-note'></i>
-                <p>Note: ${noteText}</p>
+                <p>${noteText}</p>
               </div>
             `;
-            wirdFooter.insertAdjacentHTML('beforebegin', noteHtml);
+            notesEdit.insertAdjacentHTML('beforebegin', noteHtml);
           }
         } else {
           // Remove note section if note is empty
@@ -86,14 +78,10 @@ document.querySelectorAll('.save-note-btn').forEach((btn) => {
       } else {
         const card = btn.closest('.wird-card');
 
-        // Add failure effect with border color change
         card.classList.add('failed-to-update');
-        const originalBorderColor = card.style.borderLeftColor;
-        card.style.borderLeftColor = '#dc3545'; // Red for failure
 
         setTimeout(() => {
           card.classList.remove('failed-to-update');
-          card.style.borderLeftColor = originalBorderColor;
         }, 1500);
       }
     } catch (error) {

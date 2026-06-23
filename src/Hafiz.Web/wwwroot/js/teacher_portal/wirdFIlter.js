@@ -4,11 +4,11 @@ document.getElementById('filterToggle')?.addEventListener('click', function () {
   const toggle = this;
 
   if (content.style.display === 'none') {
-    content.style.display = 'grid';
-    toggle.textContent = '▼';
+    content.style.display = 'block';
+    toggle.classList.add('active');
   } else {
     content.style.display = 'none';
-    toggle.textContent = '▶';
+    toggle.classList.remove('active');
   }
 });
 
@@ -42,32 +42,28 @@ document
 
       let showCard = true;
 
-      // Student name filter
       if (studentFilter && !student.includes(studentFilter)) {
         showCard = false;
       }
 
-      // Type filter
       if (typeFilter && type !== typeFilter) {
         showCard = false;
       }
 
-      // Status filter
       if (statusFilter && status !== statusFilter) {
         showCard = false;
       }
 
       if (showCard) {
-        card.style.display = 'block';
+        card.style.display = 'flex';
         visibleCount++;
       } else {
         card.style.display = 'none';
       }
     });
 
-    // Update results count
     document.getElementById('resultsCount').innerHTML =
-      `Showing <strong>${visibleCount}</strong> of <strong>${cards.length}</strong> assignments`;
+      `<strong>${visibleCount}</strong> of <strong>${cards.length}</strong> assignments`;
   });
 
 // Reset filters
@@ -80,12 +76,11 @@ document.getElementById('resetFilters')?.addEventListener('click', function () {
 
   const cards = document.querySelectorAll('.wird-card');
   cards.forEach((card) => {
-    card.style.display = 'block';
+    card.style.display = 'flex';
   });
 
-  // Update results count
   document.getElementById('resultsCount').innerHTML =
-    `Showing <strong>${cards.length}</strong> assignments`;
+    `<strong>${cards.length}</strong> assignments`;
 });
 
 // Real-time search on student name
