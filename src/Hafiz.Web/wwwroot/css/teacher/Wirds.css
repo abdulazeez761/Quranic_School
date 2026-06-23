@@ -556,12 +556,12 @@
 
 .seg-btn {
   flex: 1;
-  padding: 6px 6px;
+  padding: 10px 6px;
   border: none;
   border-right: 1px solid var(--border-color);
   background: var(--light-gray);
   color: var(--text-medium);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -570,6 +570,7 @@
   white-space: nowrap;
   overflow: visible;
   text-overflow: unset;
+  min-height: 40px;
 }
 
 .seg-btn:last-child {
@@ -849,8 +850,9 @@
   }
 
   .seg-btn {
-    font-size: 9px;
-    padding: 4px 1px;
+    font-size: 11px;
+    padding: 8px 4px;
+    min-height: 44px;
   }
 }
 
