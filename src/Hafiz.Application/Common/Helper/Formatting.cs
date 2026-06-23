@@ -13,7 +13,7 @@ namespace Hafiz.Common.Helper
         private static readonly Dictionary<Surah, string> ArabicSurahNames =
             new()
             {
-                { Surah.NONE, "غير محدد" },
+                { Surah.NONE, "سورة" },
                 { Surah.Al_Fatiha, "الفاتحة" },
                 { Surah.Al_Baqara, "البقرة" },
                 { Surah.Aal_Imran, "آل عمران" },

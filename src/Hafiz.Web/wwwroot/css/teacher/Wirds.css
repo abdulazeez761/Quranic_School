@@ -240,8 +240,8 @@
    =================================== */
 .wird-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  gap: var(--space-md);
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: var(--space-lg);
 }
 
 /* ===================================
@@ -269,30 +269,42 @@
   flex-shrink: 0;
 }
 
-.wird-card.excellent .wird-card-top-stripe { background: #28a745; }
-.wird-card.verygood .wird-card-top-stripe  { background: #17a2b8; }
-.wird-card.good .wird-card-top-stripe      { background: #fd7e14; }
-.wird-card.fair .wird-card-top-stripe      { background: #ffc107; }
-.wird-card.poor .wird-card-top-stripe      { background: #dc3545; }
-.wird-card.notset .wird-card-top-stripe    { background: #d9d9d9; }
+.wird-card.excellent .wird-card-top-stripe {
+  background: #28a745;
+}
+.wird-card.verygood .wird-card-top-stripe {
+  background: #17a2b8;
+}
+.wird-card.good .wird-card-top-stripe {
+  background: #fd7e14;
+}
+.wird-card.fair .wird-card-top-stripe {
+  background: #ffc107;
+}
+.wird-card.poor .wird-card-top-stripe {
+  background: #dc3545;
+}
+.wird-card.notset .wird-card-top-stripe {
+  background: #d9d9d9;
+}
 
 /* ===================================
    CARD HEADER — Name+badge inline, meta below
    =================================== */
 .wird-card-header {
-  padding: 10px 12px 0;
+  padding: 14px 16px 0;
 }
 
 .wird-header-title {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .student-name {
   color: var(--text-dark);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-lg);
   font-weight: 700;
   margin: 0;
   line-height: 1.3;
@@ -304,9 +316,9 @@
 }
 
 .wird-status-badge {
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: var(--radius-full);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: capitalize;
   white-space: nowrap;
@@ -314,18 +326,36 @@
   line-height: 1.4;
 }
 
-.wird-status-badge.status-notset    { background: #f0f0f0; color: #757575; }
-.wird-status-badge.status-poor      { background: #ffebee; color: #c62828; }
-.wird-status-badge.status-fair      { background: #fff9c4; color: #f57f17; }
-.wird-status-badge.status-good      { background: #fff3e0; color: #f57c00; }
-.wird-status-badge.status-verygood  { background: #e3f2fd; color: #1976d2; }
-.wird-status-badge.status-excellent { background: #e8f5e9; color: #2e7d32; }
+.wird-status-badge.status-notset {
+  background: #f0f0f0;
+  color: #757575;
+}
+.wird-status-badge.status-poor {
+  background: #ffebee;
+  color: #c62828;
+}
+.wird-status-badge.status-fair {
+  background: #fff9c4;
+  color: #f57f17;
+}
+.wird-status-badge.status-good {
+  background: #fff3e0;
+  color: #f57c00;
+}
+.wird-status-badge.status-verygood {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+.wird-status-badge.status-excellent {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
 
 /* Meta badges row */
 .wird-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 6px;
   align-items: center;
 }
 
@@ -334,10 +364,10 @@
 .wird-date-badge {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  padding: 1px 7px;
+  gap: 4px;
+  padding: 2px 8px;
   border-radius: var(--radius-full);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   line-height: 1.5;
 }
@@ -360,7 +390,7 @@
 .wird-type-badge i,
 .wird-amount-badge i,
 .wird-date-badge i {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 /* ===================================
@@ -369,9 +399,9 @@
 .wird-range-compact {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  margin: 8px 12px 0;
+  gap: 8px;
+  padding: 8px 12px;
+  margin: 10px 16px 0;
   background: var(--light-gray);
   border-radius: var(--radius-md);
 }
@@ -383,7 +413,7 @@
 
 .range-label {
   display: block;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -393,7 +423,7 @@
 
 .range-value {
   display: block;
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--text-dark);
   line-height: 1.3;
@@ -404,14 +434,14 @@
 
 .range-detail {
   display: block;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-medium);
   margin-top: 1px;
 }
 
 .range-divider {
   color: var(--text-light);
-  font-size: 1rem;
+  font-size: 1.1rem;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -427,8 +457,8 @@
 .wird-note {
   background: #fffbeb;
   border-left: 2px solid #f59e0b;
-  padding: 5px 10px;
-  margin: 8px 12px 0;
+  padding: 6px 12px;
+  margin: 10px 16px 0;
   border-radius: var(--radius-sm);
   display: flex;
   gap: 6px;
@@ -460,7 +490,7 @@
 .notes-edit {
   width: 100%;
   animation: slideDown 0.2s ease;
-  padding: 6px 12px;
+  padding: 8px 16px;
 }
 
 @keyframes slideDown {
@@ -510,7 +540,7 @@
    =================================== */
 .card-footer {
   margin-top: auto;
-  padding: 8px 12px 10px;
+  padding: 10px 16px 12px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -526,20 +556,20 @@
 
 .seg-btn {
   flex: 1;
-  padding: 4px 2px;
+  padding: 6px 6px;
   border: none;
   border-right: 1px solid var(--border-color);
   background: var(--light-gray);
   color: var(--text-medium);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
   text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   line-height: 1.4;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: unset;
 }
 
 .seg-btn:last-child {
@@ -556,18 +586,53 @@
 }
 
 /* Hover: show the color lightly */
-.seg-btn.seg-excellent:hover { background: #d4edda; color: #1e7e34; }
-.seg-btn.seg-verygood:hover  { background: #d1ecf1; color: #117a8b; }
-.seg-btn.seg-good:hover      { background: #ffe5cc; color: #d56a00; }
-.seg-btn.seg-fair:hover      { background: #fff3cd; color: #c69500; }
-.seg-btn.seg-poor:hover      { background: #f8d7da; color: #bd2130; }
+.seg-btn.seg-excellent:hover {
+  background: #d4edda;
+  color: #1e7e34;
+}
+.seg-btn.seg-verygood:hover {
+  background: #d1ecf1;
+  color: #117a8b;
+}
+.seg-btn.seg-good:hover {
+  background: #ffe5cc;
+  color: #d56a00;
+}
+.seg-btn.seg-fair:hover {
+  background: #fff3cd;
+  color: #c69500;
+}
+.seg-btn.seg-poor:hover {
+  background: #f8d7da;
+  color: #bd2130;
+}
 
 /* Active: card status class drives the highlight */
-.wird-card.excellent .seg-btn.seg-excellent { background: #28a745; color: #fff; font-weight: 700; }
-.wird-card.verygood .seg-btn.seg-verygood   { background: #17a2b8; color: #fff; font-weight: 700; }
-.wird-card.good .seg-btn.seg-good           { background: #fd7e14; color: #fff; font-weight: 700; }
-.wird-card.fair .seg-btn.seg-fair           { background: #ffc107; color: #5a4400; font-weight: 700; }
-.wird-card.poor .seg-btn.seg-poor           { background: #dc3545; color: #fff; font-weight: 700; }
+.wird-card.excellent .seg-btn.seg-excellent {
+  background: #28a745;
+  color: #fff;
+  font-weight: 700;
+}
+.wird-card.verygood .seg-btn.seg-verygood {
+  background: #17a2b8;
+  color: #fff;
+  font-weight: 700;
+}
+.wird-card.good .seg-btn.seg-good {
+  background: #fd7e14;
+  color: #fff;
+  font-weight: 700;
+}
+.wird-card.fair .seg-btn.seg-fair {
+  background: #ffc107;
+  color: #5a4400;
+  font-weight: 700;
+}
+.wird-card.poor .seg-btn.seg-poor {
+  background: #dc3545;
+  color: #fff;
+  font-weight: 700;
+}
 
 /* Action icons row */
 .card-actions {
@@ -580,8 +645,8 @@
   background: transparent;
   border: 1px solid var(--border-color);
   cursor: pointer;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -687,9 +752,23 @@
 }
 
 @keyframes errorShake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
-  20%, 40%, 60%, 80% { transform: translateX(3px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-3px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(3px);
+  }
 }
 
 /* ===================================

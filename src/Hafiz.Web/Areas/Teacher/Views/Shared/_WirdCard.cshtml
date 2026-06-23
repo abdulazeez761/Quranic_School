@@ -46,27 +46,92 @@
     </div>
 
     <!-- QURAN RANGE -->
-    <div class="wird-range-compact">
-        <div class="range-item">
-            <span class="range-label">@Localizer["From"]</span>
-            <span class="range-value">
-                @Formatting.GetLocalizedSurahName(Model.FromSurah ?? Surah.NONE)
-                @Localizer["Ayah"] @Model.FromAyah
-            </span>
-            <span class="range-detail">@Localizer["Juz"] @Model.FromJuz · @Localizer["Page"] @Model.FromPage</span>
+    @{
+        var hasFromRange = (Model.FromSurah.HasValue && Model.FromSurah != Surah.NONE)
+                           || !string.IsNullOrEmpty(Model.FromAyah)
+                           || Model.FromJuz.HasValue
+                           || Model.FromPage.HasValue;
+        var hasToRange = (Model.ToSurah.HasValue && Model.ToSurah != Surah.NONE)
+                         || Model.ToAyah.HasValue
+                         || Model.ToJuz.HasValue
+                         || Model.ToPage.HasValue;
+    }
+    @if (hasFromRange || hasToRange)
+    {
+        <div class="wird-range-compact">
+            <div class="range-item">
+                <span class="range-label">@Localizer["From"]</span>
+                <span class="range-value">
+                    @if (Model.FromSurah.HasValue && Model.FromSurah != Surah.NONE)
+                    {
+                        @Formatting.GetLocalizedSurahName(Model.FromSurah.Value)
+                        if (!string.IsNullOrEmpty(Model.FromAyah))
+                        {
+                            <text> · </text>
+                        }
+                    }
+                    @if (!string.IsNullOrEmpty(Model.FromAyah))
+                    {
+                        @Localizer["Ayah"] @Model.FromAyah
+                    }
+                </span>
+                @if (Model.FromJuz.HasValue || Model.FromPage.HasValue)
+                {
+                    <span class="range-detail">
+                        @if (Model.FromJuz.HasValue)
+                        {
+                            @Localizer["Juz"] @Model.FromJuz
+                        }
+                        @if (Model.FromJuz.HasValue && Model.FromPage.HasValue)
+                        {
+                            <text> · </text>
+                        }
+                        @if (Model.FromPage.HasValue)
+                        {
+                            @Localizer["Page"] @Model.FromPage
+                        }
+                    </span>
+                }
+            </div>
+            <div class="range-divider">
+                <i class='bx bx-right-arrow-alt'></i>
+            </div>
+            <div class="range-item">
+                <span class="range-label">@Localizer["To"]</span>
+                <span class="range-value">
+                    @if (Model.ToSurah.HasValue && Model.ToSurah != Surah.NONE)
+                    {
+                        @Formatting.GetLocalizedSurahName(Model.ToSurah.Value)
+                        if (Model.ToAyah.HasValue)
+                        {
+                            <text> · </text>
+                        }
+                    }
+                    @if (Model.ToAyah.HasValue)
+                    {
+                        @Localizer["Ayah"] @Model.ToAyah
+                    }
+                </span>
+                @if (Model.ToJuz.HasValue || Model.ToPage.HasValue)
+                {
+                    <span class="range-detail">
+                        @if (Model.ToJuz.HasValue)
+                        {
+                            @Localizer["Juz"] @Model.ToJuz
+                        }
+                        @if (Model.ToJuz.HasValue && Model.ToPage.HasValue)
+                        {
+                            <text> · </text>
+                        }
+                        @if (Model.ToPage.HasValue)
+                        {
+                            @Localizer["Page"] @Model.ToPage
+                        }
+                    </span>
+                }
+            </div>
         </div>
-        <div class="range-divider">
-            <i class='bx bx-right-arrow-alt'></i>
-        </div>
-        <div class="range-item">
-            <span class="range-label">@Localizer["To"]</span>
-            <span class="range-value">
-                @Formatting.GetLocalizedSurahName(Model.ToSurah ?? Surah.NONE)
-                @Localizer["Ayah"] @Model.ToAyah
-            </span>
-            <span class="range-detail">@Localizer["Juz"] @Model.ToJuz · @Localizer["Page"] @Model.ToPage</span>
-        </div>
-    </div>
+    }
 
     @if (!string.IsNullOrEmpty(Model.Note))
     {
@@ -81,8 +146,10 @@
         <textarea class="notes-textarea" id="notes-textarea-@Model.Id"
                   placeholder="@Localizer["AddNotes"]">@Model.Note</textarea>
         <div class="notes-edit-actions">
-            <button class="btn btn-success btn-sm save-note-btn" data-assignment-id="@Model.Id">@Localizer["Save"]</button>
-            <button class="btn btn-secondary btn-sm cancel-note-btn" data-assignment-id="@Model.Id">@Localizer["Cancel"]</button>
+            <button class="btn btn-success btn-sm save-note-btn"
+                    data-assignment-id="@Model.Id">@Localizer["Save"]</button>
+            <button class="btn btn-secondary btn-sm cancel-note-btn"
+                    data-assignment-id="@Model.Id">@Localizer["Cancel"]</button>
         </div>
     </div>
 
@@ -93,18 +160,19 @@
                     data-id="@Model.Id" title="@Localizer["Excellent"]">@Localizer["Excellent"]</button>
             <button class="seg-btn seg-verygood status-button" data-status="@AssignmentStatus.veryGood"
                     data-id="@Model.Id" title="@Localizer["VeryGood"]">@Localizer["VeryGood"]</button>
-            <button class="seg-btn seg-good status-button" data-status="@AssignmentStatus.good"
-                    data-id="@Model.Id" title="@Localizer["Good"]">@Localizer["Good"]</button>
-            <button class="seg-btn seg-fair status-button" data-status="@AssignmentStatus.fair"
-                    data-id="@Model.Id" title="@Localizer["Fair"]">@Localizer["Fair"]</button>
-            <button class="seg-btn seg-poor status-button" data-status="@AssignmentStatus.poor"
-                    data-id="@Model.Id" title="@Localizer["Poor"]">@Localizer["Poor"]</button>
+            <button class="seg-btn seg-good status-button" data-status="@AssignmentStatus.good" data-id="@Model.Id"
+                    title="@Localizer["Good"]">@Localizer["Good"]</button>
+            <button class="seg-btn seg-fair status-button" data-status="@AssignmentStatus.fair" data-id="@Model.Id"
+                    title="@Localizer["Fair"]">@Localizer["Fair"]</button>
+            <button class="seg-btn seg-poor status-button" data-status="@AssignmentStatus.poor" data-id="@Model.Id"
+                    title="@Localizer["Poor"]">@Localizer["Poor"]</button>
         </div>
         <div class="card-actions">
             <button class="card-action-btn" data-assignment-id="@Model.Id" title="@Localizer["AddNotes"]">
                 <i class='bx bx-note'></i>
             </button>
-            <button class="card-action-btn" onclick="
+            <button class="card-action-btn"
+                    onclick="
                 fetchWirdAssignmentById('@Model.Id');
                 openWirdModal('@Model.StudentId', '@Model.Student.StudentInfo.FirstName @Model.Student.StudentInfo.SecondName');"
                     title="@Localizer["Edit"]">
