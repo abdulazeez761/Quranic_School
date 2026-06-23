@@ -49,4 +49,31 @@
     <value>Advanced</value>
   </data>
   <data name="PageTitle" xml:space="preserve"><value>Students</value></data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Search students by name…</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="TajwidLevel" xml:space="preserve">
+    <value>Tajwid Level</value>
+  </data>
+  <data name="ActiveWirds" xml:space="preserve">
+    <value>Active Wirds</value>
+  </data>
+  <data name="Boys" xml:space="preserve">
+    <value>Boys</value>
+  </data>
+  <data name="Girls" xml:space="preserve">
+    <value>Girls</value>
+  </data>
+  <data name="NoStudents" xml:space="preserve">
+    <value>No students yet</value>
+  </data>
+  <data name="NoStudentsSubtitle" xml:space="preserve">
+    <value>Students assigned to this class will appear here.</value>
+  </data>
+  <data name="NoMatch" xml:space="preserve">
+    <value>No students match your filters</value>
+  </data>
 </root>

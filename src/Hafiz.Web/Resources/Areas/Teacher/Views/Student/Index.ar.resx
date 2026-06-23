@@ -49,4 +49,31 @@
     <value>متقدم</value>
   </data>
   <data name="PageTitle" xml:space="preserve"><value>الطلاب</value></data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>ابحث عن الطلاب بالاسم…</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>الكل</value>
+  </data>
+  <data name="TajwidLevel" xml:space="preserve">
+    <value>مستوى التجويد</value>
+  </data>
+  <data name="ActiveWirds" xml:space="preserve">
+    <value>الأوراد النشطة</value>
+  </data>
+  <data name="Boys" xml:space="preserve">
+    <value>بنين</value>
+  </data>
+  <data name="Girls" xml:space="preserve">
+    <value>بنات</value>
+  </data>
+  <data name="NoStudents" xml:space="preserve">
+    <value>لا يوجد طلاب بعد</value>
+  </data>
+  <data name="NoStudentsSubtitle" xml:space="preserve">
+    <value>سيظهر هنا الطلاب المضافون إلى هذه الحلقة.</value>
+  </data>
+  <data name="NoMatch" xml:space="preserve">
+    <value>لا يوجد طلاب يطابقون عوامل التصفية</value>
+  </data>
 </root>
