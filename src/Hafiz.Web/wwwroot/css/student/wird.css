@@ -553,13 +553,10 @@
   font-size: 1.1rem;
 }
 
-/* RTL Support */
-[dir='rtl'] .pagination-btn.prev-btn {
-  flex-direction: row-reverse;
-}
-
-[dir='rtl'] .pagination-btn.next-btn {
-  flex-direction: row-reverse;
+/* Force LTR pagination layout even in RTL: Previous on the left, Next on the right,
+   page numbers in ascending order (1, 2, 3 → from left to right). */
+[dir='rtl'] .pagination-buttons {
+  direction: ltr;
 }
 
 .page-numbers {
