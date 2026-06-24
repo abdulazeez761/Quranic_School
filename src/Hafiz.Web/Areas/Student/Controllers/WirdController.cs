@@ -24,7 +24,7 @@ namespace Hafiz.Areas.Student.Controllers
             string? status,
             string? type,
             int page = 1,
-            int pageSize = 5
+            int pageSize = 10
         )
         {
             Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

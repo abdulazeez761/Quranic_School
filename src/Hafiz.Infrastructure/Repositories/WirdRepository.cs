@@ -129,7 +129,9 @@ namespace Hafiz.Repositories
 
             if (isCompleted.HasValue)
             {
-                query = query.Where(w => w.IsCompleted == isCompleted.Value);
+                query = isCompleted.Value
+                    ? query.Where(w => w.Status != AssignmentStatus.notSet)
+                    : query.Where(w => w.Status == AssignmentStatus.notSet);
             }
 
             if (assignmentType.HasValue)
@@ -138,7 +140,9 @@ namespace Hafiz.Repositories
             }
 
             var totalCount = await query.CountAsync();
-            var completedCount = await query.Where(w => w.IsCompleted).CountAsync();
+            var completedCount = await query
+                .Where(w => w.Status != AssignmentStatus.notSet)
+                .CountAsync();
             var pendingCount = totalCount - completedCount;
 
             var wirds = await query

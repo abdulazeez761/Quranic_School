@@ -31,17 +31,17 @@
             <label>@Localizer["Status"]:</label>
             <div class="filter-tabs">
                 <a href="@Url.Action("Index", "Wird", new { area = "Student", status = (string?)null, type = (string?)null, page = 1, pageSize })"
-                       class="filter-tab @(string.IsNullOrEmpty(currentStatus) && string.IsNullOrEmpty(currentType) ? "active" : "")">
+                   class="filter-tab @(string.IsNullOrEmpty(currentStatus) && string.IsNullOrEmpty(currentType) ? "active" : "")">
                     <i class='bx bx-list-ul'></i>
                     @Localizer["All"]
                 </a>
                 <a href="@Url.Action("Index", "Wird", new { area = "Student", status = "pending", type = currentType, page = 1, pageSize })"
-                       class="filter-tab @(currentStatus == "pending" ? "active" : "")">
+                   class="filter-tab @(currentStatus == "pending" ? "active" : "")">
                     <i class='bx bx-time'></i>
                     @Localizer["Pending"]
                 </a>
                 <a href="@Url.Action("Index", "Wird", new { area = "Student", status = "completed", type = currentType, page = 1, pageSize })"
-                       class="filter-tab @(currentStatus == "completed" ? "active" : "")">
+                   class="filter-tab @(currentStatus == "completed" ? "active" : "")">
                     <i class='bx bx-check-circle'></i>
                     @Localizer["Completed"]
                 </a>
@@ -53,7 +53,7 @@
             <label>@Localizer["Type"]:</label>
             <div class="filter-tabs">
                 <a href="@Url.Action("Index", "Wird", new { area = "Student", status = currentStatus, type = (string?)null, page = 1, pageSize })"
-                       class="filter-tab @(string.IsNullOrEmpty(currentType) ? "active" : "")">
+                   class="filter-tab @(string.IsNullOrEmpty(currentType) ? "active" : "")">
                     @Localizer["AllTypes"]
                 </a>
                 @foreach (var type in Enum.GetValues(typeof(AssignmentType)))
@@ -65,7 +65,7 @@
                     }
 
                     <a href="@Url.Action("Index", "Wird", new { area = "Student", status = currentStatus, type = typeName, page = 1, pageSize })"
-                           class="filter-tab @(currentType == typeName ? "active" : "")">
+                       class="filter-tab @(currentType == typeName ? "active" : "")">
                         @Localizer[typeName]
                     </a>
                 }
@@ -77,7 +77,7 @@
             <div class="filter-actions"
                  style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
                 <a href="@Url.Action("Index", "Wird", new { area = "Student", page = 1, pageSize })"
-                       class="clear-filter-btn">
+                   class="clear-filter-btn">
                     <i class='bx bx-x'></i>
                     @Localizer["Clear"]
                 </a>
@@ -116,66 +116,133 @@
         {
             @foreach (var wird in Model.Wirds)
             {
-                var statusClass = wird.Status == AssignmentStatus.notSet ? "pending" : "completed";
-                var typeClass = wird.Type.ToString().ToLower();
+                var isCompleted = wird.Status != AssignmentStatus.notSet;
+                var statusClass = isCompleted ? "completed" : "pending";
+                var localizedStatus = isCompleted ? Localizer["Completed"] : Localizer["Pending"];
+
+                var hasFromRange = (wird.FromSurah.HasValue && wird.FromSurah != Surah.NONE)
+                                   || !string.IsNullOrEmpty(wird.FromAyah)
+                                   || wird.FromJuz.HasValue
+                                   || wird.FromPage.HasValue;
+                var hasToRange = (wird.ToSurah.HasValue && wird.ToSurah != Surah.NONE)
+                                 || wird.ToAyah.HasValue
+                                 || wird.ToJuz.HasValue
+                                 || wird.ToPage.HasValue;
 
                 <div class="wird-card @statusClass">
+                    <div class="wird-card-top-stripe"></div>
+
                     <div class="wird-card-header">
-                        <div class="wird-type">
-                            <i class='bx bx-bookmark'></i>
-                            <span>@Localizer[wird.Type.ToString()]</span>
+                        <div class="wird-header-title">
+                            <h3 class="wird-title-text">@Localizer[wird.Type.ToString()]</h3>
+                            <span class="wird-status-badge status-@statusClass">@localizedStatus</span>
                         </div>
-                        <span class="wird-status-badge status-@statusClass">
-                            @(wird.Status == AssignmentStatus.notSet ? Localizer["Pending"] : Localizer["Completed"])
-                        </span>
+                        <div class="wird-meta">
+                            @if (wird.Amount.HasValue && wird.AmountUnit.HasValue)
+                            {
+                                var unitKey = wird.AmountUnit.Value switch
+                                {
+                                    WirdUnit.Pages => "UnitPages",
+                                    WirdUnit.Ayahs => "UnitAyahs",
+                                    WirdUnit.Juz => "UnitJuz",
+                                    _ => ""
+                                };
+                                <span class="wird-amount-badge">
+                                    <i class='bx bx-collection'></i>
+                                    @wird.Amount.Value.ToString("0.##") @Localizer[unitKey]
+                                </span>
+                            }
+                            <span class="wird-date-badge">
+                                <i class='bx bx-calendar'></i>
+                                @wird.AssignedDate.ToString("MMM dd")
+                            </span>
+                        </div>
                     </div>
 
-                    <div class="wird-card-body">
-                        <div class="wird-range">
-                            <div class="range-section">
-                                <label>@Localizer["From"]:</label>
-                                <p>
-                                    <strong>@Localizer["Surah"]:</strong>
-                                    @Formatting.GetLocalizedSurahName(wird.FromSurah ?? Surah.NONE)<br />
-                                    <strong>@Localizer["Ayah"]:</strong> @wird.FromAyah<br />
-                                    <strong>@Localizer["Juz"]:</strong> @wird.FromJuz, <strong>@Localizer["Page"]:</strong>
-                                    @wird.FromPage
-                                </p>
+                    @if (hasFromRange || hasToRange)
+                    {
+                        <div class="wird-range-compact">
+                            <div class="range-item">
+                                <span class="range-label">@Localizer["From"]</span>
+                                <span class="range-value">
+                                    @if (wird.FromSurah.HasValue && wird.FromSurah != Surah.NONE)
+                                    {
+                                        @Formatting.GetLocalizedSurahName(wird.FromSurah.Value)
+                                        if (!string.IsNullOrEmpty(wird.FromAyah))
+                                        {
+                                            <text> · </text>
+                                        }
+                                    }
+                                    @if (!string.IsNullOrEmpty(wird.FromAyah))
+                                    {
+                                        @Localizer["Ayah"] @wird.FromAyah
+                                    }
+                                </span>
+                                @if (wird.FromJuz.HasValue || wird.FromPage.HasValue)
+                                {
+                                    <span class="range-detail">
+                                        @if (wird.FromJuz.HasValue)
+                                        {
+                                            @Localizer["Juz"] @wird.FromJuz
+                                        }
+                                        @if (wird.FromJuz.HasValue && wird.FromPage.HasValue)
+                                        {
+                                            <text> · </text>
+                                        }
+                                        @if (wird.FromPage.HasValue)
+                                        {
+                                            @Localizer["Page"] @wird.FromPage
+                                        }
+                                    </span>
+                                }
                             </div>
-                            <div class="range-arrow">
+                            <div class="range-divider">
                                 <i class='bx bx-right-arrow-alt'></i>
                             </div>
-                            <div class="range-section">
-                                <label>@Localizer["To"]:</label>
-                                <p>
-                                    <strong>@Localizer["Surah"]:</strong> @Formatting.GetLocalizedSurahName(wird.ToSurah ??
-                                                                Surah.NONE)<br />
-                                    <strong>@Localizer["Ayah"]:</strong> @wird.ToAyah<br />
-                                    <strong>@Localizer["Juz"]:</strong> @wird.ToJuz, <strong>@Localizer["Page"]:</strong>
-                                    @wird.ToPage
-                                </p>
+                            <div class="range-item">
+                                <span class="range-label">@Localizer["To"]</span>
+                                <span class="range-value">
+                                    @if (wird.ToSurah.HasValue && wird.ToSurah != Surah.NONE)
+                                    {
+                                        @Formatting.GetLocalizedSurahName(wird.ToSurah.Value)
+                                        if (wird.ToAyah.HasValue)
+                                        {
+                                            <text> · </text>
+                                        }
+                                    }
+                                    @if (wird.ToAyah.HasValue)
+                                    {
+                                        @Localizer["Ayah"] @wird.ToAyah
+                                    }
+                                </span>
+                                @if (wird.ToJuz.HasValue || wird.ToPage.HasValue)
+                                {
+                                    <span class="range-detail">
+                                        @if (wird.ToJuz.HasValue)
+                                        {
+                                            @Localizer["Juz"] @wird.ToJuz
+                                        }
+                                        @if (wird.ToJuz.HasValue && wird.ToPage.HasValue)
+                                        {
+                                            <text> · </text>
+                                        }
+                                        @if (wird.ToPage.HasValue)
+                                        {
+                                            @Localizer["Page"] @wird.ToPage
+                                        }
+                                    </span>
+                                }
                             </div>
                         </div>
+                    }
 
-                        @if (!string.IsNullOrEmpty(wird.Note))
-                        {
-                            <div class="wird-note">
-                                <i class='bx bx-note'></i>
-                                <p>@Localizer["Note"]: @wird.Note</p>
-                            </div>
-                        }
-
-                        <div class="wird-footer">
-                            <div class="wird-date">
-                                <i class='bx bx-calendar'></i>
-                                @Localizer["AssignedDate"]: @wird.AssignedDate.ToString("MMM dd, yyyy")
-                            </div>
-                            <div class="wird-assignment-status">
-                                <i class='bx bx-info-circle'></i>
-                                @Localizer["Status"]: @Localizer[wird.Status.ToString()]
-                            </div>
+                    @if (!string.IsNullOrEmpty(wird.Note))
+                    {
+                        <div class="wird-note">
+                            <i class='bx bx-note'></i>
+                            <p>@wird.Note</p>
                         </div>
-                    </div>
+                    }
                 </div>
             }
         }
@@ -201,7 +268,7 @@
                 @if (Model.HasPreviousPage)
                 {
                     <a class="pagination-btn prev-btn"
-                           href="@Url.Action("Index", "Wird", new { area = "Student", status = currentStatus, type = currentType, page = Model.PageNumber - 1, pageSize })">
+                       href="@Url.Action("Index", "Wird", new { area = "Student", status = currentStatus, type = currentType, page = Model.PageNumber - 1, pageSize })">
                         <i class='bx bx-chevron-left'></i>
                         @Localizer["Previous"]
                     </a>
@@ -236,7 +303,7 @@
                 @if (Model.HasNextPage)
                 {
                     <a class="pagination-btn next-btn"
-                           href="@Url.Action("Index", "Wird", new { area = "Student", status = currentStatus, type = currentType, page = Model.PageNumber + 1, pageSize })">
+                       href="@Url.Action("Index", "Wird", new { area = "Student", status = currentStatus, type = currentType, page = Model.PageNumber + 1, pageSize })">
                         @Localizer["Next"]
                         <i class='bx bx-chevron-right'></i>
                     </a>

@@ -36,4 +36,13 @@
   <data name="veryGood" xml:space="preserve"><value>جيد جداً</value></data>
   <data name="excellent" xml:space="preserve"><value>ممتاز</value></data>
   <data name="PageTitle" xml:space="preserve"><value>الأوراد اليومية</value></data>
+  <data name="UnitPages" xml:space="preserve"><value>صفحات</value></data>
+  <data name="UnitAyahs" xml:space="preserve"><value>آيات</value></data>
+  <data name="UnitJuz" xml:space="preserve"><value>أجزاء</value></data>
+  <data name="NotSet" xml:space="preserve"><value>غير محدد</value></data>
+  <data name="Poor" xml:space="preserve"><value>ضعيف</value></data>
+  <data name="Fair" xml:space="preserve"><value>مقبول</value></data>
+  <data name="Good" xml:space="preserve"><value>جيد</value></data>
+  <data name="VeryGood" xml:space="preserve"><value>جيد جداً</value></data>
+  <data name="Excellent" xml:space="preserve"><value>ممتاز</value></data>
 </root>

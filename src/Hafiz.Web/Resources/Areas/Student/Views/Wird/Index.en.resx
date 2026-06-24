@@ -36,4 +36,13 @@
   <data name="veryGood" xml:space="preserve"><value>Very Good</value></data>
   <data name="excellent" xml:space="preserve"><value>Excellent</value></data>
   <data name="PageTitle" xml:space="preserve"><value>Daily Wirds</value></data>
+  <data name="UnitPages" xml:space="preserve"><value>Pages</value></data>
+  <data name="UnitAyahs" xml:space="preserve"><value>Ayahs</value></data>
+  <data name="UnitJuz" xml:space="preserve"><value>Juz</value></data>
+  <data name="NotSet" xml:space="preserve"><value>Not Set</value></data>
+  <data name="Poor" xml:space="preserve"><value>Poor</value></data>
+  <data name="Fair" xml:space="preserve"><value>Fair</value></data>
+  <data name="Good" xml:space="preserve"><value>Good</value></data>
+  <data name="VeryGood" xml:space="preserve"><value>Very Good</value></data>
+  <data name="Excellent" xml:space="preserve"><value>Excellent</value></data>
 </root>
