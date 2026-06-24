@@ -1,5 +1,6 @@
 @using Hafiz.Models
 @using Hafiz.Models.enums
+@using Hafiz.Common.Helper
 @model IEnumerable<Student>
 
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
@@ -105,11 +106,14 @@
                             + (secondName.Length > 0 ? secondName[0].ToString() : "")).ToUpper();
             var genderClass = student.sex == Sex.female ? "female" : "male";
             var tajwidClass = student.TajwidLevel.ToString().ToLower();
-            var juzPercent = Math.Min(100, (int)((student.MemorizedJuz / 30.0) * 100));
+            var totalMemPages = WirdPageCalculator.TotalMemorizedPages(student);
+            var (memJuzDisplay, memPagesRemainder) = WirdPageCalculator.SplitJuzAndPages(totalMemPages);
+            var juzPercent = Math.Min(100, (int)((double)totalMemPages / WirdPageCalculator.TotalQuranPages * 100));
+            var isHafizCard = WirdPageCalculator.IsHafiz(student);
             var searchKey = studentFullName.ToLower();
 
             <div class="student-card" data-name="@searchKey" data-level="@student.TajwidLevel"
-                 data-juz="@student.MemorizedJuz">
+                 data-juz="@memJuzDisplay">
 
                 <div class="student-card-stripe stripe-@genderClass"></div>
 
@@ -125,7 +129,13 @@
                         }
                     </div>
                     <div class="student-identity">
-                        <h3 class="student-name" title="@studentFullName">@studentFullName</h3>
+                        <h3 class="student-name" title="@studentFullName">
+                            @studentFullName
+                            @if (isHafizCard)
+                            {
+                                <span class="hafiz-badge"><i class='bx bxs-award'></i>@Localizer["Hafiz"]</span>
+                            }
+                        </h3>
                         <div class="student-tags">
                             <span class="chip chip-age">
                                 <i class='bx bx-cake'></i>@age @Localizer["Years"]
@@ -145,9 +155,15 @@
                         <span class="memorization-label">
                             <i class='bx bx-book-bookmark'></i>@Localizer["JuzMemorized"]
                         </span>
-                        <span class="memorization-value">@student.MemorizedJuz / 30</span>
+                        <span class="memorization-value">
+                            @memJuzDisplay / 30
+                            @if (memPagesRemainder > 0)
+                            {
+                                <small>(+ @memPagesRemainder.ToString("0.##") @Localizer["UnitPages"])</small>
+                            }
+                        </span>
                     </div>
-                    <div class="memorization-bar" role="progressbar" aria-valuenow="@student.MemorizedJuz" aria-valuemin="0"
+                    <div class="memorization-bar" role="progressbar" aria-valuenow="@memJuzDisplay" aria-valuemin="0"
                          aria-valuemax="30">
                         <div class="memorization-fill" style="width: @juzPercent%"></div>
                     </div>
@@ -207,7 +223,9 @@
                                      + (rSecondName.Length > 0 ? rSecondName[0].ToString() : "")).ToUpper();
                     var rGenderClass = student.sex == Sex.female ? "female" : "male";
                     var rTajwidClass = student.TajwidLevel.ToString().ToLower();
-                    var rJuzPercent = Math.Min(100, (int)((student.MemorizedJuz / 30.0) * 100));
+                    var rTotalMemPages = WirdPageCalculator.TotalMemorizedPages(student);
+                    var (rMemJuzDisplay, rMemPagesRemainder) = WirdPageCalculator.SplitJuzAndPages(rTotalMemPages);
+                    var rJuzPercent = Math.Min(100, (int)((double)rTotalMemPages / WirdPageCalculator.TotalQuranPages * 100));
                     var rSearchKey = rFullName.ToLower();
 
                     <tr class="student-row"
@@ -236,9 +254,13 @@
                         </td>
                         <td class="col-juz">
                             <div class="row-juz">
-                                <span class="row-juz-value">@student.MemorizedJuz<span class="row-juz-total">/30</span></span>
+                                <span class="row-juz-value">@rMemJuzDisplay<span class="row-juz-total">/30</span></span>
+                                @if (rMemPagesRemainder > 0)
+                                {
+                                    <small class="row-juz-extra">+ @rMemPagesRemainder.ToString("0.##") @Localizer["UnitPages"]</small>
+                                }
                                 <div class="row-juz-bar" role="progressbar"
-                                     aria-valuenow="@student.MemorizedJuz" aria-valuemin="0" aria-valuemax="30">
+                                     aria-valuenow="@rMemJuzDisplay" aria-valuemin="0" aria-valuemax="30">
                                     <div class="row-juz-fill" style="width: @rJuzPercent%"></div>
                                 </div>
                             </div>

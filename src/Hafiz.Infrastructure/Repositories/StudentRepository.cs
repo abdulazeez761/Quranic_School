@@ -144,5 +144,23 @@ namespace Hafiz.Repositories
                 .Where(s => s.StudentInfo.InstituteId == instituteId)
                 .ToListAsync();
         }
+
+        public async Task ApplyProgressDeltaAsync(
+            Guid studentId,
+            decimal memorizedPagesDelta,
+            decimal reviewedPagesDelta
+        )
+        {
+            if (memorizedPagesDelta == 0 && reviewedPagesDelta == 0)
+                return;
+
+            await _context
+                .Students.Where(s => s.UserId == studentId)
+                .ExecuteUpdateAsync(setters =>
+                    setters
+                        .SetProperty(s => s.MemorizedPages, s => s.MemorizedPages + memorizedPagesDelta)
+                        .SetProperty(s => s.ReviewedPages, s => s.ReviewedPages + reviewedPagesDelta)
+                );
+        }
     }
 }

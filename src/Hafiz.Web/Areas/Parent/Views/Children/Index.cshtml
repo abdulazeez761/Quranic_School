@@ -35,6 +35,9 @@
                 int memJuz = stats?.MemorizedJuz ?? child.MemorizedJuz;
                 int compWirds = stats?.CompletedWirds ?? 0;
                 int totalWirds = stats?.TotalWirds ?? 0;
+                decimal reviewedPagesStat = stats?.ReviewedPages ?? 0m;
+                int reviewedJuzStat = stats?.ReviewedJuz ?? 0;
+                bool childIsHafiz = stats?.IsHafiz ?? false;
 
                 <div class="child-item @(hasMeeting ? "has-meeting" : "")">
                     @if (hasMeeting)
@@ -47,7 +50,15 @@
                         <i class='bx bx-user'></i>
                     </div>
                     <div class="child-item-info">
-                        <h3 class="child-item-name">@child.StudentInfo.FirstName @child.StudentInfo.SecondName</h3>
+                        <h3 class="child-item-name">
+                            @child.StudentInfo.FirstName @child.StudentInfo.SecondName
+                            @if (childIsHafiz)
+                            {
+                                <span class="hafiz-badge" title="@Localizer["HafizTitle"]">
+                                    <i class='bx bxs-award'></i> @Localizer["Hafiz"]
+                                </span>
+                            }
+                        </h3>
                         <div class="child-item-meta">
                             <span class="meta-item">
                                 <i class='bx bx-book'></i>
@@ -86,6 +97,15 @@
                                 </div>
                                 <div class="mini-progress-bar">
                                     <div class="mini-progress-fill fill-blue" style="width: @(totalWirds > 0 ? Math.Round((double)compWirds / totalWirds * 100) : 0)%"></div>
+                                </div>
+                            </div>
+                            <div class="progress-stat">
+                                <div class="progress-stat-header">
+                                    <span class="progress-stat-label">@Localizer["ReviewedJuz"]</span>
+                                    <span class="progress-stat-value">@reviewedJuzStat (@reviewedPagesStat.ToString("0.##") @Localizer["UnitPages"])</span>
+                                </div>
+                                <div class="mini-progress-bar">
+                                    <div class="mini-progress-fill fill-purple" style="width: @(Math.Min(100, Math.Round((double)reviewedJuzStat / 30 * 100)))%"></div>
                                 </div>
                             </div>
                         </div>

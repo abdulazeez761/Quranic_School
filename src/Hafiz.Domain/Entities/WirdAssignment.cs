@@ -24,6 +24,12 @@ namespace Hafiz.Models
 
         public WirdUnit? AmountUnit { get; set; }
 
+        // Page equivalent for an Ayahs-unit wird (e.g. 0.25, 0.5, 1, 2).
+        // Required when AmountUnit = Ayahs so we can count progress in pages.
+        [Column(TypeName = "decimal(5,2)")]
+        [Range(0.01, 999, ErrorMessage = "EquivalentPages must be greater than 0.")]
+        public decimal? EquivalentPages { get; set; }
+
         [Range(1, 30, ErrorMessage = "FromJuz must be between 1 and 30.")]
         public int? FromJuz { get; set; }
 

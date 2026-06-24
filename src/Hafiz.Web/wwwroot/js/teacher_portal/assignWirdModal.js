@@ -29,3 +29,21 @@ document.addEventListener('keydown', function (e) {
     closeWirdModal();
   }
 });
+
+// Toggle the EquivalentPages selector based on AmountUnit (1 = Ayahs)
+(function () {
+  const unitSelect = document.getElementById('AmountUnit');
+  const equivalentGroup = document.getElementById('equivalentPagesGroup');
+  const equivalentSelect = document.getElementById('EquivalentPages');
+  if (!unitSelect || !equivalentGroup || !equivalentSelect) return;
+
+  function syncEquivalentVisibility() {
+    const isAyahs = unitSelect.value === '1';
+    equivalentGroup.style.display = isAyahs ? '' : 'none';
+    equivalentSelect.required = isAyahs;
+    if (!isAyahs) equivalentSelect.value = '';
+  }
+
+  unitSelect.addEventListener('change', syncEquivalentVisibility);
+  syncEquivalentVisibility();
+})();

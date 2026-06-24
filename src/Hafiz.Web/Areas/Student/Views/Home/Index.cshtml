@@ -24,7 +24,17 @@
             </div>
             <div class="card-content">
                 <h3>@Localizer["MemorizedJuz"]</h3>
-                <p class="card-value">@Model.MemorizedJuz / 30</p>
+                @{
+                    var homeTotalPages = WirdPageCalculator.TotalMemorizedPages(Model);
+                    var (homeJuz, homePages) = WirdPageCalculator.SplitJuzAndPages(homeTotalPages);
+                }
+                <p class="card-value">
+                    @homeJuz / 30
+                    @if (homePages > 0)
+                    {
+                        <small>(+ @homePages.ToString("0.##") @Localizer["UnitPages"])</small>
+                    }
+                </p>
             </div>
         </div>
 

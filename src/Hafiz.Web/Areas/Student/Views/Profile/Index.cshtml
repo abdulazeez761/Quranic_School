@@ -1,3 +1,4 @@
+@using Hafiz.Common.Helper
 @model Hafiz.Models.Student
 
 @{
@@ -59,7 +60,9 @@
                     </div>
                     <div class="progress-info">
                         @{
-                            var percent = (Model.MemorizedJuz / 30.0) * 100.0;
+                            var profileTotalPages = WirdPageCalculator.TotalMemorizedPages(Model);
+                            var (profileJuz, profilePages) = WirdPageCalculator.SplitJuzAndPages(profileTotalPages);
+                            var percent = Math.Min(100, (double)profileTotalPages / WirdPageCalculator.TotalQuranPages * 100.0);
                         }
                         <label>@Localizer["MemorizedJuz"]</label>
                         <div class="progress-bar">
@@ -67,7 +70,13 @@
                                  style="width: @(percent.ToString("F2", System.Globalization.CultureInfo.InvariantCulture))%">
                             </div>
                         </div>
-                        <p class="progress-value">@Model.MemorizedJuz @Localizer["OutOf30Juz"]</p>
+                        <p class="progress-value">
+                            @profileJuz @Localizer["OutOf30Juz"]
+                            @if (profilePages > 0)
+                            {
+                                <small>(+ @profilePages.ToString("0.##") @Localizer["UnitPages"])</small>
+                            }
+                        </p>
                     </div>
                 </div>
 

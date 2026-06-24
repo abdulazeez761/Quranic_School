@@ -330,3 +330,22 @@
     min-width: auto;
   }
 }
+
+/* Hafiz badge */
+.hafiz-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-inline-start: 0.5rem;
+  padding: 0.18rem 0.6rem;
+  background: linear-gradient(135deg, #f6c453, #e0a800);
+  color: #4a3500;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.mini-progress-fill.fill-purple {
+  background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+}

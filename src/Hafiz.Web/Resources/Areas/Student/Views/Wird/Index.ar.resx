@@ -45,4 +45,11 @@
   <data name="Good" xml:space="preserve"><value>جيد</value></data>
   <data name="VeryGood" xml:space="preserve"><value>جيد جداً</value></data>
   <data name="Excellent" xml:space="preserve"><value>ممتاز</value></data>
+  <data name="MemorizedPages" xml:space="preserve"><value>الصفحات المحفوظة</value></data>
+  <data name="ReviewedPages" xml:space="preserve"><value>الصفحات المراجَعة</value></data>
+  <data name="ReviewedJuz" xml:space="preserve"><value>الأجزاء المراجَعة</value></data>
+  <data name="CompletedJuzReviews" xml:space="preserve"><value>أجزاء مراجَعة كاملة</value></data>
+  <data name="JuzShort" xml:space="preserve"><value>جزء</value></data>
+  <data name="Hafiz" xml:space="preserve"><value>حافظ</value></data>
+  <data name="HafizTitle" xml:space="preserve"><value>أتم الطالب حفظ القرآن الكريم كاملاً</value></data>
 </root>

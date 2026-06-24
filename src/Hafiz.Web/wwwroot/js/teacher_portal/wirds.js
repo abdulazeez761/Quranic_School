@@ -129,7 +129,9 @@ function fetchWirdAssignmentById(id) {
       // 2.1 تعبئة المقدار والوحدة
       const amountEl = document.getElementById('Amount');
       const amountUnitEl = document.getElementById('AmountUnit');
+      const equivalentEl = document.getElementById('EquivalentPages');
       if (amountEl) amountEl.value = data.amount ?? '';
+      if (equivalentEl) equivalentEl.value = data.equivalentPages ?? '';
       if (amountUnitEl) {
         amountUnitEl.value = data.amountUnit ?? '';
         // Re-apply the min/step rules for the loaded unit (whole vs. fractional).

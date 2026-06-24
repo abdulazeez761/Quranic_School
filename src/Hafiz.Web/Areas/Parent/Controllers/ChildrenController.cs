@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Hafiz.Common.Helper;
 using Hafiz.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -54,12 +55,20 @@ namespace Hafiz.Areas.Parent.Controllers
                 double attRate =
                     totalAtt > 0 ? Math.Round((double)presentAtt / totalAtt * 100, 0) : 0;
 
+                var totalMemorizedPages = WirdPageCalculator.TotalMemorizedPages(child);
+                var (memorizedJuzDisplay, _) = WirdPageCalculator.SplitJuzAndPages(totalMemorizedPages);
+                var (reviewedJuzDisplay, _) = WirdPageCalculator.SplitJuzAndPages(child.ReviewedPages);
+
                 childrenStats[child.UserId] = new
                 {
                     AttendanceRate = attRate,
                     TotalWirds = wirdsList.Count,
                     CompletedWirds = wirdsList.Count(w => w.IsCompleted),
-                    MemorizedJuz = child.MemorizedJuz,
+                    MemorizedJuz = memorizedJuzDisplay,
+                    TotalMemorizedPages = totalMemorizedPages,
+                    ReviewedPages = child.ReviewedPages,
+                    ReviewedJuz = reviewedJuzDisplay,
+                    IsHafiz = WirdPageCalculator.IsHafiz(child),
                     HasActiveMeeting = child.Classes?.Any(c => c.IsMeetingActive) ?? false,
                 };
             }

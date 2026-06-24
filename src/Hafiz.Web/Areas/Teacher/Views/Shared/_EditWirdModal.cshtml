@@ -52,6 +52,23 @@
                     </div>
                 </div>
 
+                <!-- Equivalent pages (only when unit = Ayahs) -->
+                <div class="form-group" id="equivalentPagesGroup" style="display:none;">
+                    <label class="form-label" for="EquivalentPages">@Localizer["EquivalentPages"]</label>
+                    <select class="form-control" id="EquivalentPages" asp-for="EquivalentPages">
+                        <option value="">@Localizer["SelectEquivalentPages"]</option>
+                        <option value="0.25">@Localizer["QuarterPage"]</option>
+                        <option value="0.5">@Localizer["HalfPage"]</option>
+                        <option value="0.75">@Localizer["ThreeQuarterPage"]</option>
+                        <option value="1">@Localizer["OnePage"]</option>
+                        <option value="1.5">@Localizer["OneAndHalfPage"]</option>
+                        <option value="2">@Localizer["TwoPages"]</option>
+                        <option value="3">@Localizer["ThreePages"]</option>
+                    </select>
+                    <small class="form-hint">@Localizer["EquivalentPagesHint"]</small>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="EquivalentPages"></span>
+                </div>
+
                 <!-- From Section -->
                 <div class="section-header">@Localizer["From"]</div>
 

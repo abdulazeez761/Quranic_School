@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Hafiz.Common.Helper;
 using Hafiz.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -73,7 +74,9 @@ namespace Hafiz.Areas.Parent.Controllers
                 totalWirds += wirdsList.Count;
                 completedWirds += wirdsList.Count(w => w.IsCompleted);
 
-                totalMemorizedJuz += child.MemorizedJuz;
+                var childTotalPages = WirdPageCalculator.TotalMemorizedPages(child);
+                var (childJuzDisplay, _) = WirdPageCalculator.SplitJuzAndPages(childTotalPages);
+                totalMemorizedJuz += childJuzDisplay;
 
                 // Collect recent attendance for activity feed
                 foreach (var att in attendanceList.OrderByDescending(a => a.Date).Take(3))

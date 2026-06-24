@@ -21,6 +21,15 @@ namespace Hafiz.Models
         [Range(0, 30, ErrorMessage = "Memorized Juz must be between 0 and 30.")]
         public int MemorizedJuz { get; set; }
 
+        // Pages memorized inside the system AFTER joining (cumulative).
+        // Total memorized pages = MemorizedJuz * 20 + MemorizedPages.
+        [Column(TypeName = "decimal(7,2)")]
+        public decimal MemorizedPages { get; set; }
+
+        // Pages reviewed inside the system (cumulative).
+        [Column(TypeName = "decimal(7,2)")]
+        public decimal ReviewedPages { get; set; }
+
         [Required(ErrorMessage = "Tajwid Level is required.")]
         [Display(Name = "Tajwid Level")]
         public TajwidLevel TajwidLevel { get; set; }

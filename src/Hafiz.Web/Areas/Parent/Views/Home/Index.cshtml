@@ -1,4 +1,5 @@
 @model Hafiz.Models.Parent
+@using Hafiz.Common.Helper
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 @{
@@ -169,8 +170,12 @@ List<Hafiz.Models.Student>();
                                 @(childClass?.Name ?? Localizer["NoClass"].ToString())
                             </p>
                             <div class="child-mini-stats">
+                                @{
+                                    var miniTotalPages = WirdPageCalculator.TotalMemorizedPages(child);
+                                    var (miniJuz, _) = WirdPageCalculator.SplitJuzAndPages(miniTotalPages);
+                                }
                                 <span class="mini-stat" title="@Localizer["MemorizedJuz"]">
-                                    <i class='bx bx-book-open'></i> @child.MemorizedJuz @Localizer["Juz"]
+                                    <i class='bx bx-book-open'></i> @miniJuz @Localizer["Juz"]
                                 </span>
                                 <span class="mini-stat" title="@Localizer["TajwidLevel"]">
                                     <i class='bx bx-star'></i> @Localizer[$"TajwidLevel_{child.TajwidLevel}"]

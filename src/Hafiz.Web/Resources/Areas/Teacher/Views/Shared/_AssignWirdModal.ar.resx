@@ -245,4 +245,14 @@
     <value>أجزاء</value>
     <comment/>
   </data>
+  <data name="EquivalentPages" xml:space="preserve"><value>ما يعادله بالصفحات</value></data>
+  <data name="EquivalentPagesHint" xml:space="preserve"><value>اختر ما يعادل عدد الآيات من الصفحات حتى تُحتسب ضمن تقدّم الطالب.</value></data>
+  <data name="SelectEquivalentPages" xml:space="preserve"><value>اختر المعادل بالصفحات</value></data>
+  <data name="QuarterPage" xml:space="preserve"><value>ربع صفحة</value></data>
+  <data name="HalfPage" xml:space="preserve"><value>نصف صفحة</value></data>
+  <data name="ThreeQuarterPage" xml:space="preserve"><value>ثلاثة أرباع صفحة</value></data>
+  <data name="OnePage" xml:space="preserve"><value>صفحة كاملة</value></data>
+  <data name="OneAndHalfPage" xml:space="preserve"><value>صفحة ونصف</value></data>
+  <data name="TwoPages" xml:space="preserve"><value>صفحتان</value></data>
+  <data name="ThreePages" xml:space="preserve"><value>ثلاث صفحات</value></data>
 </root>

@@ -875,3 +875,89 @@
     gap: var(--space-xs);
   }
 }
+
+/* Hafiz badge */
+.hafiz-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-inline-start: 0.75rem;
+  padding: 0.25rem 0.7rem;
+  background: linear-gradient(135deg, #f6c453, #e0a800);
+  color: #4a3500;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  vertical-align: middle;
+  box-shadow: 0 2px 6px rgba(224, 168, 0, 0.4);
+}
+
+.hafiz-badge i {
+  font-size: 1rem;
+}
+
+/* Progress sub-text under the juz count */
+.progress-card-subtext {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  margin-top: 0.2rem;
+}
+
+/* Memorization & review stats row */
+.progress-stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.progress-stat-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  background: var(--white);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color, #e6e6e6);
+}
+
+.progress-stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: var(--white);
+  background: var(--secondary-green, #2a8c5a);
+  flex-shrink: 0;
+}
+
+.progress-stat-card.stat-reviewed .progress-stat-icon {
+  background: #3b82f6;
+}
+
+.progress-stat-card.stat-reviewed-juz .progress-stat-icon {
+  background: #8b5cf6;
+}
+
+.progress-stat-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #666);
+  margin-bottom: 0.15rem;
+}
+
+.progress-stat-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary, #1a1a1a);
+  line-height: 1;
+}
+
+.progress-stat-sub {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #888);
+  margin-top: 0.25rem;
+}

@@ -674,3 +674,79 @@
     font-size: 0.85rem;
   }
 }
+
+/* Hafiz badge (student wirds page) */
+.hafiz-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-inline-start: 0.65rem;
+  padding: 0.2rem 0.65rem;
+  background: linear-gradient(135deg, #f6c453, #e0a800);
+  color: #4a3500;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+/* Progress summary row above filters */
+.progress-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.progress-summary-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--card-bg, #fff);
+  padding: 1rem 1.25rem;
+  border-radius: 14px;
+  border: 1px solid var(--border-color, #e6e6e6);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.progress-summary-card i {
+  font-size: 2rem;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: rgba(46, 139, 87, 0.12);
+  color: var(--accent-green, #2e8b57);
+  flex-shrink: 0;
+}
+
+.progress-summary-card.progress-reviewed i {
+  background: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+}
+
+.progress-summary-card.progress-reviewed-juz i {
+  background: rgba(139, 92, 246, 0.12);
+  color: #8b5cf6;
+}
+
+.progress-summary-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #666);
+  margin-bottom: 0.15rem;
+}
+
+.progress-summary-value {
+  font-size: 1.55rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-primary, #1a1a1a);
+}
+
+.progress-summary-sub {
+  font-size: 0.78rem;
+  color: var(--text-secondary, #888);
+  margin-top: 0.3rem;
+}

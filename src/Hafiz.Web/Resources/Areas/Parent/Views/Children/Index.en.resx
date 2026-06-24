@@ -45,4 +45,8 @@
   <data name="NoChildrenDescription" xml:space="preserve">
     <value>No children have been registered in the system yet</value>
   </data>
+  <data name="ReviewedJuz" xml:space="preserve"><value>Reviewed Juz</value></data>
+  <data name="UnitPages" xml:space="preserve"><value>pages</value></data>
+  <data name="Hafiz" xml:space="preserve"><value>Hafiz</value></data>
+  <data name="HafizTitle" xml:space="preserve"><value>Student has completed memorizing the entire Quran</value></data>
 </root>

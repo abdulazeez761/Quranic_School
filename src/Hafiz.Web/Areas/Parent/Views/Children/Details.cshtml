@@ -1,5 +1,6 @@
 @model Hafiz.Models.Student
 @using System.Security.Claims
+@using Hafiz.Common.Helper
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 @{
@@ -14,6 +15,12 @@
     var absentCount = (int)(ViewBag.AbsentCount ?? 0);
     var excusedCount = (int)(ViewBag.ExcusedCount ?? 0);
     var totalAtt = attendance.Count;
+
+    var totalMemorizedPages = WirdPageCalculator.TotalMemorizedPages(Model);
+    var (memorizedJuzDisplay, memorizedPagesRemainder) = WirdPageCalculator.SplitJuzAndPages(totalMemorizedPages);
+    var reviewedPages = Model.ReviewedPages;
+    var (reviewedJuzDisplay, reviewedPagesRemainder) = WirdPageCalculator.SplitJuzAndPages(reviewedPages);
+    var isHafiz = WirdPageCalculator.IsHafiz(Model);
 }
 
 <div class="child-details-container">
@@ -23,7 +30,15 @@
             <i class='bx bx-user'></i>
         </div>
         <div class="child-header-info">
-            <h1 class="child-name">@Model.StudentInfo.FirstName @Model.StudentInfo.SecondName</h1>
+            <h1 class="child-name">
+                @Model.StudentInfo.FirstName @Model.StudentInfo.SecondName
+                @if (isHafiz)
+                {
+                    <span class="hafiz-badge" title="@Localizer["HafizTitle"]">
+                        <i class='bx bxs-award'></i> @Localizer["Hafiz"]
+                    </span>
+                }
+            </h1>
             <p class="child-username">@@Model.StudentInfo.Username</p>
             <p class="child-class">
                 <i class='bx bx-book'></i>
@@ -93,7 +108,7 @@
                         <i class='bx bx-book-open'></i>
                     </div>
                     <div class="card-content">
-                        <h3>@Model.MemorizedJuz<span class="card-total">/30</span></h3>
+                        <h3>@memorizedJuzDisplay<span class="card-total">/30</span></h3>
                         <p>@Localizer["MemorizedJuz"]</p>
                     </div>
                 </div>
@@ -105,6 +120,55 @@
                     <div class="card-content">
                         <h3>@Localizer[$"TajwidLevel_{Model.TajwidLevel}"]</h3>
                         <p>@Localizer["TajwidLevel"]</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Memorization & Review Progress -->
+            <div class="overview-cards">
+                <div class="overview-card">
+                    <div class="card-icon" style="background: rgba(46,139,87,0.15); color: #2e8b57;">
+                        <i class='bx bx-bookmark-heart'></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>@totalMemorizedPages.ToString("0.##")</h3>
+                        <p>
+                            @Localizer["MemorizedPages"]
+                            <small style="display:block; opacity:0.75;">
+                                @memorizedJuzDisplay @Localizer["JuzShort"]
+                                @if (memorizedPagesRemainder > 0)
+                                {
+                                    <text>+ @memorizedPagesRemainder.ToString("0.##") @Localizer["UnitPages"]</text>
+                                }
+                            </small>
+                        </p>
+                    </div>
+                </div>
+                <div class="overview-card">
+                    <div class="card-icon" style="background: rgba(59,130,246,0.15); color: #3b82f6;">
+                        <i class='bx bx-revision'></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>@reviewedPages.ToString("0.##")</h3>
+                        <p>
+                            @Localizer["ReviewedPages"]
+                            <small style="display:block; opacity:0.75;">
+                                @reviewedJuzDisplay @Localizer["JuzShort"]
+                                @if (reviewedPagesRemainder > 0)
+                                {
+                                    <text>+ @reviewedPagesRemainder.ToString("0.##") @Localizer["UnitPages"]</text>
+                                }
+                            </small>
+                        </p>
+                    </div>
+                </div>
+                <div class="overview-card">
+                    <div class="card-icon" style="background: rgba(139,92,246,0.15); color: #8b5cf6;">
+                        <i class='bx bx-collection'></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>@reviewedJuzDisplay</h3>
+                        <p>@Localizer["ReviewedJuz"]</p>
                     </div>
                 </div>
             </div>
@@ -162,19 +226,34 @@
                 <div class="section-content">
                     <div class="memorization-progress">
                         <div class="progress-circle-container">
-                            <div class="progress-circle" style="--progress: @(Math.Round((double)Model.MemorizedJuz / 30 * 100))">
-                                <span class="progress-circle-value">@Model.MemorizedJuz/30</span>
+                            <div class="progress-circle" style="--progress: @(Math.Min(100, Math.Round((double)totalMemorizedPages / WirdPageCalculator.TotalQuranPages * 100)))">
+                                <span class="progress-circle-value">@memorizedJuzDisplay/30</span>
                                 <span class="progress-circle-label">@Localizer["Juz"]</span>
                             </div>
                         </div>
                         <div class="progress-details">
                             <div class="progress-detail-item">
                                 <i class='bx bx-check-circle'></i>
-                                <span>@Model.MemorizedJuz @Localizer["JuzMemorized"]</span>
+                                <span>@memorizedJuzDisplay @Localizer["JuzMemorized"]</span>
                             </div>
+                            @if (memorizedPagesRemainder > 0)
+                            {
+                                <div class="progress-detail-item">
+                                    <i class='bx bx-plus-circle'></i>
+                                    <span>+ @memorizedPagesRemainder.ToString("0.##") @Localizer["UnitPages"]</span>
+                                </div>
+                            }
                             <div class="progress-detail-item">
                                 <i class='bx bx-loader-circle'></i>
-                                <span>@(30 - Model.MemorizedJuz) @Localizer["JuzRemaining"]</span>
+                                <span>@(Math.Max(0, 30 - memorizedJuzDisplay)) @Localizer["JuzRemaining"]</span>
+                            </div>
+                            <div class="progress-detail-item">
+                                <i class='bx bx-revision'></i>
+                                <span>@reviewedPages.ToString("0.##") @Localizer["PagesReviewed"]</span>
+                            </div>
+                            <div class="progress-detail-item">
+                                <i class='bx bx-collection'></i>
+                                <span>@reviewedJuzDisplay @Localizer["JuzReviewed"]</span>
                             </div>
                             <div class="progress-detail-item">
                                 <i class='bx bx-star'></i>

@@ -56,6 +56,7 @@ namespace Hafiz.Areas.Teacher.Controllers
                     assignment.Type,
                     assignment.Amount,
                     assignment.AmountUnit,
+                    assignment.EquivalentPages,
                     assignment.FromJuz,
                     assignment.FromPage,
                     assignment.FromSurah,

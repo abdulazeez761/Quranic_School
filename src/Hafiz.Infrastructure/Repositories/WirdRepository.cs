@@ -34,6 +34,7 @@ namespace Hafiz.Repositories
                         .SetProperty(w => w.Type, wird.Type)
                         .SetProperty(w => w.Amount, wird.Amount)
                         .SetProperty(w => w.AmountUnit, wird.AmountUnit)
+                        .SetProperty(w => w.EquivalentPages, wird.EquivalentPages)
                         .SetProperty(w => w.FromJuz, wird.FromJuz)
                         .SetProperty(w => w.FromPage, wird.FromPage)
                         .SetProperty(w => w.FromSurah, wird.FromSurah)

@@ -245,4 +245,14 @@
     <value>Juz</value>
     <comment/>
   </data>
+  <data name="EquivalentPages" xml:space="preserve"><value>Page Equivalent</value></data>
+  <data name="EquivalentPagesHint" xml:space="preserve"><value>Pick how many pages this ayah amount equals so progress can be counted.</value></data>
+  <data name="SelectEquivalentPages" xml:space="preserve"><value>Select page equivalent</value></data>
+  <data name="QuarterPage" xml:space="preserve"><value>Quarter page</value></data>
+  <data name="HalfPage" xml:space="preserve"><value>Half page</value></data>
+  <data name="ThreeQuarterPage" xml:space="preserve"><value>Three quarter page</value></data>
+  <data name="OnePage" xml:space="preserve"><value>One page</value></data>
+  <data name="OneAndHalfPage" xml:space="preserve"><value>One and a half page</value></data>
+  <data name="TwoPages" xml:space="preserve"><value>Two pages</value></data>
+  <data name="ThreePages" xml:space="preserve"><value>Three pages</value></data>
 </root>

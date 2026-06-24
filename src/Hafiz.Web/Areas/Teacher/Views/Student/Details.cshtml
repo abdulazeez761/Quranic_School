@@ -23,7 +23,13 @@
 </a>
 
 @{
-    var memorizationPercent = (int)Math.Round((Model.Student.MemorizedJuz / 30.0) * 100);
+    var totalMemorizedPages = WirdPageCalculator.TotalMemorizedPages(Model.Student);
+    var (memorizedJuzDisplay, memorizedPagesRemainder) = WirdPageCalculator.SplitJuzAndPages(totalMemorizedPages);
+    var memorizationPercent = (int)Math.Round((double)totalMemorizedPages / WirdPageCalculator.TotalQuranPages * 100);
+    if (memorizationPercent > 100) memorizationPercent = 100;
+    var isHafiz = WirdPageCalculator.IsHafiz(Model.Student);
+    var reviewedPages = Model.Student.ReviewedPages;
+    var (reviewedJuzDisplay, reviewedPagesRemainder) = WirdPageCalculator.SplitJuzAndPages(reviewedPages);
 }
 
 <!-- Student Details Header -->
@@ -34,7 +40,15 @@
             @(Model.Student.StudentInfo.FirstName.Length > 0 ? Model.Student.StudentInfo.FirstName[0] : "S")
         </div>
         <div class="student-basic-info">
-            <h1>@studentFullName</h1>
+            <h1>
+                @studentFullName
+                @if (isHafiz)
+                {
+                    <span class="hafiz-badge" title="@Localizer["HafizTitle"]">
+                        <i class="bi bi-award-fill"></i> @Localizer["Hafiz"]
+                    </span>
+                }
+            </h1>
             <div class="student-meta-chips">
                 <span class="meta-chip"><i class="bi bi-calendar"></i> @age @Localizer["Years"]</span>
                 @if (!string.IsNullOrEmpty(Model.Student.StudentInfo.PhoneNumber))
@@ -53,13 +67,59 @@
                 @Localizer["MemorizedJuz"]
             </div>
             <div class="progress-card-value">
-                <span class="progress-current">@Model.Student.MemorizedJuz</span>
+                <span class="progress-current">@memorizedJuzDisplay</span>
                 <span class="progress-total">/ 30</span>
             </div>
+            @if (memorizedPagesRemainder > 0)
+            {
+                <div class="progress-card-subtext">
+                    + @memorizedPagesRemainder.ToString("0.##") @Localizer["UnitPages"]
+                </div>
+            }
             <div class="progress-card-bar">
                 <div class="progress-card-fill" style="width: @memorizationPercent%"></div>
             </div>
             <div class="progress-card-percent">@memorizationPercent%</div>
+        </div>
+    </div>
+</div>
+
+<!-- Memorization & Review Stats -->
+<div class="progress-stats-row">
+    <div class="progress-stat-card stat-memorized">
+        <div class="progress-stat-icon"><i class="bi bi-bookmark-check-fill"></i></div>
+        <div class="progress-stat-body">
+            <div class="progress-stat-label">@Localizer["MemorizedPages"]</div>
+            <div class="progress-stat-value">@totalMemorizedPages.ToString("0.##")</div>
+            <div class="progress-stat-sub">
+                @memorizedJuzDisplay @Localizer["JuzShort"]
+                @if (memorizedPagesRemainder > 0)
+                {
+                    <text>+ @memorizedPagesRemainder.ToString("0.##") @Localizer["UnitPages"]</text>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="progress-stat-card stat-reviewed">
+        <div class="progress-stat-icon"><i class="bi bi-arrow-repeat"></i></div>
+        <div class="progress-stat-body">
+            <div class="progress-stat-label">@Localizer["ReviewedPages"]</div>
+            <div class="progress-stat-value">@reviewedPages.ToString("0.##")</div>
+            <div class="progress-stat-sub">
+                @reviewedJuzDisplay @Localizer["JuzShort"]
+                @if (reviewedPagesRemainder > 0)
+                {
+                    <text>+ @reviewedPagesRemainder.ToString("0.##") @Localizer["UnitPages"]</text>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="progress-stat-card stat-reviewed-juz">
+        <div class="progress-stat-icon"><i class="bi bi-collection-fill"></i></div>
+        <div class="progress-stat-body">
+            <div class="progress-stat-label">@Localizer["ReviewedJuz"]</div>
+            <div class="progress-stat-value">@reviewedJuzDisplay</div>
+            <div class="progress-stat-sub">@Localizer["CompletedJuzReviews"]</div>
         </div>
     </div>
 </div>
@@ -74,7 +134,13 @@
         </h3>
         <div class="info-row">
             <span class="info-label">@Localizer["MemorizedJuz"]:</span>
-            <span class="info-value">@Model.Student.MemorizedJuz / 30</span>
+            <span class="info-value">
+                @memorizedJuzDisplay / 30
+                @if (memorizedPagesRemainder > 0)
+                {
+                    <small>(+ @memorizedPagesRemainder.ToString("0.##") @Localizer["UnitPages"])</small>
+                }
+            </span>
         </div>
         <div class="info-row">
             <span class="info-label">@Localizer["TajwidLevel"]:</span>

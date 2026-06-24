@@ -1,5 +1,6 @@
 @using Hafiz.Common.Helper
 @using Hafiz.Models
+@using StudentModel = Hafiz.Models.Student
 @model Hafiz.DTOs.Wird.PaginatedWirdsResponse
 
 @{
@@ -15,15 +16,81 @@
     var currentStatus = ViewBag.Status as string;
     var currentType = ViewBag.Type as string;
     int pageSize = ViewBag.PageSize is int size ? size : 10;
+    var student = ViewBag.Student as StudentModel;
+    decimal totalMemorizedPages = 0m;
+    int memorizedJuzDisplay = 0;
+    decimal memorizedPagesRemainder = 0m;
+    decimal reviewedPages = 0m;
+    int reviewedJuzDisplay = 0;
+    decimal reviewedPagesRemainder = 0m;
+    bool isHafiz = false;
+    if (student != null)
+    {
+        totalMemorizedPages = WirdPageCalculator.TotalMemorizedPages(student);
+        (memorizedJuzDisplay, memorizedPagesRemainder) = WirdPageCalculator.SplitJuzAndPages(totalMemorizedPages);
+        reviewedPages = student.ReviewedPages;
+        (reviewedJuzDisplay, reviewedPagesRemainder) = WirdPageCalculator.SplitJuzAndPages(reviewedPages);
+        isHafiz = WirdPageCalculator.IsHafiz(student);
+    }
 }
 
 <div class="wird-container" dir="@(isArabic ? "rtl" : "ltr")">
     <div class="wird-header">
         <div class="header-left">
             <i class='bx bx-book-open header-icon'></i>
-            <h1 class="wird-title">@Localizer["MyWirds"]</h1>
+            <h1 class="wird-title">
+                @Localizer["MyWirds"]
+                @if (isHafiz)
+                {
+                    <span class="hafiz-badge" title="@Localizer["HafizTitle"]">
+                        <i class='bx bxs-award'></i> @Localizer["Hafiz"]
+                    </span>
+                }
+            </h1>
         </div>
     </div>
+
+    @if (student != null)
+    {
+        <div class="progress-summary">
+            <div class="progress-summary-card progress-memorized">
+                <i class='bx bx-bookmark-heart'></i>
+                <div class="progress-summary-body">
+                    <div class="progress-summary-label">@Localizer["MemorizedPages"]</div>
+                    <div class="progress-summary-value">@totalMemorizedPages.ToString("0.##")</div>
+                    <div class="progress-summary-sub">
+                        @memorizedJuzDisplay @Localizer["JuzShort"]
+                        @if (memorizedPagesRemainder > 0)
+                        {
+                            <text>+ @memorizedPagesRemainder.ToString("0.##") @Localizer["UnitPages"]</text>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="progress-summary-card progress-reviewed">
+                <i class='bx bx-revision'></i>
+                <div class="progress-summary-body">
+                    <div class="progress-summary-label">@Localizer["ReviewedPages"]</div>
+                    <div class="progress-summary-value">@reviewedPages.ToString("0.##")</div>
+                    <div class="progress-summary-sub">
+                        @reviewedJuzDisplay @Localizer["JuzShort"]
+                        @if (reviewedPagesRemainder > 0)
+                        {
+                            <text>+ @reviewedPagesRemainder.ToString("0.##") @Localizer["UnitPages"]</text>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="progress-summary-card progress-reviewed-juz">
+                <i class='bx bx-collection'></i>
+                <div class="progress-summary-body">
+                    <div class="progress-summary-label">@Localizer["ReviewedJuz"]</div>
+                    <div class="progress-summary-value">@reviewedJuzDisplay</div>
+                    <div class="progress-summary-sub">@Localizer["CompletedJuzReviews"]</div>
+                </div>
+            </div>
+        </div>
+    }
 
     <!-- Filter Section -->
     <div class="filter-section">

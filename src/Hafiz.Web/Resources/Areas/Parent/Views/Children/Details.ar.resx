@@ -592,4 +592,13 @@
   <data name="NotProvided" xml:space="preserve">
     <value>غير متوفر</value>
   </data>
+  <data name="MemorizedPages" xml:space="preserve"><value>الصفحات المحفوظة</value></data>
+  <data name="ReviewedPages" xml:space="preserve"><value>الصفحات المراجَعة</value></data>
+  <data name="ReviewedJuz" xml:space="preserve"><value>الأجزاء المراجَعة</value></data>
+  <data name="PagesReviewed" xml:space="preserve"><value>صفحة تمت مراجعتها</value></data>
+  <data name="JuzReviewed" xml:space="preserve"><value>أجزاء كاملة تمت مراجعتها</value></data>
+  <data name="JuzShort" xml:space="preserve"><value>جزء</value></data>
+  <data name="UnitPages" xml:space="preserve"><value>صفحة</value></data>
+  <data name="Hafiz" xml:space="preserve"><value>حافظ</value></data>
+  <data name="HafizTitle" xml:space="preserve"><value>أتم الطالب حفظ القرآن الكريم كاملاً</value></data>
 </root>
