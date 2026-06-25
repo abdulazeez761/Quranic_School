@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="ReportsTitle" xml:space="preserve"><value>Student Reports</value></data>
+  <data name="ReportsDescription" xml:space="preserve"><value>Comprehensive reports and student comparison</value></data>
+  <data name="BackToStudents" xml:space="preserve"><value>Back to Students</value></data>
+  <data name="TotalStudents" xml:space="preserve"><value>Total Students</value></data>
+  <data name="TotalHafiz" xml:space="preserve"><value>Total Hafiz</value></data>
+  <data name="AverageAttendance" xml:space="preserve"><value>Average Attendance</value></data>
+  <data name="AverageMemorization" xml:space="preserve"><value>Average Memorization (pages)</value></data>
+  <data name="FilterByClass" xml:space="preserve"><value>Filter by Class</value></data>
+  <data name="AllClasses" xml:space="preserve"><value>All Classes</value></data>
+  <data name="StudentName" xml:space="preserve"><value>Student Name</value></data>
+  <data name="Class" xml:space="preserve"><value>Class</value></data>
+  <data name="MemorizedJuz" xml:space="preserve"><value>Memorized Juz</value></data>
+  <data name="MemorizedPages" xml:space="preserve"><value>Memorized Pages</value></data>
+  <data name="ReviewedPages" xml:space="preserve"><value>Reviewed Pages</value></data>
+  <data name="TotalWirds" xml:space="preserve"><value>Total Wirds</value></data>
+  <data name="CompletedWirds" xml:space="preserve"><value>Completed Wirds</value></data>
+  <data name="AttendanceRate" xml:space="preserve"><value>Attendance Rate</value></data>
+  <data name="TajwidLevel" xml:space="preserve"><value>Tajwid Level</value></data>
+  <data name="TajwidLevel_Beginner" xml:space="preserve"><value>Beginner</value></data>
+  <data name="TajwidLevel_Intermediate" xml:space="preserve"><value>Intermediate</value></data>
+  <data name="TajwidLevel_Advanced" xml:space="preserve"><value>Advanced</value></data>
+  <data name="TajwidLevel_none" xml:space="preserve"><value>None</value></data>
+  <data name="TajwidLevel_First" xml:space="preserve"><value>Beginner</value></data>
+  <data name="TajwidLevel_Second" xml:space="preserve"><value>Intermediate</value></data>
+  <data name="TajwidLevel_Third" xml:space="preserve"><value>Advanced</value></data>
+  <data name="Hafiz" xml:space="preserve"><value>Hafiz</value></data>
+  <data name="NoStudentsFound" xml:space="preserve"><value>No students found</value></data>
+</root>

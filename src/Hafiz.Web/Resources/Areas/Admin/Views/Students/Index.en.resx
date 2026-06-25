@@ -85,6 +85,11 @@
     <value>Export</value>
     <comment>Export button text</comment>
   </data>
+
+  <data name="Reports" xml:space="preserve">
+    <value>Reports</value>
+    <comment>Reports button text</comment>
+  </data>
   
   <!-- Statistics Cards -->
   <data name="TotalStudents" xml:space="preserve">

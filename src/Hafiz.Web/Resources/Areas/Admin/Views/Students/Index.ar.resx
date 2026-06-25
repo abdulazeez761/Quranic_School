@@ -85,6 +85,11 @@
     <value>تصدير</value>
     <comment>نص زر التصدير</comment>
   </data>
+
+  <data name="Reports" xml:space="preserve">
+    <value>التقارير</value>
+    <comment>نص زر التقارير</comment>
+  </data>
   
   <!-- Statistics Cards -->
   <data name="TotalStudents" xml:space="preserve">

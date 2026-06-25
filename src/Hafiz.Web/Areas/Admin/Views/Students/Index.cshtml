@@ -18,6 +18,10 @@
             <i class='bx bx-user-plus'></i>
             <span>@Localizer["AddNewStudent"]</span>
         </a>
+        <a asp-action="Reports" class="btn btn-outline">
+            <i class='bx bx-bar-chart-alt-2'></i>
+            <span>@Localizer["Reports"]</span>
+        </a>
         <button class="btn btn-outline" id="exportBtn">
             <i class='bx bx-download'></i>
             <span>@Localizer["Export"]</span>
@@ -194,10 +198,10 @@
 
                             <td data-label="@Localizer["Actions"]">
                                 <div class="table-actions">
-                                    @* <a asp-action="Details" asp-route-id="@student.UserId" class="table-action-btn"
+                                    <a asp-action="Details" asp-route-id="@student.UserId" class="table-action-btn"
                                            data-tooltip="@Localizer["ViewDetails"]">
                                         <i class='bx bx-show'></i>
-                                    </a> *@
+                                    </a>
                                     <a asp-action="Edit" asp-route-id="@student.UserId" class="table-action-btn"
                                        data-tooltip="@Localizer["Edit"]">
                                         <i class='bx bx-edit'></i>
