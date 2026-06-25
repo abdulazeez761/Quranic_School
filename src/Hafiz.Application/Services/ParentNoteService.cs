@@ -84,6 +84,17 @@ namespace Hafiz.Services
             return await _parentNoteRepository.DeleteNoteAsync(noteId);
         }
 
+        public async Task<bool> MarkNoteAsReadAsync(Guid noteId, Guid userId)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null || (user.Role != UserRole.Admin && user.Role != UserRole.Teacher))
+            {
+                throw new UnauthorizedAccessException("Only admins and teachers can mark notes as read.");
+            }
+
+            return await _parentNoteRepository.MarkAsReadAsync(noteId);
+        }
+
         public async Task<bool> CanUserManageNoteAsync(Guid userId, Guid noteId)
         {
             var note = await _parentNoteRepository.GetNoteByIdAsync(noteId);

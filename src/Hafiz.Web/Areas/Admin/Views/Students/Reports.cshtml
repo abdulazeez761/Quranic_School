@@ -1,192 +1,159 @@
 @model Hafiz.DTOs.Student.AdminStudentReportsViewModel
+@using Hafiz.Common.Helper
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 @{
     ViewData["Title"] = Localizer["ReportsTitle"];
-    var classes = ViewBag.Classes as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> ?? new List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
     var students = Model.Students;
     var totalHafiz = students.Count(s => s.IsHafiz);
     var avgAttendance = students.Any() ? Math.Round(students.Average(s => s.AttendanceRate), 1) : 0;
     var avgMemorization = students.Any() ? Math.Round((double)students.Average(s => s.TotalMemorizedPages), 1) : 0;
+
+    string SortHref(string by) => Url.Action("Reports", new { sortBy = by })!;
+    bool IsActiveSort(string by) =>
+        (string.IsNullOrEmpty(Model.SortBy) && by == "memorization") || Model.SortBy == by;
 }
 
-<!-- Page Header -->
-<div class="d-flex justify-between align-center mb-lg flex-wrap gap-md">
-    <div>
-        <h2 class="section-title mb-sm">
-            <i class='bx bx-bar-chart-alt-2' style="color: var(--primary-green);"></i>
-            @Localizer["ReportsTitle"]
-        </h2>
-        <p class="text-medium">@Localizer["ReportsDescription"]</p>
-    </div>
-    <div class="btn-group">
-        <a asp-action="Index" class="btn btn-outline">
+<div class="admin-student-reports">
+    <!-- Page Header -->
+    <div class="reports-header">
+        <div>
+            <h2 class="section-title">
+                <i class='bx bx-bar-chart-alt-2' style="color: var(--primary-green);"></i>
+                @Localizer["ReportsTitle"]
+            </h2>
+            <p class="text-medium">@Localizer["ReportsDescription"]</p>
+        </div>
+        <a asp-action="Index" class="back-btn">
             <i class='bx bx-arrow-back'></i>
             <span>@Localizer["BackToStudents"]</span>
         </a>
     </div>
-</div>
 
-<!-- Summary Stats -->
-<div class="stats-grid mb-lg">
-    <div class="card-stat">
-        <div class="stat-icon" style="background: rgba(46,139,87,0.15); color: #2e8b57;">
-            <i class='bx bx-group'></i>
-        </div>
-        <div class="stat-content">
-            <h3>@students.Count</h3>
-            <p>@Localizer["TotalStudents"]</p>
-        </div>
-    </div>
-    <div class="card-stat">
-        <div class="stat-icon" style="background: rgba(255,152,0,0.15); color: #ff9800;">
-            <i class='bx bxs-award'></i>
-        </div>
-        <div class="stat-content">
-            <h3>@totalHafiz</h3>
-            <p>@Localizer["TotalHafiz"]</p>
-        </div>
-    </div>
-    <div class="card-stat">
-        <div class="stat-icon" style="background: rgba(33,150,243,0.15); color: #2196f3;">
-            <i class='bx bx-calendar-check'></i>
-        </div>
-        <div class="stat-content">
-            <h3>@avgAttendance%</h3>
-            <p>@Localizer["AverageAttendance"]</p>
-        </div>
-    </div>
-    <div class="card-stat">
-        <div class="stat-icon" style="background: rgba(156,39,176,0.15); color: #9c27b0;">
-            <i class='bx bx-book-open'></i>
-        </div>
-        <div class="stat-content">
-            <h3>@avgMemorization</h3>
-            <p>@Localizer["AverageMemorization"]</p>
-        </div>
-    </div>
-</div>
-
-<!-- Filters -->
-<div class="card mb-lg">
-    <div class="card-body">
-        <form method="get" class="filter-row">
-            <div class="filter-group">
-                <label>@Localizer["FilterByClass"]</label>
-                <select name="classId" class="form-input" onchange="this.form.submit()">
-                    <option value="">@Localizer["AllClasses"]</option>
-                    @foreach (var cls in classes)
-                    {
-                        var isSelected = Model.ClassFilter?.ToString() == cls.Value;
-                        if (isSelected)
-                        {
-                            <option value="@cls.Value" selected>@cls.Text</option>
-                        }
-                        else
-                        {
-                            <option value="@cls.Value">@cls.Text</option>
-                        }
-                    }
-                </select>
+    <!-- Summary Stats -->
+    <div class="stats-grid mb-lg">
+        <div class="card-stat">
+            <div class="stat-icon" style="background: rgba(46,139,87,0.15); color: #2e8b57;">
+                <i class='bx bx-group'></i>
             </div>
-            <input type="hidden" name="sortBy" value="@Model.SortBy" />
-            <input type="hidden" name="sortOrder" value="@Model.SortOrder" />
-        </form>
-    </div>
-</div>
-
-<!-- Reports Table -->
-<div class="card">
-    <div class="table-responsive">
-        @if (students.Any())
-        {
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>
-                            <a asp-action="Reports" asp-route-classId="@Model.ClassFilter"
-                               asp-route-sortBy="name"
-                               asp-route-sortOrder="@(Model.SortBy == "name" && Model.SortOrder != "desc" ? "desc" : "asc")"
-                               class="sortable-header @(Model.SortBy == "name" ? "active" : "")">
-                                @Localizer["StudentName"]
-                                @if (Model.SortBy == "name")
-                                {
-                                    <i class='bx bx-sort-@(Model.SortOrder == "desc" ? "down" : "up")'></i>
-                                }
-                            </a>
-                        </th>
-                        <th>@Localizer["Class"]</th>
-                        <th>
-                            <a asp-action="Reports" asp-route-classId="@Model.ClassFilter"
-                               asp-route-sortBy="memorization"
-                               asp-route-sortOrder="@(Model.SortBy == "memorization" && Model.SortOrder != "asc" ? "asc" : "desc")"
-                               class="sortable-header @(Model.SortBy == "memorization" ? "active" : "")">
-                                @Localizer["MemorizedJuz"]
-                                @if (Model.SortBy == "memorization" || string.IsNullOrEmpty(Model.SortBy))
-                                {
-                                    <i class='bx bx-sort-@(Model.SortOrder == "asc" ? "up" : "down")'></i>
-                                }
-                            </a>
-                        </th>
-                        <th>@Localizer["MemorizedPages"]</th>
-                        <th>@Localizer["ReviewedPages"]</th>
-                        <th>@Localizer["TotalWirds"]</th>
-                        <th>@Localizer["CompletedWirds"]</th>
-                        <th>
-                            <a asp-action="Reports" asp-route-classId="@Model.ClassFilter"
-                               asp-route-sortBy="attendance"
-                               asp-route-sortOrder="@(Model.SortBy == "attendance" && Model.SortOrder != "asc" ? "asc" : "desc")"
-                               class="sortable-header @(Model.SortBy == "attendance" ? "active" : "")">
-                                @Localizer["AttendanceRate"]
-                                @if (Model.SortBy == "attendance")
-                                {
-                                    <i class='bx bx-sort-@(Model.SortOrder == "asc" ? "up" : "down")'></i>
-                                }
-                            </a>
-                        </th>
-                        <th>@Localizer["TajwidLevel"]</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @{ int index = 1; }
-                    @foreach (var row in students)
-                    {
-                        <tr>
-                            <td>@index</td>
-                            <td>
-                                <a asp-action="Details" asp-route-id="@row.StudentId" class="student-link">
-                                    @row.FullName
-                                    @if (row.IsHafiz)
-                                    {
-                                        <i class='bx bxs-award' style="color: #ff9800;" title="@Localizer["Hafiz"]"></i>
-                                    }
-                                </a>
-                            </td>
-                            <td>@row.ClassName</td>
-                            <td><strong>@row.MemorizedJuz</strong>/30</td>
-                            <td>@row.TotalMemorizedPages.ToString("0.##")</td>
-                            <td>@row.ReviewedPages.ToString("0.##")</td>
-                            <td>@row.TotalWirds</td>
-                            <td>@row.CompletedWirds</td>
-                            <td>
-                                <span class="status-badge @(row.AttendanceRate >= 80 ? "status-present" : row.AttendanceRate >= 50 ? "status-late" : "status-absent")">
-                                    @row.AttendanceRate%
-                                </span>
-                            </td>
-                            <td>@Localizer[$"TajwidLevel_{row.TajwidLevel}"]</td>
-                        </tr>
-                        index++;
-                    }
-                </tbody>
-            </table>
-        }
-        else
-        {
-            <div class="no-data" style="padding: 3rem;">
-                <i class='bx bx-search-alt' style="font-size: 3rem; color: var(--text-light); display: block; margin-bottom: 1rem;"></i>
-                <p>@Localizer["NoStudentsFound"]</p>
+            <div class="stat-content">
+                <h3>@students.Count</h3>
+                <p>@Localizer["TotalStudents"]</p>
             </div>
-        }
+        </div>
+        <div class="card-stat">
+            <div class="stat-icon" style="background: rgba(255,152,0,0.15); color: #ff9800;">
+                <i class='bx bxs-award'></i>
+            </div>
+            <div class="stat-content">
+                <h3>@totalHafiz</h3>
+                <p>@Localizer["TotalHafiz"]</p>
+            </div>
+        </div>
+        <div class="card-stat">
+            <div class="stat-icon" style="background: rgba(33,150,243,0.15); color: #2196f3;">
+                <i class='bx bx-calendar-check'></i>
+            </div>
+            <div class="stat-content">
+                <h3>@avgAttendance%</h3>
+                <p>@Localizer["AverageAttendance"]</p>
+            </div>
+        </div>
+        <div class="card-stat">
+            <div class="stat-icon" style="background: rgba(156,39,176,0.15); color: #9c27b0;">
+                <i class='bx bx-book-open'></i>
+            </div>
+            <div class="stat-content">
+                <h3>@avgMemorization</h3>
+                <p>@Localizer["AverageMemorization"]</p>
+            </div>
+        </div>
     </div>
+
+    @if (students.Any())
+    {
+        <!-- Sort Toolbar -->
+        <div class="reports-toolbar">
+            <span class="toolbar-label"><i class='bx bx-sort-alt-2'></i> @Localizer["SortBy"]</span>
+            <div class="sort-chips">
+                <a href="@SortHref("memorization")" class="sort-chip @(IsActiveSort("memorization") ? "active" : "")">
+                    <i class='bx bx-book-open'></i> @Localizer["SortMemorization"]
+                </a>
+                <a href="@SortHref("attendance")" class="sort-chip @(IsActiveSort("attendance") ? "active" : "")">
+                    <i class='bx bx-calendar-check'></i> @Localizer["SortAttendance"]
+                </a>
+                <a href="@SortHref("name")" class="sort-chip @(IsActiveSort("name") ? "active" : "")">
+                    <i class='bx bx-sort-a-z'></i> @Localizer["SortName"]
+                </a>
+            </div>
+            <span class="toolbar-count">@students.Count @Localizer["StudentsCount"]</span>
+        </div>
+
+        <!-- Student Cards -->
+        <div class="report-cards">
+            @foreach (var row in students)
+            {
+                var memPercent = Math.Min(100, Math.Round((double)row.TotalMemorizedPages / WirdPageCalculator.TotalQuranPages *
+        100));
+                var attClass = row.AttendanceRate >= 80 ? "good" : row.AttendanceRate >= 50 ? "mid" : "low";
+                <a asp-action="Details" asp-route-id="@row.StudentId" class="report-card">
+                    <div class="report-card-top">
+                        <div class="report-avatar">
+                            <i class='bx bx-user'></i>
+                        </div>
+                        <div class="report-identity">
+                            <span class="report-name">
+                                @row.FullName
+                                @if (row.IsHafiz)
+                                {
+                                    <i class='bx bxs-award' style="color:#ff9800;" title="@Localizer["Hafiz"]"></i>
+                                }
+                            </span>
+                            <span class="report-class">
+                                <i class='bx bx-book'></i>
+                                @(string.IsNullOrWhiteSpace(row.ClassName) ? Localizer["NoClass"].Value : row.ClassName)
+                            </span>
+                        </div>
+                        <i class='bx bx-chevron-left report-chevron'></i>
+                    </div>
+
+                    <div class="report-progress">
+                        <div class="report-progress-head">
+                            <span><i class='bx bx-bookmark-heart'></i> @Localizer["Memorization"]</span>
+                            <span class="report-progress-value">@row.MemorizedJuz/30 @Localizer["JuzShort"]</span>
+                        </div>
+                        <div class="report-bar-track">
+                            <div class="report-bar-fill" style="width:@memPercent%"></div>
+                        </div>
+                    </div>
+
+                    <div class="report-metrics">
+                        <div class="report-metric">
+                            <span class="metric-badge att-@attClass">@row.AttendanceRate%</span>
+                            <span class="metric-label">@Localizer["AttendanceRate"]</span>
+                        </div>
+                        <div class="report-metric">
+                            <span class="metric-value">@row.TotalWirds</span>
+                            <span class="metric-label">@Localizer["totalWird"]</span>
+                        </div>
+                        <div class="report-metric">
+                            <span class="metric-value">@row.ReviewedPages.ToString("0.#")</span>
+                            <span class="metric-label">@Localizer["ReviewedPages"]</span>
+                        </div>
+                        <div class="report-metric">
+                            <span class="metric-value tajwid">@Localizer[$"TajwidLevel_{row.TajwidLevel}"]</span>
+                            <span class="metric-label">@Localizer["TajwidLevel"]</span>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="no-data" style="padding: 3rem;">
+            <i class='bx bx-search-alt'></i>
+            <p>@Localizer["NoStudentsFound"]</p>
+        </div>
+    }
 </div>

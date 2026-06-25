@@ -8,7 +8,6 @@ namespace Hafiz.DTOs.Student
     public class AdminStudentReportsViewModel
     {
         public List<StudentReportRow> Students { get; set; } = new();
-        public Guid? ClassFilter { get; set; }
         public string? SortBy { get; set; }
         public string? SortOrder { get; set; }
     }

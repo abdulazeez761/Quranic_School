@@ -135,7 +135,7 @@ namespace Hafiz.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Reports(Guid? classId = null, string? sortBy = null, string? sortOrder = null)
+        public async Task<IActionResult> Reports(string? sortBy = null, string? sortOrder = null)
         {
             var instituteId = GetInstituteId();
             IEnumerable<StudentModel> students;
@@ -144,9 +144,6 @@ namespace Hafiz.Areas.Admin.Controllers
                 students = await _studentService.GetAllByInstituteAsync(instituteId.Value);
             else
                 students = await _studentService.GetAllAsync();
-
-            if (classId.HasValue)
-                students = students.Where(s => s.Classes.Any(c => c.Id == classId.Value));
 
             var reportRows = new List<StudentReportRow>();
             foreach (var student in students)
@@ -191,17 +188,36 @@ namespace Hafiz.Areas.Admin.Controllers
                 _ => reportRows.OrderByDescending(r => r.TotalMemorizedPages).ToList(),
             };
 
-            await PopulateClassesDropdown();
-
             var viewModel = new AdminStudentReportsViewModel
             {
                 Students = reportRows,
-                ClassFilter = classId,
                 SortBy = sortBy,
                 SortOrder = sortOrder,
             };
 
             return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> MarkNoteAsRead(Guid noteId)
+        {
+            try
+            {
+                var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                var success = await _parentNoteService.MarkNoteAsReadAsync(noteId, userId);
+                if (!success)
+                    return Json(new { success = false, message = "Note not found." });
+
+                return Json(new { success = true, readAt = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm") });
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Json(new { success = false, message = "Unauthorized." });
+            }
+            catch (Exception)
+            {
+                return Json(new { success = false, message = "Failed to mark note as read." });
+            }
         }
 
         [HttpGet]

@@ -62,5 +62,21 @@ namespace Hafiz.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> MarkAsReadAsync(Guid id)
+        {
+            var note = await _context.ParentNotes.FindAsync(id);
+            if (note == null)
+                return false;
+
+            if (!note.IsRead)
+            {
+                note.IsRead = true;
+                note.ReadAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
+
+            return true;
+        }
     }
 }

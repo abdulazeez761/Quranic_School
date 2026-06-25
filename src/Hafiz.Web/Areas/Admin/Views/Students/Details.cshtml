@@ -616,6 +616,13 @@
             <div class="section-card">
                 <div class="section-header">
                     <h2><i class='bx bx-note'></i> @Localizer["ParentNotes"]</h2>
+                    @{
+                        var unreadCount = parentNotes.Count(n => !n.IsRead);
+                    }
+                    @if (unreadCount > 0)
+                    {
+                        <span class="header-badge badge-red"><span class="unread-count">@unreadCount</span> @Localizer["UnreadNotes"]</span>
+                    }
                 </div>
                 <div class="section-content">
                     @if (parentNotes.Any())
@@ -623,13 +630,19 @@
                         <div class="notes-list">
                             @foreach (var note in parentNotes.OrderByDescending(n => n.CreatedAt))
                             {
-                                <div class="note-item">
+                                <div class="note-item @(note.IsRead ? "note-read" : "note-unread")" data-note-id="@note.Id">
                                     <div class="note-header">
                                         <div class="note-author">
                                             <i class='bx bx-user-circle'></i>
                                             <span>@note.CreatedByUser.FirstName @note.CreatedByUser.SecondName</span>
                                         </div>
                                         <div class="note-meta">
+                                            <span class="note-status-badge note-badge-unread" style="@(note.IsRead ? "display:none" : "")">
+                                                <i class='bx bx-bell'></i> @Localizer["NewNote"]
+                                            </span>
+                                            <span class="note-status-badge note-badge-read" style="@(note.IsRead ? "" : "display:none")">
+                                                <i class='bx bx-check-double'></i> @Localizer["ReadNote"]
+                                            </span>
                                             <span class="note-date">
                                                 <i class='bx bx-time-five'></i>
                                                 @note.CreatedAt.ToString("MMM dd, yyyy HH:mm")
@@ -638,6 +651,11 @@
                                     </div>
                                     <div class="note-content">
                                         @note.Content
+                                    </div>
+                                    <div class="note-footer" style="@(note.IsRead ? "display:none" : "")">
+                                        <button type="button" class="mark-read-btn" onclick="markNoteAsRead(this, '@note.Id')">
+                                            <i class='bx bx-check'></i> @Localizer["MarkAsRead"]
+                                        </button>
                                     </div>
                                 </div>
                             }
@@ -656,7 +674,78 @@
     </div>
 </div>
 
+<!-- Toast notification -->
+<div id="toast" class="toast" role="status" aria-live="polite" data-read-message='@Localizer["NoteMarkedAsRead"]'>
+    <i class='bx bx-check-circle'></i>
+    <span id="toast-message"></span>
+</div>
+
+@Html.AntiForgeryToken()
+
+@{
+    var markReadUrl = Url.Action("MarkNoteAsRead", "Students", new { area = "Admin" });
+}
+
 <script>
+    const markReadUrl = '@markReadUrl';
+    const markedReadText = document.getElementById('toast').dataset.readMessage;
+
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toast-message').textContent = message;
+        toast.classList.add('show');
+        clearTimeout(window.__toastTimer);
+        window.__toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function markNoteAsRead(btn, noteId) {
+        btn.disabled = true;
+        const formData = new FormData();
+        formData.append('noteId', noteId);
+        const tokenEl = document.querySelector('input[name="__RequestVerificationToken"]');
+        if (tokenEl) formData.append('__RequestVerificationToken', tokenEl.value);
+
+        fetch(markReadUrl, {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            body: formData
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data && data.success) {
+                const item = document.querySelector('.note-item[data-note-id="' + noteId + '"]');
+                if (item) {
+                    item.classList.remove('note-unread');
+                    item.classList.add('note-read');
+                    const unreadBadge = item.querySelector('.note-badge-unread');
+                    const readBadge = item.querySelector('.note-badge-read');
+                    const footer = item.querySelector('.note-footer');
+                    if (unreadBadge) unreadBadge.style.display = 'none';
+                    if (readBadge) readBadge.style.display = '';
+                    if (footer) footer.style.display = 'none';
+                }
+                updateUnreadHeaderBadge();
+                showToast(markedReadText);
+            } else {
+                btn.disabled = false;
+            }
+        })
+        .catch(() => { btn.disabled = false; });
+    }
+
+    function updateUnreadHeaderBadge() {
+        const remaining = document.querySelectorAll('.note-item.note-unread').length;
+        const badge = document.querySelector('#notes .badge-red');
+        if (badge) {
+            if (remaining > 0) {
+                const countEl = badge.querySelector('.unread-count');
+                if (countEl) countEl.textContent = remaining;
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    }
+
     function openTab(evt, tabName) {
         var tabContent = document.getElementsByClassName("tab-content");
         for (var i = 0; i < tabContent.length; i++) {

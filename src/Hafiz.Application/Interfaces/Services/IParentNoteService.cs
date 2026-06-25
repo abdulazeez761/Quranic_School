@@ -13,5 +13,6 @@ namespace Hafiz.Services.Interfaces
         Task<ParentNote> UpdateNoteAsync(Guid noteId, string content, Guid userId);
         Task<bool> DeleteNoteAsync(Guid noteId, Guid userId);
         Task<bool> CanUserManageNoteAsync(Guid userId, Guid noteId);
+        Task<bool> MarkNoteAsReadAsync(Guid noteId, Guid userId);
     }
 }

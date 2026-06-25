@@ -12,5 +12,6 @@ namespace Hafiz.Repositories.Interfaces
         Task<ParentNote> CreateNoteAsync(ParentNote note);
         Task<ParentNote> UpdateNoteAsync(ParentNote note);
         Task<bool> DeleteNoteAsync(Guid id);
+        Task<bool> MarkAsReadAsync(Guid id);
     }
 }

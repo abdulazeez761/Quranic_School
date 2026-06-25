@@ -26,6 +26,12 @@ namespace Hafiz.Models
 
         public DateTime? UpdatedAt { get; set; }
 
+        // Whether an admin/teacher has marked this note as seen/handled.
+        // The note is never deleted; it only changes its visual state.
+        public bool IsRead { get; set; } = false;
+
+        public DateTime? ReadAt { get; set; }
+
         // Navigation properties
         public Student Student { get; set; } = null!;
         public User CreatedByUser { get; set; } = null!;
