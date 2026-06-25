@@ -55,6 +55,13 @@
                             <span>إدارة المراكز</span>
                         </a>
                     </li>
+                    <li class="@IsActive("Backup", "Index")">
+                        <a asp-area="SuperAdmin" asp-controller="Backup" asp-action="Index"
+                               aria-current="@(IsActive("Backup", "Index") == "active" ? "page" : "")">
+                            <i class='bx bx-data' aria-hidden="true"></i>
+                            <span>النسخ الاحتياطي</span>
+                        </a>
+                    </li>
                 </ul>
 
                 <a asp-area="" asp-controller="Auth" asp-action="Logout" class="logout" style="margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: var(--space-md);">

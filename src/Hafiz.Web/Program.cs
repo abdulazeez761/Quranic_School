@@ -19,6 +19,9 @@ builder.Services.AddHafizServices(builder.Environment.EnvironmentName);
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
+// Scheduled daily database backup → Google Drive
+builder.Services.AddHostedService<Hafiz.Web.BackgroundServices.DailyBackupService>();
+
 var app = builder.Build();
 app.UseHafizMiddlewares();
 
@@ -26,8 +29,9 @@ app.UseHafizMiddlewares();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<Hafiz.Data.ApplicationDbContext>();
-    var passwordHasher = scope.ServiceProvider.GetRequiredService<Hafiz.Application.Interfaces.IPasswordHasher>();
-    
+    var passwordHasher =
+        scope.ServiceProvider.GetRequiredService<Hafiz.Application.Interfaces.IPasswordHasher>();
+
     // Apply migrations if needed
     context.Database.Migrate();
 
@@ -41,7 +45,7 @@ using (var scope = app.Services.CreateScope())
             PhoneNumber = "0790000000",
             Email = "superadmin@hafiz.com",
             Password = passwordHasher.HashPassword("SuperAdmin123!"),
-            Role = Hafiz.Models.UserRole.SuperAdmin
+            Role = Hafiz.Models.UserRole.SuperAdmin,
         };
         context.Users.Add(superAdmin);
         context.SaveChanges();

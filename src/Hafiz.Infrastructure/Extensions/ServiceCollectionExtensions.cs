@@ -1,5 +1,6 @@
 using Hafiz.Application.Interfaces;
 using Hafiz.Application.Interfaces.Repositories;
+using Hafiz.Application.Interfaces.Services;
 using Hafiz.Data;
 using Hafiz.Infrastructure.Security;
 using Hafiz.Infrastructure.Services;
@@ -40,6 +41,8 @@ namespace Hafiz.Infrastructure.Extensions
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IMeetingService, MeetingService>();
             services.AddScoped<IDashboardService, DashboardService>();
+            services.AddScoped<IGoogleDriveUploader, GoogleDriveUploader>();
+            services.AddScoped<IBackupService, BackupService>();
 
             return services;
         }
