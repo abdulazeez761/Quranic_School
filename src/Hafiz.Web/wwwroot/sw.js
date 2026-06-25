@@ -1,5 +1,5 @@
 // Service Worker for Hifz PWA
-const CACHE_VERSION = '1.0.0';
+const CACHE_VERSION = '2.0.0';
 const CACHE_NAME = `hifz-v${CACHE_VERSION}`;
 
 // Assets to cache immediately on install
@@ -28,12 +28,12 @@ self.addEventListener('install', (event) => {
       .then((cache) => {
         // Use {cache: 'reload'} to force network fetch, ignoring browser disk cache
         return cache.addAll(
-          STATIC_ASSETS.map((url) => new Request(url, { cache: 'reload' }))
+          STATIC_ASSETS.map((url) => new Request(url, { cache: 'reload' })),
         );
       })
       .catch((error) => {
         console.error('[ServiceWorker] Cache failed:', error);
-      })
+      }),
   );
 });
 
@@ -48,9 +48,9 @@ self.addEventListener('activate', (event) => {
             console.log('[ServiceWorker] Deleting old cache:', cache);
             return caches.delete(cache);
           }
-        })
+        }),
       );
-    })
+    }),
   );
   // Take control of all clients immediately
   return self.clients.claim();
@@ -85,7 +85,7 @@ self.addEventListener('fetch', (event) => {
         .catch(() => {
           // Fallback to offline page
           return caches.match('/offline.html');
-        })
+        }),
     );
     return;
   }
@@ -129,7 +129,7 @@ self.addEventListener('fetch', (event) => {
           // Optional: Return a placeholder image if an image fails
           return null;
         });
-    })
+    }),
   );
 });
 

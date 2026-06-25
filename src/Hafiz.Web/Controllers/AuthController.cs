@@ -57,7 +57,12 @@ namespace Hafiz.Controllers
 
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
-                principal
+                principal,
+                new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTime.UtcNow.AddDays(30),
+                }
             );
 
             if (ReturnUrl != null && Url.IsLocalUrl(ReturnUrl))
