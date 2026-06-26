@@ -1,18 +1,6 @@
-@import url('../variables.css');
-@import url('./base.css');
-@import url('./layout.css');
-@import url('./sidebar.css');
-@import url('./topbar.css');
-@import url('./cards.css');
-@import url('./buttons.css');
-@import url('./forms.css');
-@import url('./responsive-forms.css');
-@import url('./table.css');
-@import url('./util.css');
-@import url('./attendance.css');
-@import url('./listUsersCustomizatoin.css');
-@import url('./creteCustom.css');
-@import url('./switchLanguage.css');
-@import url('./dayCeckbox.css');
-@import url('./selectSectionForClass.css');
-@import url('./student-details.css');
+/*
+ * DEPRECATED: لم يعد هذا الملف مستخدماً.
+ * كان يجمّع ملفات CSS عبر @import، لكن @import يمنع asp-append-version من
+ * تحديث كاش المتصفح للملفات المستوردة. تم استبداله بربط كل ملف مباشرة في
+ * Views/Shared/_AdminStyles.cshtml بحيث يأخذ كل ملف نسخة (?v=hash) مستقلة.
+ */
