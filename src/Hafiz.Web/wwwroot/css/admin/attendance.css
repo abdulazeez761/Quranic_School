@@ -911,3 +911,106 @@ body[dir='rtl'] .save-indicator {
   border-color: var(--primary-green);
   transform: translateY(-1px);
 }
+
+/* ===== Attendance Status Legend ===== */
+.attendance-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-md, 16px);
+  padding: var(--space-md, 16px) var(--space-lg, 24px);
+}
+
+.attendance-legend .legend-title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs, 6px);
+  font-weight: 700;
+  color: var(--text-dark, #222);
+  white-space: nowrap;
+}
+
+.attendance-legend .legend-title i {
+  color: var(--primary-green);
+  font-size: 1.2rem;
+}
+
+.attendance-legend .legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md, 16px) var(--space-lg, 24px);
+  flex: 1;
+}
+
+.attendance-legend .legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm, 10px);
+}
+
+.attendance-legend .legend-badge {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.attendance-legend .legend-badge.present {
+  background: rgba(40, 167, 69, 0.12);
+  color: var(--success);
+}
+
+.attendance-legend .legend-badge.late {
+  background: rgba(255, 193, 7, 0.18);
+  color: var(--warning);
+}
+
+.attendance-legend .legend-badge.absent {
+  background: rgba(220, 53, 69, 0.12);
+  color: var(--danger);
+}
+
+.attendance-legend .legend-badge.excuse {
+  background: rgba(23, 162, 184, 0.12);
+  color: var(--info);
+}
+
+.attendance-legend .legend-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.attendance-legend .legend-label {
+  font-weight: 600;
+  color: var(--text-dark, #222);
+}
+
+.attendance-legend .legend-desc {
+  font-size: var(--font-size-sm, 0.8125rem);
+  color: var(--text-medium, #6b7280);
+}
+
+@media (max-width: 768px) {
+  .attendance-legend {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-sm, 10px);
+  }
+  .attendance-legend .legend-items {
+    gap: var(--space-sm, 10px);
+  }
+  .attendance-legend .legend-item {
+    width: calc(50% - var(--space-sm, 10px));
+  }
+}
+
+@media (max-width: 480px) {
+  .attendance-legend .legend-item {
+    width: 100%;
+  }
+}

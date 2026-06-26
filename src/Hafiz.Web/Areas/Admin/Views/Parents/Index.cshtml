@@ -130,7 +130,7 @@
 
                             <td class="text-center text-medium" data-label="#">@index</td>
 
-                            <td data-label="@Localizer["FirstName"]">
+                            <td class="card-title-cell" data-label="@Localizer["FirstName"]">
                                 <div class="d-flex align-center gap-sm">
                                     <div class="avatar-sm"
                                          style="background: var(--primary-green); color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
@@ -175,7 +175,7 @@
                                 }
                             </td>
 
-                            <td data-label="@Localizer["Actions"]">
+                            <td class="card-actions-cell" data-label="@Localizer["Actions"]">
                                 <div class="table-actions justify-center">
                                     <a asp-action="Edit" asp-route-id="@parent.UserId" class="table-action-btn"
                                            data-tooltip="@Localizer["Edit"]">

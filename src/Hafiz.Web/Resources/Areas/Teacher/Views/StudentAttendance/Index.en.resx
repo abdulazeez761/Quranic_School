@@ -54,4 +54,19 @@
   <data name="NoStudentsFound" xml:space="preserve">
     <value>No students found</value>
   </data>
+  <data name="LegendTitle" xml:space="preserve">
+    <value>Status Guide</value>
+  </data>
+  <data name="PresentDesc" xml:space="preserve">
+    <value>Attended on time</value>
+  </data>
+  <data name="LateDesc" xml:space="preserve">
+    <value>Attended late</value>
+  </data>
+  <data name="AbsentDesc" xml:space="preserve">
+    <value>Did not attend</value>
+  </data>
+  <data name="ExcuseDesc" xml:space="preserve">
+    <value>Absent with valid excuse</value>
+  </data>
 </root>

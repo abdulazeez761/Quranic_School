@@ -327,17 +327,23 @@ body[dir='rtl'] .table-search i {
   }
 
   .table-responsive-cards tr {
+    position: relative;
     margin-bottom: var(--space-md);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    padding: var(--space-md);
+    padding: var(--space-xs) var(--space-md);
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
   }
 
   .table-responsive-cards td {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
     padding: var(--space-sm) 0;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--light-gray);
   }
 
   .table-responsive-cards td:last-child {
@@ -347,13 +353,94 @@ body[dir='rtl'] .table-search i {
   .table-responsive-cards td::before {
     content: attr(data-label);
     font-weight: 600;
-    color: var(--text-dark);
-    margin-right: var(--space-md);
+    color: var(--text-medium);
+    flex-shrink: 0;
   }
 
   body[dir='rtl'] .table-responsive-cards td::before {
     margin-right: 0;
-    margin-left: var(--space-md);
+    margin-left: 0;
+  }
+
+  .table-responsive-cards td > * {
+    text-align: end;
+  }
+
+  /* ---- Card header (title + actions), like the reference design ---- */
+
+  /* The running index is redundant in card view */
+  .table-responsive-cards td[data-label='#'] {
+    display: none;
+  }
+
+  /* Title cell becomes a prominent header with a divider below it */
+  .table-responsive-cards td.card-title-cell {
+    justify-content: flex-start;
+    padding-top: var(--space-sm);
+    padding-bottom: var(--space-md);
+    padding-inline-end: 110px; /* clearance for the floating action buttons */
+    margin-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .table-responsive-cards td.card-title-cell::before {
+    display: none;
+  }
+
+  .table-responsive-cards td.card-title-cell .fw-medium {
+    font-weight: 700;
+    font-size: var(--font-size-lg);
+    color: var(--text-dark);
+  }
+
+  /* Actions cell floats into the header at the inline-end (top-left in RTL) */
+  .table-responsive-cards td.card-actions-cell {
+    position: absolute;
+    top: var(--space-md);
+    inset-inline-end: var(--space-md);
+    width: auto;
+    padding: 0;
+    border: none;
+  }
+
+  .table-responsive-cards td.card-actions-cell::before {
+    display: none;
+  }
+
+  .table-responsive-cards td.card-actions-cell .table-actions {
+    justify-content: flex-end;
+    gap: var(--space-xs);
+  }
+
+  /* Colored, tappable action buttons */
+  .table-responsive-cards td.card-actions-cell .table-action-btn {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(40, 167, 69, 0.25);
+    background: rgba(40, 167, 69, 0.08);
+    color: var(--primary-green);
+    font-size: var(--font-size-lg);
+  }
+
+  .table-responsive-cards td.card-actions-cell .table-action-btn:hover {
+    background: var(--primary-green);
+    color: var(--white);
+    transform: none;
+  }
+
+  .table-responsive-cards td.card-actions-cell .table-action-btn.danger {
+    border-color: rgba(220, 53, 69, 0.25);
+    background: rgba(220, 53, 69, 0.08);
+    color: var(--danger);
+  }
+
+  .table-responsive-cards td.card-actions-cell .table-action-btn.danger:hover {
+    background: var(--danger);
+    color: var(--white);
   }
 }
 
@@ -452,67 +539,50 @@ body[dir='rtl'] .table-search i {
   }
 
   .table-responsive-cards tr {
-    display: flex;
-    flex-direction: column;
-    border: 2px solid var(--primary-green);
+    display: block;
+    border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    padding: var(--space-lg);
+    padding: var(--space-xs) var(--space-md);
     background: var(--white);
-    gap: var(--space-md);
-    margin-bottom: var(--space-md);
-    box-shadow: 0 2px 8px rgba(141, 242, 156, 0.15);
-  }
-
-  .table-responsive-cards tr:hover {
-    box-shadow: 0 4px 12px rgba(141, 242, 156, 0.25);
-    transform: translateY(-2px);
+    margin-bottom: 0;
+    box-shadow: var(--shadow-sm);
   }
 
   .table-responsive-cards tr:active {
-    transform: translateY(0);
+    transform: scale(0.99);
   }
 
-  .table-responsive-cards tr:hover {
-    background: var(--white);
-    transform: none;
-  }
-
-  .table-responsive-cards tr:active {
-    transform: scale(0.98);
-  }
-
+  /* Each cell: label on one side, value on the other (clear key/value row) */
   .table-responsive-cards td {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
     flex-wrap: wrap;
-    gap: var(--space-md);
-    align-items: flex-start;
+    gap: var(--space-sm);
     padding: var(--space-sm) 0;
     border-bottom: 1px solid var(--light-gray);
+    color: var(--text-dark);
   }
 
   .table-responsive-cards td:last-child {
     border-bottom: none;
-    margin-top: var(--space-sm);
-    justify-content: flex-start;
-    gap: var(--space-sm);
   }
 
   .table-responsive-cards td::before {
     content: attr(data-label);
-    font-weight: 700;
-    color: var(--primary-green);
+    font-weight: 600;
+    color: var(--text-medium);
     font-size: var(--font-size-sm);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    display: block;
-    width: 100%;
-    margin-bottom: 4px;
-    padding-bottom: var(--space-xs);
-    border-bottom: 1px dotted var(--primary-green);
+    flex-shrink: 0;
   }
 
   body[dir='rtl'] .table-responsive-cards td::before {
     margin-right: 0;
     margin-left: 0;
+  }
+
+  /* Let rich/long values (chips, action buttons) wrap neatly to the end */
+  .table-responsive-cards td > * {
+    text-align: end;
   }
 }

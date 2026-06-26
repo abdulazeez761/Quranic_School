@@ -131,7 +131,7 @@
                         var days = string.Join(", ", cl.ClassDays.Select(d => Formatting.GetLocalizedDayName(d)));
 
                         <tr class="table-row" data-name="@cl.Name.ToLower()" data-gender="@cl.Gender.ToString().ToLower()">
-                            <td data-label="@Localizer["ClassName"]">
+                            <td class="card-title-cell" data-label="@Localizer["ClassName"]">
                                 <span class="fw-medium">@cl.Name</span>
                             </td>
                             <td data-label="@Localizer["Gender"]">@cl.Gender</td>
@@ -152,7 +152,7 @@
                             </td>
                             <td data-label="@Localizer["Days"]">@days</td>
                             <td data-label="@Localizer["Time"]">@cl.ClassTime.ToString("HH:mm")</td>
-                            <td data-label="@Localizer["Actions"]">
+                            <td class="card-actions-cell" data-label="@Localizer["Actions"]">
                                 <div class="table-actions">
                                     <a asp-action="Edit" asp-route-id="@cl.Id" class="table-action-btn"
                                            data-tooltip="@Localizer["Edit"]">

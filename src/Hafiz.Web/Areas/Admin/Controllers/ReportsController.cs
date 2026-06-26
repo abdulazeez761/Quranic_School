@@ -48,8 +48,9 @@ namespace Hafiz.Areas.Admin.Controllers
             }
             else
             {
-                students = await _studentService.GetAllAsync();
-                classes = await _classService.ViewClasses();
+                // students = await _studentService.GetAllAsync();
+                // classes = await _classService.ViewClasses();
+                return Forbid();
             }
 
             var studentList = students.ToList();
@@ -67,12 +68,14 @@ namespace Hafiz.Areas.Admin.Controllers
                         {
                             StudentId = s.UserId,
                             FullName = $"{s.StudentInfo.FirstName} {s.StudentInfo.SecondName}",
-                            Status = s.Attendances
-                                .Where(a => a.ClassId == c.Id && a.Date.Date == selectedDate)
+                            Status = s
+                                .Attendances.Where(a =>
+                                    a.ClassId == c.Id && a.Date.Date == selectedDate
+                                )
                                 .Select(a => (AttendanceStatus?)a.Status)
                                 .FirstOrDefault(),
-                            Wirds = s.wirds
-                                .Where(w => w.AssignedDate.Date == selectedDate)
+                            Wirds = s
+                                .wirds.Where(w => w.AssignedDate.Date == selectedDate)
                                 .OrderBy(w => w.Type)
                                 .ToList(),
                         })

@@ -54,4 +54,19 @@
   <data name="NoStudentsFound" xml:space="preserve">
     <value>لم يتم العثور على طلاب</value>
   </data>
+  <data name="LegendTitle" xml:space="preserve">
+    <value>دليل العلامات</value>
+  </data>
+  <data name="PresentDesc" xml:space="preserve">
+    <value>حضر في موعده</value>
+  </data>
+  <data name="LateDesc" xml:space="preserve">
+    <value>حضر متأخراً</value>
+  </data>
+  <data name="AbsentDesc" xml:space="preserve">
+    <value>لم يحضر</value>
+  </data>
+  <data name="ExcuseDesc" xml:space="preserve">
+    <value>غياب بعذر مقبول</value>
+  </data>
 </root>
