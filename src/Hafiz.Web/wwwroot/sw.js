@@ -1,7 +1,7 @@
 // Service Worker for Hifz PWA
 const CACHE_VERSION = '2.0.0';
 const CACHE_NAME = `hifz-v${CACHE_VERSION}`;
-
+const LAST_CACHE_VERSION_UPDATED_DATE = '2026-06-27'; //? jut for info, not used in code
 // Assets to cache immediately on install
 const STATIC_ASSETS = [
   '/',

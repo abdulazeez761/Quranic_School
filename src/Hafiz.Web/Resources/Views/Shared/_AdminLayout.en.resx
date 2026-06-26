@@ -157,4 +157,8 @@
     <value>Teacher Attendance</value>
     <comment/>
   </data>
+  <data name="Daily_Reports" xml:space="preserve">
+    <value>Daily Reports</value>
+    <comment/>
+  </data>
 </root>

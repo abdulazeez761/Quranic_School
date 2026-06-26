@@ -84,6 +84,13 @@
                             <span>@Localizer["Teacher_Attendance"]</span>
                         </a>
                     </li>
+                    <li class="@IsActive("Reports", "Daily", "Admin")">
+                        <a asp-area="Admin" asp-controller="Reports" asp-action="Daily"
+                               aria-current="@(IsActive("Reports", "Daily", "Admin") == "active" ? "page" : "")">
+                            <i class='bx bx-calendar-event' aria-hidden="true"></i>
+                            <span>@Localizer["Daily_Reports"]</span>
+                        </a>
+                    </li>
 
                     @* <li class="@IsActive("Videos", "Index", "Admin")">
                         <a asp-area="Admin" asp-controller="Videos" asp-action="Index"

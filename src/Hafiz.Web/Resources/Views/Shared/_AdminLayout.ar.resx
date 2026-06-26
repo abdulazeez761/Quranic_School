@@ -145,6 +145,10 @@
     <value>تحضير المعلمين</value>
     <comment/>
   </data>
+  <data name="Daily_Reports" xml:space="preserve">
+    <value>التقارير اليومية</value>
+    <comment/>
+  </data>
   <data name="Student_Attendance" xml:space="preserve">
     <value>تحضير الطلاب</value>
     <comment/>

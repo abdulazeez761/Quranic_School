@@ -1,0 +1,285 @@
+@model Hafiz.DTOs.Reports.AdminDailyReportsViewModel
+@using Hafiz.Models
+@{
+    ViewData["Title"] = "التقارير اليومية";
+
+    // تسمية حالة الحضور بالعربية + لون البطاقة
+    (string Label, string Css) StatusInfo(AttendanceStatus? status) => status switch
+    {
+        AttendanceStatus.Present => ("حاضر", "dr-present"),
+        AttendanceStatus.Late => ("متأخر", "dr-late"),
+        AttendanceStatus.Absent => ("غائب", "dr-absent"),
+        AttendanceStatus.Excused => ("بعذر", "dr-excused"),
+        _ => ("لم يُسجّل", "dr-pending"),
+    };
+
+    string WirdTypeLabel(AssignmentType type) => type switch
+    {
+        AssignmentType.Wird => "ورد",
+        AssignmentType.Memorization => "حفظ",
+        AssignmentType.Revision => "مراجعة",
+        AssignmentType.Tajwid => "تجويد",
+        AssignmentType.Tafsir => "تفسير",
+        _ => "أخرى",
+    };
+
+    string WirdDescription(WirdAssignment w)
+    {
+        if (w.FromSurah != null || w.ToSurah != null)
+        {
+            var from = w.FromSurah != null ? $"{w.FromSurah}{(string.IsNullOrEmpty(w.FromAyah) ? "" : $" ({w.FromAyah})")}" : "";
+            var to = w.ToSurah != null ? $"{w.ToSurah}{(w.ToAyah != null ? $" ({w.ToAyah})" : "")}" : "";
+            if (!string.IsNullOrEmpty(from) && !string.IsNullOrEmpty(to))
+                return $"من {from} إلى {to}";
+            return !string.IsNullOrEmpty(from) ? from : to;
+        }
+        if (w.Amount != null)
+        {
+            var unit = w.AmountUnit switch
+            {
+                WirdUnit.Pages => "صفحة",
+                WirdUnit.Ayahs => "آية",
+                WirdUnit.Juz => "جزء",
+                _ => "",
+            };
+            return $"{w.Amount:0.##} {unit}".Trim();
+        }
+        return "";
+    }
+}
+
+<div class="daily-reports">
+    <!-- رأس الصفحة + اختيار التاريخ -->
+    <div class="d-flex justify-between align-center mb-lg flex-wrap gap-md">
+        <div>
+            <h2 class="section-title mb-sm">
+                <i class='bx bx-calendar-event' style="color: var(--primary-green);"></i>
+                التقارير اليومية
+            </h2>
+            <p class="text-medium">حضور وغياب وأوراد الطلاب لكل شعبة في يوم @Model.Date.ToString("yyyy-MM-dd")</p>
+        </div>
+        <form method="get" asp-action="Daily" class="d-flex align-center gap-sm flex-wrap">
+            <input type="date" name="date" value="@Model.Date.ToString("yyyy-MM-dd")"
+                   class="form-input form-input-sm" onchange="this.form.submit()" />
+            <a asp-action="Daily" asp-route-date="@DateTime.Today.ToString("yyyy-MM-dd")"
+               class="btn btn-outline btn-sm">
+                <i class='bx bx-calendar-check'></i> اليوم
+            </a>
+        </form>
+    </div>
+
+    <!-- ملخص المركز لهذا اليوم -->
+    <div class="grid-auto-fit mb-lg" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #4a90d9, #2c6fad);">
+                <i class='bx bx-group'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">إجمالي الطلاب</div>
+                <div class="card-stat-value">@Model.TotalStudents</div>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #2e8b57, #1f6b41);">
+                <i class='bx bx-check-circle'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">حاضر</div>
+                <div class="card-stat-value">@Model.TotalPresent</div>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #ff9800, #e07b00);">
+                <i class='bx bx-time-five'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">متأخر</div>
+                <div class="card-stat-value">@Model.TotalLate</div>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #dc3545, #b02a37);">
+                <i class='bx bx-x-circle'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">غائب</div>
+                <div class="card-stat-value">@Model.TotalAbsent</div>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #17a2b8, #117a8b);">
+                <i class='bx bx-note'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">بعذر</div>
+                <div class="card-stat-value">@Model.TotalExcused</div>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #9c27b0, #7b1fa2);">
+                <i class='bx bx-book-bookmark'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">الأوراد المسندة</div>
+                <div class="card-stat-value">@Model.TotalWirds</div>
+            </div>
+        </div>
+    </div>
+
+    @if (!Model.Classes.Any())
+    {
+        <div class="card card-standard" style="padding: 3rem; text-align:center;">
+            <i class='bx bx-folder-open' style="font-size:3rem; color: var(--text-muted, #999);"></i>
+            <p class="text-medium mt-md">لا توجد شُعب لعرضها.</p>
+        </div>
+    }
+
+    <!-- تقرير كل شعبة على حدة -->
+    @foreach (var cls in Model.Classes)
+    {
+        <div class="card card-standard mb-lg dr-class-card">
+            <div class="card-header dr-class-header">
+                <h3 class="card-title">
+                    <i class='bx bx-group' style="color: var(--primary-green);"></i>
+                    @cls.ClassName
+                </h3>
+                <div class="dr-class-badges">
+                    <span class="dr-chip dr-present">حاضر @cls.PresentCount</span>
+                    <span class="dr-chip dr-late">متأخر @cls.LateCount</span>
+                    <span class="dr-chip dr-absent">غائب @cls.AbsentCount</span>
+                    <span class="dr-chip dr-excused">بعذر @cls.ExcusedCount</span>
+                    <span class="dr-chip dr-pending">لم يُسجّل @cls.PendingCount</span>
+                    <span class="dr-chip dr-rate">نسبة الحضور @cls.AttendanceRate%</span>
+                </div>
+            </div>
+            <div class="card-body">
+                @if (!cls.Students.Any())
+                {
+                    <p class="text-medium" style="padding: 0.5rem 0;">لا يوجد طلاب في هذه الشعبة.</p>
+                }
+                else
+                {
+                    <div class="table-wrapper">
+                        <table class="table table-responsive-cards">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;">#</th>
+                                    <th>اسم الطالب</th>
+                                    <th style="width: 130px;">الحالة</th>
+                                    <th>الأوراد المسندة اليوم</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ int idx = 1; }
+                                @foreach (var st in cls.Students)
+                                {
+                                    var info = StatusInfo(st.Status);
+                                    <tr>
+                                        <td data-label="#">@idx</td>
+                                        <td data-label="اسم الطالب">
+                                            <a asp-controller="Students" asp-action="Details" asp-route-id="@st.StudentId"
+                                               class="fw-medium dr-student-link">@st.FullName</a>
+                                        </td>
+                                        <td data-label="الحالة">
+                                            <span class="dr-status @info.Css">@info.Label</span>
+                                        </td>
+                                        <td data-label="الأوراد المسندة اليوم">
+                                            @if (st.Wirds.Any())
+                                            {
+                                                <div class="dr-wirds">
+                                                    @foreach (var w in st.Wirds)
+                                                    {
+                                                        var desc = WirdDescription(w);
+                                                        <span class="dr-wird @(w.IsCompleted ? "dr-wird-done" : "")"
+                                                              title="@(w.IsCompleted ? "مكتمل" : "قيد التنفيذ")">
+                                                            <strong>@WirdTypeLabel(w.Type)</strong>@(string.IsNullOrEmpty(desc) ? "" : $": {desc}")
+                                                            @if (w.IsCompleted)
+                                                            {
+                                                                <i class='bx bx-check'></i>
+                                                            }
+                                                        </span>
+                                                    }
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-medium">—</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    idx++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .dr-class-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .dr-class-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+    }
+
+    .dr-chip {
+        font-size: 0.78rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+        white-space: nowrap;
+        font-weight: 600;
+    }
+
+    .dr-status {
+        display: inline-block;
+        font-size: 0.8rem;
+        padding: 0.25rem 0.7rem;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+
+    .dr-present { background: rgba(46, 139, 87, 0.15); color: #1f6b41; }
+    .dr-late { background: rgba(255, 152, 0, 0.18); color: #b56b00; }
+    .dr-absent { background: rgba(220, 53, 69, 0.15); color: #b02a37; }
+    .dr-excused { background: rgba(23, 162, 184, 0.15); color: #117a8b; }
+    .dr-pending { background: rgba(120, 120, 120, 0.15); color: #666; }
+    .dr-rate { background: rgba(74, 144, 217, 0.15); color: #2c6fad; }
+
+    .dr-wirds {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+    }
+
+    .dr-wird {
+        font-size: 0.78rem;
+        padding: 0.2rem 0.55rem;
+        border-radius: 6px;
+        background: rgba(156, 39, 176, 0.1);
+        color: #6a1b8a;
+        white-space: nowrap;
+    }
+
+    .dr-wird-done {
+        background: rgba(46, 139, 87, 0.12);
+        color: #1f6b41;
+    }
+
+    .dr-student-link {
+        color: var(--primary-green, #2e8b57);
+        text-decoration: none;
+    }
+
+    .dr-student-link:hover { text-decoration: underline; }
+</style>

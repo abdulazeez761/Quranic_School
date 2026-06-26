@@ -48,7 +48,7 @@
   display: flex !important;
   flex-direction: column;
   z-index: var(--z-fixed);
-  overflow-y: auto;
+  overflow: hidden;
   box-shadow: var(--shadow-lg);
   visibility: visible !important;
 }
@@ -78,20 +78,53 @@ body[dir='rtl'] .sidebar {
 /* Navigation */
 .sidebar nav {
   flex: 1;
+  min-height: 0;
   display: flex !important;
   flex-direction: column;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
 }
 
+/* Only the navigation list scrolls; logo + footer stay pinned */
 .sidebar ul {
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+/* Keep the language switcher and logout fixed at the bottom */
+.sidebar .sidebar-footer,
+.sidebar .logout {
+  flex-shrink: 0;
+}
+
+/* Slim, subtle scrollbar for the nav list */
+.sidebar ul {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+.sidebar ul::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar ul::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar ul::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+}
+
+.sidebar ul::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .sidebar li {
