@@ -11,6 +11,7 @@ namespace Hafiz.Infrastructure.Services
         private readonly string _localBackupFolder;
         private readonly IGoogleDriveUploader _driveUploader;
         private readonly ILogger<BackupService> _logger;
+        private readonly bool _isUsingDifferentImage = false; // the server might have more than one image for the applicaion and another one for the database
 
         public BackupService(
             IConfiguration config,
@@ -24,6 +25,7 @@ namespace Hafiz.Infrastructure.Services
             _localBackupFolder = config["Backup:LocalFolder"] ?? @"C:\SqlBackups";
             _driveUploader = driveUploader;
             _logger = logger;
+            _isUsingDifferentImage = config["Backup:UseDifferentImage"]?.ToLower() == "true";
         }
 
         public async Task<string> RunBackupAsync(CancellationToken ct = default)
@@ -60,6 +62,17 @@ namespace Hafiz.Infrastructure.Services
 
             try
             {
+                if (_isUsingDifferentImage == true)
+                {
+                    var process = new System.Diagnostics.Process();
+                    process.StartInfo.FileName = "docker";
+                    process.StartInfo.Arguments = $"cp sql_server:{fullPath} {fullPath}";
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.StartInfo.UseShellExecute = false;
+                    process.Start();
+                    process.WaitForExit();
+                }
+
                 var driveFileId = await _driveUploader.UploadAsync(fullPath, ct);
                 _logger.LogInformation(
                     "تم رفع النسخة الاحتياطية إلى Google Drive (Id: {Id})",
