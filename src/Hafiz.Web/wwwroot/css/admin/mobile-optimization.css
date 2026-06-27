@@ -147,7 +147,7 @@
 
   .btn-group {
     display: flex !important;
-    flex-direction: column;
+    flex-direction: row;
     gap: var(--space-sm);
   }
 
