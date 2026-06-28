@@ -35,12 +35,20 @@ namespace Hafiz.Services
             }
 
             if (wird.Status.ToString() != "notSet")
+            {
                 wird.IsCompleted = true;
+                wird.IsUpcoming = false;
+            }
+
             bool isAdded = await _wirdRepository.AddWirdAsync(wird);
             if (isAdded)
             {
                 var (memDelta, revDelta) = ProgressContribution(wird);
-                await _studentRepository.ApplyProgressDeltaAsync(wird.StudentId, memDelta, revDelta);
+                await _studentRepository.ApplyProgressDeltaAsync(
+                    wird.StudentId,
+                    memDelta,
+                    revDelta
+                );
             }
             return (
                 isAdded,
@@ -53,9 +61,7 @@ namespace Hafiz.Services
         public async Task<(bool IsSuccess, string Message)> UpdateWirdAsync(WirdAssignment wird)
         {
             var existing = await _wirdRepository.GetWirdByID(wird.Id);
-            var (oldMem, oldRev) = existing is null
-                ? (0m, 0m)
-                : ProgressContribution(existing);
+            var (oldMem, oldRev) = existing is null ? (0m, 0m) : ProgressContribution(existing);
 
             // Block memorization edits that would exceed the Quran for an already-hafiz student.
             // Compare against the student's total minus this wird's old memorization contribution
@@ -65,7 +71,8 @@ namespace Hafiz.Services
                 var student = await _studentRepository.GetByIdAsync(wird.StudentId);
                 if (student != null)
                 {
-                    decimal totalExcludingThis = WirdPageCalculator.TotalMemorizedPages(student) - oldMem;
+                    decimal totalExcludingThis =
+                        WirdPageCalculator.TotalMemorizedPages(student) - oldMem;
                     if (totalExcludingThis >= WirdPageCalculator.TotalQuranPages)
                     {
                         return (
@@ -76,6 +83,9 @@ namespace Hafiz.Services
                 }
             }
 
+            // The edit modal carries an explicit "Upcoming" toggle, so honor whatever the
+            // teacher set here (don't force-clear it from the grade). The quick-grade
+            // buttons handle clearing it on their own path.
             bool isUpdated = await _wirdRepository.UpdateWirdAsync(wird);
             if (isUpdated)
             {
@@ -139,7 +149,7 @@ namespace Hafiz.Services
             var wird = await _wirdRepository.GetWirdByID(Id);
             if (wird == null)
                 return false;
-
+            wird.IsUpcoming = false;
             var (oldMem, oldRev) = ProgressContribution(wird);
             bool ok = await _wirdRepository.UpdateStatus(Id, status);
             if (ok)
@@ -164,7 +174,9 @@ namespace Hafiz.Services
             return await _wirdRepository.UpdateNote(Id, Note);
         }
 
-        private static (decimal memorized, decimal reviewed) ProgressContribution(WirdAssignment wird)
+        private static (decimal memorized, decimal reviewed) ProgressContribution(
+            WirdAssignment wird
+        )
         {
             decimal pages = WirdPageCalculator.ToPages(wird);
             if (pages <= 0 || wird.Status == AssignmentStatus.notSet)

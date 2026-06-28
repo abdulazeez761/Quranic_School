@@ -59,6 +59,7 @@ namespace Hafiz.Models
         public DateTime AssignedDate { get; set; } = DateTime.Now;
 
         public bool IsCompleted { get; set; }
+        public bool IsUpcoming { get; set; } = false;
 
         [StringLength(500, ErrorMessage = "Note length can't exceed 500 characters.")]
         public string? Note { get; set; }

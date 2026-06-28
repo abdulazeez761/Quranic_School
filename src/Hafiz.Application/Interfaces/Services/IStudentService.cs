@@ -28,7 +28,8 @@ namespace Hafiz.Services.Interfaces
             int pageNumber = 1,
             int pageSize = 5,
             bool? isCompleted = null,
-            AssignmentType? assignmentType = null
+            AssignmentType? assignmentType = null,
+            bool? isUpcoming = null
         );
     }
 }

@@ -21,6 +21,10 @@ namespace Hafiz.Repositories.Interfaces
         /// Atomically increments the student's cumulative memorized/reviewed page counters.
         /// Pass negative deltas to subtract (e.g. when a completed wird is deleted).
         /// </summary>
-        Task ApplyProgressDeltaAsync(Guid studentId, decimal memorizedPagesDelta, decimal reviewedPagesDelta);
+        Task ApplyProgressDeltaAsync(
+            Guid studentId,
+            decimal memorizedPagesDelta,
+            decimal reviewedPagesDelta
+        );
     }
 }

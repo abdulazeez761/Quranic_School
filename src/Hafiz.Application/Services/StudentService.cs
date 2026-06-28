@@ -168,7 +168,8 @@ namespace Hafiz.Services
             int pageNumber = 1,
             int pageSize = 5,
             bool? isCompleted = null,
-            AssignmentType? assignmentType = null
+            AssignmentType? assignmentType = null,
+            bool? isUpcoming = null
         )
         {
             if (pageNumber < 1)
@@ -176,13 +177,14 @@ namespace Hafiz.Services
             if (pageSize < 1)
                 pageSize = 5;
 
-            var (wirds, totalCount, completedCount, pendingCount) =
+            var (wirds, totalCount, completedCount, pendingCount, upcomingCount) =
                 await _wirdRepository.GetWirdAssignmentsByStudentIdPaginatedAsync(
                     studentId,
                     pageNumber,
                     pageSize,
                     isCompleted,
-                    assignmentType
+                    assignmentType,
+                    isUpcoming
                 );
 
             return new PaginatedWirdsResponse(
@@ -191,7 +193,8 @@ namespace Hafiz.Services
                 pageSize,
                 totalCount,
                 completedCount,
-                pendingCount
+                pendingCount,
+                upcomingCount
             );
         }
     }

@@ -44,6 +44,7 @@ namespace Hafiz.Repositories
                         .SetProperty(w => w.ToSurah, wird.ToSurah)
                         .SetProperty(w => w.ToAyah, wird.ToAyah)
                         .SetProperty(w => w.Status, wird.Status)
+                        .SetProperty(w => w.IsUpcoming, wird.IsUpcoming)
                         .SetProperty(w => w.Note, wird.Note)
                 );
 
@@ -77,8 +78,12 @@ namespace Hafiz.Repositories
 
         public async Task<WirdAssignment?> GetWirdByID(Guid Id)
         {
+            // No tracking: callers read this for display or recompute then persist via a
+            // separate ExecuteUpdate/own query. Tracking here would make a re-fetch after
+            // ExecuteUpdateAsync return the stale cached entity instead of fresh DB values.
             return await _context
-                .WirdAssignments.Include(w => w.Student)
+                .WirdAssignments.AsNoTracking()
+                .Include(w => w.Student)
                 .ThenInclude(s => s.StudentInfo)
                 .Where(c => c.Id == Id)
                 .FirstOrDefaultAsync();
@@ -88,6 +93,9 @@ namespace Hafiz.Repositories
         {
             var assignment = _context.WirdAssignments.Where(c => c.Id == Id).FirstOrDefault();
             assignment!.Status = status;
+            // Grading a wird means it's no longer an upcoming (future) assignment.
+            if (status != AssignmentStatus.notSet)
+                assignment.IsUpcoming = false;
             var result = await _context.SaveChangesAsync();
 
             return result > 0;
@@ -114,19 +122,26 @@ namespace Hafiz.Repositories
             List<WirdAssignment> wirds,
             int totalCount,
             int completedCount,
-            int pendingCount
+            int pendingCount,
+            int upcomingCount
         )> GetWirdAssignmentsByStudentIdPaginatedAsync(
             Guid studentID,
             int pageNumber,
             int pageSize,
             bool? isCompleted = null,
-            AssignmentType? assignmentType = null
+            AssignmentType? assignmentType = null,
+            bool? isUpcoming = null
         )
         {
             var query = _context
                 .WirdAssignments.Include(w => w.Student)
                 .Include(w => w.Student.StudentInfo)
                 .Where(w => w.StudentId == studentID);
+
+            if (isUpcoming.HasValue)
+            {
+                query = query.Where(w => w.IsUpcoming == isUpcoming.Value);
+            }
 
             if (isCompleted.HasValue)
             {
@@ -145,6 +160,11 @@ namespace Hafiz.Repositories
                 .Where(w => w.Status != AssignmentStatus.notSet)
                 .CountAsync();
             var pendingCount = totalCount - completedCount;
+            // Upcoming count is always over the whole student so the summary stays
+            // meaningful even while the list is filtered by status/type.
+            var upcomingCount = await _context
+                .WirdAssignments.Where(w => w.StudentId == studentID && w.IsUpcoming)
+                .CountAsync();
 
             var wirds = await query
                 .OrderByDescending(w => w.AssignedDate)
@@ -152,7 +172,7 @@ namespace Hafiz.Repositories
                 .Take(pageSize)
                 .ToListAsync();
 
-            return (wirds, totalCount, completedCount, pendingCount);
+            return (wirds, totalCount, completedCount, pendingCount, upcomingCount);
         }
     }
 }

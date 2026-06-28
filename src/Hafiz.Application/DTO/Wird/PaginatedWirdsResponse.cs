@@ -13,6 +13,7 @@ namespace Hafiz.DTOs.Wird
         public int TotalPages { get; set; }
         public int CompletedCount { get; set; }
         public int PendingCount { get; set; }
+        public int UpcomingCount { get; set; }
 
         public bool HasPreviousPage => PageNumber > 1;
         public bool HasNextPage => PageNumber < TotalPages;
@@ -28,7 +29,8 @@ namespace Hafiz.DTOs.Wird
             int pageSize,
             int totalCount,
             int completedCount,
-            int pendingCount
+            int pendingCount,
+            int upcomingCount = 0
         )
         {
             Wirds = wirds;
@@ -38,6 +40,7 @@ namespace Hafiz.DTOs.Wird
             TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
             CompletedCount = completedCount;
             PendingCount = pendingCount;
+            UpcomingCount = upcomingCount;
         }
     }
 }

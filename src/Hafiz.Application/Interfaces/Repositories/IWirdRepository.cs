@@ -20,13 +20,15 @@ namespace Hafiz.Repositories.Interfaces
             List<WirdAssignment> wirds,
             int totalCount,
             int completedCount,
-            int pendingCount
+            int pendingCount,
+            int upcomingCount
         )> GetWirdAssignmentsByStudentIdPaginatedAsync(
             Guid studentID,
             int pageNumber,
             int pageSize,
             bool? isCompleted = null,
-            AssignmentType? assignmentType = null
+            AssignmentType? assignmentType = null,
+            bool? isUpcoming = null
         );
         Task<bool> UpdateStatus(Guid id, AssignmentStatus status);
         Task<WirdAssignment?> GetWirdByID(Guid Id);
