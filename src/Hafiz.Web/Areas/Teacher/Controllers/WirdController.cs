@@ -66,6 +66,7 @@ namespace Hafiz.Areas.Teacher.Controllers
                     assignment.ToSurah,
                     assignment.ToAyah,
                     assignment.Status,
+                    assignment.IsUpcoming,
                     assignment.Note,
                 }
             );

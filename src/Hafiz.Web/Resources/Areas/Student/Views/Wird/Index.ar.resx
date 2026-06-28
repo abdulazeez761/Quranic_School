@@ -5,6 +5,7 @@
   <data name="All" xml:space="preserve"><value>الكل</value></data>
   <data name="Pending" xml:space="preserve"><value>قيد الانتظار</value></data>
   <data name="Completed" xml:space="preserve"><value>مكتمل</value></data>
+  <data name="Upcoming" xml:space="preserve"><value>ورد قادم</value></data>
   <data name="Type" xml:space="preserve"><value>النوع</value></data>
   <data name="AllTypes" xml:space="preserve"><value>كل الأنواع</value></data>
   <data name="TotalWirds" xml:space="preserve"><value>إجمالي الأوراد</value></data>

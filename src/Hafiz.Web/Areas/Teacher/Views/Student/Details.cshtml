@@ -207,9 +207,13 @@
                 var hasFromData = fromSurahName != null || wird.FromJuz != null || wird.FromPage != null || !string.IsNullOrEmpty(wird.FromAyah);
                 var hasToData = toSurahName != null || wird.ToJuz != null || wird.ToPage != null || wird.ToAyah != null;
 
-                <div class="wird-item">
+                <div class="wird-item @(wird.IsUpcoming ? "is-upcoming" : "")">
                     <div class="wird-header">
                         <h4>@Localizer[wird.Type.ToString()]</h4>
+                        @if (wird.IsUpcoming)
+                        {
+                            @await Html.PartialAsync("_UpcomingBadge")
+                        }
                         <span class="wird-status-badge @(wird.IsCompleted ? "status-completed" : wird.Status == AssignmentStatus.notSet ? "status-pending" : "")">
                             @Localizer[wird.Status.ToString()]
                         </span>

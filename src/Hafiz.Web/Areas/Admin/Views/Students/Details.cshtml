@@ -447,6 +447,11 @@
                                class="filter-tab @(Model.WirdStatus == "completed" ? "active" : "")">
                                 @Localizer["Completed"]
                             </a>
+                            <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="wirds" asp-route-status="upcoming"
+                               asp-route-type="@Model.WirdType"
+                               class="filter-tab @(Model.WirdStatus == "upcoming" ? "active" : "")">
+                                @Localizer["Upcoming"]
+                            </a>
                         </div>
                         <div class="filter-tabs">
                             <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="wirds"
@@ -482,15 +487,21 @@
                         <div class="wirds-list">
                             @foreach (var wird in paginatedWirds.Wirds)
                             {
-                                <div class="wird-item @(wird.IsCompleted ? "completed" : "")">
+                                <div class="wird-item @(wird.IsCompleted ? "completed" : "") @(wird.IsUpcoming ? "is-upcoming" : "")">
                                     <div class="wird-header">
                                         <div class="wird-type">
                                             <i class='bx bx-file'></i>
                                             @Localizer[$"AssignmentType_{wird.Type}"]
                                         </div>
-                                        <div class="wird-date">
-                                            <i class='bx bx-calendar'></i>
-                                            @wird.AssignedDate.ToString("yyyy-MM-dd")
+                                        <div class="wird-header-right">
+                                            @if (wird.IsUpcoming)
+                                            {
+                                                @await Html.PartialAsync("_UpcomingBadge")
+                                            }
+                                            <div class="wird-date">
+                                                <i class='bx bx-calendar'></i>
+                                                @wird.AssignedDate.ToString("yyyy-MM-dd")
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="wird-content">

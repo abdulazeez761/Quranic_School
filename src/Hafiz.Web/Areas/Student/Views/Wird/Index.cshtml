@@ -112,6 +112,11 @@
                     <i class='bx bx-check-circle'></i>
                     @Localizer["Completed"]
                 </a>
+                <a href="@Url.Action("Index", "Wird", new { area = "Student", status = "upcoming", type = currentType, page = 1, pageSize })"
+                   class="filter-tab filter-tab-upcoming @(currentStatus == "upcoming" ? "active" : "")">
+                    <i class='bx bx-calendar-star'></i>
+                    @Localizer["Upcoming"]
+                </a>
             </div>
         </div>
 
@@ -175,6 +180,13 @@
                 <p class="stat-value">@Model.CompletedCount</p>
             </div>
         </div>
+        <div class="stat-card stat-upcoming">
+            <i class='bx bx-calendar-star'></i>
+            <div class="stat-info">
+                <h3>@Localizer["Upcoming"]</h3>
+                <p class="stat-value">@Model.UpcomingCount</p>
+            </div>
+        </div>
     </div>
 
     <!-- Wirds List -->
@@ -196,12 +208,16 @@
                                  || wird.ToJuz.HasValue
                                  || wird.ToPage.HasValue;
 
-                <div class="wird-card @statusClass">
+                <div class="wird-card @statusClass @(wird.IsUpcoming ? "is-upcoming" : "")">
                     <div class="wird-card-top-stripe"></div>
 
                     <div class="wird-card-header">
                         <div class="wird-header-title">
                             <h3 class="wird-title-text">@Localizer[wird.Type.ToString()]</h3>
+                            @if (wird.IsUpcoming)
+                            {
+                                @await Html.PartialAsync("_UpcomingBadge")
+                            }
                             <span class="wird-status-badge status-@statusClass">@localizedStatus</span>
                         </div>
                         <div class="wird-meta">

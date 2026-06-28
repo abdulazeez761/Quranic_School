@@ -241,4 +241,12 @@
     <value>اجزاء</value>
     <comment/>
   </data>
+  <data name="IsUpcoming" xml:space="preserve">
+    <value>ورد قادم</value>
+    <comment/>
+  </data>
+  <data name="IsUpcomingHint" xml:space="preserve">
+    <value>جدوِل هذا الورد كورد قادم. لن يُحتسب ضمن تقدّم الطالب حتى يتم تقييمه.</value>
+    <comment/>
+  </data>
 </root>

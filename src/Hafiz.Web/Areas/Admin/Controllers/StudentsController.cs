@@ -87,12 +87,14 @@ namespace Hafiz.Areas.Admin.Controllers
                 _ => null,
             };
 
+            bool? isUpcoming = status?.ToLower() == "upcoming" ? true : null;
+
             AssignmentType? assignmentType = null;
             if (!string.IsNullOrEmpty(type) && Enum.TryParse(type, true, out AssignmentType parsedType))
                 assignmentType = parsedType;
 
             var paginatedWirds = await _studentService.GetStudentWirdsPaginatedAsync(
-                id, page, pageSize, isCompleted, assignmentType);
+                id, page, pageSize, isCompleted, assignmentType, isUpcoming);
 
             var attendance = await _studentService.GetStudentAttendanceAsync(id);
             var attendanceList = attendance.ToList();

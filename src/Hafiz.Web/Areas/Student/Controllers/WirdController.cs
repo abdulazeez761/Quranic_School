@@ -43,6 +43,8 @@ namespace Hafiz.Areas.Student.Controllers
                 _ => null,
             };
 
+            bool? isUpcoming = status?.ToLower() == "upcoming" ? true : null;
+
             AssignmentType? assignmentType = null;
             if (
                 !string.IsNullOrEmpty(type)
@@ -57,7 +59,8 @@ namespace Hafiz.Areas.Student.Controllers
                 page,
                 pageSize,
                 isCompleted,
-                assignmentType
+                assignmentType,
+                isUpcoming
             );
 
             ViewBag.Status = status;

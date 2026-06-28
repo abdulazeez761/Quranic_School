@@ -1,0 +1,68 @@
+/* ===================================================================
+   UPCOMING WIRD — shared visual language
+   Used by _UpcomingBadge.cshtml and any wird card/list across all areas.
+   =================================================================== */
+
+.upcoming-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: nowrap;
+  color: #5b21b6;
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+  border: 1px solid #c4b5fd;
+  box-shadow: 0 1px 2px rgba(91, 33, 182, 0.12);
+  vertical-align: middle;
+}
+
+.upcoming-badge i {
+  font-size: 13px;
+  color: #7c3aed;
+  animation: upcomingPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes upcomingPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 0.75;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .upcoming-badge i {
+    animation: none;
+  }
+}
+
+/* Card / row accent when a wird is upcoming. Opt-in via .is-upcoming. */
+.wird-card.is-upcoming,
+.wird-item.is-upcoming {
+  background: linear-gradient(180deg, #faf5ff 0%, var(--white, #fff) 60%);
+}
+
+.wird-card.is-upcoming .wird-card-top-stripe {
+  background: linear-gradient(90deg, #7c3aed, #a855f7) !important;
+}
+
+/* Subtle left rail for list-style items (LTR + RTL aware). */
+.wird-item.is-upcoming {
+  border-inline-start: 3px solid #7c3aed;
+}
+
+/* Inline group for badge + date in list headers. */
+.wird-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}

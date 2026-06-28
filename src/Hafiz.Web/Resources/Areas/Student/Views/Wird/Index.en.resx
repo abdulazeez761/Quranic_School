@@ -5,6 +5,7 @@
   <data name="All" xml:space="preserve"><value>All</value></data>
   <data name="Pending" xml:space="preserve"><value>Pending</value></data>
   <data name="Completed" xml:space="preserve"><value>Completed</value></data>
+  <data name="Upcoming" xml:space="preserve"><value>Upcoming</value></data>
   <data name="Type" xml:space="preserve"><value>Type</value></data>
   <data name="AllTypes" xml:space="preserve"><value>All Types</value></data>
   <data name="TotalWirds" xml:space="preserve"><value>Total Wirds</value></data>

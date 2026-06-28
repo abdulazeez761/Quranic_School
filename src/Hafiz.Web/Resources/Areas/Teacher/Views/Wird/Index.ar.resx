@@ -205,6 +205,22 @@
     <value>↺ إعادة تعيين</value>
     <comment/>
   </data>
+  <data name="Upcoming" xml:space="preserve">
+    <value>ورد قادم</value>
+    <comment/>
+  </data>
+  <data name="AllWirds" xml:space="preserve">
+    <value>كل الأوراد</value>
+    <comment/>
+  </data>
+  <data name="UpcomingOnly" xml:space="preserve">
+    <value>الأوراد القادمة فقط</value>
+    <comment/>
+  </data>
+  <data name="NotUpcoming" xml:space="preserve">
+    <value>الأوراد العادية فقط</value>
+    <comment/>
+  </data>
   <data name="Showing" xml:space="preserve">
     <value>عرض</value>
     <comment/>

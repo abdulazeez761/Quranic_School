@@ -179,6 +179,10 @@
   color: var(--success);
 }
 
+.stat-upcoming i {
+  color: #7c3aed;
+}
+
 .stat-info h3 {
   font-size: var(--font-size-sm);
   color: var(--text-medium);

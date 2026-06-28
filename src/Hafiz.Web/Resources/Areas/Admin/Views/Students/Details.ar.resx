@@ -361,6 +361,10 @@
     <value>مكتمل</value>
     <comment/>
   </data>
+  <data name="Upcoming" xml:space="preserve">
+    <value>ورد قادم</value>
+    <comment/>
+  </data>
   <data name="AssignmentType_Wird" xml:space="preserve">
     <value>ورد</value>
     <comment/>

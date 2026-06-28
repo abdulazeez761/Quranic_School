@@ -245,14 +245,52 @@
     <value>Juz</value>
     <comment/>
   </data>
-  <data name="EquivalentPages" xml:space="preserve"><value>Page Equivalent</value></data>
-  <data name="EquivalentPagesHint" xml:space="preserve"><value>Pick how many pages this ayah amount equals so progress can be counted.</value></data>
-  <data name="SelectEquivalentPages" xml:space="preserve"><value>Select page equivalent</value></data>
-  <data name="QuarterPage" xml:space="preserve"><value>Quarter page</value></data>
-  <data name="HalfPage" xml:space="preserve"><value>Half page</value></data>
-  <data name="ThreeQuarterPage" xml:space="preserve"><value>Three quarter page</value></data>
-  <data name="OnePage" xml:space="preserve"><value>One page</value></data>
-  <data name="OneAndHalfPage" xml:space="preserve"><value>One and a half page</value></data>
-  <data name="TwoPages" xml:space="preserve"><value>Two pages</value></data>
-  <data name="ThreePages" xml:space="preserve"><value>Three pages</value></data>
+  <data name="EquivalentPages" xml:space="preserve">
+    <value>Page Equivalent</value>
+    <comment/>
+  </data>
+  <data name="EquivalentPagesHint" xml:space="preserve">
+    <value>Pick how many pages this ayah amount equals so progress can be counted.</value>
+    <comment/>
+  </data>
+  <data name="SelectEquivalentPages" xml:space="preserve">
+    <value>Select page equivalent</value>
+    <comment/>
+  </data>
+  <data name="QuarterPage" xml:space="preserve">
+    <value>Quarter page</value>
+    <comment/>
+  </data>
+  <data name="HalfPage" xml:space="preserve">
+    <value>Half page</value>
+    <comment/>
+  </data>
+  <data name="ThreeQuarterPage" xml:space="preserve">
+    <value>Three quarter page</value>
+    <comment/>
+  </data>
+  <data name="OnePage" xml:space="preserve">
+    <value>One page</value>
+    <comment/>
+  </data>
+  <data name="OneAndHalfPage" xml:space="preserve">
+    <value>One and a half page</value>
+    <comment/>
+  </data>
+  <data name="TwoPages" xml:space="preserve">
+    <value>Two pages</value>
+    <comment/>
+  </data>
+  <data name="ThreePages" xml:space="preserve">
+    <value>Three pages</value>
+    <comment/>
+  </data>
+  <data name="IsUpcoming" xml:space="preserve">
+    <value>Upcoming wird</value>
+    <comment/>
+  </data>
+  <data name="IsUpcomingHint" xml:space="preserve">
+    <value>Schedule this as a future wird. It won't count toward progress until it is graded.</value>
+    <comment/>
+  </data>
 </root>

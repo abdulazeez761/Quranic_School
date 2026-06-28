@@ -1,0 +1,12 @@
+@*
+    Reusable "Upcoming wird" badge. Drop it anywhere a wird is rendered:
+        @if (wird.IsUpcoming) { @await Html.PartialAsync("_UpcomingBadge") }
+    Styling lives in wwwroot/css/upcoming.css (loaded by every area layout).
+*@
+@{
+    var isUpcomingAr = System.Globalization.CultureInfo.CurrentUICulture.Name.StartsWith("ar");
+}
+<span class="upcoming-badge" title="@(isUpcomingAr ? "ورد قادم لم يحن وقته بعد" : "Upcoming wird — not due yet")">
+    <i class='bx bx-calendar-star'></i>
+    <span>@(isUpcomingAr ? "ورد قادم" : "Upcoming")</span>
+</span>

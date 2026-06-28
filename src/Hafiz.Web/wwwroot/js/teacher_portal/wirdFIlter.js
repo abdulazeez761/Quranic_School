@@ -25,6 +25,7 @@ document
     const statusFilter = document
       .getElementById('filterStatus')
       .value.toLowerCase();
+    const upcomingFilter = document.getElementById('filterUpcoming').value;
     const dateFromFilter = document.getElementById('filterDateFrom').value;
     const dateToFilter = document.getElementById('filterDateTo').value;
 
@@ -39,6 +40,7 @@ document
       const student = card.dataset.student.toLowerCase();
       const type = card.dataset.type.toLowerCase();
       const status = card.dataset.status.toLowerCase();
+      const upcoming = card.dataset.upcoming;
 
       let showCard = true;
 
@@ -51,6 +53,10 @@ document
       }
 
       if (statusFilter && status !== statusFilter) {
+        showCard = false;
+      }
+
+      if (upcomingFilter && upcoming !== upcomingFilter) {
         showCard = false;
       }
 
@@ -71,6 +77,7 @@ document.getElementById('resetFilters')?.addEventListener('click', function () {
   document.getElementById('filterStudent').value = '';
   document.getElementById('filterType').value = '';
   document.getElementById('filterStatus').value = '';
+  document.getElementById('filterUpcoming').value = '';
   document.getElementById('filterDateFrom').value = '';
   document.getElementById('filterDateTo').value = '';
 
@@ -87,5 +94,12 @@ document.getElementById('resetFilters')?.addEventListener('click', function () {
 document
   .getElementById('filterStudent')
   ?.addEventListener('input', function () {
+    document.getElementById('applyFilters').click();
+  });
+
+// Apply immediately when the upcoming filter changes
+document
+  .getElementById('filterUpcoming')
+  ?.addEventListener('change', function () {
     document.getElementById('applyFilters').click();
   });

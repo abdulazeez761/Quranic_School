@@ -205,6 +205,22 @@
     <value>↺ Reset</value>
     <comment/>
   </data>
+  <data name="Upcoming" xml:space="preserve">
+    <value>Upcoming</value>
+    <comment/>
+  </data>
+  <data name="AllWirds" xml:space="preserve">
+    <value>All Wirds</value>
+    <comment/>
+  </data>
+  <data name="UpcomingOnly" xml:space="preserve">
+    <value>Upcoming only</value>
+    <comment/>
+  </data>
+  <data name="NotUpcoming" xml:space="preserve">
+    <value>Regular only</value>
+    <comment/>
+  </data>
   <data name="Showing" xml:space="preserve">
     <value>Showing</value>
     <comment/>

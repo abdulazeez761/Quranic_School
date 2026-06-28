@@ -237,4 +237,12 @@
     <value>Ayahs</value>
     <comment/>
   </data>
+  <data name="IsUpcoming" xml:space="preserve">
+    <value>Upcoming wird</value>
+    <comment/>
+  </data>
+  <data name="IsUpcomingHint" xml:space="preserve">
+    <value>Schedule this as a future wird. It won't count toward progress until it is graded.</value>
+    <comment/>
+  </data>
 </root>

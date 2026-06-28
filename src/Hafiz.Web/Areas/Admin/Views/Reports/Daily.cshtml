@@ -223,8 +223,12 @@
                                                     @foreach (var w in st.Wirds)
                                                     {
                                                         var desc = WirdDescription(w);
-                                                        <span class="dr-wird @(w.IsCompleted ? "dr-wird-done" : "")"
-                                                              title="@(w.IsCompleted ? "مكتمل" : "قيد التنفيذ")">
+                                                        <span class="dr-wird @(w.IsCompleted ? "dr-wird-done" : "") @(w.IsUpcoming ? "dr-wird-upcoming" : "")"
+                                                              title="@(w.IsUpcoming ? "ورد قادم" : w.IsCompleted ? "مكتمل" : "قيد التنفيذ")">
+                                                            @if (w.IsUpcoming)
+                                                            {
+                                                                <i class='bx bx-calendar-star'></i>
+                                                            }
                                                             <strong>@WirdTypeLabel(w.Type)</strong>@(string.IsNullOrEmpty(desc) ? "" : $": {desc}")
                                                             @if (w.IsCompleted)
                                                             {
@@ -307,6 +311,12 @@
     .dr-wird-done {
         background: rgba(46, 139, 87, 0.12);
         color: #1f6b41;
+    }
+
+    .dr-wird-upcoming {
+        background: rgba(124, 58, 237, 0.12);
+        color: #5b21b6;
+        border: 1px solid rgba(124, 58, 237, 0.35);
     }
 
     .dr-student-link {

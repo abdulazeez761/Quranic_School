@@ -155,6 +155,10 @@ function fetchWirdAssignmentById(id) {
 
       // 6. تعبئة الملاحظات (نضع نصاً فارغاً إذا كانت الملاحظة غير موجودة لتجنب طباعة 'null')
       document.getElementById('Note').value = data.note || '';
+
+      // 7. تعبئة خانة "ورد قادم"
+      const upcomingEl = document.getElementById('IsUpcoming');
+      if (upcomingEl) upcomingEl.checked = data.isUpcoming === true;
     })
     .catch((error) => {
       console.error('Error fetching assignment:', error);

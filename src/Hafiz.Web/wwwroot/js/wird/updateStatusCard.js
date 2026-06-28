@@ -37,6 +37,14 @@ document.addEventListener('click', async function (e) {
         card.classList.add(status.toLowerCase());
         card.dataset.status = status.toLowerCase();
 
+        // Grading clears the "upcoming" flag server-side; mirror that in the DOM.
+        if (status.toLowerCase() !== 'notset') {
+          card.classList.remove('is-upcoming');
+          card.dataset.upcoming = 'false';
+          const upcomingBadge = card.querySelector('.upcoming-badge');
+          if (upcomingBadge) upcomingBadge.remove();
+        }
+
         card.classList.add('updated');
 
         setTimeout(() => {

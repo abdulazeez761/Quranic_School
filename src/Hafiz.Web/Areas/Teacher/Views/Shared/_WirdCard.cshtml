@@ -7,9 +7,10 @@
     var statusKey = Model.Status.ToString();
     var localizedStatus = Localizer[char.ToUpper(statusKey[0]) + statusKey.Substring(1)];
 }
-<div id="wird-card-@Model.Id" class="wird-card @statusClass"
+<div id="wird-card-@Model.Id" class="wird-card @statusClass @(Model.IsUpcoming ? "is-upcoming" : "")"
      data-student="@Model.Student.StudentInfo.FirstName @Model.Student.StudentInfo.SecondName" data-type="@Model.Type"
-     data-status="@statusClass" data-date="@Model.AssignedDate.ToString("yyyy-MM-dd")">
+     data-status="@statusClass" data-upcoming="@(Model.IsUpcoming ? "true" : "false")"
+     data-date="@Model.AssignedDate.ToString("yyyy-MM-dd")">
 
     <div class="wird-card-top-stripe"></div>
 
@@ -17,6 +18,10 @@
     <div class="wird-card-header">
         <div class="wird-header-title">
             <h3 class="student-name">@Model.Student.StudentInfo.FirstName @Model.Student.StudentInfo.SecondName</h3>
+            @if (Model.IsUpcoming)
+            {
+                @await Html.PartialAsync("_UpcomingBadge")
+            }
             <span class="wird-status-badge status-@statusClass">@localizedStatus</span>
         </div>
         <div class="wird-meta">

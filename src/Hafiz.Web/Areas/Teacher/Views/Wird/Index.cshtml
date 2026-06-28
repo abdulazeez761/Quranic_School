@@ -63,6 +63,15 @@
                 </div>
 
                 <div class="filter-group">
+                    <label class="filter-label" for="filterUpcoming">@Localizer["Upcoming"]</label>
+                    <select id="filterUpcoming" class="filter-select">
+                        <option value="">@Localizer["AllWirds"]</option>
+                        <option value="true">@Localizer["UpcomingOnly"]</option>
+                        <option value="false">@Localizer["NotUpcoming"]</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
                     <label class="filter-label" for="filterDateFrom">@Localizer["DateFrom"]</label>
                     <input type="date" id="filterDateFrom" class="filter-input">
                 </div>

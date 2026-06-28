@@ -145,6 +145,24 @@
                         <span class="text-danger field-validation-valid" data-valmsg-for="ToAyah"></span>
                     </div>
                 </details>
+
+                <!-- Upcoming wird toggle -->
+                <div class="form-group">
+                    <div class="upcoming-toggle">
+                        <label class="upcoming-toggle-text" for="IsUpcoming">
+                            <span class="upcoming-toggle-icon"><i class='bx bx-calendar-star'></i></span>
+                            <span class="upcoming-toggle-copy">
+                                <span class="upcoming-toggle-title">@Localizer["IsUpcoming"]</span>
+                                <small class="upcoming-toggle-hint">@Localizer["IsUpcomingHint"]</small>
+                            </span>
+                        </label>
+                        <label class="switch">
+                            <input type="checkbox" id="IsUpcoming" asp-for="IsUpcoming" />
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="IsUpcoming"></span>
+                </div>
             </div>
 
             <div class="modal-footer">
