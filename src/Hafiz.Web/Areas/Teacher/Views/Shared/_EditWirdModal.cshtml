@@ -36,7 +36,7 @@
                 <div class="form-row">
                     <div class="form-group half-width">
                         <label class="form-label" for="Amount">@Localizer["Quantity"]</label>
-                        <input type="number" class="form-control" id="Amount" asp-for="Amount" min="0.5" step="0.5"
+                        <input type="number" class="form-control" id="Amount" asp-for="Amount" min="0.1" step="any"
                                placeholder="@Localizer["Quantity"]" />
                         <span class="text-danger field-validation-valid" data-valmsg-for="Amount"></span>
                     </div>

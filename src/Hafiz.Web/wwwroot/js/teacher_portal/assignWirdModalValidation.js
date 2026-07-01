@@ -22,15 +22,21 @@
   const fromAyah = document.getElementById('FromAyah');
   const toAyah = document.getElementById('ToAyah');
 
-  // Juz can be fractional (e.g. 1.5); pages and ayahs are whole numbers.
+  // Juz and Pages can be fractional (e.g. 1.5 juz, 1.2 pages); ayahs are counted
+  // as whole numbers (their sub-page value is captured by EquivalentPages instead).
   // Note: the browser anchors valid step values to `min`, so min and step must
   // agree — otherwise min="0.5" + step="1" makes whole numbers like 3 invalid.
+  // Pages use step="any" so any fraction the teacher types is accepted; the
+  // decimal(4,2) column keeps it to two decimal places on save.
   function applyUnitConstraints(roundExisting) {
     if (!amount || !amountUnit) return;
     if (amountUnit.value === '2') {
       amount.min = '0.5';
       amount.step = '0.5';
-    } else if (amountUnit.value === '0' || amountUnit.value === '1') {
+    } else if (amountUnit.value === '0') {
+      amount.min = '0.1';
+      amount.step = 'any';
+    } else if (amountUnit.value === '1') {
       amount.min = '1';
       amount.step = '1';
       if (roundExisting && amount.value) {
