@@ -91,6 +91,13 @@
                             <span>@Localizer["Daily_Reports"]</span>
                         </a>
                     </li>
+                    <li class="@IsActive("Reports", "Wirds", "Admin")">
+                        <a asp-area="Admin" asp-controller="Reports" asp-action="Wirds"
+                               aria-current="@(IsActive("Reports", "Wirds", "Admin") == "active" ? "page" : "")">
+                            <i class='bx bx-book-bookmark' aria-hidden="true"></i>
+                            <span>@Localizer["Wird_Reports"]</span>
+                        </a>
+                    </li>
 
                     @* <li class="@IsActive("Videos", "Index", "Admin")">
                         <a asp-area="Admin" asp-controller="Videos" asp-action="Index"
@@ -156,9 +163,17 @@
         var routeData = Context.Request.RouteValues;
         var currentController = routeData["controller"]?.ToString();
         var currentAction = routeData["action"]?.ToString();
-        var currentArea = routeData["area"]?.ToString() ?? "";
 
-        return (string.Equals(controller, currentController, StringComparison.OrdinalIgnoreCase)) ? "active" : "";
+        if (!string.Equals(controller, currentController, StringComparison.OrdinalIgnoreCase))
+            return "";
+
+        // شعبة التقارير تستضيف أكثر من عنصر في القائمة (اليومي، الأوراد) فنميّز بينها بالإجراء.
+        // بقية الشعب لها عنصر واحد، فتبقى مُبرزة في كل صفحاتها الفرعية.
+        if (string.Equals(controller, "Reports", StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(action, currentAction, StringComparison.OrdinalIgnoreCase))
+            return "";
+
+        return "active";
     }
 }
 </body>

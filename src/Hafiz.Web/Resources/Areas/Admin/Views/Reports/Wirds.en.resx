@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Title" xml:space="preserve"><value>Wird Reports</value></data>
+  <data name="Description" xml:space="preserve"><value>Comprehensive wird report with filtering, statistics and student rankings</value></data>
+  <data name="ExportExcel" xml:space="preserve"><value>Export Excel</value></data>
+  <data name="ExportPdf" xml:space="preserve"><value>Print / PDF</value></data>
+  <data name="Institute" xml:space="preserve"><value>Center</value></data>
+  <data name="AllInstitutes" xml:space="preserve"><value>All centers</value></data>
+  <data name="FromDate" xml:space="preserve"><value>From date</value></data>
+  <data name="ToDate" xml:space="preserve"><value>To date</value></data>
+  <data name="Class" xml:space="preserve"><value>Class</value></data>
+  <data name="AllClasses" xml:space="preserve"><value>All classes</value></data>
+  <data name="Student" xml:space="preserve"><value>Student</value></data>
+  <data name="AllStudents" xml:space="preserve"><value>All students</value></data>
+  <data name="Type" xml:space="preserve"><value>Type</value></data>
+  <data name="AllTypes" xml:space="preserve"><value>All types</value></data>
+  <data name="Type_Wird" xml:space="preserve"><value>Wird</value></data>
+  <data name="Type_Memorization" xml:space="preserve"><value>Memorization</value></data>
+  <data name="Type_Revision" xml:space="preserve"><value>Revision</value></data>
+  <data name="Type_Tajwid" xml:space="preserve"><value>Tajwid</value></data>
+  <data name="Type_Tafsir" xml:space="preserve"><value>Tafsir</value></data>
+  <data name="Type_Other" xml:space="preserve"><value>Other</value></data>
+  <data name="CompletionStatus" xml:space="preserve"><value>Completion status</value></data>
+  <data name="AllStatuses" xml:space="preserve"><value>All</value></data>
+  <data name="Completed" xml:space="preserve"><value>Completed</value></data>
+  <data name="Pending" xml:space="preserve"><value>Pending</value></data>
+  <data name="PageSize" xml:space="preserve"><value>Rows</value></data>
+  <data name="ShowRankings" xml:space="preserve"><value>Show student rankings</value></data>
+  <data name="Apply" xml:space="preserve"><value>Apply</value></data>
+  <data name="Reset" xml:space="preserve"><value>Reset</value></data>
+  <data name="TotalAssignments" xml:space="preserve"><value>Total wirds</value></data>
+  <data name="Upcoming" xml:space="preserve"><value>Upcoming</value></data>
+  <data name="CompletionRate" xml:space="preserve"><value>Completion rate</value></data>
+  <data name="TotalPagesEquiv" xml:space="preserve"><value>Total pages</value></data>
+  <data name="ByType" xml:space="preserve"><value>Breakdown by type</value></data>
+  <data name="Total" xml:space="preserve"><value>Total</value></data>
+  <data name="PagesShort" xml:space="preserve"><value>pages</value></data>
+  <data name="TopStudents" xml:space="preserve"><value>Student rankings</value></data>
+  <data name="TotalWirds" xml:space="preserve"><value>Total wirds</value></data>
+  <data name="NoClass" xml:space="preserve"><value>No class</value></data>
+  <data name="Details" xml:space="preserve"><value>Details</value></data>
+  <data name="SearchPlaceholder" xml:space="preserve"><value>Search by name or description...</value></data>
+  <data name="NoResults" xml:space="preserve"><value>No matching results</value></data>
+  <data name="DescriptionCol" xml:space="preserve"><value>Description</value></data>
+  <data name="Date" xml:space="preserve"><value>Date</value></data>
+  <data name="Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Grade" xml:space="preserve"><value>Grade</value></data>
+  <data name="Status_notSet" xml:space="preserve"><value>—</value></data>
+  <data name="Status_poor" xml:space="preserve"><value>Poor</value></data>
+  <data name="Status_fair" xml:space="preserve"><value>Fair</value></data>
+  <data name="Status_good" xml:space="preserve"><value>Good</value></data>
+  <data name="Status_veryGood" xml:space="preserve"><value>Very good</value></data>
+  <data name="Status_excellent" xml:space="preserve"><value>Excellent</value></data>
+  <data name="Previous" xml:space="preserve"><value>Previous</value></data>
+  <data name="Next" xml:space="preserve"><value>Next</value></data>
+  <data name="ShowingRange" xml:space="preserve"><value>Showing {0}–{1} of {2}</value></data>
+  <data name="PageOf" xml:space="preserve"><value>Page {0} of {1}</value></data>
+</root>

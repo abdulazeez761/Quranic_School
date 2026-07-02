@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Hafiz.Data;
+using Hafiz.DTOs.Reports;
 using Hafiz.Models;
 using Hafiz.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -74,6 +75,50 @@ namespace Hafiz.Repositories
         public Task<List<WirdAssignment>> GetWirdAssignmentsByStudentIdAsync(Guid studentID)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<List<WirdAssignment>> GetWirdReportDataAsync(WirdReportFilterDto filter)
+        {
+            var query = _context
+                .WirdAssignments.AsNoTracking()
+                .Include(w => w.Student)
+                .ThenInclude(s => s.StudentInfo)
+                .Include(w => w.Student)
+                .ThenInclude(s => s.Classes)
+                .AsQueryable();
+
+            if (filter.InstituteId.HasValue)
+                query = query.Where(w => w.Student.StudentInfo.InstituteId == filter.InstituteId);
+
+            if (filter.ClassId.HasValue)
+                query = query.Where(w => w.Student.Classes.Any(c => c.Id == filter.ClassId));
+
+            if (filter.StudentId.HasValue)
+                query = query.Where(w => w.StudentId == filter.StudentId);
+
+            if (filter.FromDate.HasValue)
+            {
+                var from = filter.FromDate.Value.Date;
+                query = query.Where(w => w.AssignedDate >= from);
+            }
+
+            if (filter.ToDate.HasValue)
+            {
+                var toExclusive = filter.ToDate.Value.Date.AddDays(1);
+                query = query.Where(w => w.AssignedDate < toExclusive);
+            }
+
+            if (filter.Type.HasValue)
+                query = query.Where(w => w.Type == filter.Type);
+
+            if (filter.IsCompleted.HasValue)
+            {
+                query = filter.IsCompleted.Value
+                    ? query.Where(w => w.Status != AssignmentStatus.notSet)
+                    : query.Where(w => w.Status == AssignmentStatus.notSet);
+            }
+
+            return await query.OrderByDescending(w => w.AssignedDate).ToListAsync();
         }
 
         public async Task<WirdAssignment?> GetWirdByID(Guid Id)

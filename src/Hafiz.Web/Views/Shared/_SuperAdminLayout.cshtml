@@ -55,6 +55,13 @@
                             <span>إدارة المراكز</span>
                         </a>
                     </li>
+                    <li class="@IsActive("Reports", "Wirds")">
+                        <a asp-area="SuperAdmin" asp-controller="Reports" asp-action="Wirds"
+                               aria-current="@(IsActive("Reports", "Wirds") == "active" ? "page" : "")">
+                            <i class='bx bx-book-bookmark' aria-hidden="true"></i>
+                            <span>تقارير الأوراد</span>
+                        </a>
+                    </li>
                     <li class="@IsActive("Backup", "Index")">
                         <a asp-area="SuperAdmin" asp-controller="Backup" asp-action="Index"
                                aria-current="@(IsActive("Backup", "Index") == "active" ? "page" : "")">

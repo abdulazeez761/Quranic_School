@@ -6,6 +6,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.104.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6" />
   </ItemGroup>
 
@@ -84,6 +85,7 @@
     <AdditionalFiles Include="Areas\Admin\Views\Classes\Edit.cshtml" />
     <AdditionalFiles Include="Areas\Admin\Views\Classes\Index.cshtml" />
     <AdditionalFiles Include="Areas\Admin\Views\Home\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\Reports\Wirds.cshtml" />
     <AdditionalFiles Include="Areas\Admin\Views\Parents\Create.cshtml" />
     <AdditionalFiles Include="Areas\Admin\Views\Parents\Edit.cshtml" />
     <AdditionalFiles Include="Areas\Admin\Views\Parents\Index.cshtml" />
@@ -126,6 +128,8 @@
     <AdditionalFiles Include="Areas\Teacher\Views\Wird\Index.cshtml" />
     <AdditionalFiles Include="Areas\Teacher\Views\_ViewImports.cshtml" />
     <AdditionalFiles Include="Areas\Teacher\Views\_ViewStart.cshtml" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Reports\Wirds.ar.resx" />
+    <AdditionalFiles Include="Resources\Areas\Admin\Views\Reports\Wirds.en.resx" />
     <AdditionalFiles Include="Resources\Areas\Admin\Views\Classes\Create.ar.resx" />
     <AdditionalFiles Include="Resources\Areas\Admin\Views\Classes\Create.en.resx" />
     <AdditionalFiles Include="Resources\Areas\Admin\Views\Classes\Edit.ar.resx" />

@@ -149,6 +149,10 @@
     <value>التقارير اليومية</value>
     <comment/>
   </data>
+  <data name="Wird_Reports" xml:space="preserve">
+    <value>تقارير الأوراد</value>
+    <comment/>
+  </data>
   <data name="Student_Attendance" xml:space="preserve">
     <value>تحضير الطلاب</value>
     <comment/>

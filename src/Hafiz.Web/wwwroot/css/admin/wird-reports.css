@@ -1,0 +1,208 @@
+/* تنسيقات صفحة تقرير الأوراد (بادئة wr-). محمّلة عند الحاجة من صفحة العرض فقط. */
+
+.wr-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.wr-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.wr-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+/* بطاقة الفلاتر */
+.wr-filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.85rem;
+    align-items: end;
+}
+
+.wr-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.wr-field label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-medium, #6b7280);
+}
+
+.wr-filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+/* حقل خيار الإظهار: خانة اختيار محاذاة أفقياً */
+.wr-field-check {
+    justify-content: flex-end;
+}
+
+.wr-check {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+}
+
+.wr-check input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+}
+
+/* شبكة الإحصائيات */
+.wr-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.85rem;
+}
+
+/* تفصيل الأنواع */
+.wr-type-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+}
+
+.wr-type-card {
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.wr-type-card .wr-type-name {
+    font-weight: 700;
+    color: var(--primary-green, #2e8b57);
+}
+
+.wr-type-metrics {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    color: var(--text-medium, #6b7280);
+}
+
+.wr-progress-track {
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(46, 139, 87, 0.12);
+    overflow: hidden;
+}
+
+.wr-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2e8b57, #1f6b41);
+}
+
+/* الشارات */
+.wr-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    padding: 0.18rem 0.55rem;
+    border-radius: 6px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.wr-badge-done { background: rgba(46, 139, 87, 0.15); color: #1f6b41; }
+.wr-badge-pending { background: rgba(120, 120, 120, 0.15); color: #666; }
+.wr-badge-upcoming { background: rgba(124, 58, 237, 0.12); color: #5b21b6; border: 1px solid rgba(124, 58, 237, 0.35); }
+
+.wr-type-badge { background: rgba(156, 39, 176, 0.1); color: #6a1b8a; }
+
+.wr-rank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    background: rgba(46, 139, 87, 0.12);
+    color: #1f6b41;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+
+/* شريط الأدوات فوق الجدول */
+.wr-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    justify-content: space-between;
+}
+
+.wr-search {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+}
+
+/* ترقيم الصفحات */
+.wr-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding-top: 1rem;
+}
+
+.wr-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-medium, #6b7280);
+}
+
+.wr-empty i { font-size: 3rem; }
+
+/* عند الطباعة/التصدير كـ PDF: إخفاء العناصر التفاعلية وإظهار المحتوى فقط */
+@media print {
+    .sidebar,
+    .sidebar-toggle,
+    .sidebar-overlay,
+    .wr-filters-card,
+    .wr-toolbar,
+    .wr-actions,
+    .wr-pagination {
+        display: none !important;
+    }
+
+    .content,
+    .main-content {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    .wr-page {
+        gap: 0.75rem;
+    }
+
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+        break-inside: avoid;
+    }
+
+    table {
+        font-size: 0.75rem;
+    }
+}

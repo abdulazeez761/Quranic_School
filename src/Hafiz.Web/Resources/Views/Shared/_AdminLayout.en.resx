@@ -161,4 +161,8 @@
     <value>Daily Reports</value>
     <comment/>
   </data>
+  <data name="Wird_Reports" xml:space="preserve">
+    <value>Wird Reports</value>
+    <comment/>
+  </data>
 </root>

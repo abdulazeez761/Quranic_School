@@ -1,0 +1,390 @@
+@model Hafiz.DTOs.Reports.WirdReportViewModel
+@using Hafiz.Models
+@using Hafiz.DTOs.Reports
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["Title"];
+    var f = Model.Filter;
+
+    string TypeLabel(AssignmentType t) => Localizer[$"Type_{t}"].Value;
+    string StatusLabel(AssignmentStatus s) => Localizer[$"Status_{s}"].Value;
+
+    // معطيات المسار المشتركة للفلاتر (لروابط الترقيم والتصدير)؛ نُسقط القيم الفارغة.
+    Dictionary<string, string> RouteFor(int? page)
+    {
+        var d = new Dictionary<string, string>();
+        if (f.InstituteId.HasValue) d["InstituteId"] = f.InstituteId.ToString()!;
+        if (f.ClassId.HasValue) d["ClassId"] = f.ClassId.ToString()!;
+        if (f.StudentId.HasValue) d["StudentId"] = f.StudentId.ToString()!;
+        if (f.FromDate.HasValue) d["FromDate"] = f.FromDate.Value.ToString("yyyy-MM-dd");
+        if (f.ToDate.HasValue) d["ToDate"] = f.ToDate.Value.ToString("yyyy-MM-dd");
+        if (f.Type.HasValue) d["Type"] = f.Type.ToString()!;
+        if (!string.IsNullOrEmpty(f.Status)) d["Status"] = f.Status!;
+        if (!f.ShowRankings) d["ShowRankings"] = "false";
+        d["PageSize"] = f.PageSize.ToString();
+        if (page.HasValue) d["Page"] = page.Value.ToString();
+        return d;
+    }
+
+    int firstRow = Model.TotalCount == 0 ? 0 : (f.Page - 1) * f.PageSize + 1;
+    int lastRow = Math.Min(f.Page * f.PageSize, Model.TotalCount);
+}
+
+<link rel="stylesheet" href="~/css/admin/wird-reports.css" asp-append-version="true" />
+
+<div class="wr-page">
+    <!-- رأس الصفحة + أزرار التصدير -->
+    <div class="wr-header">
+        <div>
+            <h2 class="section-title mb-sm">
+                <i class='bx bx-book-bookmark' style="color: var(--primary-green);"></i>
+                @Localizer["Title"]
+            </h2>
+            <p class="text-medium">@Localizer["Description"]</p>
+        </div>
+        <div class="wr-actions">
+            <a asp-action="ExportWirdsExcel" asp-all-route-data="RouteFor(null)" class="btn btn-outline btn-sm">
+                <i class='bx bx-file'></i> @Localizer["ExportExcel"]
+            </a>
+            <button type="button" id="wrPrintBtn" class="btn btn-outline btn-sm">
+                <i class='bx bx-printer'></i> @Localizer["ExportPdf"]
+            </button>
+        </div>
+    </div>
+
+    <!-- بطاقة الفلاتر -->
+    <div class="card card-standard wr-filters-card">
+        <form method="get" asp-action="Wirds">
+            <div class="wr-filters">
+                @if (Model.IsCrossCenter)
+                {
+                    <div class="wr-field">
+                        <label for="InstituteId">@Localizer["Institute"]</label>
+                        <select id="InstituteId" name="InstituteId" class="form-select form-input-sm">
+                            <option value="">@Localizer["AllInstitutes"]</option>
+                            @foreach (var opt in Model.InstituteOptions)
+                            {
+                                <option value="@opt.Value" selected="@(f.InstituteId?.ToString() == opt.Value)">@opt.Text</option>
+                            }
+                        </select>
+                    </div>
+                }
+
+                <div class="wr-field">
+                    <label for="FromDate">@Localizer["FromDate"]</label>
+                    <input type="date" id="FromDate" name="FromDate" class="form-input form-input-sm"
+                           value="@(f.FromDate?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div class="wr-field">
+                    <label for="ToDate">@Localizer["ToDate"]</label>
+                    <input type="date" id="ToDate" name="ToDate" class="form-input form-input-sm"
+                           value="@(f.ToDate?.ToString("yyyy-MM-dd"))" />
+                </div>
+
+                <div class="wr-field">
+                    <label for="ClassId">@Localizer["Class"]</label>
+                    <select id="ClassId" name="ClassId" class="form-select form-input-sm">
+                        <option value="">@Localizer["AllClasses"]</option>
+                        @foreach (var opt in Model.ClassOptions)
+                        {
+                            <option value="@opt.Value" selected="@(f.ClassId?.ToString() == opt.Value)">@opt.Text</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="wr-field">
+                    <label for="StudentId">@Localizer["Student"]</label>
+                    <select id="StudentId" name="StudentId" class="form-select form-input-sm">
+                        <option value="">@Localizer["AllStudents"]</option>
+                        @foreach (var opt in Model.StudentOptions)
+                        {
+                            <option value="@opt.Value" selected="@(f.StudentId?.ToString() == opt.Value)">@opt.Text</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="wr-field">
+                    <label for="Type">@Localizer["Type"]</label>
+                    <select id="Type" name="Type" class="form-select form-input-sm">
+                        <option value="">@Localizer["AllTypes"]</option>
+                        @foreach (var t in Enum.GetValues<AssignmentType>())
+                        {
+                            <option value="@t" selected="@(f.Type == t)">@TypeLabel(t)</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="wr-field">
+                    <label for="Status">@Localizer["CompletionStatus"]</label>
+                    <select id="Status" name="Status" class="form-select form-input-sm">
+                        <option value="" selected="@string.IsNullOrEmpty(f.Status)">@Localizer["AllStatuses"]</option>
+                        <option value="completed" selected="@(f.Status == "completed")">@Localizer["Completed"]</option>
+                        <option value="pending" selected="@(f.Status == "pending")">@Localizer["Pending"]</option>
+                    </select>
+                </div>
+
+                <div class="wr-field">
+                    <label for="PageSize">@Localizer["PageSize"]</label>
+                    <select id="PageSize" name="PageSize" class="form-select form-input-sm">
+                        @foreach (var size in new[] { 25, 50, 100 })
+                        {
+                            <option value="@size" selected="@(f.PageSize == size)">@size</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="wr-field wr-field-check">
+                    <label class="wr-check">
+                        <input type="checkbox" name="ShowRankings" value="true" @(f.ShowRankings ? "checked" : "") />
+                        <input type="hidden" name="ShowRankings" value="false" />
+                        <span>@Localizer["ShowRankings"]</span>
+                    </label>
+                </div>
+
+                <div class="wr-field wr-filter-buttons">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class='bx bx-filter-alt'></i> @Localizer["Apply"]
+                    </button>
+                    <a asp-action="Wirds" class="btn btn-outline btn-sm">
+                        <i class='bx bx-reset'></i> @Localizer["Reset"]
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- الإحصائيات العامة -->
+    <div class="wr-stats">
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #4a90d9, #2c6fad);">
+                <i class='bx bx-book-content'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">@Localizer["TotalAssignments"]</div>
+                <div class="card-stat-value">@Model.Stats.TotalAssignments</div>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #2e8b57, #1f6b41);">
+                <i class='bx bx-check-circle'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">@Localizer["Completed"]</div>
+                <div class="card-stat-value">@Model.Stats.CompletedCount</div>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #9e9e9e, #6b7280);">
+                <i class='bx bx-time-five'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">@Localizer["Pending"]</div>
+                <div class="card-stat-value">@Model.Stats.PendingCount</div>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #7c3aed, #5b21b6);">
+                <i class='bx bx-calendar-star'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">@Localizer["Upcoming"]</div>
+                <div class="card-stat-value">@Model.Stats.UpcomingCount</div>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #ff9800, #e07b00);">
+                <i class='bx bx-trending-up'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">@Localizer["CompletionRate"]</div>
+                <div class="card-stat-value">@Model.Stats.CompletionRate%</div>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #17a2b8, #117a8b);">
+                <i class='bx bx-book-open'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">@Localizer["TotalPagesEquiv"]</div>
+                <div class="card-stat-value">@Model.Stats.TotalEquivalentPages.ToString("0.#")</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- تفصيل حسب النوع -->
+    @if (Model.Stats.ByType.Any())
+    {
+        <div class="card card-standard">
+            <div class="card-header">
+                <h3 class="card-title"><i class='bx bx-category'></i> @Localizer["ByType"]</h3>
+            </div>
+            <div class="card-body">
+                <div class="wr-type-grid">
+                    @foreach (var t in Model.Stats.ByType)
+                    {
+                        <div class="wr-type-card">
+                            <span class="wr-type-name">@TypeLabel(t.Type)</span>
+                            <div class="wr-type-metrics">
+                                <span>@Localizer["Total"]: @t.Total</span>
+                                <span>@Localizer["Completed"]: @t.Completed</span>
+                                <span>@t.Pages.ToString("0.#") @Localizer["PagesShort"]</span>
+                            </div>
+                            <div class="wr-progress-track">
+                                <div class="wr-progress-fill" style="width:@t.CompletionRate%"></div>
+                            </div>
+                            <div class="wr-type-metrics">
+                                <span>@Localizer["CompletionRate"]</span>
+                                <span>@t.CompletionRate%</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- ترتيب الطلاب -->
+    @if (Model.TopStudents.Any())
+    {
+        <div class="card card-standard">
+            <div class="card-header">
+                <h3 class="card-title"><i class='bx bx-medal'></i> @Localizer["TopStudents"]</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-wrapper">
+                    <table class="table table-responsive-cards">
+                        <thead>
+                            <tr>
+                                <th style="width: 48px;">#</th>
+                                <th>@Localizer["Student"]</th>
+                                <th>@Localizer["Class"]</th>
+                                <th>@Localizer["TotalWirds"]</th>
+                                <th>@Localizer["Completed"]</th>
+                                <th>@Localizer["CompletionRate"]</th>
+                                <th>@Localizer["PagesShort"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ int rank = 1; }
+                            @foreach (var s in Model.TopStudents)
+                            {
+                                <tr>
+                                    <td data-label="#"><span class="wr-rank">@rank</span></td>
+                                    <td data-label="@Localizer["Student"]">
+                                        <a asp-controller="Students" asp-action="Details" asp-route-id="@s.StudentId"
+                                           class="fw-medium">@s.FullName</a>
+                                    </td>
+                                    <td data-label="@Localizer["Class"]">@(string.IsNullOrWhiteSpace(s.ClassName) ? Localizer["NoClass"].Value : s.ClassName)</td>
+                                    <td data-label="@Localizer["TotalWirds"]">@s.TotalWirds</td>
+                                    <td data-label="@Localizer["Completed"]">@s.CompletedWirds</td>
+                                    <td data-label="@Localizer["CompletionRate"]">@s.CompletionRate%</td>
+                                    <td data-label="@Localizer["PagesShort"]">@s.TotalPages.ToString("0.#")</td>
+                                </tr>
+                                rank++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- جدول التفاصيل -->
+    <div class="card card-standard">
+        <div class="card-header wr-toolbar">
+            <h3 class="card-title"><i class='bx bx-list-ul'></i> @Localizer["Details"]</h3>
+            <div class="table-search wr-search">
+                <input type="text" id="wrSearch" placeholder="@Localizer["SearchPlaceholder"]">
+                <i class='bx bx-search'></i>
+            </div>
+        </div>
+        <div class="card-body">
+            @if (!Model.Details.Any())
+            {
+                <div class="wr-empty">
+                    <i class='bx bx-search-alt'></i>
+                    <p>@Localizer["NoResults"]</p>
+                </div>
+            }
+            else
+            {
+                <p class="text-medium fs-sm" id="wrNoMatch" style="display:none;">@Localizer["NoResults"]</p>
+                <div class="table-wrapper">
+                    <table class="table table-responsive-cards">
+                        <thead>
+                            <tr>
+                                <th>@Localizer["Student"]</th>
+                                <th>@Localizer["Class"]</th>
+                                <th>@Localizer["Type"]</th>
+                                <th>@Localizer["DescriptionCol"]</th>
+                                <th>@Localizer["Date"]</th>
+                                <th>@Localizer["Status"]</th>
+                                <th>@Localizer["Grade"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var d in Model.Details)
+                            {
+                                <tr class="wr-detail-row" data-search="@($"{d.StudentName} {d.ClassName} {d.Description}")">
+                                    <td data-label="@Localizer["Student"]">
+                                        <a asp-controller="Students" asp-action="Details" asp-route-id="@d.StudentId"
+                                           class="fw-medium">@d.StudentName</a>
+                                    </td>
+                                    <td data-label="@Localizer["Class"]">@(string.IsNullOrWhiteSpace(d.ClassName) ? "—" : d.ClassName)</td>
+                                    <td data-label="@Localizer["Type"]"><span class="wr-badge wr-type-badge">@TypeLabel(d.Type)</span></td>
+                                    <td data-label="@Localizer["DescriptionCol"]">
+                                        @(string.IsNullOrEmpty(d.Description) ? "—" : d.Description)
+                                        @if (d.Note is { Length: > 0 })
+                                        {
+                                            <i class='bx bx-note' title="@d.Note" style="color:#9c27b0;"></i>
+                                        }
+                                    </td>
+                                    <td data-label="@Localizer["Date"]">@d.AssignedDate.ToString("yyyy-MM-dd")</td>
+                                    <td data-label="@Localizer["Status"]">
+                                        @if (d.IsUpcoming)
+                                        {
+                                            <span class="wr-badge wr-badge-upcoming">@Localizer["Upcoming"]</span>
+                                        }
+                                        else if (d.IsCompleted)
+                                        {
+                                            <span class="wr-badge wr-badge-done">@Localizer["Completed"]</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="wr-badge wr-badge-pending">@Localizer["Pending"]</span>
+                                        }
+                                    </td>
+                                    <td data-label="@Localizer["Grade"]">@(d.Status == AssignmentStatus.notSet ? "—" : StatusLabel(d.Status))</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ترقيم الصفحات -->
+                <div class="wr-pagination">
+                    @if (Model.HasPreviousPage)
+                    {
+                        <a asp-action="Wirds" asp-all-route-data="RouteFor(f.Page - 1)" class="btn btn-outline btn-sm">
+                            <i class='bx bx-chevron-right'></i> @Localizer["Previous"]
+                        </a>
+                    }
+                    <span class="text-medium fs-sm">
+                        @Localizer["ShowingRange", firstRow, lastRow, Model.TotalCount] — @Localizer["PageOf", f.Page, Math.Max(Model.TotalPages, 1)]
+                    </span>
+                    @if (Model.HasNextPage)
+                    {
+                        <a asp-action="Wirds" asp-all-route-data="RouteFor(f.Page + 1)" class="btn btn-outline btn-sm">
+                            @Localizer["Next"] <i class='bx bx-chevron-left'></i>
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-wird-reports.js" asp-append-version="true"></script>
+}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Hafiz.Common.Helper;
+using Hafiz.DTOs.Reports;
 using Hafiz.Models;
 using Hafiz.Repositories.Interfaces;
 using Hafiz.Services.Interfaces;
@@ -172,6 +173,134 @@ namespace Hafiz.Services
                 return false;
 
             return await _wirdRepository.UpdateNote(Id, Note);
+        }
+
+        public async Task<WirdReportViewModel> GetWirdReportAsync(WirdReportFilterDto filter)
+        {
+            var wirds = await _wirdRepository.GetWirdReportDataAsync(filter);
+
+            var vm = new WirdReportViewModel
+            {
+                Filter = filter,
+                Stats = BuildStats(wirds),
+                TopStudents = filter.ShowRankings
+                    ? BuildRankings(wirds)
+                    : new List<StudentRankingRow>(),
+                Details = wirds.Select(BuildDetailRow).ToList(),
+                TotalCount = wirds.Count,
+            };
+
+            return vm;
+        }
+
+        private static WirdReportStatsDto BuildStats(IReadOnlyList<WirdAssignment> wirds)
+        {
+            bool IsDone(WirdAssignment w) => w.Status != AssignmentStatus.notSet;
+
+            var stats = new WirdReportStatsDto
+            {
+                TotalAssignments = wirds.Count,
+                CompletedCount = wirds.Count(IsDone),
+                UpcomingCount = wirds.Count(w => w.IsUpcoming),
+                TotalEquivalentPages = wirds.Sum(WirdPageCalculator.ToPages),
+                CompletedEquivalentPages = wirds.Where(IsDone).Sum(WirdPageCalculator.ToPages),
+            };
+            stats.PendingCount = stats.TotalAssignments - stats.CompletedCount;
+
+            stats.ByType = wirds
+                .GroupBy(w => w.Type)
+                .Select(g => new WirdTypeStat
+                {
+                    Type = g.Key,
+                    Total = g.Count(),
+                    Completed = g.Count(IsDone),
+                    Pages = g.Sum(WirdPageCalculator.ToPages),
+                })
+                .OrderByDescending(t => t.Total)
+                .ToList();
+
+            return stats;
+        }
+
+        private static List<StudentRankingRow> BuildRankings(IReadOnlyList<WirdAssignment> wirds)
+        {
+            return wirds
+                .GroupBy(w => w.StudentId)
+                .Select(g =>
+                {
+                    var first = g.First();
+                    return new StudentRankingRow
+                    {
+                        StudentId = g.Key,
+                        FullName = StudentFullName(first),
+                        ClassName = StudentClasses(first),
+                        TotalWirds = g.Count(),
+                        CompletedWirds = g.Count(w => w.Status != AssignmentStatus.notSet),
+                        TotalPages = g.Sum(WirdPageCalculator.ToPages),
+                    };
+                })
+                .OrderByDescending(r => r.CompletionRate)
+                .ThenByDescending(r => r.TotalWirds)
+                .Take(10)
+                .ToList();
+        }
+
+        private static WirdReportDetailRow BuildDetailRow(WirdAssignment w) =>
+            new()
+            {
+                WirdId = w.Id,
+                StudentId = w.StudentId,
+                StudentName = StudentFullName(w),
+                ClassName = StudentClasses(w),
+                Type = w.Type,
+                Amount = w.Amount,
+                AmountUnit = w.AmountUnit,
+                EquivalentPages = WirdPageCalculator.ToPages(w),
+                Description = BuildDescription(w),
+                AssignedDate = w.AssignedDate,
+                IsCompleted = w.Status != AssignmentStatus.notSet,
+                IsUpcoming = w.IsUpcoming,
+                Status = w.Status,
+                Note = w.Note,
+            };
+
+        private static string StudentFullName(WirdAssignment w) =>
+            w.Student?.StudentInfo is { } info ? $"{info.FirstName} {info.SecondName}" : string.Empty;
+
+        private static string StudentClasses(WirdAssignment w) =>
+            w.Student?.Classes is { Count: > 0 } classes
+                ? string.Join("، ", classes.Select(c => c.Name))
+                : string.Empty;
+
+        /// <summary>يبني وصفاً مقروءاً للورد: نطاق السور إن وُجد، وإلا الكمية والوحدة.</summary>
+        private static string BuildDescription(WirdAssignment w)
+        {
+            if (w.FromSurah != null || w.ToSurah != null)
+            {
+                var from = w.FromSurah != null
+                    ? $"{Formatting.GetLocalizedSurahName(w.FromSurah.Value)}{(string.IsNullOrEmpty(w.FromAyah) ? "" : $" ({w.FromAyah})")}"
+                    : "";
+                var to = w.ToSurah != null
+                    ? $"{Formatting.GetLocalizedSurahName(w.ToSurah.Value)}{(w.ToAyah != null ? $" ({w.ToAyah})" : "")}"
+                    : "";
+                if (!string.IsNullOrEmpty(from) && !string.IsNullOrEmpty(to))
+                    return $"من {from} إلى {to}";
+                return !string.IsNullOrEmpty(from) ? from : to;
+            }
+
+            if (w.Amount != null)
+            {
+                var unit = w.AmountUnit switch
+                {
+                    WirdUnit.Pages => "صفحة",
+                    WirdUnit.Ayahs => "آية",
+                    WirdUnit.Juz => "جزء",
+                    _ => "",
+                };
+                return $"{w.Amount:0.##} {unit}".Trim();
+            }
+
+            return "";
         }
 
         private static (decimal memorized, decimal reviewed) ProgressContribution(

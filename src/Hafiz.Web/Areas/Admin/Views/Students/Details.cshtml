@@ -123,7 +123,7 @@
             <!-- Memorization & Review -->
             <div class="overview-cards">
                 <div class="overview-card">
-                    <div class="card-icon" style="background: rgba(46,139,87,0.15); color: #2e8b57;">
+                    <div class="card-icon memorized-icon">
                         <i class='bx bx-bookmark-heart'></i>
                     </div>
                     <div class="card-content">
@@ -141,7 +141,7 @@
                     </div>
                 </div>
                 <div class="overview-card">
-                    <div class="card-icon" style="background: rgba(59,130,246,0.15); color: #3b82f6;">
+                    <div class="card-icon reviewed-icon">
                         <i class='bx bx-revision'></i>
                     </div>
                     <div class="card-content">
@@ -159,7 +159,7 @@
                     </div>
                 </div>
                 <div class="overview-card">
-                    <div class="card-icon" style="background: rgba(139,92,246,0.15); color: #8b5cf6;">
+                    <div class="card-icon collection-icon">
                         <i class='bx bx-collection'></i>
                     </div>
                     <div class="card-content">
@@ -508,14 +508,14 @@
                                         <div class="wird-range">
                                             <span class="range-label">@Localizer["From"]:</span>
                                             <span class="range-value">
-                                                @Localizer[$"Surah_{wird.FromSurah}"] (@wird.FromAyah)
+                                                @Formatting.GetLocalizedSurahName(wird.FromSurah ?? Surah.NONE) (@wird.FromAyah)
                                                 - @Localizer["Page"] @wird.FromPage
                                             </span>
                                         </div>
                                         <div class="wird-range">
                                             <span class="range-label">@Localizer["To"]:</span>
                                             <span class="range-value">
-                                                @Localizer[$"Surah_{wird.ToSurah}"] (@wird.ToAyah)
+                                                @Formatting.GetLocalizedSurahName(wird.ToSurah ?? Surah.NONE) (@wird.ToAyah)
                                                 - @Localizer["Page"] @wird.ToPage
                                             </span>
                                         </div>
@@ -775,5 +775,12 @@
         }, 10);
 
         evt.currentTarget.classList.add("active");
+        evt.currentTarget.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
     }
+
+    // On small screens the tab bar scrolls horizontally; keep the active tab visible
+    document.addEventListener('DOMContentLoaded', function () {
+        var activeTab = document.querySelector('.tabs-header .tab-btn.active');
+        if (activeTab) activeTab.scrollIntoView({ inline: 'center', block: 'nearest' });
+    });
 </script>

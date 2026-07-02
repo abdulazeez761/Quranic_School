@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Title" xml:space="preserve"><value>تقارير الأوراد</value></data>
+  <data name="Description" xml:space="preserve"><value>تقرير شامل عن الأوراد مع التصفية والإحصائيات وترتيب الطلاب</value></data>
+  <data name="ExportExcel" xml:space="preserve"><value>تصدير Excel</value></data>
+  <data name="ExportPdf" xml:space="preserve"><value>طباعة / PDF</value></data>
+  <data name="Institute" xml:space="preserve"><value>المركز</value></data>
+  <data name="AllInstitutes" xml:space="preserve"><value>كل المراكز</value></data>
+  <data name="FromDate" xml:space="preserve"><value>من تاريخ</value></data>
+  <data name="ToDate" xml:space="preserve"><value>إلى تاريخ</value></data>
+  <data name="Class" xml:space="preserve"><value>الحلقة</value></data>
+  <data name="AllClasses" xml:space="preserve"><value>كل الحلقات</value></data>
+  <data name="Student" xml:space="preserve"><value>الطالب</value></data>
+  <data name="AllStudents" xml:space="preserve"><value>كل الطلاب</value></data>
+  <data name="Type" xml:space="preserve"><value>النوع</value></data>
+  <data name="AllTypes" xml:space="preserve"><value>كل الأنواع</value></data>
+  <data name="Type_Wird" xml:space="preserve"><value>ورد</value></data>
+  <data name="Type_Memorization" xml:space="preserve"><value>حفظ</value></data>
+  <data name="Type_Revision" xml:space="preserve"><value>مراجعة</value></data>
+  <data name="Type_Tajwid" xml:space="preserve"><value>تجويد</value></data>
+  <data name="Type_Tafsir" xml:space="preserve"><value>تفسير</value></data>
+  <data name="Type_Other" xml:space="preserve"><value>أخرى</value></data>
+  <data name="CompletionStatus" xml:space="preserve"><value>حالة الإنجاز</value></data>
+  <data name="AllStatuses" xml:space="preserve"><value>الكل</value></data>
+  <data name="Completed" xml:space="preserve"><value>مكتمل</value></data>
+  <data name="Pending" xml:space="preserve"><value>معلّق</value></data>
+  <data name="PageSize" xml:space="preserve"><value>عدد الصفوف</value></data>
+  <data name="ShowRankings" xml:space="preserve"><value>إظهار ترتيب الطلاب</value></data>
+  <data name="Apply" xml:space="preserve"><value>تطبيق</value></data>
+  <data name="Reset" xml:space="preserve"><value>إعادة تعيين</value></data>
+  <data name="TotalAssignments" xml:space="preserve"><value>إجمالي الأوراد</value></data>
+  <data name="Upcoming" xml:space="preserve"><value>قادم</value></data>
+  <data name="CompletionRate" xml:space="preserve"><value>نسبة الإنجاز</value></data>
+  <data name="TotalPagesEquiv" xml:space="preserve"><value>إجمالي الصفحات</value></data>
+  <data name="ByType" xml:space="preserve"><value>التفصيل حسب النوع</value></data>
+  <data name="Total" xml:space="preserve"><value>الإجمالي</value></data>
+  <data name="PagesShort" xml:space="preserve"><value>صفحة</value></data>
+  <data name="TopStudents" xml:space="preserve"><value>ترتيب الطلاب</value></data>
+  <data name="TotalWirds" xml:space="preserve"><value>عدد الأوراد</value></data>
+  <data name="NoClass" xml:space="preserve"><value>بدون حلقة</value></data>
+  <data name="Details" xml:space="preserve"><value>التفاصيل</value></data>
+  <data name="SearchPlaceholder" xml:space="preserve"><value>ابحث بالاسم أو الوصف...</value></data>
+  <data name="NoResults" xml:space="preserve"><value>لا توجد نتائج مطابقة</value></data>
+  <data name="DescriptionCol" xml:space="preserve"><value>الوصف</value></data>
+  <data name="Date" xml:space="preserve"><value>التاريخ</value></data>
+  <data name="Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="Grade" xml:space="preserve"><value>التقييم</value></data>
+  <data name="Status_notSet" xml:space="preserve"><value>—</value></data>
+  <data name="Status_poor" xml:space="preserve"><value>ضعيف</value></data>
+  <data name="Status_fair" xml:space="preserve"><value>مقبول</value></data>
+  <data name="Status_good" xml:space="preserve"><value>جيد</value></data>
+  <data name="Status_veryGood" xml:space="preserve"><value>جيد جداً</value></data>
+  <data name="Status_excellent" xml:space="preserve"><value>ممتاز</value></data>
+  <data name="Previous" xml:space="preserve"><value>السابق</value></data>
+  <data name="Next" xml:space="preserve"><value>التالي</value></data>
+  <data name="ShowingRange" xml:space="preserve"><value>عرض {0}–{1} من {2}</value></data>
+  <data name="PageOf" xml:space="preserve"><value>صفحة {0} من {1}</value></data>
+</root>

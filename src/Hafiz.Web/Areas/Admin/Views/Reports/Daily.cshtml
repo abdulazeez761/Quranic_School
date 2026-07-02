@@ -27,8 +27,8 @@
     {
         if (w.FromSurah != null || w.ToSurah != null)
         {
-            var from = w.FromSurah != null ? $"{w.FromSurah}{(string.IsNullOrEmpty(w.FromAyah) ? "" : $" ({w.FromAyah})")}" : "";
-            var to = w.ToSurah != null ? $"{w.ToSurah}{(w.ToAyah != null ? $" ({w.ToAyah})" : "")}" : "";
+            var from = w.FromSurah != null ? $"{Hafiz.Common.Helper.Formatting.GetLocalizedSurahName(w.FromSurah.Value)}{(string.IsNullOrEmpty(w.FromAyah) ? "" : $" ({w.FromAyah})")}" : "";
+            var to = w.ToSurah != null ? $"{Hafiz.Common.Helper.Formatting.GetLocalizedSurahName(w.ToSurah.Value)}{(w.ToAyah != null ? $" ({w.ToAyah})" : "")}" : "";
             if (!string.IsNullOrEmpty(from) && !string.IsNullOrEmpty(to))
                 return $"من {from} إلى {to}";
             return !string.IsNullOrEmpty(from) ? from : to;

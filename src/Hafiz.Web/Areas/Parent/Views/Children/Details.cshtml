@@ -426,14 +426,14 @@
                                         <div class="wird-range">
                                             <span class="range-label">@Localizer["From"]:</span>
                                             <span class="range-value">
-                                                @Localizer[$"Surah_{wird.FromSurah}"] (@wird.FromAyah)
+                                                @Formatting.GetLocalizedSurahName(wird.FromSurah ?? Surah.NONE) (@wird.FromAyah)
                                                 - @Localizer["Page"] @wird.FromPage
                                             </span>
                                         </div>
                                         <div class="wird-range">
                                             <span class="range-label">@Localizer["To"]:</span>
                                             <span class="range-value">
-                                                @Localizer[$"Surah_{wird.ToSurah}"] (@wird.ToAyah)
+                                                @Formatting.GetLocalizedSurahName(wird.ToSurah ?? Surah.NONE) (@wird.ToAyah)
                                                 - @Localizer["Page"] @wird.ToPage
                                             </span>
                                         </div>

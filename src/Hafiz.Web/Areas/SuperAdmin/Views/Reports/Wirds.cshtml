@@ -1,0 +1,393 @@
+@model Hafiz.DTOs.Reports.WirdReportViewModel
+@using Hafiz.Models
+@using Hafiz.DTOs.Reports
+@{
+    ViewData["Title"] = "تقارير الأوراد";
+    var f = Model.Filter;
+
+    string TypeLabel(AssignmentType t) => t switch
+    {
+        AssignmentType.Wird => "ورد",
+        AssignmentType.Memorization => "حفظ",
+        AssignmentType.Revision => "مراجعة",
+        AssignmentType.Tajwid => "تجويد",
+        AssignmentType.Tafsir => "تفسير",
+        _ => "أخرى",
+    };
+
+    string StatusLabel(AssignmentStatus s) => s switch
+    {
+        AssignmentStatus.excellent => "ممتاز",
+        AssignmentStatus.veryGood => "جيد جداً",
+        AssignmentStatus.good => "جيد",
+        AssignmentStatus.fair => "مقبول",
+        AssignmentStatus.poor => "ضعيف",
+        _ => "—",
+    };
+
+    Dictionary<string, string> RouteFor(int? page)
+    {
+        var d = new Dictionary<string, string>();
+        if (f.InstituteId.HasValue) d["InstituteId"] = f.InstituteId.ToString()!;
+        if (f.ClassId.HasValue) d["ClassId"] = f.ClassId.ToString()!;
+        if (f.StudentId.HasValue) d["StudentId"] = f.StudentId.ToString()!;
+        if (f.FromDate.HasValue) d["FromDate"] = f.FromDate.Value.ToString("yyyy-MM-dd");
+        if (f.ToDate.HasValue) d["ToDate"] = f.ToDate.Value.ToString("yyyy-MM-dd");
+        if (f.Type.HasValue) d["Type"] = f.Type.ToString()!;
+        if (!string.IsNullOrEmpty(f.Status)) d["Status"] = f.Status!;
+        if (!f.ShowRankings) d["ShowRankings"] = "false";
+        d["PageSize"] = f.PageSize.ToString();
+        if (page.HasValue) d["Page"] = page.Value.ToString();
+        return d;
+    }
+
+    int firstRow = Model.TotalCount == 0 ? 0 : (f.Page - 1) * f.PageSize + 1;
+    int lastRow = Math.Min(f.Page * f.PageSize, Model.TotalCount);
+}
+
+<link rel="stylesheet" href="~/css/admin/wird-reports.css" asp-append-version="true" />
+
+<div class="wr-page">
+    <div class="wr-header">
+        <div>
+            <h2 class="section-title mb-sm">
+                <i class='bx bx-book-bookmark' style="color: var(--primary-green);"></i>
+                تقارير الأوراد
+            </h2>
+            <p class="text-medium">تقرير شامل عن الأوراد عبر كل المراكز مع التصفية والإحصائيات وترتيب الطلاب</p>
+        </div>
+        <div class="wr-actions">
+            <a asp-action="ExportWirdsExcel" asp-all-route-data="RouteFor(null)" class="btn btn-outline btn-sm">
+                <i class='bx bx-file'></i> تصدير Excel
+            </a>
+            <button type="button" id="wrPrintBtn" class="btn btn-outline btn-sm">
+                <i class='bx bx-printer'></i> طباعة / PDF
+            </button>
+        </div>
+    </div>
+
+    <!-- بطاقة الفلاتر -->
+    <div class="card card-standard wr-filters-card">
+        <form method="get" asp-action="Wirds">
+            <div class="wr-filters">
+                <div class="wr-field">
+                    <label for="InstituteId">المركز</label>
+                    <select id="InstituteId" name="InstituteId" class="form-select form-input-sm">
+                        <option value="">كل المراكز</option>
+                        @foreach (var opt in Model.InstituteOptions)
+                        {
+                            <option value="@opt.Value" selected="@(f.InstituteId?.ToString() == opt.Value)">@opt.Text</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="wr-field">
+                    <label for="FromDate">من تاريخ</label>
+                    <input type="date" id="FromDate" name="FromDate" class="form-input form-input-sm"
+                           value="@(f.FromDate?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div class="wr-field">
+                    <label for="ToDate">إلى تاريخ</label>
+                    <input type="date" id="ToDate" name="ToDate" class="form-input form-input-sm"
+                           value="@(f.ToDate?.ToString("yyyy-MM-dd"))" />
+                </div>
+
+                <div class="wr-field">
+                    <label for="ClassId">الحلقة</label>
+                    <select id="ClassId" name="ClassId" class="form-select form-input-sm">
+                        <option value="">كل الحلقات</option>
+                        @foreach (var opt in Model.ClassOptions)
+                        {
+                            <option value="@opt.Value" selected="@(f.ClassId?.ToString() == opt.Value)">@opt.Text</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="wr-field">
+                    <label for="StudentId">الطالب</label>
+                    <select id="StudentId" name="StudentId" class="form-select form-input-sm">
+                        <option value="">كل الطلاب</option>
+                        @foreach (var opt in Model.StudentOptions)
+                        {
+                            <option value="@opt.Value" selected="@(f.StudentId?.ToString() == opt.Value)">@opt.Text</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="wr-field">
+                    <label for="Type">النوع</label>
+                    <select id="Type" name="Type" class="form-select form-input-sm">
+                        <option value="">كل الأنواع</option>
+                        @foreach (var t in Enum.GetValues<AssignmentType>())
+                        {
+                            <option value="@t" selected="@(f.Type == t)">@TypeLabel(t)</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="wr-field">
+                    <label for="Status">حالة الإنجاز</label>
+                    <select id="Status" name="Status" class="form-select form-input-sm">
+                        <option value="" selected="@string.IsNullOrEmpty(f.Status)">الكل</option>
+                        <option value="completed" selected="@(f.Status == "completed")">مكتمل</option>
+                        <option value="pending" selected="@(f.Status == "pending")">معلّق</option>
+                    </select>
+                </div>
+
+                <div class="wr-field">
+                    <label for="PageSize">عدد الصفوف</label>
+                    <select id="PageSize" name="PageSize" class="form-select form-input-sm">
+                        @foreach (var size in new[] { 25, 50, 100 })
+                        {
+                            <option value="@size" selected="@(f.PageSize == size)">@size</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="wr-field wr-field-check">
+                    <label class="wr-check">
+                        <input type="checkbox" name="ShowRankings" value="true" @(f.ShowRankings ? "checked" : "") />
+                        <input type="hidden" name="ShowRankings" value="false" />
+                        <span>إظهار ترتيب الطلاب</span>
+                    </label>
+                </div>
+
+                <div class="wr-field wr-filter-buttons">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class='bx bx-filter-alt'></i> تطبيق
+                    </button>
+                    <a asp-action="Wirds" class="btn btn-outline btn-sm">
+                        <i class='bx bx-reset'></i> إعادة تعيين
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- الإحصائيات العامة -->
+    <div class="wr-stats">
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #4a90d9, #2c6fad);">
+                <i class='bx bx-book-content'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">إجمالي الأوراد</div>
+                <div class="card-stat-value">@Model.Stats.TotalAssignments</div>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #2e8b57, #1f6b41);">
+                <i class='bx bx-check-circle'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">مكتمل</div>
+                <div class="card-stat-value">@Model.Stats.CompletedCount</div>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #9e9e9e, #6b7280);">
+                <i class='bx bx-time-five'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">معلّق</div>
+                <div class="card-stat-value">@Model.Stats.PendingCount</div>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #7c3aed, #5b21b6);">
+                <i class='bx bx-calendar-star'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">قادم</div>
+                <div class="card-stat-value">@Model.Stats.UpcomingCount</div>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #ff9800, #e07b00);">
+                <i class='bx bx-trending-up'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">نسبة الإنجاز</div>
+                <div class="card-stat-value">@Model.Stats.CompletionRate%</div>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #17a2b8, #117a8b);">
+                <i class='bx bx-book-open'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">إجمالي الصفحات</div>
+                <div class="card-stat-value">@Model.Stats.TotalEquivalentPages.ToString("0.#")</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- تفصيل حسب النوع -->
+    @if (Model.Stats.ByType.Any())
+    {
+        <div class="card card-standard">
+            <div class="card-header">
+                <h3 class="card-title"><i class='bx bx-category'></i> التفصيل حسب النوع</h3>
+            </div>
+            <div class="card-body">
+                <div class="wr-type-grid">
+                    @foreach (var t in Model.Stats.ByType)
+                    {
+                        <div class="wr-type-card">
+                            <span class="wr-type-name">@TypeLabel(t.Type)</span>
+                            <div class="wr-type-metrics">
+                                <span>الإجمالي: @t.Total</span>
+                                <span>مكتمل: @t.Completed</span>
+                                <span>@t.Pages.ToString("0.#") صفحة</span>
+                            </div>
+                            <div class="wr-progress-track">
+                                <div class="wr-progress-fill" style="width:@t.CompletionRate%"></div>
+                            </div>
+                            <div class="wr-type-metrics">
+                                <span>نسبة الإنجاز</span>
+                                <span>@t.CompletionRate%</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- ترتيب الطلاب -->
+    @if (Model.TopStudents.Any())
+    {
+        <div class="card card-standard">
+            <div class="card-header">
+                <h3 class="card-title"><i class='bx bx-medal'></i> ترتيب الطلاب</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-wrapper">
+                    <table class="table table-responsive-cards">
+                        <thead>
+                            <tr>
+                                <th style="width: 48px;">#</th>
+                                <th>الطالب</th>
+                                <th>الحلقة</th>
+                                <th>عدد الأوراد</th>
+                                <th>مكتمل</th>
+                                <th>نسبة الإنجاز</th>
+                                <th>صفحة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ int rank = 1; }
+                            @foreach (var s in Model.TopStudents)
+                            {
+                                <tr>
+                                    <td data-label="#"><span class="wr-rank">@rank</span></td>
+                                    <td data-label="الطالب">@s.FullName</td>
+                                    <td data-label="الحلقة">@(string.IsNullOrWhiteSpace(s.ClassName) ? "بدون حلقة" : s.ClassName)</td>
+                                    <td data-label="عدد الأوراد">@s.TotalWirds</td>
+                                    <td data-label="مكتمل">@s.CompletedWirds</td>
+                                    <td data-label="نسبة الإنجاز">@s.CompletionRate%</td>
+                                    <td data-label="صفحة">@s.TotalPages.ToString("0.#")</td>
+                                </tr>
+                                rank++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- جدول التفاصيل -->
+    <div class="card card-standard">
+        <div class="card-header wr-toolbar">
+            <h3 class="card-title"><i class='bx bx-list-ul'></i> التفاصيل</h3>
+            <div class="table-search wr-search">
+                <input type="text" id="wrSearch" placeholder="ابحث بالاسم أو الوصف...">
+                <i class='bx bx-search'></i>
+            </div>
+        </div>
+        <div class="card-body">
+            @if (!Model.Details.Any())
+            {
+                <div class="wr-empty">
+                    <i class='bx bx-search-alt'></i>
+                    <p>لا توجد نتائج مطابقة</p>
+                </div>
+            }
+            else
+            {
+                <p class="text-medium fs-sm" id="wrNoMatch" style="display:none;">لا توجد نتائج مطابقة</p>
+                <div class="table-wrapper">
+                    <table class="table table-responsive-cards">
+                        <thead>
+                            <tr>
+                                <th>الطالب</th>
+                                <th>الحلقة</th>
+                                <th>النوع</th>
+                                <th>الوصف</th>
+                                <th>التاريخ</th>
+                                <th>الحالة</th>
+                                <th>التقييم</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var d in Model.Details)
+                            {
+                                <tr class="wr-detail-row" data-search="@($"{d.StudentName} {d.ClassName} {d.Description}")">
+                                    <td data-label="الطالب">@d.StudentName</td>
+                                    <td data-label="الحلقة">@(string.IsNullOrWhiteSpace(d.ClassName) ? "—" : d.ClassName)</td>
+                                    <td data-label="النوع"><span class="wr-badge wr-type-badge">@TypeLabel(d.Type)</span></td>
+                                    <td data-label="الوصف">
+                                        @(string.IsNullOrEmpty(d.Description) ? "—" : d.Description)
+                                        @if (d.Note is { Length: > 0 })
+                                        {
+                                            <i class='bx bx-note' title="@d.Note" style="color:#9c27b0;"></i>
+                                        }
+                                    </td>
+                                    <td data-label="التاريخ">@d.AssignedDate.ToString("yyyy-MM-dd")</td>
+                                    <td data-label="الحالة">
+                                        @if (d.IsUpcoming)
+                                        {
+                                            <span class="wr-badge wr-badge-upcoming">قادم</span>
+                                        }
+                                        else if (d.IsCompleted)
+                                        {
+                                            <span class="wr-badge wr-badge-done">مكتمل</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="wr-badge wr-badge-pending">معلّق</span>
+                                        }
+                                    </td>
+                                    <td data-label="التقييم">@(d.Status == AssignmentStatus.notSet ? "—" : StatusLabel(d.Status))</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="wr-pagination">
+                    @if (Model.HasPreviousPage)
+                    {
+                        <a asp-action="Wirds" asp-all-route-data="RouteFor(f.Page - 1)" class="btn btn-outline btn-sm">
+                            <i class='bx bx-chevron-right'></i> السابق
+                        </a>
+                    }
+                    <span class="text-medium fs-sm">
+                        عرض @firstRow–@lastRow من @Model.TotalCount — صفحة @f.Page من @Math.Max(Model.TotalPages, 1)
+                    </span>
+                    @if (Model.HasNextPage)
+                    {
+                        <a asp-action="Wirds" asp-all-route-data="RouteFor(f.Page + 1)" class="btn btn-outline btn-sm">
+                            التالي <i class='bx bx-chevron-left'></i>
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-wird-reports.js" asp-append-version="true"></script>
+}
