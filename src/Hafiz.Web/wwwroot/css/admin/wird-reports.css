@@ -72,46 +72,6 @@
     gap: 0.85rem;
 }
 
-/* تفصيل الأنواع */
-.wr-type-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 0.75rem;
-}
-
-.wr-type-card {
-    border: 1px solid var(--border-color, #e5e7eb);
-    border-radius: 10px;
-    padding: 0.85rem 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-}
-
-.wr-type-card .wr-type-name {
-    font-weight: 700;
-    color: var(--primary-green, #2e8b57);
-}
-
-.wr-type-metrics {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.82rem;
-    color: var(--text-medium, #6b7280);
-}
-
-.wr-progress-track {
-    height: 6px;
-    border-radius: 999px;
-    background: rgba(46, 139, 87, 0.12);
-    overflow: hidden;
-}
-
-.wr-progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #2e8b57, #1f6b41);
-}
-
 /* الشارات */
 .wr-badge {
     display: inline-block;

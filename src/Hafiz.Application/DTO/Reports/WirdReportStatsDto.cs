@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using Hafiz.Models;
 
 namespace Hafiz.DTOs.Reports
 {
@@ -22,20 +20,5 @@ namespace Hafiz.DTOs.Reports
             TotalAssignments > 0
                 ? Math.Round((double)CompletedCount / TotalAssignments * 100, 1)
                 : 0;
-
-        /// <summary>تفصيل حسب نوع الورد (حفظ، مراجعة، تجويد...).</summary>
-        public List<WirdTypeStat> ByType { get; set; } = new();
-    }
-
-    /// <summary>سطر إحصائي لنوع ورد واحد.</summary>
-    public class WirdTypeStat
-    {
-        public AssignmentType Type { get; set; }
-        public int Total { get; set; }
-        public int Completed { get; set; }
-        public decimal Pages { get; set; }
-
-        public double CompletionRate =>
-            Total > 0 ? Math.Round((double)Completed / Total * 100, 1) : 0;
     }
 }

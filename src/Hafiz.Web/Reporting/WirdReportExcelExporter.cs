@@ -51,23 +51,6 @@ namespace Hafiz.Web.Reporting
                 sheet.Cell(i + 2, 2).Value = XLCellValue.FromObject(rows[i].Value);
             }
 
-            int typeHeaderRow = rows.Length + 3;
-            sheet.Cell(typeHeaderRow, 1).Value = "النوع";
-            sheet.Cell(typeHeaderRow, 2).Value = "الإجمالي";
-            sheet.Cell(typeHeaderRow, 3).Value = "المكتمل";
-            sheet.Cell(typeHeaderRow, 4).Value = "الصفحات";
-            sheet.Range(typeHeaderRow, 1, typeHeaderRow, 4).Style.Font.SetBold();
-
-            int r = typeHeaderRow + 1;
-            foreach (var t in vm.Stats.ByType)
-            {
-                sheet.Cell(r, 1).Value = TypeLabel(t.Type);
-                sheet.Cell(r, 2).Value = t.Total;
-                sheet.Cell(r, 3).Value = t.Completed;
-                sheet.Cell(r, 4).Value = t.Pages;
-                r++;
-            }
-
             sheet.Columns().AdjustToContents();
         }
 

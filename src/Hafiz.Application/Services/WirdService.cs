@@ -207,18 +207,6 @@ namespace Hafiz.Services
             };
             stats.PendingCount = stats.TotalAssignments - stats.CompletedCount;
 
-            stats.ByType = wirds
-                .GroupBy(w => w.Type)
-                .Select(g => new WirdTypeStat
-                {
-                    Type = g.Key,
-                    Total = g.Count(),
-                    Completed = g.Count(IsDone),
-                    Pages = g.Sum(WirdPageCalculator.ToPages),
-                })
-                .OrderByDescending(t => t.Total)
-                .ToList();
-
             return stats;
         }
 

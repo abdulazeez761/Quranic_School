@@ -51,10 +51,6 @@ namespace Hafiz.Areas.Admin.Controllers
             IEnumerable<StudentModel> students;
             IEnumerable<Class> classes;
 
-            //!اول مشكلة انه بجيب كل الطلاب وكل الحلقات المفروض يكون يجيب الطلاب على حسب الحلقة
-            /*
-           ? يعني هاي المفروض تكون ال شي بجيب الحلقة اللي دوامها اليوم وبناء عليها بجيب الطلاب اللي مسجلين فيهذه الحلقات
-             */
             if (instituteId.HasValue)
             {
                 classes = await _classService.ViewClassesByInstituteAndClassDaysAsync(

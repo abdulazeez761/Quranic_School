@@ -222,38 +222,6 @@
         </div>
     </div>
 
-    <!-- تفصيل حسب النوع -->
-    @if (Model.Stats.ByType.Any())
-    {
-        <div class="card card-standard">
-            <div class="card-header">
-                <h3 class="card-title"><i class='bx bx-category'></i> التفصيل حسب النوع</h3>
-            </div>
-            <div class="card-body">
-                <div class="wr-type-grid">
-                    @foreach (var t in Model.Stats.ByType)
-                    {
-                        <div class="wr-type-card">
-                            <span class="wr-type-name">@TypeLabel(t.Type)</span>
-                            <div class="wr-type-metrics">
-                                <span>الإجمالي: @t.Total</span>
-                                <span>مكتمل: @t.Completed</span>
-                                <span>@t.Pages.ToString("0.#") صفحة</span>
-                            </div>
-                            <div class="wr-progress-track">
-                                <div class="wr-progress-fill" style="width:@t.CompletionRate%"></div>
-                            </div>
-                            <div class="wr-type-metrics">
-                                <span>نسبة الإنجاز</span>
-                                <span>@t.CompletionRate%</span>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-    }
-
     <!-- ترتيب الطلاب -->
     @if (Model.TopStudents.Any())
     {
