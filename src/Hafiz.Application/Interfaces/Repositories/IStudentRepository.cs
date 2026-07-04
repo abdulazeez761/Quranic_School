@@ -32,5 +32,7 @@ namespace Hafiz.Repositories.Interfaces
             Guid instituteId,
             ClassDaysEnum dayOfWeek
         );
+
+        Task<IEnumerable<Student>> GetStudentsByClassIdAsync(Guid classId);
     }
 }

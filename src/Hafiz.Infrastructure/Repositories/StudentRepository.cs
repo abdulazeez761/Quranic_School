@@ -61,8 +61,7 @@ namespace Hafiz.Repositories
             return await _context
                 .Students.Include(t => t.StudentInfo)
                 .Include(s => s.Classes)
-                .Include(s => s.Attendances)
-                .Include(s => s.wirds)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -141,9 +140,8 @@ namespace Hafiz.Repositories
             return await _context
                 .Students.Include(t => t.StudentInfo)
                 .Include(s => s.Classes)
-                .Include(s => s.Attendances)
-                .Include(s => s.wirds)
                 .Where(s => s.StudentInfo.InstituteId == instituteId)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -185,6 +183,18 @@ namespace Hafiz.Repositories
                     s.StudentInfo.InstituteId == instituteId
                     && s.Classes.Any(c => c.ClassDays.Any(day => day == dayOfWeek))
                 )
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Student>> GetStudentsByClassIdAsync(Guid classId)
+        {
+            return await _context.Students
+                .Include(t => t.StudentInfo)
+                .Include(s => s.Classes)
+                .Include(s => s.wirds)
+                .Where(s => s.Classes.Any(c => c.Id == classId))
+                .AsNoTracking()
                 .ToListAsync();
         }
     }

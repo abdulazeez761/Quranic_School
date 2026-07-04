@@ -138,16 +138,15 @@ namespace Hafiz.Services
 
         public async Task<IEnumerable<Student>> GetStudentsByClassID(Guid? classID)
         {
-            IEnumerable<Student>? students = await this.GetAllAsync();
-            students = students.Where(s => s.Classes.Any(c => c.Id == classID)).ToList();
-            return students;
+            if (classID == null)
+                return new List<Student>();
+            return await _studentRepository.GetStudentsByClassIdAsync(classID.Value);
         }
 
         // Student Portal Methods
         public async Task<Student?> GetStudentByUserIdAsync(Guid userId)
         {
-            var students = await _studentRepository.GetAllAsync();
-            return students.FirstOrDefault(s => s.UserId == userId);
+            return await _studentRepository.GetByIdAsync(userId);
         }
 
         public async Task<Student?> GetStudentByIdAsync(Guid studentId)
