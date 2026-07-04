@@ -175,56 +175,78 @@ namespace Hafiz.Services
             return await _wirdRepository.UpdateNote(Id, Note);
         }
 
+        // تقرير صفحة العرض: الإحصائيات والترتيب تُحسب على كامل النتائج، أمّا التفاصيل
+        // فتُجلب صفحة واحدة فقط مُرقّمة من قاعدة البيانات (لا نجلب كل الأسطر لعرض صفحة).
         public async Task<WirdReportViewModel> GetWirdReportAsync(WirdReportFilterDto filter)
         {
-            var wirds = await _wirdRepository.GetWirdReportDataAsync(filter);
+            var pageItems = await _wirdRepository.GetWirdReportDetailsPageAsync(filter);
+            var stats = await BuildStatsAsync(filter);
 
-            var vm = new WirdReportViewModel
+            return new WirdReportViewModel
             {
                 Filter = filter,
-                Stats = BuildStats(wirds),
+                Stats = stats,
                 TopStudents = filter.ShowRankings
-                    ? BuildRankings(wirds)
+                    ? await BuildRankingsAsync(filter)
                     : new List<StudentRankingRow>(),
-                Details = wirds.Select(BuildDetailRow).ToList(),
-                TotalCount = wirds.Count,
+                Details = pageItems.Select(BuildDetailRow).ToList(),
+                // إجمالي الأسطر لترقيم الصفحات = إحصاء التقرير الكلي.
+                TotalCount = stats.TotalAssignments,
             };
-
-            return vm;
         }
 
-        private static WirdReportStatsDto BuildStats(IReadOnlyList<WirdAssignment> wirds)
+        // تقرير التصدير: نفس الإحصائيات مع كل الأسطر التفصيلية المطابقة (بدون ترقيم).
+        public async Task<WirdReportViewModel> GetWirdReportForExportAsync(WirdReportFilterDto filter)
         {
-            bool IsDone(WirdAssignment w) => w.Status != AssignmentStatus.notSet;
+            var allItems = await _wirdRepository.GetWirdReportDetailsAsync(filter);
+            var stats = await BuildStatsAsync(filter);
 
-            var stats = new WirdReportStatsDto
+            return new WirdReportViewModel
             {
-                TotalAssignments = wirds.Count,
-                CompletedCount = wirds.Count(IsDone),
-                UpcomingCount = wirds.Count(w => w.IsUpcoming),
-                TotalEquivalentPages = wirds.Sum(WirdPageCalculator.ToPages),
-                CompletedEquivalentPages = wirds.Where(IsDone).Sum(WirdPageCalculator.ToPages),
+                Filter = filter,
+                Stats = stats,
+                Details = allItems.Select(BuildDetailRow).ToList(),
+                TotalCount = stats.TotalAssignments,
             };
-            stats.PendingCount = stats.TotalAssignments - stats.CompletedCount;
-
-            return stats;
         }
 
-        private static List<StudentRankingRow> BuildRankings(IReadOnlyList<WirdAssignment> wirds)
+        private async Task<WirdReportStatsDto> BuildStatsAsync(WirdReportFilterDto filter)
         {
-            return wirds
-                .GroupBy(w => w.StudentId)
+            var (total, completed, upcoming, totalPages, completedPages) =
+                await _wirdRepository.GetWirdReportAggregatesAsync(filter);
+
+            return new WirdReportStatsDto
+            {
+                TotalAssignments = total,
+                CompletedCount = completed,
+                PendingCount = total - completed,
+                UpcomingCount = upcoming,
+                TotalEquivalentPages = totalPages,
+                CompletedEquivalentPages = completedPages,
+            };
+        }
+
+        private async Task<List<StudentRankingRow>> BuildRankingsAsync(WirdReportFilterDto filter)
+        {
+            var source = await _wirdRepository.GetWirdReportRankingSourceAsync(filter);
+
+            return source
+                .GroupBy(r => r.StudentId)
                 .Select(g =>
                 {
                     var first = g.First();
                     return new StudentRankingRow
                     {
                         StudentId = g.Key,
-                        FullName = StudentFullName(first),
-                        ClassName = StudentClasses(first),
+                        FullName = $"{first.FirstName} {first.SecondName}".Trim(),
+                        ClassName = first.ClassNames is { Count: > 0 } names
+                            ? string.Join("، ", names)
+                            : string.Empty,
                         TotalWirds = g.Count(),
-                        CompletedWirds = g.Count(w => w.Status != AssignmentStatus.notSet),
-                        TotalPages = g.Sum(WirdPageCalculator.ToPages),
+                        CompletedWirds = g.Count(r => r.IsCompleted),
+                        TotalPages = g.Sum(r =>
+                            WirdPageCalculator.ToPages(r.Amount, r.AmountUnit, r.EquivalentPages)
+                        ),
                     };
                 })
                 .OrderByDescending(r => r.CompletionRate)

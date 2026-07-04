@@ -45,18 +45,13 @@ namespace Hafiz.Areas.SuperAdmin.Controllers
 
             await PopulateFilterOptionsAsync(vm, filter);
 
-            vm.Details = vm
-                .Details.Skip((filter.Page - 1) * filter.PageSize)
-                .Take(filter.PageSize)
-                .ToList();
-
             return View(vm);
         }
 
         [HttpGet]
         public async Task<IActionResult> ExportWirdsExcel(WirdReportFilterDto filter)
         {
-            var vm = await _wirdService.GetWirdReportAsync(filter);
+            var vm = await _wirdService.GetWirdReportForExportAsync(filter);
 
             var bytes = WirdReportExcelExporter.Build(vm);
             var fileName = $"wird-report-{DateTime.Today:yyyy-MM-dd}.xlsx";

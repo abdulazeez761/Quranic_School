@@ -10,10 +10,33 @@ namespace Hafiz.Repositories.Interfaces
     public interface IWirdRepository
     {
         /// <summary>
-        /// يجلب الأوراد المطابقة لمعايير التقرير (مع بيانات الطالب وشُعبه) بعد تطبيق
-        /// التصفية على مستوى قاعدة البيانات. التجميع والحساب يتمّان في طبقة الخدمة.
+        /// صفحة واحدة من أسطر تقرير الأوراد (مع بيانات الطالب وشُعبه)، مُرقّمة على مستوى
+        /// قاعدة البيانات وفق Page/PageSize في التصفية ومرتّبة بالأحدث.
         /// </summary>
-        Task<List<WirdAssignment>> GetWirdReportDataAsync(WirdReportFilterDto filter);
+        Task<List<WirdAssignment>> GetWirdReportDetailsPageAsync(WirdReportFilterDto filter);
+
+        /// <summary>
+        /// كل أسطر تقرير الأوراد المطابقة للتصفية (بدون ترقيم) — للتصدير إلى Excel.
+        /// </summary>
+        Task<List<WirdAssignment>> GetWirdReportDetailsAsync(WirdReportFilterDto filter);
+
+        /// <summary>
+        /// إحصائيات التقرير محسوبة داخل قاعدة البيانات (عدّ ومجاميع) دون جلب الأسطر.
+        /// </summary>
+        Task<(
+            int Total,
+            int Completed,
+            int Upcoming,
+            decimal TotalPages,
+            decimal CompletedPages
+        )> GetWirdReportAggregatesAsync(WirdReportFilterDto filter);
+
+        /// <summary>
+        /// إسقاط خفيف بالحقول اللازمة لحساب ترتيب الطلاب فقط (بدون تحميل الكيانات الكاملة).
+        /// </summary>
+        Task<List<WirdRankingSourceRow>> GetWirdReportRankingSourceAsync(
+            WirdReportFilterDto filter
+        );
 
         Task<bool> AddWirdAsync(WirdAssignment wird);
         Task<bool> UpdateWirdAsync(WirdAssignment wird);

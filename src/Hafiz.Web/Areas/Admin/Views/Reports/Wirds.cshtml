@@ -125,31 +125,34 @@
                     </select>
                 </div>
 
-                <div class="wr-field">
-                    <label for="PageSize">@Localizer["PageSize"]</label>
-                    <select id="PageSize" name="PageSize" class="form-select form-input-sm">
-                        @foreach (var size in new[] { 25, 50, 100 })
-                        {
-                            <option value="@size" selected="@(f.PageSize == size)">@size</option>
-                        }
-                    </select>
-                </div>
+            </div>
 
-                <div class="wr-field wr-field-check">
-                    <label class="wr-check">
-                        <input type="checkbox" name="ShowRankings" value="true" @(f.ShowRankings ? "checked" : "") />
-                        <input type="hidden" name="ShowRankings" value="false" />
-                        <span>@Localizer["ShowRankings"]</span>
-                    </label>
-                </div>
-
-                <div class="wr-field wr-filter-buttons">
+            <div class="wr-filters-footer">
+                <div class="wr-filter-buttons">
                     <button type="submit" class="btn btn-primary btn-sm">
                         <i class='bx bx-filter-alt'></i> @Localizer["Apply"]
                     </button>
                     <a asp-action="Wirds" class="btn btn-outline btn-sm">
                         <i class='bx bx-reset'></i> @Localizer["Reset"]
                     </a>
+                </div>
+
+                <div class="wr-footer-options">
+                    <label class="wr-check">
+                        <input type="checkbox" name="ShowRankings" value="true" @(f.ShowRankings ? "checked" : "") />
+                        <input type="hidden" name="ShowRankings" value="false" />
+                        <span>@Localizer["ShowRankings"]</span>
+                    </label>
+
+                    <div class="wr-field wr-field-pagesize">
+                        <label for="PageSize">@Localizer["PageSize"]</label>
+                        <select id="PageSize" name="PageSize" class="form-select form-input-sm">
+                            @foreach (var size in new[] { 25, 50, 100 })
+                            {
+                                <option value="@size" selected="@(f.PageSize == size)">@size</option>
+                            }
+                        </select>
+                    </div>
                 </div>
             </div>
         </form>
@@ -247,7 +250,7 @@
                                            class="fw-medium">@s.FullName</a>
                                     </td>
                                     <td data-label="@Localizer["Class"]">@(string.IsNullOrWhiteSpace(s.ClassName) ?
-                                                                                                                                                                                                Localizer["NoClass"].Value : s.ClassName)</td>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                Localizer["NoClass"].Value : s.ClassName)</td>
                                         <td data-label="@Localizer["TotalWirds"]">@s.TotalWirds</td>
                                         <td data-label="@Localizer["Completed"]">@s.CompletedWirds</td>
                                         <td data-label="@Localizer["CompletionRate"]">@s.CompletionRate%</td>
@@ -304,7 +307,7 @@
                                                class="fw-medium">@d.StudentName</a>
                                         </td>
                                         <td data-label="@Localizer["Class"]">@(string.IsNullOrWhiteSpace(d.ClassName) ? "—" :
-                                                                                                                                                                                                                d.ClassName)</td>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        d.ClassName)</td>
                                             <td data-label="@Localizer["Type"]"><span
                                                 class="wr-badge wr-type-badge">@TypeLabel(d.Type)</span></td>
                                                 <td data-label="@Localizer["DescriptionCol"]">
@@ -330,7 +333,7 @@
                                                     }
                                                 </td>
                                                 <td data-label="@Localizer["Grade"]">@(d.Status == AssignmentStatus.notSet ? "—" :
-                                                                                                                                                                                                                                                StatusLabel(d.Status))</td>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        StatusLabel(d.Status))</td>
                                                 </tr>
                                             }
                                         </tbody>
@@ -363,4 +366,17 @@
 
                 @section Scripts {
                     <script src="~/js/admin-wird-reports.js" asp-append-version="true"></script>
+                    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+                    <script>
+                        $(document).ready(function () {
+                        $('#StudentId').select2({
+                        placeholder: "@Localizer["AllStudents"]",
+                        allowClear: true,
+                        width: '100%' // Ensures it fits your Bootstrap layout properly
+
+                        });
+                        });
+                    </script>
                 }

@@ -10,10 +10,15 @@ namespace Hafiz.Services.Interfaces
     public interface IWirdService
     {
         /// <summary>
-        /// يبني تقرير الأوراد كاملاً (الإحصائيات، ترتيب الطلاب، وكل الأسطر التفصيلية) وفق
-        /// معايير التصفية. لا يُطبَّق ترقيم الصفحات هنا؛ يتكفّل به مستدعي الخدمة.
+        /// يبني تقرير الأوراد لصفحة العرض: الإحصائيات، ترتيب الطلاب، وصفحة واحدة من الأسطر
+        /// التفصيلية مُرقّمة في قاعدة البيانات وفق Page/PageSize في التصفية.
         /// </summary>
         Task<WirdReportViewModel> GetWirdReportAsync(WirdReportFilterDto filter);
+
+        /// <summary>
+        /// يبني تقرير الأوراد للتصدير: نفس الإحصائيات مع كل الأسطر التفصيلية المطابقة (بدون ترقيم).
+        /// </summary>
+        Task<WirdReportViewModel> GetWirdReportForExportAsync(WirdReportFilterDto filter);
 
         Task<(bool IsSuccess, string Message)> AddWirdAsync(WirdAssignment wird);
         Task<(bool IsSuccess, string Message)> UpdateWirdAsync(WirdAssignment wird);

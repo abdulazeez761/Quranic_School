@@ -124,12 +124,6 @@ namespace Hafiz.Areas.Admin.Controllers
 
             await PopulateFilterOptionsAsync(vm, filter, isSuperAdmin.Value);
 
-            // ترقيم الصفحات يخصّ جدول التفاصيل فقط؛ الإحصائيات والترتيب تُحسب على كامل النتائج.
-            vm.Details = vm
-                .Details.Skip((filter.Page - 1) * filter.PageSize)
-                .Take(filter.PageSize)
-                .ToList();
-
             return View(vm);
         }
 
@@ -140,7 +134,7 @@ namespace Hafiz.Areas.Admin.Controllers
             if (ResolveScope(filter) is null)
                 return Forbid();
 
-            var vm = await _wirdService.GetWirdReportAsync(filter);
+            var vm = await _wirdService.GetWirdReportForExportAsync(filter);
 
             var bytes = WirdReportExcelExporter.Build(vm);
             var fileName = $"wird-report-{DateTime.Today:yyyy-MM-dd}.xlsx";

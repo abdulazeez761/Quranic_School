@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Hafiz.Common.Helper;
 using Hafiz.Data;
 using Hafiz.DTOs.Reports;
 using Hafiz.Models;
@@ -77,15 +78,79 @@ namespace Hafiz.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<List<WirdAssignment>> GetWirdReportDataAsync(WirdReportFilterDto filter)
+        public async Task<List<WirdAssignment>> GetWirdReportDetailsPageAsync(
+            WirdReportFilterDto filter
+        )
         {
-            var query = _context
-                .WirdAssignments.AsNoTracking()
-                .Include(w => w.Student)
-                .ThenInclude(s => s.StudentInfo)
-                .Include(w => w.Student)
-                .ThenInclude(s => s.Classes)
-                .AsQueryable();
+            return await WithStudentDetails(BuildReportQuery(filter))
+                .OrderByDescending(w => w.AssignedDate)
+                .Skip((filter.Page - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToListAsync();
+        }
+
+        public async Task<List<WirdAssignment>> GetWirdReportDetailsAsync(
+            WirdReportFilterDto filter
+        )
+        {
+            return await WithStudentDetails(BuildReportQuery(filter))
+                .OrderByDescending(w => w.AssignedDate)
+                .ToListAsync();
+        }
+
+        public async Task<(
+            int Total,
+            int Completed,
+            int Upcoming,
+            decimal TotalPages,
+            decimal CompletedPages
+        )> GetWirdReportAggregatesAsync(WirdReportFilterDto filter)
+        {
+            var query = BuildReportQuery(filter);
+
+            var total = await query.CountAsync();
+            if (total == 0)
+                return (0, 0, 0, 0m, 0m);
+
+            var completed = await query.CountAsync(w => w.Status != AssignmentStatus.notSet);
+            var upcoming = await query.CountAsync(w => w.IsUpcoming);
+
+            // المجاميع تُحسب في قاعدة البيانات؛ نتجنّب SUM على مجموعة فارغة (يُرجع NULL) بالحارس.
+            var totalPages = await query.SumAsync(WirdPageCalculator.ToPagesExpression);
+            var completedPages =
+                completed == 0
+                    ? 0m
+                    : await query
+                        .Where(w => w.Status != AssignmentStatus.notSet)
+                        .SumAsync(WirdPageCalculator.ToPagesExpression);
+
+            return (total, completed, upcoming, totalPages, completedPages);
+        }
+
+        public async Task<List<WirdRankingSourceRow>> GetWirdReportRankingSourceAsync(
+            WirdReportFilterDto filter
+        )
+        {
+            return await BuildReportQuery(filter)
+                .Select(w => new WirdRankingSourceRow
+                {
+                    StudentId = w.StudentId,
+                    FirstName = w.Student.StudentInfo.FirstName,
+                    SecondName = w.Student.StudentInfo.SecondName,
+                    ClassNames = w.Student.Classes.Select(c => c.Name).ToList(),
+                    IsCompleted = w.Status != AssignmentStatus.notSet,
+                    Amount = w.Amount,
+                    AmountUnit = w.AmountUnit,
+                    EquivalentPages = w.EquivalentPages,
+                })
+                .ToListAsync();
+        }
+
+        // يبني استعلام التقرير بتطبيق كل الفلاتر (دون ترتيب أو تضمين) — مصدر واحد للفلترة
+        // تشترك فيه صفحة التفاصيل والإحصائيات والترتيب.
+        private IQueryable<WirdAssignment> BuildReportQuery(WirdReportFilterDto filter)
+        {
+            var query = _context.WirdAssignments.AsNoTracking();
 
             if (filter.InstituteId.HasValue)
                 query = query.Where(w => w.Student.StudentInfo.InstituteId == filter.InstituteId);
@@ -118,8 +183,18 @@ namespace Hafiz.Repositories
                     : query.Where(w => w.Status == AssignmentStatus.notSet);
             }
 
-            return await query.OrderByDescending(w => w.AssignedDate).ToListAsync();
+            return query;
         }
+
+        // يُضيف بيانات الطالب وشُعبه اللازمة لعرض أسطر التفاصيل.
+        private static IQueryable<WirdAssignment> WithStudentDetails(
+            IQueryable<WirdAssignment> query
+        ) =>
+            query
+                .Include(w => w.Student)
+                .ThenInclude(s => s.StudentInfo)
+                .Include(w => w.Student)
+                .ThenInclude(s => s.Classes);
 
         public async Task<WirdAssignment?> GetWirdByID(Guid Id)
         {
