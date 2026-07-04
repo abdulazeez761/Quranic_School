@@ -101,22 +101,33 @@
   cursor: pointer;
 }
 
-/* مواءمة قائمة select2 (الطالب) مع بقية حقول الفلاتر */
+/* مواءمة وتوحيد أبعاد حقول الفلاتر (التواريخ، القوائم المنسدلة، وقائمة select2) */
+.wr-field .form-input,
+.wr-field .form-select,
 .wr-field .select2-container--default .select2-selection--single {
-  height: auto;
-  display: flex;
-  align-items: center;
-  padding: var(--space-xs, 0.35rem) var(--space-sm, 0.6rem);
-  border: 1px solid var(--border-color, #e5e7eb);
-  border-radius: var(--radius-md, 8px);
-  background: var(--white, #fff);
+  height: 36px !important;
+  min-height: 36px !important;
+  padding: 0 var(--space-sm, 0.5rem) !important;
+  border: 1px solid var(--border-color, #e0e0e0) !important;
+  border-radius: var(--radius-md, 6px) !important;
+  font-size: var(--font-size-sm, 0.875rem) !important;
+  box-sizing: border-box !important;
+  background-color: var(--white, #fff) !important;
+  color: var(--text-dark, #2c3e50) !important;
+}
+
+/* تنسيقات إضافية لمحاذاة النص داخل select2 */
+.wr-field .select2-container--default .select2-selection--single {
+  display: flex !important;
+  align-items: center !important;
 }
 
 .wr-field .select2-container--default .select2-selection--single .select2-selection__rendered {
-  padding: 0;
-  line-height: 1.5;
-  font-size: var(--font-size-sm, 0.85rem);
-  color: var(--text-dark, #1f2937);
+  padding: 0 !important;
+  line-height: normal !important;
+  color: var(--text-dark, #2c3e50) !important;
+  width: 100% !important;
+  text-align: right !important;
 }
 
 /* إخفاء سهم select2 والاكتفاء بزر المسح (×) */
@@ -125,15 +136,25 @@
 }
 
 .wr-field .select2-container--default .select2-selection--single .select2-selection__clear {
-  margin: 0 0 0 0.35rem;
-  color: var(--text-medium, #6b7280);
+  margin: 0 0.35rem 0 0.35rem;
+  color: var(--text-medium, #6c757d);
   font-weight: 700;
 }
 
+/* حالة التركيز والتحويم لحقول الفلاتر بما فيها select2 */
+.wr-field .form-input:hover,
+.wr-field .form-select:hover,
+.wr-field .select2-container--default .select2-selection--single:hover {
+  border-color: var(--secondary-green, #85a67c) !important;
+}
+
+.wr-field .form-input:focus,
+.wr-field .form-select:focus,
 .wr-field .select2-container--default.select2-container--focus .select2-selection--single,
 .wr-field .select2-container--default.select2-container--open .select2-selection--single {
-  border-color: var(--primary-green, #2e8b57);
-  box-shadow: 0 0 0 3px rgba(141, 242, 156, 0.1);
+  outline: none !important;
+  border-color: var(--primary-green, #8df29c) !important;
+  box-shadow: 0 0 0 3px rgba(141, 242, 156, 0.1) !important;
 }
 
 /* شبكة الإحصائيات */
@@ -252,3 +273,49 @@
     font-size: 0.75rem;
   }
 }
+
+/* تنسيق الملاحظات والوصف في التقرير */
+.wr-description-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.wr-note-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  position: relative;
+  cursor: pointer;
+}
+
+.wr-note-text {
+  display: none; /* مخفية في الشاشات الكبيرة لأن tooltip (المتصفح) يعرضها */
+}
+
+@media (max-width: 768px) {
+  .table-responsive-cards td .wr-description-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 100%;
+    gap: 0.25rem;
+  }
+  
+  .table-responsive-cards td .wr-note-inline {
+    background: rgba(156, 39, 176, 0.08);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #9c27b0;
+    max-width: 100%;
+    word-break: break-word;
+    text-align: end;
+  }
+  
+  .table-responsive-cards td .wr-note-text {
+    display: inline; /* إظهار نص الملاحظة في الجوال */
+  }
+}
+

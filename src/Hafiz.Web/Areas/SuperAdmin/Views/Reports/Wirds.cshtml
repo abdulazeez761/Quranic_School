@@ -306,11 +306,16 @@
                                     <td data-label="الحلقة">@(string.IsNullOrWhiteSpace(d.ClassName) ? "—" : d.ClassName)</td>
                                     <td data-label="النوع"><span class="wr-badge wr-type-badge">@TypeLabel(d.Type)</span></td>
                                     <td data-label="الوصف">
-                                        @(string.IsNullOrEmpty(d.Description) ? "—" : d.Description)
-                                        @if (d.Note is { Length: > 0 })
-                                        {
-                                            <i class='bx bx-note' title="@d.Note" style="color:#9c27b0;"></i>
-                                        }
+                                        <div class="wr-description-container">
+                                            <span class="wr-description-text">@(string.IsNullOrEmpty(d.Description) ? "—" : d.Description)</span>
+                                            @if (d.Note is { Length: > 0 })
+                                            {
+                                                <span class="wr-note-inline" title="@d.Note">
+                                                    <i class='bx bx-note' style="color:#9c27b0;"></i>
+                                                    <span class="wr-note-text">@d.Note</span>
+                                                </span>
+                                            }
+                                        </div>
                                     </td>
                                     <td data-label="التاريخ">@d.AssignedDate.ToString("yyyy-MM-dd")</td>
                                     <td data-label="الحالة">
