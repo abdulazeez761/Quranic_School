@@ -1,5 +1,6 @@
 using Hafiz.DTOs;
 using Hafiz.Models;
+using Hafiz.Models.enums;
 using Hafiz.Repositories.Interfaces;
 using Hafiz.Services.Interfaces;
 
@@ -181,6 +182,16 @@ namespace Hafiz.Services
         public async Task<IEnumerable<Class>> ViewClassesByInstitute(Guid instituteId)
         {
             return await _classRepository.GetAllByInstituteAsync(instituteId);
+        }
+
+        public Task<IEnumerable<Class>> ViewClassesByInstituteAndClassDaysAsync(
+            Guid instituteId,
+            DateTime workingDays
+        )
+        {
+            ClassDaysEnum currentDay = (ClassDaysEnum)((int)workingDays.DayOfWeek + 1); // Convert DayOfWeek to ClassDaysEnum (assuming Sunday = 1, Monday = 2, ..., Saturday = 7)
+
+            return _classRepository.GetAllByInstituteAndClassDaysAsync(instituteId, currentDay);
         }
     }
 }

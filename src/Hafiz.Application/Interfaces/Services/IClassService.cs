@@ -17,5 +17,9 @@ namespace Hafiz.Services.Interfaces
         Task<List<ClassDto>> GetClassesByInstituteAsync(Guid instituteId);
         Task<IEnumerable<Class>> ViewClassesByInstitute(Guid instituteId);
         Task CreateAsync(CreateClassDto classDto, Guid? instituteId = null);
+        Task<IEnumerable<Class>> ViewClassesByInstituteAndClassDaysAsync(
+            Guid instituteId,
+            DateTime workingDays
+        );
     }
 }

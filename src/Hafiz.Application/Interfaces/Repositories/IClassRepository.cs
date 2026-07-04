@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Hafiz.DTOs;
 using Hafiz.Models;
+using Hafiz.Models.enums;
 
 namespace Hafiz.Repositories.Interfaces
 {
@@ -15,5 +16,9 @@ namespace Hafiz.Repositories.Interfaces
         Task<bool> Delete(Guid Id);
         Task<bool> UpdateAsync(Class newClass);
         Task<IEnumerable<Class>> GetAllByInstituteAsync(Guid instituteId);
+        Task<IEnumerable<Class>> GetAllByInstituteAndClassDaysAsync(
+            Guid instituteId,
+            ClassDaysEnum workingDays
+        );
     }
 }

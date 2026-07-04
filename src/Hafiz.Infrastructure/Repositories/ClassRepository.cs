@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Hafiz.Data;
 using Hafiz.Models;
+using Hafiz.Models.enums;
 using Hafiz.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -131,6 +132,20 @@ namespace Hafiz.Repositories
                 .Classes.Include(c => c.Teachers)
                 .ThenInclude(t => t.TeacherInfo)
                 .Where(c => c.InstituteId == instituteId)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Class>> GetAllByInstituteAndClassDaysAsync(
+            Guid instituteId,
+            ClassDaysEnum workingDays
+        )
+        {
+            return await _context
+                .Classes.Include(c => c.Teachers)
+                .ThenInclude(t => t.TeacherInfo)
+                .Where(c =>
+                    c.InstituteId == instituteId && c.ClassDays.Any(day => day == workingDays)
+                )
                 .ToListAsync();
         }
     }

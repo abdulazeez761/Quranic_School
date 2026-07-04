@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Hafiz.DTOs;
 using Hafiz.Models;
+using Hafiz.Models.enums;
 
 namespace Hafiz.Repositories.Interfaces
 {
@@ -25,6 +26,11 @@ namespace Hafiz.Repositories.Interfaces
             Guid studentId,
             decimal memorizedPagesDelta,
             decimal reviewedPagesDelta
+        );
+
+        Task<IEnumerable<Student>> GetStudentByInstituteIdAsyncAndClassDay(
+            Guid instituteId,
+            ClassDaysEnum dayOfWeek
         );
     }
 }

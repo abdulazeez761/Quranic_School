@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Hafiz.Data;
 using Hafiz.DTOs;
 using Hafiz.Models;
+using Hafiz.Models.enums;
 using Hafiz.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -85,8 +86,8 @@ namespace Hafiz.Repositories
 
         public async Task UpdateAsync(EditStudentDto student)
         {
-            var existingStudent = await _context.Students
-                .Include(s => s.StudentInfo)
+            var existingStudent = await _context
+                .Students.Include(s => s.StudentInfo)
                 .Include(s => s.Classes)
                 .FirstOrDefaultAsync(s => s.UserId == (student.StudentID ?? Guid.Empty));
             if (existingStudent is null || student is null)
@@ -97,7 +98,8 @@ namespace Hafiz.Repositories
                 student.SecondName ?? existingStudent.StudentInfo.SecondName;
             existingStudent.StudentInfo.PhoneNumber =
                 student.PhoneNumber ?? existingStudent.StudentInfo.PhoneNumber;
-            existingStudent.StudentInfo.Username = student.Username ?? existingStudent.StudentInfo.Username;
+            existingStudent.StudentInfo.Username =
+                student.Username ?? existingStudent.StudentInfo.Username;
             existingStudent.StudentInfo.Email = student.Email ?? existingStudent.StudentInfo.Email;
             existingStudent.StudentInfo.Password =
                 student.Password ?? existingStudent.StudentInfo.Password;
@@ -158,9 +160,32 @@ namespace Hafiz.Repositories
                 .Students.Where(s => s.UserId == studentId)
                 .ExecuteUpdateAsync(setters =>
                     setters
-                        .SetProperty(s => s.MemorizedPages, s => s.MemorizedPages + memorizedPagesDelta)
-                        .SetProperty(s => s.ReviewedPages, s => s.ReviewedPages + reviewedPagesDelta)
+                        .SetProperty(
+                            s => s.MemorizedPages,
+                            s => s.MemorizedPages + memorizedPagesDelta
+                        )
+                        .SetProperty(
+                            s => s.ReviewedPages,
+                            s => s.ReviewedPages + reviewedPagesDelta
+                        )
                 );
+        }
+
+        public async Task<IEnumerable<Student>> GetStudentByInstituteIdAsyncAndClassDay(
+            Guid instituteId,
+            ClassDaysEnum dayOfWeek
+        )
+        {
+            return await _context
+                .Students.Include(t => t.StudentInfo)
+                .Include(s => s.Classes)
+                .Include(s => s.Attendances)
+                .Include(s => s.wirds)
+                .Where(s =>
+                    s.StudentInfo.InstituteId == instituteId
+                    && s.Classes.Any(c => c.ClassDays.Any(day => day == dayOfWeek))
+                )
+                .ToListAsync();
         }
     }
 }

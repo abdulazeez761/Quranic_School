@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Hafiz.DTOs;
 using Hafiz.Models;
+using Hafiz.Models.enums;
 
 namespace Hafiz.Services.Interfaces
 {
@@ -11,7 +12,10 @@ namespace Hafiz.Services.Interfaces
     {
         public Task<IEnumerable<Student>> GetAllAsync();
         public Task<IEnumerable<Student>> GetAllByInstituteAsync(Guid instituteId);
-        public Task<(bool Success, string ErrorMessage)> AddAsync(RegisterStudentDto student, Guid? instituteId = null);
+        public Task<(bool Success, string ErrorMessage)> AddAsync(
+            RegisterStudentDto student,
+            Guid? instituteId = null
+        );
         public Task DeleteAsync(Guid id);
         public Task<StudentDto?> GetByIdAsync(Guid id);
 
@@ -30,6 +34,10 @@ namespace Hafiz.Services.Interfaces
             bool? isCompleted = null,
             AssignmentType? assignmentType = null,
             bool? isUpcoming = null
+        );
+        public Task<IEnumerable<Student>> GetStudentByInstituteIdAsyncAndClassDay(
+            Guid instituteId,
+            DateTime dayOfWeek
         );
     }
 }

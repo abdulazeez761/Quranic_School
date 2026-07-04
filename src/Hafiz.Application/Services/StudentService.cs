@@ -2,6 +2,7 @@ using Hafiz.Application.Interfaces;
 using Hafiz.DTOs;
 using Hafiz.DTOs.Wird;
 using Hafiz.Models;
+using Hafiz.Models.enums;
 using Hafiz.Repositories.Interfaces;
 using Hafiz.Services.Interfaces;
 
@@ -30,7 +31,10 @@ namespace Hafiz.Services
             _passwordHasher = passwordHasher;
         }
 
-        public async Task<(bool Success, string ErrorMessage)> AddAsync(RegisterStudentDto student, Guid? instituteId = null)
+        public async Task<(bool Success, string ErrorMessage)> AddAsync(
+            RegisterStudentDto student,
+            Guid? instituteId = null
+        )
         {
             if (student is null)
                 throw new ArgumentNullException(nameof(student));
@@ -195,6 +199,18 @@ namespace Hafiz.Services
                 completedCount,
                 pendingCount,
                 upcomingCount
+            );
+        }
+
+        public Task<IEnumerable<Student>> GetStudentByInstituteIdAsyncAndClassDay(
+            Guid instituteId,
+            DateTime dayOfWeek
+        )
+        {
+            ClassDaysEnum classDay = (ClassDaysEnum)(int)(dayOfWeek.DayOfWeek + 1);
+            return _studentRepository.GetStudentByInstituteIdAsyncAndClassDay(
+                instituteId,
+                classDay
             );
         }
     }
