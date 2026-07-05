@@ -145,6 +145,18 @@ namespace Hafiz.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Student>> GetStudentsWithWirdsAndAttendancesByInstituteAsync(Guid instituteId)
+        {
+            return await _context
+                .Students.Include(s => s.StudentInfo)
+                .Include(s => s.Classes)
+                .Include(s => s.Attendances)
+                .Include(s => s.wirds)
+                .Where(s => s.StudentInfo.InstituteId == instituteId)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
         public async Task ApplyProgressDeltaAsync(
             Guid studentId,
             decimal memorizedPagesDelta,

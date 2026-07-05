@@ -71,7 +71,8 @@ namespace Hafiz.Areas.Admin.Controllers
             string? type = null,
             DateTime? fromDate = null,
             DateTime? toDate = null,
-            string? tab = null)
+            string? tab = null
+        )
         {
             var student = await _studentService.GetStudentByIdAsync(id);
             if (student == null)
@@ -90,11 +91,20 @@ namespace Hafiz.Areas.Admin.Controllers
             bool? isUpcoming = status?.ToLower() == "upcoming" ? true : null;
 
             AssignmentType? assignmentType = null;
-            if (!string.IsNullOrEmpty(type) && Enum.TryParse(type, true, out AssignmentType parsedType))
+            if (
+                !string.IsNullOrEmpty(type)
+                && Enum.TryParse(type, true, out AssignmentType parsedType)
+            )
                 assignmentType = parsedType;
 
             var paginatedWirds = await _studentService.GetStudentWirdsPaginatedAsync(
-                id, page, pageSize, isCompleted, assignmentType, isUpcoming);
+                id,
+                page,
+                pageSize,
+                isCompleted,
+                assignmentType,
+                isUpcoming
+            );
 
             var attendance = await _studentService.GetStudentAttendanceAsync(id);
             var attendanceList = attendance.ToList();
@@ -109,9 +119,10 @@ namespace Hafiz.Areas.Admin.Controllers
             int lateCount = attendanceList.Count(a => a.Status == AttendanceStatus.Late);
             int absentCount = attendanceList.Count(a => a.Status == AttendanceStatus.Absent);
             int excusedCount = attendanceList.Count(a => a.Status == AttendanceStatus.Excused);
-            double attRate = totalAtt > 0
-                ? Math.Round((double)(presentCount + lateCount) / totalAtt * 100, 1)
-                : 0;
+            double attRate =
+                totalAtt > 0
+                    ? Math.Round((double)(presentCount + lateCount) / totalAtt * 100, 1)
+                    : 0;
 
             var notes = await _parentNoteService.GetNotesByStudentIdAsync(id);
 
@@ -143,46 +154,51 @@ namespace Hafiz.Areas.Admin.Controllers
             IEnumerable<StudentModel> students;
 
             if (instituteId.HasValue)
-                students = await _studentService.GetAllByInstituteAsync(instituteId.Value);
+                students = await _studentService.GetStudentsWithWirdsAndAttendancesByInstituteAsync(instituteId.Value);
             else
-                students = await _studentService.GetAllAsync();
+                return Forbid();
 
             var reportRows = new List<StudentReportRow>();
             foreach (var student in students)
             {
-                var attendance = await _studentService.GetStudentAttendanceAsync(student.UserId);
-                var attendanceList = attendance.ToList();
-                var wirds = await _studentService.GetStudentWirdsAsync(student.UserId);
-                var wirdsList = wirds.ToList();
+                var attendanceList = student.Attendances.ToList();
+                var wirdsList = student.wirds.ToList();
 
                 int totalAtt = attendanceList.Count;
                 int presentCount = attendanceList.Count(a =>
-                    a.Status == AttendanceStatus.Present || a.Status == AttendanceStatus.Late);
+                    a.Status == AttendanceStatus.Present || a.Status == AttendanceStatus.Late
+                );
 
                 var totalMemorizedPages = WirdPageCalculator.TotalMemorizedPages(student);
                 var (juz, _) = WirdPageCalculator.SplitJuzAndPages(totalMemorizedPages);
 
-                reportRows.Add(new StudentReportRow
-                {
-                    StudentId = student.UserId,
-                    FullName = $"{student.StudentInfo.FirstName} {student.StudentInfo.SecondName}",
-                    ClassName = string.Join(", ", student.Classes.Select(c => c.Name)),
-                    TotalMemorizedPages = totalMemorizedPages,
-                    MemorizedJuz = juz,
-                    ReviewedPages = student.ReviewedPages,
-                    TotalWirds = wirdsList.Count,
-                    CompletedWirds = wirdsList.Count(w => w.IsCompleted),
-                    AttendanceRate = totalAtt > 0 ? Math.Round((double)presentCount / totalAtt * 100, 1) : 0,
-                    TotalAttendance = totalAtt,
-                    IsHafiz = WirdPageCalculator.IsHafiz(student),
-                    TajwidLevel = student.TajwidLevel,
-                });
+                reportRows.Add(
+                    new StudentReportRow
+                    {
+                        StudentId = student.UserId,
+                        FullName =
+                            $"{student.StudentInfo.FirstName} {student.StudentInfo.SecondName}",
+                        ClassName = string.Join(", ", student.Classes.Select(c => c.Name)),
+                        TotalMemorizedPages = totalMemorizedPages,
+                        MemorizedJuz = juz,
+                        ReviewedPages = student.ReviewedPages,
+                        TotalWirds = wirdsList.Count,
+                        CompletedWirds = wirdsList.Count(w => w.IsCompleted),
+                        AttendanceRate =
+                            totalAtt > 0 ? Math.Round((double)presentCount / totalAtt * 100, 1) : 0,
+                        TotalAttendance = totalAtt,
+                        IsHafiz = WirdPageCalculator.IsHafiz(student),
+                        TajwidLevel = student.TajwidLevel,
+                    }
+                );
             }
 
             reportRows = (sortBy?.ToLower(), sortOrder?.ToLower()) switch
             {
                 ("memorization", "asc") => reportRows.OrderBy(r => r.TotalMemorizedPages).ToList(),
-                ("memorization", _) => reportRows.OrderByDescending(r => r.TotalMemorizedPages).ToList(),
+                ("memorization", _) => reportRows
+                    .OrderByDescending(r => r.TotalMemorizedPages)
+                    .ToList(),
                 ("attendance", "asc") => reportRows.OrderBy(r => r.AttendanceRate).ToList(),
                 ("attendance", _) => reportRows.OrderByDescending(r => r.AttendanceRate).ToList(),
                 ("name", "desc") => reportRows.OrderByDescending(r => r.FullName).ToList(),
@@ -210,7 +226,9 @@ namespace Hafiz.Areas.Admin.Controllers
                 if (!success)
                     return Json(new { success = false, message = "Note not found." });
 
-                return Json(new { success = true, readAt = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm") });
+                return Json(
+                    new { success = true, readAt = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm") }
+                );
             }
             catch (UnauthorizedAccessException)
             {

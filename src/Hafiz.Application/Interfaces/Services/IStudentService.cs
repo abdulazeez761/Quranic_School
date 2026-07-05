@@ -12,6 +12,7 @@ namespace Hafiz.Services.Interfaces
     {
         public Task<IEnumerable<Student>> GetAllAsync();
         public Task<IEnumerable<Student>> GetAllByInstituteAsync(Guid instituteId);
+        public Task<IEnumerable<Student>> GetStudentsWithWirdsAndAttendancesByInstituteAsync(Guid instituteId);
         public Task<(bool Success, string ErrorMessage)> AddAsync(
             RegisterStudentDto student,
             Guid? instituteId = null

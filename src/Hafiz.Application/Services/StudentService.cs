@@ -127,6 +127,11 @@ namespace Hafiz.Services
             return _studentRepository.GetAllByInstituteAsync(instituteId);
         }
 
+        public Task<IEnumerable<Student>> GetStudentsWithWirdsAndAttendancesByInstituteAsync(Guid instituteId)
+        {
+            return _studentRepository.GetStudentsWithWirdsAndAttendancesByInstituteAsync(instituteId);
+        }
+
         public Task UpdateAsync(EditStudentDto student)
         {
             if (student is null)
