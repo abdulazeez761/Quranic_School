@@ -164,8 +164,14 @@
                 var initials = GetInitials(row.FullName);
                 <a asp-action="Details" asp-route-id="@row.StudentId" class="report-card">
                     <div class="report-card-top">
-                        <div class="report-avatar">
-                            @initials
+                        <div class="report-avatar-wrap">
+                            <div class="report-avatar">
+                                @initials
+                            </div>
+                            @if (row.UnreadNotesCount > 0)
+                            {
+                                <span class="avatar-notes-badge" title="@Localizer["UnreadNotes"]">@row.UnreadNotesCount</span>
+                            }
                         </div>
                         <div class="report-identity">
                             <div class="report-name">
