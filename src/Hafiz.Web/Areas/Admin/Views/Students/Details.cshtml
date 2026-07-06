@@ -48,7 +48,7 @@
             </p>
         </div>
         <div class="header-actions">
-            <a asp-area="Admin" asp-controller="Students" asp-action="Index" class="back-btn">
+            <a asp-area="Admin" asp-controller="Students" asp-action="Reports" class="back-btn">
                 <i class='bx bx-arrow-back'></i>
                 @Localizer["BackToList"]
             </a>
@@ -182,28 +182,36 @@
                             <div class="att-bar-row">
                                 <span class="att-bar-label">@Localizer["AttendanceStatus_Present"]</span>
                                 <div class="att-bar-track">
-                                    <div class="att-bar-fill att-present" style="width: @(totalAtt > 0 ? Math.Round((double)Model.PresentCount / totalAtt * 100) : 0)%"></div>
+                                    <div class="att-bar-fill att-present"
+                                         style="width: @(totalAtt > 0 ? Math.Round((double)Model.PresentCount / totalAtt * 100) : 0)%">
+                                    </div>
                                 </div>
                                 <span class="att-bar-count">@Model.PresentCount</span>
                             </div>
                             <div class="att-bar-row">
                                 <span class="att-bar-label">@Localizer["AttendanceStatus_Late"]</span>
                                 <div class="att-bar-track">
-                                    <div class="att-bar-fill att-late" style="width: @(totalAtt > 0 ? Math.Round((double)Model.LateCount / totalAtt * 100) : 0)%"></div>
+                                    <div class="att-bar-fill att-late"
+                                         style="width: @(totalAtt > 0 ? Math.Round((double)Model.LateCount / totalAtt * 100) : 0)%">
+                                    </div>
                                 </div>
                                 <span class="att-bar-count">@Model.LateCount</span>
                             </div>
                             <div class="att-bar-row">
                                 <span class="att-bar-label">@Localizer["AttendanceStatus_Absent"]</span>
                                 <div class="att-bar-track">
-                                    <div class="att-bar-fill att-absent" style="width: @(totalAtt > 0 ? Math.Round((double)Model.AbsentCount / totalAtt * 100) : 0)%"></div>
+                                    <div class="att-bar-fill att-absent"
+                                         style="width: @(totalAtt > 0 ? Math.Round((double)Model.AbsentCount / totalAtt * 100) : 0)%">
+                                    </div>
                                 </div>
                                 <span class="att-bar-count">@Model.AbsentCount</span>
                             </div>
                             <div class="att-bar-row">
                                 <span class="att-bar-label">@Localizer["AttendanceStatus_Excused"]</span>
                                 <div class="att-bar-track">
-                                    <div class="att-bar-fill att-excused" style="width: @(totalAtt > 0 ? Math.Round((double)Model.ExcusedCount / totalAtt * 100) : 0)%"></div>
+                                    <div class="att-bar-fill att-excused"
+                                         style="width: @(totalAtt > 0 ? Math.Round((double)Model.ExcusedCount / totalAtt * 100) : 0)%">
+                                    </div>
                                 </div>
                                 <span class="att-bar-count">@Model.ExcusedCount</span>
                             </div>
@@ -223,7 +231,8 @@
                 <div class="section-content">
                     <div class="memorization-progress">
                         <div class="progress-circle-container">
-                            <div class="progress-circle" style="--progress: @(Math.Min(100, Math.Round((double)totalMemorizedPages / WirdPageCalculator.TotalQuranPages * 100)))">
+                            <div class="progress-circle"
+                                 style="--progress: @(Math.Min(100, Math.Round((double)totalMemorizedPages / WirdPageCalculator.TotalQuranPages * 100)))">
                                 <span class="progress-circle-value">@memorizedJuzDisplay/30</span>
                                 <span class="progress-circle-label">@Localizer["Juz"]</span>
                             </div>
@@ -272,515 +281,525 @@
                     <div class="info-grid">
                         <div class="info-item">
                             <label><i class='bx bx-envelope'></i> @Localizer["Email"]</label>
-                            <span>@(string.IsNullOrEmpty(student.StudentInfo.Email) ? Localizer["NotProvided"].Value : student.StudentInfo.Email)</span>
-                        </div>
-                        <div class="info-item">
-                            <label><i class='bx bx-phone'></i> @Localizer["PhoneNumber"]</label>
-                            <span>@(string.IsNullOrEmpty(student.StudentInfo.PhoneNumber) ? Localizer["NotProvided"].Value : student.StudentInfo.PhoneNumber)</span>
-                        </div>
-                        <div class="info-item">
-                            <label><i class='bx bx-calendar'></i> @Localizer["DateOfBirth"]</label>
-                            <span>@student.DateOfBirth.ToString("yyyy-MM-dd")</span>
-                        </div>
-                        <div class="info-item">
-                            <label><i class='bx bx-user'></i> @Localizer["Gender"]</label>
-                            <span>@Localizer[$"Gender_{student.sex}"]</span>
-                        </div>
-                        <div class="info-item">
-                            <label><i class='bx bx-group'></i> @Localizer["Parent"]</label>
-                            <span>
-                                @if (student.Parent != null)
-                                {
-                                    @($"{student.Parent.ParentInfo.FirstName} {student.Parent.ParentInfo.SecondName}")
-                                }
-                                else
-                                {
-                                    @Localizer["NotProvided"]
-                                }
-                            </span>
-                        </div>
-                        <div class="info-item">
-                            <label><i class='bx bx-book'></i> @Localizer["ClassesEnrolled"]</label>
-                            <span>
-                                @if (student.Classes?.Any() == true)
-                                {
-                                    @string.Join(", ", student.Classes.Select(c => c.Name))
-                                }
-                                else
-                                {
-                                    @Localizer["NoClass"]
-                                }
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Attendance Tab -->
-        <div id="attendance" class="tab-content @(activeTab == "attendance" ? "active" : "")">
-            <div class="section-card">
-                <div class="section-header">
-                    <h2><i class='bx bx-calendar'></i> @Localizer["AttendanceHistory"]</h2>
-                    @if (attendance.Count > 0)
-                    {
-                        <span class="header-badge badge-green">@Model.AttendanceRate% @Localizer["AttendanceRate"]</span>
-                    }
-                </div>
-                <div class="section-content">
-                    <!-- Date Filter -->
-                    <form method="get" class="filter-form mb-lg">
-                        <input type="hidden" name="id" value="@student.UserId" />
-                        <input type="hidden" name="tab" value="attendance" />
-                        <div class="filter-row">
-                            <div class="filter-group">
-                                <label>@Localizer["FromDate"]</label>
-                                <input type="date" name="fromDate" value="@Model.AttendanceFromDate?.ToString("yyyy-MM-dd")" class="form-input" />
+                            <span>@(string.IsNullOrEmpty(student.StudentInfo.Email) ? Localizer["NotProvided"].Value :
+                                                                student.StudentInfo.Email)</span>
                             </div>
-                            <div class="filter-group">
-                                <label>@Localizer["ToDate"]</label>
-                                <input type="date" name="toDate" value="@Model.AttendanceToDate?.ToString("yyyy-MM-dd")" class="form-input" />
-                            </div>
-                            <div class="filter-actions">
-                                <button type="submit" class="btn btn-primary btn-sm">
-                                    <i class='bx bx-filter'></i> @Localizer["Filter"]
-                                </button>
-                                <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="attendance" class="btn btn-outline btn-sm">
-                                    <i class='bx bx-reset'></i> @Localizer["Clear"]
-                                </a>
-                            </div>
-                        </div>
-                    </form>
-
-                    <!-- Attendance Stats -->
-                    @if (attendance.Count > 0)
-                    {
-                        <div class="att-stats-grid mb-lg">
-                            <div class="att-stat-card att-stat-present">
-                                <span class="att-stat-count">@Model.PresentCount</span>
-                                <span class="att-stat-label">@Localizer["AttendanceStatus_Present"]</span>
-                            </div>
-                            <div class="att-stat-card att-stat-late">
-                                <span class="att-stat-count">@Model.LateCount</span>
-                                <span class="att-stat-label">@Localizer["AttendanceStatus_Late"]</span>
-                            </div>
-                            <div class="att-stat-card att-stat-absent">
-                                <span class="att-stat-count">@Model.AbsentCount</span>
-                                <span class="att-stat-label">@Localizer["AttendanceStatus_Absent"]</span>
-                            </div>
-                            <div class="att-stat-card att-stat-excused">
-                                <span class="att-stat-count">@Model.ExcusedCount</span>
-                                <span class="att-stat-label">@Localizer["AttendanceStatus_Excused"]</span>
-                            </div>
-                        </div>
-                    }
-
-                    @if (attendance.Any())
-                    {
-                        <div class="table-responsive">
-                            <table class="attendance-table">
-                                <thead>
-                                    <tr>
-                                        <th>@Localizer["Date"]</th>
-                                        <th>@Localizer["Class"]</th>
-                                        <th>@Localizer["Status"]</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var record in attendance.OrderByDescending(a => a.Date))
-                                    {
-                                        <tr>
-                                            <td>
-                                                <div class="date-cell">
-                                                    <i class='bx bx-calendar'></i>
-                                                    @record.Date.ToString("yyyy-MM-dd")
-                                                </div>
-                                            </td>
-                                            <td>@record.Class?.Name</td>
-                                            <td>
-                                                <span class="status-badge status-@record.Status.ToString().ToLower()">
-                                                    @Localizer[$"AttendanceStatus_{record.Status}"]
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="no-data">
-                            <i class='bx bx-calendar-x'></i>
-                            <p>@Localizer["NoAttendanceRecords"]</p>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-
-        <!-- Wirds Tab -->
-        <div id="wirds" class="tab-content @(activeTab == "wirds" ? "active" : "")">
-            <div class="section-card">
-                <div class="section-header">
-                    <h2><i class='bx bx-book-bookmark'></i> @Localizer["WirdAssignments"]</h2>
-                    <div class="wird-stats-badges">
-                        <span class="header-badge badge-green">@paginatedWirds.CompletedCount @Localizer["Completed"]</span>
-                        <span class="header-badge badge-orange">@paginatedWirds.PendingCount @Localizer["Pending"]</span>
-                    </div>
-                </div>
-                <div class="section-content">
-                    <!-- Filters -->
-                    <div class="wird-filters mb-lg">
-                        <div class="filter-tabs">
-                            <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="wirds"
-                               class="filter-tab @(string.IsNullOrEmpty(Model.WirdStatus) ? "active" : "")">
-                                @Localizer["All"]
-                            </a>
-                            <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="wirds" asp-route-status="pending"
-                               asp-route-type="@Model.WirdType"
-                               class="filter-tab @(Model.WirdStatus == "pending" ? "active" : "")">
-                                @Localizer["Pending"]
-                            </a>
-                            <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="wirds" asp-route-status="completed"
-                               asp-route-type="@Model.WirdType"
-                               class="filter-tab @(Model.WirdStatus == "completed" ? "active" : "")">
-                                @Localizer["Completed"]
-                            </a>
-                            <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="wirds" asp-route-status="upcoming"
-                               asp-route-type="@Model.WirdType"
-                               class="filter-tab @(Model.WirdStatus == "upcoming" ? "active" : "")">
-                                @Localizer["Upcoming"]
-                            </a>
-                        </div>
-                        <div class="filter-tabs">
-                            <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="wirds"
-                               asp-route-status="@Model.WirdStatus"
-                               class="filter-tab @(string.IsNullOrEmpty(Model.WirdType) ? "active" : "")">
-                                @Localizer["AllTypes"]
-                            </a>
-                            <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="wirds"
-                               asp-route-status="@Model.WirdStatus" asp-route-type="Memorization"
-                               class="filter-tab @(Model.WirdType == "Memorization" ? "active" : "")">
-                                @Localizer["AssignmentType_Memorization"]
-                            </a>
-                            <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="wirds"
-                               asp-route-status="@Model.WirdStatus" asp-route-type="Revision"
-                               class="filter-tab @(Model.WirdType == "Revision" ? "active" : "")">
-                                @Localizer["AssignmentType_Revision"]
-                            </a>
-                            <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="wirds"
-                               asp-route-status="@Model.WirdStatus" asp-route-type="Tajwid"
-                               class="filter-tab @(Model.WirdType == "Tajwid" ? "active" : "")">
-                                @Localizer["AssignmentType_Tajwid"]
-                            </a>
-                            <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="wirds"
-                               asp-route-status="@Model.WirdStatus" asp-route-type="Tafsir"
-                               class="filter-tab @(Model.WirdType == "Tafsir" ? "active" : "")">
-                                @Localizer["AssignmentType_Tafsir"]
-                            </a>
-                        </div>
-                    </div>
-
-                    @if (paginatedWirds.Wirds.Any())
-                    {
-                        <div class="wirds-list">
-                            @foreach (var wird in paginatedWirds.Wirds)
-                            {
-                                <div class="wird-item @(wird.IsCompleted ? "completed" : "") @(wird.IsUpcoming ? "is-upcoming" : "")">
-                                    <div class="wird-header">
-                                        <div class="wird-type">
-                                            <i class='bx bx-file'></i>
-                                            @Localizer[$"AssignmentType_{wird.Type}"]
-                                        </div>
-                                        <div class="wird-header-right">
-                                            @if (wird.IsUpcoming)
-                                            {
-                                                @await Html.PartialAsync("_UpcomingBadge")
-                                            }
-                                            <div class="wird-date">
-                                                <i class='bx bx-calendar'></i>
-                                                @wird.AssignedDate.ToString("yyyy-MM-dd")
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="wird-content">
-                                        <div class="wird-range">
-                                            <span class="range-label">@Localizer["From"]:</span>
-                                            <span class="range-value">
-                                                @Formatting.GetLocalizedSurahName(wird.FromSurah ?? Surah.NONE) (@wird.FromAyah)
-                                                - @Localizer["Page"] @wird.FromPage
-                                            </span>
-                                        </div>
-                                        <div class="wird-range">
-                                            <span class="range-label">@Localizer["To"]:</span>
-                                            <span class="range-value">
-                                                @Formatting.GetLocalizedSurahName(wird.ToSurah ?? Surah.NONE) (@wird.ToAyah)
-                                                - @Localizer["Page"] @wird.ToPage
-                                            </span>
-                                        </div>
-                                        @if (!string.IsNullOrEmpty(wird.Note))
-                                        {
-                                            <div class="wird-note">
-                                                <i class='bx bx-note'></i>
-                                                <span>@wird.Note</span>
-                                            </div>
-                                        }
-                                    </div>
-                                    <div class="wird-footer">
-                                        <span class="status-badge status-@wird.Status.ToString().ToLower()">
-                                            @Localizer[$"AssignmentStatus_{wird.Status}"]
-                                        </span>
-                                        @if (wird.IsCompleted)
-                                        {
-                                            <span class="completion-badge">
-                                                <i class='bx bx-check-circle'></i>
-                                                @Localizer["Completed"]
-                                            </span>
-                                        }
-                                    </div>
+                            <div class="info-item">
+                                <label><i class='bx bx-phone'></i> @Localizer["PhoneNumber"]</label>
+                                <span>@(string.IsNullOrEmpty(student.StudentInfo.PhoneNumber) ?
+                                                                    Localizer["NotProvided"].Value : student.StudentInfo.PhoneNumber)</span>
                                 </div>
+                                <div class="info-item">
+                                    <label><i class='bx bx-calendar'></i> @Localizer["DateOfBirth"]</label>
+                                    <span>@student.DateOfBirth.ToString("yyyy-MM-dd")</span>
+                                </div>
+                                <div class="info-item">
+                                    <label><i class='bx bx-user'></i> @Localizer["Gender"]</label>
+                                    <span>@Localizer[$"Gender_{student.sex}"]</span>
+                                </div>
+                                <div class="info-item">
+                                    <label><i class='bx bx-group'></i> @Localizer["Parent"]</label>
+                                    <span>
+                                        @if (student.Parent != null)
+                                        {
+                                            @($"{student.Parent.ParentInfo.FirstName} {student.Parent.ParentInfo.SecondName}")
+                                        }
+                                        else
+                                        {
+                                            @Localizer["NotProvided"]
+                                        }
+                                    </span>
+                                </div>
+                                <div class="info-item">
+                                    <label><i class='bx bx-book'></i> @Localizer["ClassesEnrolled"]</label>
+                                    <span>
+                                        @if (student.Classes?.Any() == true)
+                                        {
+                                            @string.Join(", ", student.Classes.Select(c => c.Name))
+                                        }
+                                        else
+                                        {
+                                            @Localizer["NoClass"]
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendance Tab -->
+                <div id="attendance" class="tab-content @(activeTab == "attendance" ? "active" : "")">
+                    <div class="section-card">
+                        <div class="section-header">
+                            <h2><i class='bx bx-calendar'></i> @Localizer["AttendanceHistory"]</h2>
+                            @if (attendance.Count > 0)
+                            {
+                                <span class="header-badge badge-green">@Model.AttendanceRate% @Localizer["AttendanceRate"]</span>
                             }
                         </div>
-
-                        <!-- Pagination -->
-                        <div class="pagination-controls">
-                            <div class="pagination-info">
-                                <span>@Localizer["Page"] @paginatedWirds.PageNumber @Localizer["Of"]
-                                    @paginatedWirds.TotalPages
-                                    (@paginatedWirds.TotalCount @Localizer["TotalRecords"])</span>
-                            </div>
-                            <div class="pagination-buttons">
-                                @if (paginatedWirds.HasPreviousPage)
-                                {
-                                    <a asp-action="Details" asp-route-id="@student.UserId"
-                                       asp-route-page="@(paginatedWirds.PageNumber - 1)"
-                                       asp-route-tab="wirds" asp-route-status="@Model.WirdStatus" asp-route-type="@Model.WirdType"
-                                       class="pagination-btn prev-btn">
-                                        <i class='bx bx-chevron-left'></i>
-                                        @Localizer["Previous"]
-                                    </a>
-                                }
-                                else
-                                {
-                                    <button class="pagination-btn prev-btn" disabled>
-                                        <i class='bx bx-chevron-left'></i>
-                                        @Localizer["Previous"]
-                                    </button>
-                                }
-
-                                <div class="page-numbers">
-                                    @for (int i = 1; i <= paginatedWirds.TotalPages; i++)
-                                    {
-                                        if (i == paginatedWirds.PageNumber)
-                                        {
-                                            <span class="page-num active">@i</span>
-                                        }
-                                        else if (i == 1 || i == paginatedWirds.TotalPages ||
-                                        (i >= paginatedWirds.PageNumber - 1 && i <= paginatedWirds.PageNumber + 1))
-                                        {
-                                            <a asp-action="Details" asp-route-id="@student.UserId"
-                                               asp-route-page="@i"
-                                               asp-route-tab="wirds" asp-route-status="@Model.WirdStatus" asp-route-type="@Model.WirdType"
-                                               class="page-num">@i</a>
-                                        }
-                                        else if (i == 2 || i == paginatedWirds.TotalPages - 1)
-                                        {
-                                            <span class="page-num dots">...</span>
-                                        }
-                                    }
-                                </div>
-
-                                @if (paginatedWirds.HasNextPage)
-                                {
-                                    <a asp-action="Details" asp-route-id="@student.UserId"
-                                       asp-route-page="@(paginatedWirds.PageNumber + 1)"
-                                       asp-route-tab="wirds" asp-route-status="@Model.WirdStatus" asp-route-type="@Model.WirdType"
-                                       class="pagination-btn next-btn">
-                                        @Localizer["Next"]
-                                        <i class='bx bx-chevron-right'></i>
-                                    </a>
-                                }
-                                else
-                                {
-                                    <button class="pagination-btn next-btn" disabled>
-                                        @Localizer["Next"]
-                                        <i class='bx bx-chevron-right'></i>
-                                    </button>
-                                }
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="no-data">
-                            <i class='bx bx-book-alt'></i>
-                            <p>@Localizer["NoWirdAssignments"]</p>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-
-        <!-- Notes Tab -->
-        <div id="notes" class="tab-content @(activeTab == "notes" ? "active" : "")">
-            <div class="section-card">
-                <div class="section-header">
-                    <h2><i class='bx bx-note'></i> @Localizer["ParentNotes"]</h2>
-                    @{
-                        var unreadCount = parentNotes.Count(n => !n.IsRead);
-                    }
-                    @if (unreadCount > 0)
-                    {
-                        <span class="header-badge badge-red"><span class="unread-count">@unreadCount</span> @Localizer["UnreadNotes"]</span>
-                    }
-                </div>
-                <div class="section-content">
-                    @if (parentNotes.Any())
-                    {
-                        <div class="notes-list">
-                            @foreach (var note in parentNotes.OrderByDescending(n => n.CreatedAt))
-                            {
-                                <div class="note-item @(note.IsRead ? "note-read" : "note-unread")" data-note-id="@note.Id">
-                                    <div class="note-header">
-                                        <div class="note-author">
-                                            <i class='bx bx-user-circle'></i>
-                                            <span>@note.CreatedByUser.FirstName @note.CreatedByUser.SecondName</span>
-                                        </div>
-                                        <div class="note-meta">
-                                            <span class="note-status-badge note-badge-unread" style="@(note.IsRead ? "display:none" : "")">
-                                                <i class='bx bx-bell'></i> @Localizer["NewNote"]
-                                            </span>
-                                            <span class="note-status-badge note-badge-read" style="@(note.IsRead ? "" : "display:none")">
-                                                <i class='bx bx-check-double'></i> @Localizer["ReadNote"]
-                                            </span>
-                                            <span class="note-date">
-                                                <i class='bx bx-time-five'></i>
-                                                @note.CreatedAt.ToString("MMM dd, yyyy HH:mm")
-                                            </span>
-                                        </div>
+                        <div class="section-content">
+                            <!-- Date Filter -->
+                            <form method="get" class="filter-form mb-lg">
+                                <input type="hidden" name="id" value="@student.UserId" />
+                                <input type="hidden" name="tab" value="attendance" />
+                                <div class="filter-row">
+                                    <div class="filter-group">
+                                        <label>@Localizer["FromDate"]</label>
+                                        <input type="date" name="fromDate"
+                                               value="@Model.AttendanceFromDate?.ToString("yyyy-MM-dd")" class="form-input" />
                                     </div>
-                                    <div class="note-content">
-                                        @note.Content
+                                    <div class="filter-group">
+                                        <label>@Localizer["ToDate"]</label>
+                                        <input type="date" name="toDate" value="@Model.AttendanceToDate?.ToString("yyyy-MM-dd")"
+                                               class="form-input" />
                                     </div>
-                                    <div class="note-footer" style="@(note.IsRead ? "display:none" : "")">
-                                        <button type="button" class="mark-read-btn" onclick="markNoteAsRead(this, '@note.Id')">
-                                            <i class='bx bx-check'></i> @Localizer["MarkAsRead"]
+                                    <div class="filter-actions">
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            <i class='bx bx-filter'></i> @Localizer["Filter"]
                                         </button>
+                                        <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="attendance"
+                                           class="btn btn-outline btn-sm">
+                                            <i class='bx bx-reset'></i> @Localizer["Clear"]
+                                        </a>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!-- Attendance Stats -->
+                            @if (attendance.Count > 0)
+                            {
+                                <div class="att-stats-grid mb-lg">
+                                    <div class="att-stat-card att-stat-present">
+                                        <span class="att-stat-count">@Model.PresentCount</span>
+                                        <span class="att-stat-label">@Localizer["AttendanceStatus_Present"]</span>
+                                    </div>
+                                    <div class="att-stat-card att-stat-late">
+                                        <span class="att-stat-count">@Model.LateCount</span>
+                                        <span class="att-stat-label">@Localizer["AttendanceStatus_Late"]</span>
+                                    </div>
+                                    <div class="att-stat-card att-stat-absent">
+                                        <span class="att-stat-count">@Model.AbsentCount</span>
+                                        <span class="att-stat-label">@Localizer["AttendanceStatus_Absent"]</span>
+                                    </div>
+                                    <div class="att-stat-card att-stat-excused">
+                                        <span class="att-stat-count">@Model.ExcusedCount</span>
+                                        <span class="att-stat-label">@Localizer["AttendanceStatus_Excused"]</span>
                                     </div>
                                 </div>
                             }
+
+                            @if (attendance.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="attendance-table">
+                                        <thead>
+                                            <tr>
+                                                <th>@Localizer["Date"]</th>
+                                                <th>@Localizer["Class"]</th>
+                                                <th>@Localizer["Status"]</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var record in attendance.OrderByDescending(a => a.Date))
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <div class="date-cell">
+                                                            <i class='bx bx-calendar'></i>
+                                                            @record.Date.ToString("yyyy-MM-dd")
+                                                        </div>
+                                                    </td>
+                                                    <td>@record.Class?.Name</td>
+                                                    <td>
+                                                        <span class="status-badge status-@record.Status.ToString().ToLower()">
+                                                            @Localizer[$"AttendanceStatus_{record.Status}"]
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="no-data">
+                                    <i class='bx bx-calendar-x'></i>
+                                    <p>@Localizer["NoAttendanceRecords"]</p>
+                                </div>
+                            }
                         </div>
-                    }
-                    else
-                    {
-                        <div class="no-data">
-                            <i class='bx bx-notepad'></i>
-                            <p>@Localizer["NoParentNotes"]</p>
-                        </div>
-                    }
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Toast notification -->
-<div id="toast" class="toast" role="status" aria-live="polite" data-read-message='@Localizer["NoteMarkedAsRead"]'>
-    <i class='bx bx-check-circle'></i>
-    <span id="toast-message"></span>
-</div>
+                <!-- Wirds Tab -->
+                <div id="wirds" class="tab-content @(activeTab == "wirds" ? "active" : "")">
+                    <div class="section-card">
+                        <div class="section-header">
+                            <h2><i class='bx bx-book-bookmark'></i> @Localizer["WirdAssignments"]</h2>
+                            <div class="wird-stats-badges">
+                                <span class="header-badge badge-green">@paginatedWirds.CompletedCount
+                                    @Localizer["Completed"]</span>
+                                    <span class="header-badge badge-orange">@paginatedWirds.PendingCount
+                                        @Localizer["Pending"]</span>
+                                    </div>
+                                </div>
+                                <div class="section-content">
+                                    <!-- Filters -->
+                                    <div class="wird-filters mb-lg">
+                                        <div class="filter-tabs">
+                                            <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="wirds"
+                                               class="filter-tab @(string.IsNullOrEmpty(Model.WirdStatus) ? "active" : "")">
+                                                @Localizer["All"]
+                                            </a>
+                                            <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="wirds"
+                                               asp-route-status="pending" asp-route-type="@Model.WirdType"
+                                               class="filter-tab @(Model.WirdStatus == "pending" ? "active" : "")">
+                                                @Localizer["Pending"]
+                                            </a>
+                                            <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="wirds"
+                                               asp-route-status="completed" asp-route-type="@Model.WirdType"
+                                               class="filter-tab @(Model.WirdStatus == "completed" ? "active" : "")">
+                                                @Localizer["Completed"]
+                                            </a>
+                                            <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="wirds"
+                                               asp-route-status="upcoming" asp-route-type="@Model.WirdType"
+                                               class="filter-tab @(Model.WirdStatus == "upcoming" ? "active" : "")">
+                                                @Localizer["Upcoming"]
+                                            </a>
+                                        </div>
+                                        <div class="filter-tabs">
+                                            <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="wirds"
+                                               asp-route-status="@Model.WirdStatus"
+                                               class="filter-tab @(string.IsNullOrEmpty(Model.WirdType) ? "active" : "")">
+                                                @Localizer["AllTypes"]
+                                            </a>
+                                            <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="wirds"
+                                               asp-route-status="@Model.WirdStatus" asp-route-type="Memorization"
+                                               class="filter-tab @(Model.WirdType == "Memorization" ? "active" : "")">
+                                                @Localizer["AssignmentType_Memorization"]
+                                            </a>
+                                            <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="wirds"
+                                               asp-route-status="@Model.WirdStatus" asp-route-type="Revision"
+                                               class="filter-tab @(Model.WirdType == "Revision" ? "active" : "")">
+                                                @Localizer["AssignmentType_Revision"]
+                                            </a>
+                                            <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="wirds"
+                                               asp-route-status="@Model.WirdStatus" asp-route-type="Tajwid"
+                                               class="filter-tab @(Model.WirdType == "Tajwid" ? "active" : "")">
+                                                @Localizer["AssignmentType_Tajwid"]
+                                            </a>
+                                            <a asp-action="Details" asp-route-id="@student.UserId" asp-route-tab="wirds"
+                                               asp-route-status="@Model.WirdStatus" asp-route-type="Tafsir"
+                                               class="filter-tab @(Model.WirdType == "Tafsir" ? "active" : "")">
+                                                @Localizer["AssignmentType_Tafsir"]
+                                            </a>
+                                        </div>
+                                    </div>
 
-@Html.AntiForgeryToken()
+                                    @if (paginatedWirds.Wirds.Any())
+                                    {
+                                        <div class="wirds-list">
+                                            @foreach (var wird in paginatedWirds.Wirds)
+                                            {
+                                                <div
+                                                    class="wird-item @(wird.IsCompleted ? "completed" : "") @(wird.IsUpcoming ? "is-upcoming" : "")">
+                                                    <div class="wird-header">
+                                                        <div class="wird-type">
+                                                            <i class='bx bx-file'></i>
+                                                            @Localizer[$"AssignmentType_{wird.Type}"]
+                                                        </div>
+                                                        <div class="wird-header-right">
+                                                            @if (wird.IsUpcoming)
+                                                            {
+                                                                @await Html.PartialAsync("_UpcomingBadge")
+                                                            }
+                                                            <div class="wird-date">
+                                                                <i class='bx bx-calendar'></i>
+                                                                @wird.AssignedDate.ToString("yyyy-MM-dd")
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="wird-content">
+                                                        <div class="wird-range">
+                                                            <span class="range-label">@Localizer["From"]:</span>
+                                                            <span class="range-value">
+                                                                @Formatting.GetLocalizedSurahName(wird.FromSurah ?? Surah.NONE) (@wird.FromAyah)
+                                                                - @Localizer["Page"] @wird.FromPage
+                                                            </span>
+                                                        </div>
+                                                        <div class="wird-range">
+                                                            <span class="range-label">@Localizer["To"]:</span>
+                                                            <span class="range-value">
+                                                                @Formatting.GetLocalizedSurahName(wird.ToSurah ?? Surah.NONE) (@wird.ToAyah)
+                                                                - @Localizer["Page"] @wird.ToPage
+                                                            </span>
+                                                        </div>
+                                                        @if (!string.IsNullOrEmpty(wird.Note))
+                                                        {
+                                                            <div class="wird-note">
+                                                                <i class='bx bx-note'></i>
+                                                                <span>@wird.Note</span>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                    <div class="wird-footer">
+                                                        <span class="status-badge status-@wird.Status.ToString().ToLower()">
+                                                            @Localizer[$"AssignmentStatus_{wird.Status}"]
+                                                        </span>
+                                                        @if (wird.IsCompleted)
+                                                        {
+                                                            <span class="completion-badge">
+                                                                <i class='bx bx-check-circle'></i>
+                                                                @Localizer["Completed"]
+                                                            </span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
 
-@{
-    var markReadUrl = Url.Action("MarkNoteAsRead", "Students", new { area = "Admin" });
-}
+                                        <!-- Pagination -->
+                                        <div class="pagination-controls">
+                                            <div class="pagination-info">
+                                                <span>@Localizer["Page"] @paginatedWirds.PageNumber @Localizer["Of"]
+                                                    @paginatedWirds.TotalPages
+                                                    (@paginatedWirds.TotalCount @Localizer["TotalRecords"])</span>
+                                                </div>
+                                                <div class="pagination-buttons">
+                                                    @if (paginatedWirds.HasPreviousPage)
+                                                    {
+                                                        <a asp-action="Details" asp-route-id="@student.UserId"
+                                                           asp-route-page="@(paginatedWirds.PageNumber - 1)" asp-route-tab="wirds"
+                                                           asp-route-status="@Model.WirdStatus" asp-route-type="@Model.WirdType"
+                                                           class="pagination-btn prev-btn">
+                                                            <i class='bx bx-chevron-left'></i>
+                                                            @Localizer["Previous"]
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button class="pagination-btn prev-btn" disabled>
+                                                            <i class='bx bx-chevron-left'></i>
+                                                            @Localizer["Previous"]
+                                                        </button>
+                                                    }
 
-<script>
-    const markReadUrl = '@markReadUrl';
-    const markedReadText = document.getElementById('toast').dataset.readMessage;
+                                                    <div class="page-numbers">
+                                                        @for (int i = 1; i <= paginatedWirds.TotalPages; i++)
+                                                        {
+                                                            if (i == paginatedWirds.PageNumber)
+                                                            {
+                                                                <span class="page-num active">@i</span>
+                                                            }
+                                                            else if (i == 1 || i == paginatedWirds.TotalPages ||
+                                                            (i >= paginatedWirds.PageNumber - 1 && i <= paginatedWirds.PageNumber + 1))
+                                                            {
+                                                                <a asp-action="Details" asp-route-id="@student.UserId" asp-route-page="@i"
+                                                                   asp-route-tab="wirds" asp-route-status="@Model.WirdStatus"
+                                                                   asp-route-type="@Model.WirdType" class="page-num">@i</a>
+                                                            }
+                                                            else if (i == 2 || i == paginatedWirds.TotalPages - 1)
+                                                            {
+                                                                <span class="page-num dots">...</span>
+                                                            }
+                                                        }
+                                                    </div>
 
-    function showToast(message) {
-        const toast = document.getElementById('toast');
-        document.getElementById('toast-message').textContent = message;
-        toast.classList.add('show');
-        clearTimeout(window.__toastTimer);
-        window.__toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
-    }
+                                                    @if (paginatedWirds.HasNextPage)
+                                                    {
+                                                        <a asp-action="Details" asp-route-id="@student.UserId"
+                                                           asp-route-page="@(paginatedWirds.PageNumber + 1)" asp-route-tab="wirds"
+                                                           asp-route-status="@Model.WirdStatus" asp-route-type="@Model.WirdType"
+                                                           class="pagination-btn next-btn">
+                                                            @Localizer["Next"]
+                                                            <i class='bx bx-chevron-right'></i>
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button class="pagination-btn next-btn" disabled>
+                                                            @Localizer["Next"]
+                                                            <i class='bx bx-chevron-right'></i>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                    else
+                                        {
+                                            <div class="no-data">
+                                                <i class='bx bx-book-alt'></i>
+                                                <p>@Localizer["NoWirdAssignments"]</p>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
 
-    function markNoteAsRead(btn, noteId) {
-        btn.disabled = true;
-        const formData = new FormData();
-        formData.append('noteId', noteId);
-        const tokenEl = document.querySelector('input[name="__RequestVerificationToken"]');
-        if (tokenEl) formData.append('__RequestVerificationToken', tokenEl.value);
+                            <!-- Notes Tab -->
+                            <div id="notes" class="tab-content @(activeTab == "notes" ? "active" : "")">
+                                <div class="section-card">
+                                    <div class="section-header">
+                                        <h2><i class='bx bx-note'></i> @Localizer["ParentNotes"]</h2>
+                                        @{
+                                            var unreadCount = parentNotes.Count(n => !n.IsRead);
+                                        }
+                                        @if (unreadCount > 0)
+                                        {
+                                            <span class="header-badge badge-red"><span class="unread-count">@unreadCount</span>
+                                                @Localizer["UnreadNotes"]</span>
+                                            }
+                                        </div>
+                                        <div class="section-content">
+                                            @if (parentNotes.Any())
+                                            {
+                                                <div class="notes-list">
+                                                    @foreach (var note in parentNotes.OrderByDescending(n => n.CreatedAt))
+                                                    {
+                                                        <div class="note-item @(note.IsRead ? "note-read" : "note-unread")" data-note-id="@note.Id">
+                                                            <div class="note-header">
+                                                                <div class="note-author">
+                                                                    <i class='bx bx-user-circle'></i>
+                                                                    <span>@note.CreatedByUser.FirstName @note.CreatedByUser.SecondName</span>
+                                                                </div>
+                                                                <div class="note-meta">
+                                                                    <span class="note-status-badge note-badge-unread"
+                                                                          style="@(note.IsRead ? "display:none" : "")">
+                                                                        <i class='bx bx-bell'></i> @Localizer["NewNote"]
+                                                                    </span>
+                                                                    <span class="note-status-badge note-badge-read"
+                                                                          style="@(note.IsRead ? "" : "display:none")">
+                                                                        <i class='bx bx-check-double'></i> @Localizer["ReadNote"]
+                                                                    </span>
+                                                                    <span class="note-date">
+                                                                        <i class='bx bx-time-five'></i>
+                                                                        @note.CreatedAt.ToString("MMM dd, yyyy HH:mm")
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="note-content">
+                                                                @note.Content
+                                                            </div>
+                                                            <div class="note-footer" style="@(note.IsRead ? "display:none" : "")">
+                                                                <button type="button" class="mark-read-btn" onclick="markNoteAsRead(this, '@note.Id')">
+                                                                    <i class='bx bx-check'></i> @Localizer["MarkAsRead"]
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="no-data">
+                                                    <i class='bx bx-notepad'></i>
+                                                    <p>@Localizer["NoParentNotes"]</p>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-        fetch(markReadUrl, {
-            method: 'POST',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-            body: formData
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data && data.success) {
-                const item = document.querySelector('.note-item[data-note-id="' + noteId + '"]');
-                if (item) {
-                    item.classList.remove('note-unread');
-                    item.classList.add('note-read');
-                    const unreadBadge = item.querySelector('.note-badge-unread');
-                    const readBadge = item.querySelector('.note-badge-read');
-                    const footer = item.querySelector('.note-footer');
-                    if (unreadBadge) unreadBadge.style.display = 'none';
-                    if (readBadge) readBadge.style.display = '';
-                    if (footer) footer.style.display = 'none';
-                }
-                updateUnreadHeaderBadge();
-                showToast(markedReadText);
-            } else {
-                btn.disabled = false;
-            }
-        })
-        .catch(() => { btn.disabled = false; });
-    }
+                        <!-- Toast notification -->
+                        <div id="toast" class="toast" role="status" aria-live="polite" data-read-message='@Localizer["NoteMarkedAsRead"]'>
+                            <i class='bx bx-check-circle'></i>
+                            <span id="toast-message"></span>
+                        </div>
 
-    function updateUnreadHeaderBadge() {
-        const remaining = document.querySelectorAll('.note-item.note-unread').length;
-        const badge = document.querySelector('#notes .badge-red');
-        if (badge) {
-            if (remaining > 0) {
-                const countEl = badge.querySelector('.unread-count');
-                if (countEl) countEl.textContent = remaining;
-            } else {
-                badge.style.display = 'none';
-            }
-        }
-    }
+                        @Html.AntiForgeryToken()
 
-    function openTab(evt, tabName) {
-        var tabContent = document.getElementsByClassName("tab-content");
-        for (var i = 0; i < tabContent.length; i++) {
-            tabContent[i].style.display = "none";
-            tabContent[i].classList.remove("active");
-        }
+                        @{
+                            var markReadUrl = Url.Action("MarkNoteAsRead", "Students", new { area = "Admin" });
+                        }
 
-        var tabBtn = document.getElementsByClassName("tab-btn");
-        for (var i = 0; i < tabBtn.length; i++) {
-            tabBtn[i].classList.remove("active");
-        }
+                        <script>
+                            const markReadUrl = '@markReadUrl';
+                            const markedReadText = document.getElementById('toast').dataset.readMessage;
 
-        document.getElementById(tabName).style.display = "block";
-        setTimeout(() => {
-            document.getElementById(tabName).classList.add("active");
-        }, 10);
+                            function showToast(message) {
+                                const toast = document.getElementById('toast');
+                                document.getElementById('toast-message').textContent = message;
+                                toast.classList.add('show');
+                                clearTimeout(window.__toastTimer);
+                                window.__toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+                            }
 
-        evt.currentTarget.classList.add("active");
-        evt.currentTarget.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
-    }
+                            function markNoteAsRead(btn, noteId) {
+                                btn.disabled = true;
+                                const formData = new FormData();
+                                formData.append('noteId', noteId);
+                                const tokenEl = document.querySelector('input[name="__RequestVerificationToken"]');
+                                if (tokenEl) formData.append('__RequestVerificationToken', tokenEl.value);
 
-    // On small screens the tab bar scrolls horizontally; keep the active tab visible
-    document.addEventListener('DOMContentLoaded', function () {
-        var activeTab = document.querySelector('.tabs-header .tab-btn.active');
-        if (activeTab) activeTab.scrollIntoView({ inline: 'center', block: 'nearest' });
-    });
-</script>
+                                fetch(markReadUrl, {
+                                    method: 'POST',
+                                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                                    body: formData
+                                })
+                                    .then(r => r.json())
+                                    .then(data => {
+                                        if (data && data.success) {
+                                            const item = document.querySelector('.note-item[data-note-id="' + noteId + '"]');
+                                            if (item) {
+                                                item.classList.remove('note-unread');
+                                                item.classList.add('note-read');
+                                                const unreadBadge = item.querySelector('.note-badge-unread');
+                                                const readBadge = item.querySelector('.note-badge-read');
+                                                const footer = item.querySelector('.note-footer');
+                                                if (unreadBadge) unreadBadge.style.display = 'none';
+                                                if (readBadge) readBadge.style.display = '';
+                                                if (footer) footer.style.display = 'none';
+                                            }
+                                            updateUnreadHeaderBadge();
+                                            showToast(markedReadText);
+                                        } else {
+                                            btn.disabled = false;
+                                        }
+                                    })
+                                    .catch(() => { btn.disabled = false; });
+                            }
+
+                            function updateUnreadHeaderBadge() {
+                                const remaining = document.querySelectorAll('.note-item.note-unread').length;
+                                const badge = document.querySelector('#notes .badge-red');
+                                if (badge) {
+                                    if (remaining > 0) {
+                                        const countEl = badge.querySelector('.unread-count');
+                                        if (countEl) countEl.textContent = remaining;
+                                    } else {
+                                        badge.style.display = 'none';
+                                    }
+                                }
+                            }
+
+                            function openTab(evt, tabName) {
+                                var tabContent = document.getElementsByClassName("tab-content");
+                                for (var i = 0; i < tabContent.length; i++) {
+                                    tabContent[i].style.display = "none";
+                                    tabContent[i].classList.remove("active");
+                                }
+
+                                var tabBtn = document.getElementsByClassName("tab-btn");
+                                for (var i = 0; i < tabBtn.length; i++) {
+                                    tabBtn[i].classList.remove("active");
+                                }
+
+                                document.getElementById(tabName).style.display = "block";
+                                setTimeout(() => {
+                                    document.getElementById(tabName).classList.add("active");
+                                }, 10);
+
+                                evt.currentTarget.classList.add("active");
+                                evt.currentTarget.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+                            }
+
+                            // On small screens the tab bar scrolls horizontally; keep the active tab visible
+                            document.addEventListener('DOMContentLoaded', function () {
+                                var activeTab = document.querySelector('.tabs-header .tab-btn.active');
+                                if (activeTab) activeTab.scrollIntoView({ inline: 'center', block: 'nearest' });
+                            });
+                        </script>

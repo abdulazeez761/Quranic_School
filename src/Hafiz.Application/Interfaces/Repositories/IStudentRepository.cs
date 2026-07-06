@@ -17,7 +17,7 @@ namespace Hafiz.Repositories.Interfaces
         Task DeleteAsync(Guid id);
         Task UpdateAsync(EditStudentDto student);
         Task<IEnumerable<Student>> GetAllByInstituteAsync(Guid instituteId);
-        Task<IEnumerable<Student>> GetStudentsWithWirdsAndAttendancesByInstituteAsync(Guid instituteId);
+        Task<IEnumerable<Student>> GetStudentsWithWirdsAndAttendancesByInstituteAsync(Guid instituteId, Guid? classId = null, string? search = null);
 
         /// <summary>
         /// Atomically increments the student's cumulative memorized/reviewed page counters.

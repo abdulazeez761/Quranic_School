@@ -261,4 +261,63 @@
     <value>الأوراد</value>
     <comment/>
   </data>
+  <data name="Search" xml:space="preserve">
+    <value>بحث</value>
+    <comment/>
+  </data>
+  <data name="SearchStudent" xml:space="preserve">
+    <value>البحث عن طالب</value>
+    <comment/>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>ابحث عن الطالب بالاسم...</value>
+    <comment/>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>إعادة تعيين</value>
+    <comment/>
+  </data>
+  <data name="ClassCircle" xml:space="preserve">
+    <value>الحلقة / الشعبة</value>
+    <comment/>
+  </data>
+  <data name="Years" xml:space="preserve">
+    <value>سنوات</value>
+  </data>
+  <data name="PagesShort" xml:space="preserve">
+    <value>صفحة</value>
+  </data>
+  <data name="AttendanceShort" xml:space="preserve">
+    <value>حضور</value>
+  </data>
+  <data name="NeverActive" xml:space="preserve">
+    <value>غير نشط بالكامل</value>
+  </data>
+  <data name="ActiveToday" xml:space="preserve">
+    <value>نشط اليوم</value>
+  </data>
+  <data name="ActiveYesterday" xml:space="preserve">
+    <value>نشط أمس</value>
+  </data>
+  <data name="ActiveDaysAgo" xml:space="preserve">
+    <value>نشط منذ {0} يوم</value>
+  </data>
+  <data name="LastActive" xml:space="preserve">
+    <value>آخر نشاط</value>
+  </data>
+  <data name="InactiveWarning" xml:space="preserve">
+    <value>منقطع!</value>
+  </data>
+  <data name="ReviewedPagesShort" xml:space="preserve">
+    <value>مراجعة</value>
+  </data>
+  <data name="MemorizedPagesShort" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="LastWird" xml:space="preserve">
+    <value>آخر ورد</value>
+  </data>
+  <data name="NoCompletedWirds" xml:space="preserve">
+    <value>لا يوجد أوراد مكتملة</value>
+  </data>
 </root>

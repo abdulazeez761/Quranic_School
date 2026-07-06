@@ -148,69 +148,38 @@ namespace Hafiz.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Reports(string? sortBy = null, string? sortOrder = null)
+        public async Task<IActionResult> Reports(
+            Guid? classId = null,
+            string? search = null,
+            string? sortBy = null,
+            string? sortOrder = null
+        )
         {
             var instituteId = GetInstituteId();
-            IEnumerable<StudentModel> students;
-
-            if (instituteId.HasValue)
-                students = await _studentService.GetStudentsWithWirdsAndAttendancesByInstituteAsync(instituteId.Value);
-            else
+            if (!instituteId.HasValue)
                 return Forbid();
 
-            var reportRows = new List<StudentReportRow>();
-            foreach (var student in students)
-            {
-                var attendanceList = student.Attendances.ToList();
-                var wirdsList = student.wirds.ToList();
+            var classes = await _classService.GetClassesByInstituteAsync(instituteId.Value);
+            ViewBag.Classes = classes
+                .OrderBy(c => c.Name)
+                .Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name })
+                .ToList();
 
-                int totalAtt = attendanceList.Count;
-                int presentCount = attendanceList.Count(a =>
-                    a.Status == AttendanceStatus.Present || a.Status == AttendanceStatus.Late
-                );
-
-                var totalMemorizedPages = WirdPageCalculator.TotalMemorizedPages(student);
-                var (juz, _) = WirdPageCalculator.SplitJuzAndPages(totalMemorizedPages);
-
-                reportRows.Add(
-                    new StudentReportRow
-                    {
-                        StudentId = student.UserId,
-                        FullName =
-                            $"{student.StudentInfo.FirstName} {student.StudentInfo.SecondName}",
-                        ClassName = string.Join(", ", student.Classes.Select(c => c.Name)),
-                        TotalMemorizedPages = totalMemorizedPages,
-                        MemorizedJuz = juz,
-                        ReviewedPages = student.ReviewedPages,
-                        TotalWirds = wirdsList.Count,
-                        CompletedWirds = wirdsList.Count(w => w.IsCompleted),
-                        AttendanceRate =
-                            totalAtt > 0 ? Math.Round((double)presentCount / totalAtt * 100, 1) : 0,
-                        TotalAttendance = totalAtt,
-                        IsHafiz = WirdPageCalculator.IsHafiz(student),
-                        TajwidLevel = student.TajwidLevel,
-                    }
-                );
-            }
-
-            reportRows = (sortBy?.ToLower(), sortOrder?.ToLower()) switch
-            {
-                ("memorization", "asc") => reportRows.OrderBy(r => r.TotalMemorizedPages).ToList(),
-                ("memorization", _) => reportRows
-                    .OrderByDescending(r => r.TotalMemorizedPages)
-                    .ToList(),
-                ("attendance", "asc") => reportRows.OrderBy(r => r.AttendanceRate).ToList(),
-                ("attendance", _) => reportRows.OrderByDescending(r => r.AttendanceRate).ToList(),
-                ("name", "desc") => reportRows.OrderByDescending(r => r.FullName).ToList(),
-                ("name", _) => reportRows.OrderBy(r => r.FullName).ToList(),
-                _ => reportRows.OrderByDescending(r => r.TotalMemorizedPages).ToList(),
-            };
+            var reportRows = await _studentService.GetStudentReportsByInstituteAsync(
+                instituteId.Value,
+                classId,
+                search,
+                sortBy,
+                sortOrder
+            );
 
             var viewModel = new AdminStudentReportsViewModel
             {
-                Students = reportRows,
+                Students = reportRows.ToList(),
                 SortBy = sortBy,
                 SortOrder = sortOrder,
+                ClassId = classId,
+                Search = search,
             };
 
             return View(viewModel);

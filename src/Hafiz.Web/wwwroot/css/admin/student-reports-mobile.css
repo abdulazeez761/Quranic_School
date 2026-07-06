@@ -1,0 +1,298 @@
+/* Mobile list layout */
+.report-list-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.report-row-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.report-row-mobile:last-child {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.report-row-mobile:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-green, #2e8b57);
+}
+
+/* Header Section */
+.row-mobile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.mobile-avatar-name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  min-width: 0;
+  flex: 1;
+}
+
+.row-mobile-header .avatar-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4f46e5, #3b82f6);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.row-mobile-header .student-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.row-mobile-header .student-name {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.row-mobile-header .student-class {
+  font-size: 0.72rem;
+  color: var(--text-medium);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.row-mobile-header .student-class i {
+  color: var(--primary-green, #2e8b57);
+}
+
+.mobile-wirds-badge {
+  flex-shrink: 0;
+}
+
+.mobile-wirds-badge .wirds-count-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+}
+
+.mobile-wirds-badge .wirds-count-badge.wird-badge-active {
+  background: rgba(76, 175, 80, 0.12);
+  color: #2e7d32;
+  border: 1px solid rgba(76, 175, 80, 0.2);
+}
+
+.mobile-wirds-badge .wirds-count-badge.wird-badge-inactive {
+  background: var(--light-gray);
+  color: var(--text-medium);
+  border: 1px solid var(--border-color);
+}
+
+.mobile-wirds-badge .wirds-count-badge i {
+  font-size: 0.95rem;
+}
+
+/* Progress Section */
+.row-mobile-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: var(--space-md) 0;
+  border-top: 1px dashed var(--border-color);
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.row-mobile-progress .progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--font-size-xs);
+}
+
+.row-mobile-progress .progress-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-medium);
+  font-weight: 600;
+}
+
+.row-mobile-progress .progress-label i {
+  color: var(--primary-green, #2e8b57);
+}
+
+.row-mobile-progress .progress-values {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.row-mobile-progress .progress-fraction {
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.row-mobile-progress .progress-extra-pages {
+  font-size: 0.68rem;
+  color: var(--text-medium);
+  background: var(--light-gray);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.row-mobile-progress .progress-bar-track {
+  width: 100%;
+  height: 6px;
+  background: var(--light-gray);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.row-mobile-progress .progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #43a047, #2e8b57);
+  border-radius: var(--radius-full);
+}
+
+/* Stats Section (3 columns grid) */
+.row-mobile-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
+  text-align: center;
+}
+
+.mobile-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-sm) var(--space-xs);
+  border-radius: var(--radius-md);
+  background: var(--light-gray);
+  border: 1px solid var(--border-color);
+}
+
+.mobile-stat-item .stat-value {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.mobile-stat-item .stat-label {
+  font-size: 0.68rem;
+  color: var(--text-medium);
+  font-weight: 600;
+}
+
+/* Specific styling for attendance badge in mobile stats */
+.mobile-stat-item.attendance.att-good {
+  background: rgba(76, 175, 80, 0.08);
+  border-color: rgba(76, 175, 80, 0.15);
+}
+.mobile-stat-item.attendance.att-good .stat-value {
+  color: #2e7d32;
+}
+
+.mobile-stat-item.attendance.att-mid {
+  background: rgba(255, 152, 0, 0.08);
+  border-color: rgba(255, 152, 0, 0.15);
+}
+.mobile-stat-item.attendance.att-mid .stat-value {
+  color: #e65100;
+}
+
+.mobile-stat-item.attendance.att-low {
+  background: rgba(244, 67, 54, 0.08);
+  border-color: rgba(244, 67, 54, 0.15);
+}
+.mobile-stat-item.attendance.att-low .stat-value {
+  color: #c62828;
+}
+
+/* Footer Section */
+.row-mobile-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--font-size-xs);
+  padding-top: var(--space-xs);
+}
+
+.row-mobile-footer .last-active {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-medium);
+}
+
+.row-mobile-footer .last-active i {
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.row-mobile-footer .last-active.warning {
+  color: #c62828;
+  font-weight: 600;
+}
+
+.row-mobile-footer .last-active.warning i {
+  color: #c62828;
+}
+
+.row-mobile-footer .warning-alert-badge {
+  background: #ffebee;
+  color: #c62828;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.68rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Responsive updates for viewports */
+@media (max-width: 480px) {
+  .report-row-mobile {
+    padding: var(--space-md);
+  }
+  .row-mobile-progress {
+    padding: var(--space-sm) 0;
+  }
+  .mobile-stat-item {
+    padding: var(--space-xs);
+  }
+}

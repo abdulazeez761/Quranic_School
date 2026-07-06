@@ -145,16 +145,37 @@ namespace Hafiz.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Student>> GetStudentsWithWirdsAndAttendancesByInstituteAsync(Guid instituteId)
+        public async Task<IEnumerable<Student>> GetStudentsWithWirdsAndAttendancesByInstituteAsync(
+            Guid instituteId,
+            Guid? classId = null,
+            string? search = null
+        )
         {
-            return await _context
+            var query = _context
                 .Students.Include(s => s.StudentInfo)
                 .Include(s => s.Classes)
                 .Include(s => s.Attendances)
                 .Include(s => s.wirds)
-                .Where(s => s.StudentInfo.InstituteId == instituteId)
-                .AsNoTracking()
-                .ToListAsync();
+                .Where(s => s.StudentInfo.InstituteId == instituteId);
+
+            if (classId.HasValue)
+            {
+                query = query.Where(s => s.Classes.Any(c => c.Id == classId.Value));
+            }
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.ToLower().Trim();
+                query = query.Where(s =>
+                    s.StudentInfo.FirstName.ToLower().Contains(term)
+                    || s.StudentInfo.SecondName.ToLower().Contains(term)
+                    || (s.StudentInfo.FirstName + " " + s.StudentInfo.SecondName)
+                        .ToLower()
+                        .Contains(term)
+                );
+            }
+
+            return await query.AsNoTracking().ToListAsync();
         }
 
         public async Task ApplyProgressDeltaAsync(
@@ -201,8 +222,8 @@ namespace Hafiz.Repositories
 
         public async Task<IEnumerable<Student>> GetStudentsByClassIdAsync(Guid classId)
         {
-            return await _context.Students
-                .Include(t => t.StudentInfo)
+            return await _context
+                .Students.Include(t => t.StudentInfo)
                 .Include(s => s.Classes)
                 .Include(s => s.wirds)
                 .Where(s => s.Classes.Any(c => c.Id == classId))

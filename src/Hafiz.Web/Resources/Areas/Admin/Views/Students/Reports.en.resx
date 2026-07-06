@@ -261,4 +261,63 @@
     <value>Wirds</value>
     <comment/>
   </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+    <comment/>
+  </data>
+  <data name="SearchStudent" xml:space="preserve">
+    <value>Search Student</value>
+    <comment/>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Search student by name...</value>
+    <comment/>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Reset</value>
+    <comment/>
+  </data>
+  <data name="ClassCircle" xml:space="preserve">
+    <value>Class / Circle</value>
+    <comment/>
+  </data>
+  <data name="Years" xml:space="preserve">
+    <value>years</value>
+  </data>
+  <data name="PagesShort" xml:space="preserve">
+    <value>pages</value>
+  </data>
+  <data name="AttendanceShort" xml:space="preserve">
+    <value>attendance</value>
+  </data>
+  <data name="NeverActive" xml:space="preserve">
+    <value>Never active</value>
+  </data>
+  <data name="ActiveToday" xml:space="preserve">
+    <value>Active today</value>
+  </data>
+  <data name="ActiveYesterday" xml:space="preserve">
+    <value>Active yesterday</value>
+  </data>
+  <data name="ActiveDaysAgo" xml:space="preserve">
+    <value>Active {0} days ago</value>
+  </data>
+  <data name="LastActive" xml:space="preserve">
+    <value>Last active</value>
+  </data>
+  <data name="InactiveWarning" xml:space="preserve">
+    <value>Inactive!</value>
+  </data>
+  <data name="ReviewedPagesShort" xml:space="preserve">
+    <value>reviewed</value>
+  </data>
+  <data name="MemorizedPagesShort" xml:space="preserve">
+    <value>memorized</value>
+  </data>
+  <data name="LastWird" xml:space="preserve">
+    <value>Last wird</value>
+  </data>
+  <data name="NoCompletedWirds" xml:space="preserve">
+    <value>No completed wirds</value>
+  </data>
 </root>

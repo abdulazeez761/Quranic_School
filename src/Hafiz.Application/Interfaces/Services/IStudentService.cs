@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Hafiz.DTOs;
+using Hafiz.DTOs.Student;
 using Hafiz.Models;
 using Hafiz.Models.enums;
 
@@ -12,7 +13,8 @@ namespace Hafiz.Services.Interfaces
     {
         public Task<IEnumerable<Student>> GetAllAsync();
         public Task<IEnumerable<Student>> GetAllByInstituteAsync(Guid instituteId);
-        public Task<IEnumerable<Student>> GetStudentsWithWirdsAndAttendancesByInstituteAsync(Guid instituteId);
+        public Task<IEnumerable<Student>> GetStudentsWithWirdsAndAttendancesByInstituteAsync(Guid instituteId, Guid? classId = null, string? search = null);
+        public Task<IEnumerable<StudentReportRow>> GetStudentReportsByInstituteAsync(Guid instituteId, Guid? classId = null, string? search = null, string? sortBy = null, string? sortOrder = null);
         public Task<(bool Success, string ErrorMessage)> AddAsync(
             RegisterStudentDto student,
             Guid? instituteId = null

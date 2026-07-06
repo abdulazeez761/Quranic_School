@@ -1,5 +1,7 @@
 using Hafiz.Application.Interfaces;
+using Hafiz.Common.Helper;
 using Hafiz.DTOs;
+using Hafiz.DTOs.Student;
 using Hafiz.DTOs.Wird;
 using Hafiz.Models;
 using Hafiz.Models.enums;
@@ -127,9 +129,101 @@ namespace Hafiz.Services
             return _studentRepository.GetAllByInstituteAsync(instituteId);
         }
 
-        public Task<IEnumerable<Student>> GetStudentsWithWirdsAndAttendancesByInstituteAsync(Guid instituteId)
+        public Task<IEnumerable<Student>> GetStudentsWithWirdsAndAttendancesByInstituteAsync(
+            Guid instituteId,
+            Guid? classId = null,
+            string? search = null
+        )
         {
-            return _studentRepository.GetStudentsWithWirdsAndAttendancesByInstituteAsync(instituteId);
+            return _studentRepository.GetStudentsWithWirdsAndAttendancesByInstituteAsync(
+                instituteId,
+                classId,
+                search
+            );
+        }
+
+        public async Task<IEnumerable<StudentReportRow>> GetStudentReportsByInstituteAsync(
+            Guid instituteId,
+            Guid? classId = null,
+            string? search = null,
+            string? sortBy = null,
+            string? sortOrder = null
+        )
+        {
+            var students =
+                await _studentRepository.GetStudentsWithWirdsAndAttendancesByInstituteAsync(
+                    instituteId,
+                    classId,
+                    search
+                );
+
+            var reportRows = new List<StudentReportRow>();
+            foreach (var student in students)
+            {
+                var attendanceList = student.Attendances.ToList();
+                var wirdsList = student.wirds.ToList();
+
+                int totalAtt = attendanceList.Count;
+                int presentCount = attendanceList.Count(a =>
+                    a.Status == AttendanceStatus.Present || a.Status == AttendanceStatus.Late
+                );
+
+                var totalMemorizedPages = WirdPageCalculator.TotalMemorizedPages(student);
+                var (juz, _) = WirdPageCalculator.SplitJuzAndPages(totalMemorizedPages);
+
+                var age = DateTime.Today.Year - student.DateOfBirth.Year;
+                if (student.DateOfBirth.Date > DateTime.Today.AddYears(-age))
+                    age--;
+
+                var lastWird = student
+                    .wirds.Where(w => w.IsCompleted)
+                    .Select(w => (DateTime?)w.AssignedDate)
+                    .Max();
+
+                bool isInactiveWarning = false;
+                if (lastWird.HasValue)
+                {
+                    isInactiveWarning = (DateTime.Today - lastWird.Value.Date).TotalDays > 20;
+                }
+
+                reportRows.Add(
+                    new StudentReportRow
+                    {
+                        StudentId = student.UserId,
+                        FullName =
+                            $"{student.StudentInfo.FirstName} {student.StudentInfo.SecondName}",
+                        ClassName = string.Join(", ", student.Classes.Select(c => c.Name)),
+                        TotalMemorizedPages = totalMemorizedPages,
+                        MemorizedJuz = juz,
+                        ReviewedPages = student.ReviewedPages,
+                        TotalWirds = wirdsList.Count,
+                        CompletedWirds = wirdsList.Count(w => w.IsCompleted),
+                        AttendanceRate =
+                            totalAtt > 0 ? Math.Round((double)presentCount / totalAtt * 100, 1) : 0,
+                        TotalAttendance = totalAtt,
+                        IsHafiz = WirdPageCalculator.IsHafiz(student),
+                        TajwidLevel = student.TajwidLevel,
+                        Age = age,
+                        LastWirdDate = lastWird,
+                        IsInactiveWarning = isInactiveWarning,
+                    }
+                );
+            }
+
+            reportRows = (sortBy?.ToLower(), sortOrder?.ToLower()) switch
+            {
+                ("memorization", "asc") => reportRows.OrderBy(r => r.TotalMemorizedPages).ToList(),
+                ("memorization", _) => reportRows
+                    .OrderByDescending(r => r.TotalMemorizedPages)
+                    .ToList(),
+                ("attendance", "asc") => reportRows.OrderBy(r => r.AttendanceRate).ToList(),
+                ("attendance", _) => reportRows.OrderByDescending(r => r.AttendanceRate).ToList(),
+                ("name", "desc") => reportRows.OrderByDescending(r => r.FullName).ToList(),
+                ("name", _) => reportRows.OrderBy(r => r.FullName).ToList(),
+                _ => reportRows.OrderByDescending(r => r.TotalMemorizedPages).ToList(),
+            };
+
+            return reportRows;
         }
 
         public Task UpdateAsync(EditStudentDto student)

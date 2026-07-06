@@ -9,9 +9,33 @@
     var avgAttendance = students.Any() ? Math.Round(students.Average(s => s.AttendanceRate), 1) : 0;
     var avgMemorization = students.Any() ? Math.Round((double)students.Average(s => s.TotalMemorizedPages), 1) : 0;
 
-    string SortHref(string by) => Url.Action("Reports", new { sortBy = by })!;
+    string SortHref(string by) => Url.Action("Reports", new
+    {
+        sortBy = by,
+        classId = Model.ClassId,
+        search = Model.Search
+    })!;
     bool IsActiveSort(string by) =>
         (string.IsNullOrEmpty(Model.SortBy) && by == "memorization") || Model.SortBy == by;
+
+    string GetInitials(string fullName)
+    {
+        if (string.IsNullOrWhiteSpace(fullName)) return "";
+        var parts = fullName.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length > 0)
+        {
+            var first = parts[0][0];
+            var second = parts.Length > 1 ? parts[1][0].ToString() : "";
+            return $"{first}{second}";
+        }
+        return "";
+    }
+
+    string GetLastWirdText(DateTime? date)
+    {
+        if (!date.HasValue) return Localizer["NoCompletedWirds"].Value;
+        return $"{Localizer["LastWird"].Value}: {date.Value:yyyy-MM-dd}";
+    }
 }
 
 <div class="admin-student-reports">
@@ -24,10 +48,51 @@
             </h2>
             <p class="text-medium">@Localizer["ReportsDescription"]</p>
         </div>
-        <a asp-action="Index" class="back-btn">
+        <a asp-controller="Students" asp-action="Index" class="back-btn">
             <i class='bx bx-arrow-back'></i>
             <span>@Localizer["BackToStudents"]</span>
         </a>
+    </div>
+
+    <!-- Filters Card -->
+    <div class="card-filters mb-lg">
+        <form method="get" asp-action="Reports">
+            <!-- Preserve sorting parameters -->
+            <input type="hidden" name="sortBy" value="@Model.SortBy" />
+            <input type="hidden" name="sortOrder" value="@Model.SortOrder" />
+
+            <div class="filters-grid">
+                <div class="filter-field">
+                    <label for="search"><i class='bx bx-search'></i> @Localizer["SearchStudent"]</label>
+                    <input type="text" id="search" name="search" class="form-input"
+                           placeholder="@Localizer["SearchPlaceholder"]" value="@Model.Search" />
+                </div>
+
+                <div class="filter-field">
+                    <label for="classId"><i class='bx bx-book'></i> @Localizer["ClassCircle"]</label>
+                    <select id="classId" name="classId" class="form-select">
+                        <option value="">@Localizer["AllClasses"]</option>
+                        @if (ViewBag.Classes != null)
+                        {
+                            foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Classes)
+                            {
+                                <option value="@item.Value" selected="@(Model.ClassId?.ToString() == item.Value)">@item.Text
+                                </option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="filter-buttons">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class='bx bx-filter-alt'></i> @Localizer["Search"]
+                    </button>
+                    <a asp-action="Reports" class="btn btn-outline btn-sm">
+                        <i class='bx bx-reset'></i> @Localizer["Reset"]
+                    </a>
+                </div>
+            </div>
+        </form>
     </div>
 
     <!-- Summary Stats -->
@@ -89,71 +154,194 @@
             <span class="toolbar-count">@students.Count @Localizer["StudentsCount"]</span>
         </div>
 
-        <!-- Student Cards -->
-        <div class="report-cards">
+        <!-- Large Screens: Student Report Cards -->
+        <div class="report-cards d-none-mobile">
             @foreach (var row in students)
             {
                 var memPercent = Math.Min(100, Math.Round((double)row.TotalMemorizedPages / WirdPageCalculator.TotalQuranPages *
         100));
                 var attClass = row.AttendanceRate >= 80 ? "good" : row.AttendanceRate >= 50 ? "mid" : "low";
+                var initials = GetInitials(row.FullName);
                 <a asp-action="Details" asp-route-id="@row.StudentId" class="report-card">
                     <div class="report-card-top">
                         <div class="report-avatar">
-                            <i class='bx bx-user'></i>
+                            @initials
                         </div>
                         <div class="report-identity">
-                            <span class="report-name">
+                            <div class="report-name">
                                 @row.FullName
                                 @if (row.IsHafiz)
                                 {
-                                    <i class='bx bxs-award' style="color:#ff9800;" title="@Localizer["Hafiz"]"></i>
+                                    <i class='bx bxs-award hafiz-badge' style="color:#ff9800;" title="@Localizer["Hafiz"]"></i>
                                 }
-                            </span>
-                            <span class="report-class">
-                                <i class='bx bx-book'></i>
-                                @(string.IsNullOrWhiteSpace(row.ClassName) ? Localizer["NoClass"].Value : row.ClassName)
-                            </span>
+                            </div>
+                            <div class="report-class">
+                                <i class='bx bx-book'></i> @(string.IsNullOrEmpty(row.ClassName) ? Localizer["NoClass"].Value :
+                                                                                        row.ClassName)
+                            </div>
                         </div>
-                        <i class='bx bx-chevron-left report-chevron'></i>
+                        <div class="report-chevron">
+                            <i class='bx bx-chevron-left'></i>
+                        </div>
                     </div>
 
                     <div class="report-progress">
                         <div class="report-progress-head">
-                            <span><i class='bx bx-bookmark-heart'></i> @Localizer["Memorization"]</span>
-                            <span class="report-progress-value">@row.MemorizedJuz/30 @Localizer["JuzShort"]</span>
+                            <span><i class='bx bx-book-open'></i> @Localizer["Memorization"]</span>
+                            <span class="report-progress-value">@row.MemorizedJuz/30</span>
                         </div>
                         <div class="report-bar-track">
                             <div class="report-bar-fill" style="width:@memPercent%"></div>
                         </div>
                     </div>
 
+                    <div class="card-pages-summary">
+                        <span class="page-summary-item" title="@Localizer["MemorizedPages"]">
+                            <i class='bx bx-book-bookmark'></i>
+                            <span>@row.TotalMemorizedPages.ToString("0.##")</span>
+                            <small>@Localizer["MemorizedPagesShort"]</small>
+                        </span>
+                        <span class="page-summary-item" title="@Localizer["ReviewedPages"]">
+                            <i class='bx bx-revision'></i>
+                            <span>@((row.ReviewedPages / WirdPageCalculator.PagesPerJuz).ToString("0.##"))</span>
+                            <small>@Localizer["JuzShort"] @Localizer["ReviewedPagesShort"]</small>
+                        </span>
+                    </div>
+
                     <div class="report-metrics">
+                        <div class="report-metric">
+                            <span class="metric-value">@row.TotalWirds</span>
+                            <span class="metric-label">@Localizer["TotalWirds"]</span>
+                        </div>
+                        <div class="report-metric">
+                            <span class="metric-value">@row.CompletedWirds</span>
+                            <span class="metric-label">@Localizer["CompletedWirds"]</span>
+                        </div>
                         <div class="report-metric">
                             <span class="metric-badge att-@attClass">@row.AttendanceRate%</span>
                             <span class="metric-label">@Localizer["AttendanceRate"]</span>
-                        </div>
-                        <div class="report-metric">
-                            <span class="metric-value">@row.TotalWirds</span>
-                            <span class="metric-label">@Localizer["totalWird"]</span>
-                        </div>
-                        <div class="report-metric">
-                            <span class="metric-value">@row.ReviewedPages.ToString("0.#")</span>
-                            <span class="metric-label">@Localizer["ReviewedPages"]</span>
                         </div>
                         <div class="report-metric">
                             <span class="metric-value tajwid">@Localizer[$"TajwidLevel_{row.TajwidLevel}"]</span>
                             <span class="metric-label">@Localizer["TajwidLevel"]</span>
                         </div>
                     </div>
-                </a>
+
+                    <div class="report-card-footer">
+                        <span class="last-active-status @(row.IsInactiveWarning ? "warning" : "")">
+                            <i class='bx bx-time-five'></i>
+                            @GetLastWirdText(row.LastWirdDate)
+                        </span>
+                        @if (row.IsInactiveWarning)
+                        {
+                            <span class="warning-alert-badge"><i class='bx bxs-error-circle'></i>
+                                @Localizer["InactiveWarning"]</span>
+                            }
+                        </div>
+                    </a>
+                }
+            </div>
+
+            <!-- Mobile Screens: Student Report List -->
+            <div class="report-list-mobile d-none-desktop">
+                @foreach (var row in students)
+                {
+                    var memPercent = Math.Min(100, Math.Round((double)row.TotalMemorizedPages / WirdPageCalculator.TotalQuranPages *
+            100));
+                    var extraPages = row.TotalMemorizedPages - (row.MemorizedJuz * WirdPageCalculator.PagesPerJuz);
+                    var initials = GetInitials(row.FullName);
+                    var wirdBadgeClass = row.TotalWirds > 0 ? "wird-badge-active" : "wird-badge-inactive";
+                    var attClass = row.AttendanceRate >= 80 ? "good" : row.AttendanceRate >= 50 ? "mid" : "low";
+
+                    <a asp-action="Details" asp-route-id="@row.StudentId" class="report-row-mobile">
+                        <!-- Top section: Avatar, Name, and Total Wirds -->
+                        <div class="row-mobile-header">
+                            <div class="mobile-avatar-name">
+                                <div class="avatar-circle">
+                                    @initials
+                                </div>
+                                <div class="student-info">
+                                    <span class="student-name">
+                                        @row.FullName
+                                        @if (row.IsHafiz)
+                                        {
+                                            <i class='bx bxs-award hafiz-badge' style="color:#ff9800;" title="@Localizer["Hafiz"]"></i>
+                                        }
+                                    </span>
+                                    <span class="student-class">
+                                        <i class='bx bx-book'></i> @(string.IsNullOrEmpty(row.ClassName) ?
+                                                                                                            Localizer["NoClass"].Value : row.ClassName)
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="mobile-wirds-badge">
+                                <span class="wirds-count-badge @wirdBadgeClass" title="@Localizer["totalWird"]">
+                                    <i class='bx bx-list-check'></i>
+                                    <span>@row.TotalWirds</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Middle section: Progress Bar -->
+                        <div class="row-mobile-progress">
+                            <div class="progress-info">
+                                <span class="progress-label">
+                                    <i class='bx bx-book-open'></i>
+                                    <span>@Localizer["MemorizedJuz"]</span>
+                                </span>
+                                <div class="progress-values">
+                                    <span class="progress-fraction">@row.MemorizedJuz/30</span>
+                                    @if (extraPages > 0)
+                                    {
+                                        <span class="progress-extra-pages">+ @((int)extraPages) @Localizer["PagesShort"]</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="progress-bar-track">
+                                <div class="progress-bar-fill" style="width: @memPercent%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Bottom section: Stats Grid -->
+                        <div class="row-mobile-stats">
+                            <div class="mobile-stat-item attendance att-@attClass">
+                                <span class="stat-value">@row.AttendanceRate%</span>
+                                <span class="stat-label">@Localizer["AttendanceShort"]</span>
+                            </div>
+                            <div class="mobile-stat-item memorized">
+                                <span class="stat-value">@row.TotalMemorizedPages.ToString("0.##")</span>
+                                <span class="stat-label">@Localizer["MemorizedPagesShort"]</span>
+                            </div>
+                            <div class="mobile-stat-item reviewed">
+                                <span class="stat-value">@((row.ReviewedPages /
+                                                                                                WirdPageCalculator.PagesPerJuz).ToString("0.##"))</span>
+                                    <span class="stat-label">@Localizer["JuzShort"] @Localizer["ReviewedPagesShort"]</span>
+                                </div>
+                            </div>
+
+                            <!-- Footer section: Last Active -->
+                            <div class="row-mobile-footer">
+                                <span class="last-active @(row.IsInactiveWarning ? "warning" : "")">
+                                    <i class='bx bx-time-five'></i>
+                                    <span>@GetLastWirdText(row.LastWirdDate)</span>
+                                </span>
+                                @if (row.IsInactiveWarning)
+                                {
+                                    <span class="warning-alert-badge">
+                                        <i class='bx bxs-error-circle'></i>
+                                        <span>@Localizer["InactiveWarning"]</span>
+                                    </span>
+                                }
+                            </div>
+                        </a>
+                    }
+                </div>
+            }
+    else
+            {
+                <div class="no-data">
+                    <i class='bx bx-search-alt'></i>
+                    <p>@Localizer["NoStudentsFound"]</p>
+                </div>
             }
         </div>
-    }
-    else
-    {
-        <div class="no-data" style="padding: 3rem;">
-            <i class='bx bx-search-alt'></i>
-            <p>@Localizer["NoStudentsFound"]</p>
-        </div>
-    }
-</div>

@@ -10,6 +10,8 @@ namespace Hafiz.DTOs.Student
         public List<StudentReportRow> Students { get; set; } = new();
         public string? SortBy { get; set; }
         public string? SortOrder { get; set; }
+        public Guid? ClassId { get; set; }
+        public string? Search { get; set; }
     }
 
     public class StudentReportRow
@@ -26,5 +28,8 @@ namespace Hafiz.DTOs.Student
         public int TotalAttendance { get; set; }
         public bool IsHafiz { get; set; }
         public TajwidLevel TajwidLevel { get; set; }
+        public int Age { get; set; }
+        public DateTime? LastWirdDate { get; set; }
+        public bool IsInactiveWarning { get; set; }
     }
 }
