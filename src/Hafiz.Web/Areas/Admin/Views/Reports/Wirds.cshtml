@@ -245,7 +245,7 @@
                             {
                                 <tr>
                                     <td data-label="#"><span class="wr-rank">@rank</span></td>
-                                    <td data-label="@Localizer["Student"]">
+                                    <td data-label="@Localizer["Student"]" class="wr-card-name">
                                         <a asp-controller="Students" asp-action="Details" asp-route-id="@s.StudentId"
                                            class="fw-medium">@s.FullName</a>
                                     </td>
@@ -285,7 +285,64 @@
                 else
                 {
                     <p class="text-medium fs-sm" id="wrNoMatch" style="display:none;">@Localizer["NoResults"]</p>
-                    <div class="table-wrapper">
+
+                    @* عرض الجوال فقط: بطاقات مطابقة للتصميم المرجعي (الرأس: الاسم · الحلقة + التاريخ) *@
+                    <div class="wr-mcards">
+                        @foreach (var d in Model.Details)
+                        {
+                            <div class="wr-mcard wr-detail-row" data-search="@($"{d.StudentName} {d.ClassName} {d.Description}")">
+                                <div class="wr-mcard-head">
+                                    <div class="wr-mcard-title">
+                                        <a asp-controller="Students" asp-action="Details" asp-route-id="@d.StudentId" class="wr-mcard-name">@d.StudentName</a>
+                                        @if (!string.IsNullOrWhiteSpace(d.ClassName))
+                                        {
+                                            <span class="wr-mcard-sep">·</span>
+                                            <span class="wr-mcard-class">@d.ClassName</span>
+                                        }
+                                    </div>
+                                    <span class="wr-mcard-date">@d.AssignedDate.ToString("yyyy-MM-dd")</span>
+                                </div>
+                                <div class="wr-mcard-body">
+                                    <div class="wr-mcard-stat">
+                                        <span class="wr-mcard-label">@Localizer["Type"]</span>
+                                        <span class="wr-badge wr-type-badge">@TypeLabel(d.Type)</span>
+                                    </div>
+                                    <div class="wr-mcard-stat">
+                                        <span class="wr-mcard-label">@Localizer["Status"]</span>
+                                        @if (d.IsUpcoming)
+                                        {
+                                            <span class="wr-badge wr-badge-upcoming">@Localizer["Upcoming"]</span>
+                                        }
+                                        else if (d.IsCompleted)
+                                        {
+                                            <span class="wr-badge wr-badge-done">@Localizer["Completed"]</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="wr-badge wr-badge-pending">@Localizer["Pending"]</span>
+                                        }
+                                    </div>
+                                    <div class="wr-mcard-stat wr-mcard-desc">
+                                        <span class="wr-mcard-label">@Localizer["DescriptionCol"]</span>
+                                        <span class="wr-mcard-value">@(string.IsNullOrEmpty(d.Description) ? "—" : d.Description)</span>
+                                        @if (d.Note is { Length: > 0 })
+                                        {
+                                            <span class="wr-note-inline">
+                                                <i class='bx bx-note' style="color:#9c27b0;"></i>
+                                                <span class="wr-note-text">@d.Note</span>
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="wr-mcard-foot">
+                                    <span class="wr-mcard-label">@Localizer["Grade"]</span>
+                                    <span class="wr-mcard-grade">@(d.Status == AssignmentStatus.notSet ? "—" : StatusLabel(d.Status))</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="table-wrapper wr-details-desktop">
                         <table class="table table-responsive-cards">
                             <thead>
                                 <tr>
@@ -302,7 +359,7 @@
                                 @foreach (var d in Model.Details)
                                 {
                                     <tr class="wr-detail-row" data-search="@($"{d.StudentName} {d.ClassName} {d.Description}")">
-                                        <td data-label="@Localizer["Student"]">
+                                        <td data-label="@Localizer["Student"]" class="wr-card-name">
                                             <a asp-controller="Students" asp-action="Details" asp-route-id="@d.StudentId"
                                                class="fw-medium">@d.StudentName</a>
                                         </td>

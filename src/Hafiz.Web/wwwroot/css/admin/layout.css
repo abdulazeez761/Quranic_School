@@ -180,9 +180,12 @@ body[dir='rtl'] .content {
 }
 
 .section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
   font-size: var(--font-size-2xl);
   color: var(--dark-green);
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: var(--space-sm);
 }
 

@@ -51,11 +51,7 @@
 
 /* Button Variants */
 .btn-primary {
-  background: linear-gradient(
-    135deg,
-    var(--primary-green),
-    var(--secondary-green)
-  );
+  background: var(--gradient-brand);
   color: var(--white);
   box-shadow: var(--shadow-sm);
 }

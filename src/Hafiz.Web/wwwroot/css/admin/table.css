@@ -4,6 +4,7 @@
 
 .table-container {
   background: var(--white);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   overflow: hidden;
@@ -22,16 +23,16 @@
 
 /* Table Header */
 .table thead {
-  background: var(--light-gray);
+  background: rgba(132, 166, 124, 0.1);
 }
 
 .table th {
   padding: var(--space-md) var(--space-lg);
   text-align: left;
   font-weight: 600;
-  color: var(--text-dark);
+  color: var(--dark-green);
   white-space: nowrap;
-  border-bottom: 2px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
 }
 
 body[dir='rtl'] .table th {
@@ -83,7 +84,7 @@ body[dir='rtl'] .table th.sortable::after {
 }
 
 .table tbody tr:hover {
-  background: var(--light-gray);
+  background: rgba(132, 166, 124, 0.06);
 }
 
 .table td {
@@ -250,6 +251,13 @@ body[dir='rtl'] .table th.sortable::after {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.table-search input:focus {
+  outline: none;
+  border-color: var(--secondary-green);
+  box-shadow: 0 0 0 3px rgba(132, 166, 124, 0.15);
 }
 
 body[dir='rtl'] .table-search input {

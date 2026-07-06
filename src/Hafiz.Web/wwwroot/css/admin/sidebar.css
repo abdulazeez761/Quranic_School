@@ -42,7 +42,7 @@
   left: 0;
   width: var(--sidebar-width);
   height: 100vh;
-  background: var(--dark-green);
+  background: linear-gradient(180deg, #648c51, #587c46);
   color: var(--white);
   padding: var(--space-lg);
   display: flex !important;
@@ -161,7 +161,7 @@ body[dir='rtl'] .sidebar a {
   top: 0;
   width: 3px;
   height: 100%;
-  background: var(--primary-green);
+  background: var(--accent-gold);
   transform: scaleY(0);
   transition: transform var(--transition-base);
 }
@@ -191,7 +191,7 @@ body[dir='rtl'] .sidebar a:focus-visible {
 /* Active State */
 .sidebar .active a,
 .sidebar a.active {
-  background: var(--secondary-green);
+  background: rgba(255, 255, 255, 0.14);
   color: var(--white);
   font-weight: 600;
 }

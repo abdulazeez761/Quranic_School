@@ -5,6 +5,7 @@
 /* Base Card */
 .card {
   background: var(--white);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   transition: all var(--transition-base);
@@ -13,7 +14,7 @@
 }
 
 .card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
 }
 
@@ -29,11 +30,7 @@
   width: 56px;
   height: 56px;
   min-width: 56px;
-  background: linear-gradient(
-    135deg,
-    var(--primary-green),
-    var(--secondary-green)
-  );
+  background: var(--gradient-brand);
   border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
@@ -60,6 +57,7 @@
   font-weight: 700;
   color: var(--dark-green);
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
 .card-stat-change {

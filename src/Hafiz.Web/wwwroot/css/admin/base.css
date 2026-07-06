@@ -87,8 +87,8 @@ input:focus,
 select:focus,
 textarea:focus {
   outline: none;
-  border-color: var(--primary-green);
-  box-shadow: 0 0 0 3px rgba(141, 242, 156, 0.1);
+  border-color: var(--secondary-green);
+  box-shadow: 0 0 0 3px rgba(132, 166, 124, 0.15);
 }
 
 /* Utility Classes */

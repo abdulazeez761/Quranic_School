@@ -319,3 +319,217 @@
   }
 }
 
+/* ============================================================
+   عرض الجوال: تحويل صفوف الجدول إلى بطاقات أنيقة تحاكي بطاقات القوائم
+   (نفس لغة record-cards: حواف ناعمة، ظل خفيف، ورأس بارز لاسم الطالب)
+   ============================================================ */
+@media (max-width: 768px) {
+  /* مسافات متساوية بين البطاقات */
+  .wr-page .table-responsive-cards tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  /* هيكل البطاقة */
+  .wr-page .table-responsive-cards tr {
+    margin: 0;
+    padding: 0;
+    border: 1px solid #eef0ec;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(44, 62, 80, 0.05);
+    overflow: hidden;
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+  }
+
+  .wr-page .table-responsive-cards tr:active {
+    box-shadow: 0 6px 18px rgba(44, 62, 80, 0.08);
+    transform: translateY(-1px);
+  }
+
+  /* صف تسمية/قيمة */
+  .wr-page .table-responsive-cards td {
+    padding: 0.6rem 1rem;
+    gap: 1rem;
+    border-bottom: 1px solid #f2f2f2;
+  }
+
+  .wr-page .table-responsive-cards td:last-child {
+    border-bottom: none;
+  }
+
+  .wr-page .table-responsive-cards td::before {
+    color: #7a8791;
+    font-weight: 600;
+    font-size: 0.8rem;
+  }
+
+  /* خلية اسم الطالب تصبح رأس البطاقة */
+  .wr-page .table-responsive-cards td.wr-card-name {
+    justify-content: flex-start;
+    background: rgba(132, 166, 124, 0.08);
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #eef0ec;
+  }
+
+  .wr-page .table-responsive-cards td.wr-card-name::before {
+    display: none;
+  }
+
+  .wr-page .table-responsive-cards td.wr-card-name a,
+  .wr-page .table-responsive-cards td.wr-card-name .fw-medium {
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: #2c3e50;
+    text-align: start;
+  }
+}
+
+/* ============================================================
+   بطاقة تفاصيل الأوراد على الجوال — تصميم مطابق للصورة المرجعية:
+   الرأس: اسم الطالب · الحلقة (يمينًا) والتاريخ (يسارًا) على شريط ملوّن،
+   ثم النوع/الحالة/الوصف، ثم الدرجة في التذييل.
+   تظهر على الجوال فقط، ويُخفى الجدول المقابل.
+   ============================================================ */
+.wr-mcards {
+  display: none; /* الجدول هو الأصل على الشاشات الكبيرة */
+}
+
+@media (max-width: 768px) {
+  /* إخفاء جدول التفاصيل وإظهار البطاقات بدلًا منه */
+  .wr-details-desktop {
+    display: none;
+  }
+
+  .wr-mcards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .wr-mcard {
+    border: 1px solid #eef0ec;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(44, 62, 80, 0.05);
+    overflow: hidden;
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+  }
+
+  .wr-mcard:active {
+    box-shadow: 0 6px 18px rgba(44, 62, 80, 0.08);
+    transform: translateY(-1px);
+  }
+
+  /* الرأس: الاسم · الحلقة يمينًا والتاريخ يسارًا */
+  .wr-mcard-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: rgba(132, 166, 124, 0.08);
+    border-bottom: 1px solid #eef0ec;
+  }
+
+  .wr-mcard-title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+
+  .wr-mcard-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #2c3e50;
+    text-decoration: none;
+  }
+
+  .wr-mcard-sep {
+    color: #9aa0a6;
+  }
+
+  .wr-mcard-class {
+    font-size: 0.85rem;
+    color: #5a7a52;
+    font-weight: 600;
+  }
+
+  .wr-mcard-date {
+    font-size: 0.8rem;
+    color: #7a8791;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* الجسم: كل حقل تسمية صغيرة أعلى القيمة، وتتوزّع أفقيًا مع التفاف مرن */
+  .wr-mcard-body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem 1.5rem;
+    padding: 0.85rem 1rem;
+  }
+
+  .wr-mcard-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+  }
+
+  /* الوصف يأخذ المساحة المتبقية على السطر ويلتفّ عند الطول */
+  .wr-mcard-desc {
+    flex: 1 1 auto;
+    min-width: 8rem;
+  }
+
+  .wr-mcard-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #7a8791;
+  }
+
+  .wr-mcard-value {
+    font-size: 0.9rem;
+    color: #2c3e50;
+    word-break: break-word;
+  }
+
+  .wr-mcard-desc .wr-note-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0.15rem;
+    background: rgba(156, 39, 176, 0.08);
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: #9c27b0;
+    max-width: 100%;
+    word-break: break-word;
+  }
+
+  .wr-mcard-desc .wr-note-text {
+    display: inline;
+  }
+
+  /* التذييل: الدرجة */
+  .wr-mcard-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.7rem 1rem;
+    border-top: 1px solid #f2f2f2;
+  }
+
+  .wr-mcard-grade {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2c3e50;
+  }
+}
+

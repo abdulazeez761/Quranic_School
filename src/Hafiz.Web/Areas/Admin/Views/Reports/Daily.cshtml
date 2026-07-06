@@ -211,14 +211,14 @@
                                     var info = StatusInfo(st.Status);
                                     <tr class="dr-student-row" data-status="@info.Css">
                                         <td data-label="#">@idx</td>
-                                        <td data-label="اسم الطالب">
+                                        <td data-label="اسم الطالب" class="dr-card-name">
                                             <a asp-controller="Students" asp-action="Details" asp-route-id="@st.StudentId"
                                                class="fw-medium dr-student-link">@st.FullName</a>
                                         </td>
                                         <td data-label="الحالة">
                                             <span class="dr-status @info.Css">@info.Label</span>
                                         </td>
-                                        <td data-label="الأوراد المسندة اليوم">
+                                        <td data-label="الأوراد المسندة اليوم" class="dr-card-wirds">
                                             @if (st.Wirds.Any())
                                             {
                                                 <div class="dr-wirds">
