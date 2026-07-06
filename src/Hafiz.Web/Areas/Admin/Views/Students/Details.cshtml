@@ -16,6 +16,11 @@
     var (reviewedJuzDisplay, reviewedPagesRemainder) = WirdPageCalculator.SplitJuzAndPages(reviewedPages);
     var isHafiz = WirdPageCalculator.IsHafiz(student);
     var activeTab = Model.ActiveTab;
+
+      var referer = Context.Request.Headers["Referer"].ToString();
+    var backUrl = string.IsNullOrEmpty(referer) 
+        ? Url.Action("Index", "Students", new { area = "Admin" }) 
+        : referer;
 }
 
 <div class="admin-student-details">
@@ -48,7 +53,7 @@
             </p>
         </div>
         <div class="header-actions">
-            <a asp-area="Admin" asp-controller="Students" asp-action="Reports" class="back-btn">
+            <a href="@backUrl" class="back-btn">
                 <i class='bx bx-arrow-back'></i>
                 @Localizer["BackToList"]
             </a>

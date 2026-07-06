@@ -109,134 +109,88 @@
         </div>
     </div>
 
-    <!-- Table -->
-    <div class="table-wrapper">
-        <table class="table table-responsive-cards">
-            <thead>
-                <tr>
-                    <th style="width: 50px;">#</th>
-                    <th class="sortable">
-                        <i class='bx bx-user'></i> @Localizer["FirstName"]
-                    </th>
-                    <th class="sortable">
-                        <i class='bx bx-user'></i> @Localizer["LastName"]
-                    </th>
-                    <th>
-                        <i class='bx bx-user'></i> @Localizer["Username"]
-                    </th>
-                    <th>
-                        <i class='bx bx-phone'></i> @Localizer["PhoneNumber"]
-                    </th>
-                    <th>
-                        <i class='bx bx-group'></i> @Localizer["Classes"]
-                    </th>
-                    <th class="text-center" style="width: 180px;">@Localizer["Actions"]</th>
-                </tr>
-            </thead>
-            <tbody id="studentsTableBody">
-                @if (Model != null && Model.Any())
-                {
-                    int index = 1;
-                    foreach (var student in Model)
-                    {
-                        var classes = string.Join(", ", student.Classes.Select(c => c.Name));
-                        var classesData = string.Join(",", student.Classes.Select(c => c.Name));
-                        var hasClasses = student.Classes.Any();
+    <!-- Records grid -->
+    <div class="record-grid" id="studentsGrid">
+        @if (Model != null && Model.Any())
+        {
+            int index = 0;
+            foreach (var student in Model)
+            {
+                var classesData = string.Join(",", student.Classes.Select(c => c.Name));
+                var hasClasses = student.Classes.Any();
+                var firstClass = student.Classes.Select(c => c.Name).FirstOrDefault();
+                var avatarVariant = index % 5;
+                var badgeVariant = index % 2 == 0 ? "record-badge--green" : "record-badge--gold";
 
-                        <tr class="table-row" data-firstname="@student.StudentInfo.FirstName.ToLower()"
-                            data-secondname="@student.StudentInfo.SecondName.ToLower()" data-classes="@classesData">
+                <div class="record-card" data-firstname="@student.StudentInfo.FirstName.ToLower()"
+                     data-secondname="@student.StudentInfo.SecondName.ToLower()" data-classes="@classesData">
 
-                            <td class="text-center text-medium" data-label="#">@index</td>
+                    <div class="record-card-header">
+                        <div class="record-avatar record-avatar--@avatarVariant">
+                            @student.StudentInfo.FirstName.Substring(0, 1)
+                        </div>
+                        <div class="record-identity">
+                            <span class="record-name">@student.StudentInfo.FirstName @student.StudentInfo.SecondName</span>
+                            @if (hasClasses)
+                            {
+                                <span class="record-badge @badgeVariant" title="@string.Join(", ", student.Classes.Select(c => c.Name))">
+                                    <i class='bx bx-book'></i>
+                                    <span>@firstClass</span>
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="record-badge record-badge--empty">
+                                    <i class='bx bx-info-circle'></i>
+                                    <span>@Localizer["NoClasses"]</span>
+                                </span>
+                            }
+                        </div>
+                    </div>
 
-                            <td class="card-title-cell" data-label="@Localizer["FirstName"]">
-                                <div class="d-flex align-center gap-sm">
-                                    <div class="avatar-sm"
-                                         style="background: var(--primary-green); color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
-                                        @student.StudentInfo.FirstName.Substring(0, 1)
-                                    </div>
-                                    <span class="fw-medium">@student.StudentInfo.FirstName</span>
-                                </div>
-                            </td>
+                    <div class="record-info">
+                        <div class="record-info-row">
+                            <i class='bx bx-user'></i>
+                            <span class="record-info-value" title="@student.StudentInfo.Username">@student.StudentInfo.Username</span>
+                        </div>
+                        <div class="record-info-row">
+                            <i class='bx bx-phone'></i>
+                            <span class="record-info-value">@student.StudentInfo.PhoneNumber</span>
+                        </div>
+                    </div>
 
-                            <td data-label="@Localizer["LastName"]">
-                                <span class="fw-medium">@student.StudentInfo.SecondName</span>
-                            </td>
-
-                            <td data-label="@Localizer["Username"]">
-                                <div class="d-flex align-center gap-xs">
-                                    <i class='bx bx-user text-medium'></i>
-                                    <span class="text-truncate" style="max-width: 200px;" title="@student.StudentInfo.Username">
-                                        @student.StudentInfo.Username
-                                    </span>
-                                </div>
-                            </td>
-
-                            <td data-label="@Localizer["PhoneNumber"]">
-                                <div class="d-flex align-center gap-xs">
-                                    <i class='bx bx-phone text-medium'></i>
-                                    <span>@student.StudentInfo.PhoneNumber</span>
-                                </div>
-                            </td>
-
-                            <td data-label="@Localizer["Classes"]">
-                                @if (hasClasses)
-                                {
-                                    <div class="d-flex flex-wrap gap-xs">
-                                        @foreach (var className in student.Classes.Select(c => c.Name))
-                                        {
-                                            <span class="chip chip-primary">@className</span>
-                                        }
-                                    </div>
-                                }
-                                else
-                                {
-                                    <span class="badge badge-warning">
-                                        <i class='bx bx-info-circle'></i> @Localizer["NoClasses"]
-                                    </span>
-                                }
-                            </td>
-
-                            <td class="card-actions-cell" data-label="@Localizer["Actions"]">
-                                <div class="table-actions">
-                                    <a asp-action="Details" asp-route-id="@student.UserId" class="table-action-btn"
-                                           data-tooltip="@Localizer["ViewDetails"]">
-                                        <i class='bx bx-show'></i>
-                                    </a>
-                                    <a asp-action="Edit" asp-route-id="@student.UserId" class="table-action-btn"
-                                       data-tooltip="@Localizer["Edit"]">
-                                        <i class='bx bx-edit'></i>
-                                    </a>
-                                    <form asp-action="Delete" asp-route-id="@student.UserId" method="post"
-                                          class="d-inline delete-form">
-                                        <button type="submit" class="table-action-btn danger"
-                                                data-confirm-delete="@string.Format(Localizer["DeleteConfirmation"].Value, student.StudentInfo.FirstName, student.StudentInfo.SecondName)"
-                                                data-tooltip="@Localizer["Delete"]">
-                                            <i class='bx bx-trash'></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        index++;
-                    }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="7">
-                            <div class="table-empty">
-                                <i class='bx bx-user-x'></i>
-                                <h3 class="table-empty-title">@Localizer["NoDataAvailable"]</h3>
-                                <p class="text-medium">@Localizer["NoStudentsAdded"]</p>
-                                <a asp-action="Create" class="btn btn-primary mt-md">
-                                    <i class='bx bx-user-plus'></i> @Localizer["AddNewStudent"]
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                    <div class="record-actions">
+                        <a asp-action="Details" asp-route-id="@student.UserId" class="record-btn record-btn-view">
+                            <i class='bx bx-show'></i>
+                            <span>@Localizer["ViewDetails"]</span>
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@student.UserId" class="record-btn record-btn-edit">
+                            <i class='bx bx-edit'></i>
+                            <span>@Localizer["Edit"]</span>
+                        </a>
+                        <form asp-action="Delete" asp-route-id="@student.UserId" method="post" class="delete-form">
+                            <button type="submit" class="record-btn record-btn-delete"
+                                    data-confirm-delete="@string.Format(Localizer["DeleteConfirmation"].Value, student.StudentInfo.FirstName, student.StudentInfo.SecondName)"
+                                    data-tooltip="@Localizer["Delete"]">
+                                <i class='bx bx-trash'></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                index++;
+            }
+        }
+        else
+        {
+            <div class="record-empty">
+                <i class='bx bx-user-x'></i>
+                <h3 class="record-empty-title">@Localizer["NoDataAvailable"]</h3>
+                <p class="text-medium">@Localizer["NoStudentsAdded"]</p>
+                <a asp-action="Create" class="btn btn-primary mt-md">
+                    <i class='bx bx-user-plus'></i> @Localizer["AddNewStudent"]
+                </a>
+            </div>
+        }
     </div>
 
     <!-- Table Footer -->

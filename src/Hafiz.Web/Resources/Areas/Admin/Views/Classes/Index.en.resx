@@ -136,4 +136,10 @@
   <data name="Class" xml:space="preserve">
     <value>classes</value>
   </data>
+  <data name="Gender_male" xml:space="preserve">
+    <value>Male</value>
+  </data>
+  <data name="Gender_female" xml:space="preserve">
+    <value>Female</value>
+  </data>
 </root>

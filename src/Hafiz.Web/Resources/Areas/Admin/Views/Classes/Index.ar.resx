@@ -136,4 +136,10 @@
   <data name="Class" xml:space="preserve">
     <value>حلقة</value>
   </data>
+  <data name="Gender_male" xml:space="preserve">
+    <value>ذكر</value>
+  </data>
+  <data name="Gender_female" xml:space="preserve">
+    <value>أنثى</value>
+  </data>
 </root>

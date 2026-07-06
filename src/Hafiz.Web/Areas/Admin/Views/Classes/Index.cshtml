@@ -98,7 +98,7 @@
 
                     foreach (var gender in genders)
                     {
-                        <option value="@gender">@gender</option>
+                        <option value="@gender">@Localizer[$"Gender_{gender}"]</option>
                     }
                 }
             </select>
@@ -109,84 +109,85 @@
         </div>
     </div>
 
-    <!-- Classes Table -->
-    <div class="table-wrapper">
-        <table class="table table-responsive-cards">
-            <thead>
-                <tr>
-                    <th>@Localizer["ClassName"]</th>
-                    <th>@Localizer["Gender"]</th>
-                    <th>@Localizer["Teachers"]</th>
-                    <th>@Localizer["Days"]</th>
-                    <th>@Localizer["Time"]</th>
-                    <th class="text-center" style="width: 180px;">@Localizer["Actions"]</th>
-                </tr>
-            </thead>
-            <tbody id="classesTableBody">
-                @if (Model != null && Model.Any())
-                {
-                    foreach (var cl in Model)
-                    {
-                        var teachers = string.Join(", ", cl.Teachers.Select(t => t.TeacherInfo.FirstName));
-                        var days = string.Join(", ", cl.ClassDays.Select(d => Formatting.GetLocalizedDayName(d)));
+    <!-- Records grid -->
+    <div class="record-grid" id="classesGrid">
+        @if (Model != null && Model.Any())
+        {
+            int index = 0;
+            foreach (var cl in Model)
+            {
+                var teacherNames = string.Join("، ", cl.Teachers.Select(t => t.TeacherInfo.FirstName));
+                var hasTeachers = cl.Teachers.Any();
+                var days = string.Join("، ", cl.ClassDays.Select(d => Formatting.GetLocalizedDayName(d)));
+                var avatarVariant = index % 5;
+                var isFemale = cl.Gender.ToString().ToLower() == "female";
+                var badgeVariant = isFemale ? "record-badge--green" : "record-badge--gold";
 
-                        <tr class="table-row" data-name="@cl.Name.ToLower()" data-gender="@cl.Gender.ToString().ToLower()">
-                            <td class="card-title-cell" data-label="@Localizer["ClassName"]">
-                                <span class="fw-medium">@cl.Name</span>
-                            </td>
-                            <td data-label="@Localizer["Gender"]">@cl.Gender</td>
-                            <td data-label="@Localizer["Teachers"]">
-                                @if (!string.IsNullOrEmpty(teachers))
-                                {
-                                    <div class="d-flex flex-wrap gap-xs">
-                                        @foreach (var t in cl.Teachers)
-                                        {
-                                            <span class="chip chip-primary">@t.TeacherInfo.FirstName</span>
-                                        }
-                                    </div>
-                                }
-                                else
-                                {
-                                    <span class="badge badge-warning">@Localizer["NoTeachers"]</span>
-                                }
-                            </td>
-                            <td data-label="@Localizer["Days"]">@days</td>
-                            <td data-label="@Localizer["Time"]">@cl.ClassTime.ToString("HH:mm")</td>
-                            <td class="card-actions-cell" data-label="@Localizer["Actions"]">
-                                <div class="table-actions">
-                                    <a asp-action="Edit" asp-route-id="@cl.Id" class="table-action-btn"
-                                           data-tooltip="@Localizer["Edit"]">
-                                        <i class='bx bx-edit'></i>
-                                    </a>
-                                    <form asp-action="Delete" asp-route-id="@cl.Id" method="post" class="d-inline delete-form">
-                                        <button type="submit" class="table-action-btn danger"
-                                                data-confirm-delete="@Localizer["DeleteConfirmation"] @cl.Name؟"
-                                                data-tooltip="@Localizer["Delete"]">
-                                            <i class='bx bx-trash'></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="6">
-                            <div class="table-empty">
-                                <i class='bx bx-book'></i>
-                                <h3 class="table-empty-title">@Localizer["NoClasses"]</h3>
-                                <p class="text-medium">@Localizer["NoClassesDescription"]</p>
-                                <a asp-action="Create" class="btn btn-primary mt-md">
-                                    <i class='bx bx-plus-circle'></i> @Localizer["AddNewClass"]
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                <div class="record-card" data-name="@cl.Name.ToLower()" data-gender="@cl.Gender.ToString().ToLower()">
+
+                    <div class="record-card-header">
+                        <div class="record-avatar record-avatar--@avatarVariant">
+                            @cl.Name.Substring(0, 1)
+                        </div>
+                        <div class="record-identity">
+                            <span class="record-name">@cl.Name</span>
+                            <span class="record-badge @badgeVariant">
+                                <i class='bx @(isFemale ? "bx-female" : "bx-male")'></i>
+                                <span>@Localizer[$"Gender_{cl.Gender}"]</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="record-info">
+                        <div class="record-info-row">
+                            <i class='bx bx-chalkboard'></i>
+                            @if (hasTeachers)
+                            {
+                                <span title="@teacherNames">@teacherNames</span>
+                            }
+                            else
+                            {
+                                <span>@Localizer["NoTeachers"]</span>
+                            }
+                        </div>
+                        <div class="record-info-row">
+                            <i class='bx bx-calendar'></i>
+                            <span title="@days">@days</span>
+                        </div>
+                        <div class="record-info-row">
+                            <i class='bx bx-time-five'></i>
+                            <span class="record-info-value">@cl.ClassTime.ToString("HH:mm")</span>
+                        </div>
+                    </div>
+
+                    <div class="record-actions">
+                        <a asp-action="Edit" asp-route-id="@cl.Id" class="record-btn record-btn-edit">
+                            <i class='bx bx-edit'></i>
+                            <span>@Localizer["Edit"]</span>
+                        </a>
+                        <form asp-action="Delete" asp-route-id="@cl.Id" method="post" class="delete-form">
+                            <button type="submit" class="record-btn record-btn-delete"
+                                    data-confirm-delete="@Localizer["DeleteConfirmation"] @cl.Name؟"
+                                    data-tooltip="@Localizer["Delete"]">
+                                <i class='bx bx-trash'></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                index++;
+            }
+        }
+        else
+        {
+            <div class="record-empty">
+                <i class='bx bx-book'></i>
+                <h3 class="record-empty-title">@Localizer["NoClasses"]</h3>
+                <p class="text-medium">@Localizer["NoClassesDescription"]</p>
+                <a asp-action="Create" class="btn btn-primary mt-md">
+                    <i class='bx bx-plus-circle'></i> @Localizer["AddNewClass"]
+                </a>
+            </div>
+        }
     </div>
 
     <!-- Table Footer -->
