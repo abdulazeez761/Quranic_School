@@ -322,6 +322,9 @@
   .report-cards {
     grid-template-columns: 1fr;
   }
+  .card-filters {
+    padding: var(--space-md);
+  }
 }
 
 @media (max-width: 480px) {
@@ -330,7 +333,21 @@
     gap: var(--space-md);
   }
   .stats-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
+  }
+  .card-stat {
+    padding: var(--space-md);
+  }
+  .card-filters {
+    padding: 12px;
+  }
+  .reports-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+  .sort-chips {
+    width: 100%;
   }
 }
 

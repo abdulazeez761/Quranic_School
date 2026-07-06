@@ -280,23 +280,41 @@
                                             <i class='bx bxs-award hafiz-badge' style="color:#ff9800;" title="@Localizer["Hafiz"]"></i>
                                         }
                                     </span>
+                                    <div class="status-chip-container-mobile">
+                                        @if (isConnected)
+                                        {
+                                            <span class="status-chip status-connected">
+                                                <span class="status-dot"></span>
+                                                <span>@(row.LastWirdDate.HasValue ? row.LastWirdDate.Value.ToString("yyyy-MM-dd") : Localizer["LastActive"].Value)</span>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-chip status-disconnected">
+                                                <span class="status-dot"></span>
+                                                <span>@Localizer["InactiveWarning"]</span>
+                                            </span>
+                                        }
+                                    </div>
                                 </div>
                             </div>
                             <div class="row-mobile-summary-side">
-                                @if (isConnected)
-                                {
-                                    <span class="status-chip status-connected">
-                                        <span class="status-dot"></span>
-                                        <span>@(row.LastWirdDate.HasValue ? row.LastWirdDate.Value.ToString("yyyy-MM-dd") : Localizer["LastActive"].Value)</span>
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="status-chip status-disconnected">
-                                        <span class="status-dot"></span>
-                                        <span>@Localizer["InactiveWarning"]</span>
-                                    </span>
-                                }
+                                <div class="status-chip-container-desktop">
+                                    @if (isConnected)
+                                    {
+                                        <span class="status-chip status-connected">
+                                            <span class="status-dot"></span>
+                                            <span>@(row.LastWirdDate.HasValue ? row.LastWirdDate.Value.ToString("yyyy-MM-dd") : Localizer["LastActive"].Value)</span>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-chip status-disconnected">
+                                            <span class="status-dot"></span>
+                                            <span>@Localizer["InactiveWarning"]</span>
+                                        </span>
+                                    }
+                                </div>
                                 <i class='bx bx-chevron-down row-mobile-chevron'></i>
                             </div>
                         </button>
@@ -408,19 +426,15 @@
             if (!accordion) return;
 
             function closeItem(item) {
-                var panel = item.querySelector('[data-accordion-panel]');
                 var toggle = item.querySelector('[data-accordion-toggle]');
-                if (panel) panel.style.maxHeight = null;
                 item.classList.remove('open');
                 if (toggle) toggle.setAttribute('aria-expanded', 'false');
             }
 
             function openItem(item) {
-                var panel = item.querySelector('[data-accordion-panel]');
                 var toggle = item.querySelector('[data-accordion-toggle]');
                 item.classList.add('open');
                 if (toggle) toggle.setAttribute('aria-expanded', 'true');
-                if (panel) panel.style.maxHeight = panel.scrollHeight + 'px';
             }
 
             accordion.addEventListener('click', function (e) {
