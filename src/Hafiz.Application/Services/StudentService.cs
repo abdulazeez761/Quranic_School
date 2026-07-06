@@ -17,13 +17,15 @@ namespace Hafiz.Services
         private readonly IClassService _classService;
         private readonly IWirdRepository _wirdRepository;
         private readonly IPasswordHasher _passwordHasher;
+        private readonly IParentNoteRepository _parentNoteRepository;
 
         public StudentService(
             IStudentRepository studentRepository,
             IUserRepository userRepository,
             IClassService classService,
             IWirdRepository wirdRepository,
-            IPasswordHasher passwordHasher
+            IPasswordHasher passwordHasher,
+            IParentNoteRepository parentNoteRepository
         )
         {
             _studentRepository = studentRepository;
@@ -31,6 +33,7 @@ namespace Hafiz.Services
             _classService = classService;
             _wirdRepository = wirdRepository;
             _passwordHasher = passwordHasher;
+            _parentNoteRepository = parentNoteRepository;
         }
 
         public async Task<(bool Success, string ErrorMessage)> AddAsync(
@@ -157,6 +160,10 @@ namespace Hafiz.Services
                     search
                 );
 
+            var unreadNotesCounts = await _parentNoteRepository.GetUnreadNotesCountByStudentIdsAsync(
+                students.Select(s => s.UserId)
+            );
+
             var reportRows = new List<StudentReportRow>();
             foreach (var student in students)
             {
@@ -206,6 +213,12 @@ namespace Hafiz.Services
                         Age = age,
                         LastWirdDate = lastWird,
                         IsInactiveWarning = isInactiveWarning,
+                        UnreadNotesCount = unreadNotesCounts.TryGetValue(
+                            student.UserId,
+                            out var unreadCount
+                        )
+                            ? unreadCount
+                            : 0,
                     }
                 );
             }

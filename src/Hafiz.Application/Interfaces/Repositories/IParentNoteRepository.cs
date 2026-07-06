@@ -13,5 +13,6 @@ namespace Hafiz.Repositories.Interfaces
         Task<ParentNote> UpdateNoteAsync(ParentNote note);
         Task<bool> DeleteNoteAsync(Guid id);
         Task<bool> MarkAsReadAsync(Guid id);
+        Task<Dictionary<Guid, int>> GetUnreadNotesCountByStudentIdsAsync(IEnumerable<Guid> studentIds);
     }
 }

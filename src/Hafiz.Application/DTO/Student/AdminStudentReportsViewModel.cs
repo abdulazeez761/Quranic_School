@@ -31,5 +31,6 @@ namespace Hafiz.DTOs.Student
         public int Age { get; set; }
         public DateTime? LastWirdDate { get; set; }
         public bool IsInactiveWarning { get; set; }
+        public int UnreadNotesCount { get; set; }
     }
 }

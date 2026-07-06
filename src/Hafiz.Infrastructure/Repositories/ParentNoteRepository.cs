@@ -63,6 +63,21 @@ namespace Hafiz.Repositories
             return true;
         }
 
+        public async Task<Dictionary<Guid, int>> GetUnreadNotesCountByStudentIdsAsync(
+            IEnumerable<Guid> studentIds
+        )
+        {
+            var ids = studentIds.Distinct().ToList();
+            if (ids.Count == 0)
+                return new Dictionary<Guid, int>();
+
+            return await _context.ParentNotes
+                .Where(pn => !pn.IsRead && ids.Contains(pn.StudentId))
+                .GroupBy(pn => pn.StudentId)
+                .Select(g => new { StudentId = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.StudentId, x => x.Count);
+        }
+
         public async Task<bool> MarkAsReadAsync(Guid id)
         {
             var note = await _context.ParentNotes.FindAsync(id);

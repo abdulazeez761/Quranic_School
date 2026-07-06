@@ -320,4 +320,13 @@
   <data name="NoCompletedWirds" xml:space="preserve">
     <value>No completed wirds</value>
   </data>
+  <data name="ViewDetails" xml:space="preserve">
+    <value>View details</value>
+  </data>
+  <data name="PendingWirds" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="UnreadNotes" xml:space="preserve">
+    <value>unread notes</value>
+  </data>
 </root>

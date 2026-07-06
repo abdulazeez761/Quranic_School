@@ -242,23 +242,29 @@
                 }
             </div>
 
-            <!-- Mobile Screens: Student Report List -->
-            <div class="report-list-mobile d-none-desktop">
+            <!-- Mobile Screens: Collapsible Student Report List -->
+            <div class="report-list-mobile d-none-desktop" data-accordion>
                 @foreach (var row in students)
                 {
                     var memPercent = Math.Min(100, Math.Round((double)row.TotalMemorizedPages / WirdPageCalculator.TotalQuranPages *
             100));
                     var extraPages = row.TotalMemorizedPages - (row.MemorizedJuz * WirdPageCalculator.PagesPerJuz);
                     var initials = GetInitials(row.FullName);
-                    var wirdBadgeClass = row.TotalWirds > 0 ? "wird-badge-active" : "wird-badge-inactive";
                     var attClass = row.AttendanceRate >= 80 ? "good" : row.AttendanceRate >= 50 ? "mid" : "low";
+                    var isConnected = !row.IsInactiveWarning;
 
-                    <a asp-action="Details" asp-route-id="@row.StudentId" class="report-row-mobile">
-                        <!-- Top section: Avatar, Name, and Total Wirds -->
-                        <div class="row-mobile-header">
+                    <div class="report-row-mobile" data-accordion-item>
+                        <!-- Collapsed summary: tap to expand -->
+                        <button type="button" class="row-mobile-summary" data-accordion-toggle aria-expanded="false">
                             <div class="mobile-avatar-name">
-                                <div class="avatar-circle">
-                                    @initials
+                                <div class="avatar-wrap">
+                                    <div class="avatar-circle">
+                                        @initials
+                                    </div>
+                                    @if (row.UnreadNotesCount > 0)
+                                    {
+                                        <span class="avatar-notes-badge" title="@Localizer["UnreadNotes"]">@row.UnreadNotesCount</span>
+                                    }
                                 </div>
                                 <div class="student-info">
                                     <span class="student-name">
@@ -268,21 +274,28 @@
                                             <i class='bx bxs-award hafiz-badge' style="color:#ff9800;" title="@Localizer["Hafiz"]"></i>
                                         }
                                     </span>
-                                    <span class="student-class">
-                                        <i class='bx bx-book'></i> @(string.IsNullOrEmpty(row.ClassName) ?
-                                                                                                            Localizer["NoClass"].Value : row.ClassName)
-                                    </span>
                                 </div>
                             </div>
-                            <div class="mobile-wirds-badge">
-                                <span class="wirds-count-badge @wirdBadgeClass" title="@Localizer["totalWird"]">
-                                    <i class='bx bx-list-check'></i>
-                                    <span>@row.TotalWirds</span>
-                                </span>
+                            <div class="row-mobile-summary-side">
+                                @if (isConnected)
+                                {
+                                    <span class="status-chip status-connected">
+                                        <span class="status-dot"></span>
+                                        <span>@(row.LastWirdDate.HasValue ? row.LastWirdDate.Value.ToString("yyyy-MM-dd") : Localizer["LastActive"].Value)</span>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="status-chip status-disconnected">
+                                        <span class="status-dot"></span>
+                                        <span>@Localizer["InactiveWarning"]</span>
+                                    </span>
+                                }
+                                <i class='bx bx-chevron-down row-mobile-chevron'></i>
                             </div>
-                        </div>
+                        </button>
 
-                        <!-- Middle section: Progress Bar -->
+                        <!-- Progress bar: visible while collapsed -->
                         <div class="row-mobile-progress">
                             <div class="progress-info">
                                 <span class="progress-label">
@@ -302,40 +315,76 @@
                             </div>
                         </div>
 
-                        <!-- Bottom section: Stats Grid -->
-                        <div class="row-mobile-stats">
-                            <div class="mobile-stat-item attendance att-@attClass">
-                                <span class="stat-value">@row.AttendanceRate%</span>
-                                <span class="stat-label">@Localizer["AttendanceShort"]</span>
-                            </div>
-                            <div class="mobile-stat-item memorized">
-                                <span class="stat-value">@row.TotalMemorizedPages.ToString("0.##")</span>
-                                <span class="stat-label">@Localizer["MemorizedPagesShort"]</span>
-                            </div>
-                            <div class="mobile-stat-item reviewed">
-                                <span class="stat-value">@((row.ReviewedPages /
-                                                                                                WirdPageCalculator.PagesPerJuz).ToString("0.##"))</span>
-                                    <span class="stat-label">@Localizer["JuzShort"] @Localizer["ReviewedPagesShort"]</span>
+                        <!-- Expandable detail -->
+                        <div class="row-mobile-details" data-accordion-panel>
+                            <div class="row-mobile-details-inner">
+                                <!-- Class / Halaqa -->
+                                <div class="row-mobile-class">
+                                    <i class='bx bx-book'></i>
+                                    <span>@(string.IsNullOrEmpty(row.ClassName) ? Localizer["NoClass"].Value : row.ClassName)</span>
                                 </div>
-                            </div>
 
-                            <!-- Footer section: Last Active -->
-                            <div class="row-mobile-footer">
-                                <span class="last-active @(row.IsInactiveWarning ? "warning" : "")">
-                                    <i class='bx bx-time-five'></i>
-                                    <span>@GetLastWirdText(row.LastWirdDate)</span>
-                                </span>
-                                @if (row.IsInactiveWarning)
-                                {
-                                    <span class="warning-alert-badge">
-                                        <i class='bx bxs-error-circle'></i>
-                                        <span>@Localizer["InactiveWarning"]</span>
+                                <!-- Stats Grid -->
+                                <div class="row-mobile-stats">
+                                    <div class="mobile-stat-item reviewed">
+                                        <span class="stat-value">@((row.ReviewedPages /
+                                            WirdPageCalculator.PagesPerJuz).ToString("0.##"))</span>
+                                        <span class="stat-label">@Localizer["JuzShort"] @Localizer["ReviewedPagesShort"]</span>
+                                    </div>
+                                    <div class="mobile-stat-item memorized">
+                                        <span class="stat-value">@row.TotalMemorizedPages.ToString("0.##")</span>
+                                        <span class="stat-label">@Localizer["MemorizedPagesShort"]</span>
+                                    </div>
+                                    <div class="mobile-stat-item attendance att-@attClass">
+                                        <span class="stat-value">@row.AttendanceRate%</span>
+                                        <span class="stat-label">@Localizer["AttendanceShort"]</span>
+                                    </div>
+                                </div>
+
+                                <!-- Wirds breakdown: total / completed / pending -->
+                                <div class="row-mobile-wirds">
+                                    <span class="wird-stat wird-total">
+                                        <i class='bx bx-list-check'></i>
+                                        <span class="wird-stat-value">@row.TotalWirds</span>
+                                        <span class="wird-stat-label">@Localizer["TotalWirds"]</span>
                                     </span>
+                                    <span class="wird-stat wird-completed">
+                                        <i class='bx bx-check-circle'></i>
+                                        <span class="wird-stat-value">@row.CompletedWirds</span>
+                                        <span class="wird-stat-label">@Localizer["CompletedWirds"]</span>
+                                    </span>
+                                    <span class="wird-stat wird-pending">
+                                        <i class='bx bx-time'></i>
+                                        <span class="wird-stat-value">@(row.TotalWirds - row.CompletedWirds)</span>
+                                        <span class="wird-stat-label">@Localizer["PendingWirds"]</span>
+                                    </span>
+                                </div>
+
+                                <!-- Last wird status line -->
+                                <div class="row-mobile-footer">
+                                    <span class="last-active @(row.IsInactiveWarning ? "warning" : "")">
+                                        <i class='bx bx-time-five'></i>
+                                        <span>@GetLastWirdText(row.LastWirdDate)</span>
+                                    </span>
+                                </div>
+
+                                @if (row.UnreadNotesCount > 0)
+                                {
+                                    <div class="row-mobile-notes-alert">
+                                        <i class='bx bxs-bell'></i>
+                                        <span>@row.UnreadNotesCount @Localizer["UnreadNotes"]</span>
+                                    </div>
                                 }
+
+                                <a asp-action="Details" asp-route-id="@row.StudentId" class="row-mobile-details-link">
+                                    <i class='bx bx-user-circle'></i>
+                                    <span>@Localizer["ViewDetails"]</span>
+                                </a>
                             </div>
-                        </a>
-                    }
-                </div>
+                        </div>
+                    </div>
+                }
+            </div>
             }
     else
             {
@@ -345,3 +394,49 @@
                 </div>
             }
         </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var accordion = document.querySelector('[data-accordion]');
+            if (!accordion) return;
+
+            function closeItem(item) {
+                var panel = item.querySelector('[data-accordion-panel]');
+                var toggle = item.querySelector('[data-accordion-toggle]');
+                if (panel) panel.style.maxHeight = null;
+                item.classList.remove('open');
+                if (toggle) toggle.setAttribute('aria-expanded', 'false');
+            }
+
+            function openItem(item) {
+                var panel = item.querySelector('[data-accordion-panel]');
+                var toggle = item.querySelector('[data-accordion-toggle]');
+                item.classList.add('open');
+                if (toggle) toggle.setAttribute('aria-expanded', 'true');
+                if (panel) panel.style.maxHeight = panel.scrollHeight + 'px';
+            }
+
+            accordion.addEventListener('click', function (e) {
+                var toggle = e.target.closest('[data-accordion-toggle]');
+                if (!toggle || !accordion.contains(toggle)) return;
+
+                var item = toggle.closest('[data-accordion-item]');
+                if (!item) return;
+
+                var isOpen = item.classList.contains('open');
+
+                // Only one row open at a time
+                accordion.querySelectorAll('[data-accordion-item].open').forEach(function (openItemEl) {
+                    if (openItemEl !== item) closeItem(openItemEl);
+                });
+
+                if (isOpen) {
+                    closeItem(item);
+                } else {
+                    openItem(item);
+                }
+            });
+        })();
+    </script>
+}

@@ -320,4 +320,13 @@
   <data name="NoCompletedWirds" xml:space="preserve">
     <value>لا يوجد أوراد مكتملة</value>
   </data>
+  <data name="ViewDetails" xml:space="preserve">
+    <value>عرض التفاصيل</value>
+  </data>
+  <data name="PendingWirds" xml:space="preserve">
+    <value>أوراد معلقة</value>
+  </data>
+  <data name="UnreadNotes" xml:space="preserve">
+    <value>ملاحظات غير مقروءة</value>
+  </data>
 </root>
