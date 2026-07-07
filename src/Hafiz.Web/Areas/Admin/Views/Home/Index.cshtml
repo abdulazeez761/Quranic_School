@@ -8,16 +8,15 @@
     double femalePercent = totalStudents > 0 ? Math.Round((double)Model.FemaleStudentsCount / totalStudents * 100, 1) : 0;
 }
 
-<!-- فلتر الفترة الزمنية لإحصائيات الحفظ والمراجعة -->
-<div class="d-flex justify-between align-center mb-lg flex-wrap gap-md">
+<div class="dashboard-header">
     <div>
-        <h2 class="section-title mb-sm">
-            <i class='bx bx-bar-chart-alt-2' style="color: var(--primary-green);"></i>
+        <h2 class="dashboard-header-title">
+            <i class='bx bx-bar-chart-alt-2'></i>
             إحصائيات المركز
         </h2>
-        <p class="text-medium">إحصائيات الحفظ والمراجعة محسوبة حسب وحدات الورد (صفحات / أجزاء / آيات)</p>
+        <p class="dashboard-header-subtitle">إحصائيات الحفظ والمراجعة محسوبة حسب وحدات الورد (صفحات / أجزاء / آيات)</p>
     </div>
-    <div class="btn-group">
+    <div class="dashboard-period-group" role="tablist" aria-label="فترة الإحصائيات">
         <a asp-action="Index" asp-route-period="@DashboardPeriod.AllTime"
            class="btn @(Model.SelectedPeriod == DashboardPeriod.AllTime ? "btn-primary" : "btn-outline")">
             إجمالي تراكمي
@@ -33,204 +32,125 @@
     </div>
 </div>
 
-<!-- Stats Cards -->
-<div class="grid-auto-fit mb-lg" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+<div class="dashboard-kpi-grid">
 
-    <!-- بطاقة الحلقات -->
-    <div class="card card-stat">
-        <div class="card-stat-icon" style="background: linear-gradient(135deg, #7c4dbe, #5a2d9e);">
-            <i class='bx bx-group'></i>
-        </div>
-        <div class="card-stat-content">
-            <div class="card-stat-label">عدد الحلقات</div>
-            <div class="card-stat-value">@Model.CirclesCount</div>
+    <div class="dashboard-stat --purple">
+        <div class="dashboard-stat-icon"><i class='bx bx-group'></i></div>
+        <div class="dashboard-stat-content">
+            <div class="dashboard-stat-label">عدد الحلقات</div>
+            <div class="dashboard-stat-value">@Model.CirclesCount</div>
         </div>
     </div>
 
-    <!-- بطاقة المعلمين -->
-    <div class="card card-stat">
-        <div class="card-stat-icon" style="background: linear-gradient(135deg, #85a67c, #648c51);">
-            <i class='bx bx-chalkboard'></i>
-        </div>
-        <div class="card-stat-content">
-            <div class="card-stat-label">عدد المعلمين</div>
-            <div class="card-stat-value">@Model.TeachersCount</div>
+    <div class="dashboard-stat --sage">
+        <div class="dashboard-stat-icon"><i class='bx bx-chalkboard'></i></div>
+        <div class="dashboard-stat-content">
+            <div class="dashboard-stat-label">عدد المعلمين</div>
+            <div class="dashboard-stat-value">@Model.TeachersCount</div>
         </div>
     </div>
 
-    <!-- بطاقة الطلاب الذكور -->
-    <div class="card card-stat">
-        <div class="card-stat-icon" style="background: linear-gradient(135deg, #4a90d9, #2c6fad);">
-            <i class='bx bx-male'></i>
-        </div>
-        <div class="card-stat-content">
-            <div class="card-stat-label">الطلاب الذكور</div>
-            <div class="card-stat-value">@Model.MaleStudentsCount</div>
+    <div class="dashboard-stat --blue">
+        <div class="dashboard-stat-icon"><i class='bx bx-male'></i></div>
+        <div class="dashboard-stat-content">
+            <div class="dashboard-stat-label">الطلاب الذكور</div>
+            <div class="dashboard-stat-value">@Model.MaleStudentsCount</div>
         </div>
     </div>
 
-    <!-- بطاقة الطالبات الإناث -->
-    <div class="card card-stat">
-        <div class="card-stat-icon" style="background: linear-gradient(135deg, #e07b9a, #c0547d);">
-            <i class='bx bx-female'></i>
-        </div>
-        <div class="card-stat-content">
-            <div class="card-stat-label">الطالبات الإناث</div>
-            <div class="card-stat-value">@Model.FemaleStudentsCount</div>
+    <div class="dashboard-stat --pink">
+        <div class="dashboard-stat-icon"><i class='bx bx-female'></i></div>
+        <div class="dashboard-stat-content">
+            <div class="dashboard-stat-label">الطالبات الإناث</div>
+            <div class="dashboard-stat-value">@Model.FemaleStudentsCount</div>
         </div>
     </div>
 
-    <!-- بطاقة الحفظ: صفحات أو آيات متفرقة -->
-    <div class="card card-stat">
-        <div class="card-stat-icon" style="background: linear-gradient(135deg, #bf913b, #a67c2e);">
-            <i class='bx bx-book-heart'></i>
-        </div>
-        <div class="card-stat-content">
-
-            <div class="card-stat-label">صفحات الحفظ</div>
-            <div class="card-stat-value">@Model.MemorizationPages.ToString("0.##")</div>
-            <div style="font-size:0.78rem; color: var(--text-muted, #888); margin-top:2px;">صفحة محفوظة</div>
-
-            
+    <div class="dashboard-stat --gold">
+        <div class="dashboard-stat-icon"><i class='bx bx-book-heart'></i></div>
+        <div class="dashboard-stat-content">
+            <div class="dashboard-stat-label">صفحات الحفظ</div>
+            <div class="dashboard-stat-value">@Model.MemorizationPages.ToString("0.##")</div>
+            <div class="dashboard-stat-hint">صفحة محفوظة (تشمل آيات الحفظ)</div>
         </div>
     </div>
 
-    <!-- بطاقة المراجعة -->
-    <div class="card card-stat">
-        <div class="card-stat-icon" style="background: linear-gradient(135deg, #17a2b8, #138496);">
-            <i class='bx bx-rotate-left'></i>
-        </div>
-        <div class="card-stat-content">
-            <div class="card-stat-label">صفحات المراجعة</div>
-            <div class="card-stat-value">@Model.RevisionPages.ToString("0.##")</div>
-            <div style="font-size:0.78rem; color: var(--text-muted, #888); margin-top:2px;">صفحة مراجعة</div>
+    <div class="dashboard-stat --teal">
+        <div class="dashboard-stat-icon"><i class='bx bx-rotate-left'></i></div>
+        <div class="dashboard-stat-content">
+            <div class="dashboard-stat-label">صفحات المراجعة</div>
+            <div class="dashboard-stat-value">@Model.RevisionPages.ToString("0.##")</div>
+            <div class="dashboard-stat-hint">صفحة مراجعة</div>
         </div>
     </div>
-    <!-- <div class="card card-stat">
-        <div class="card-stat-icon" style="background: linear-gradient(135deg, #bf913b, #a67c2e);">
-            <i class='bx bx-book-open'></i>
-        </div>
-        <div class="card-stat-content">
-         
-                <div class="card-stat-label">آيات الحفظ المتفرقة</div>
-                <div class="card-stat-value">@Model.MemorizationAyahs</div>
-                <div style="font-size:0.78rem; color: var(--text-muted, #888); margin-top:2px;">لا توجد صفحات كاملة</div>
-            
-        </div>
-    </div> -->
 
-    <!-- بطاقة عدد أجزاء الحفظ -->
-    <div class="card card-stat">
-        <div class="card-stat-icon" style="background: linear-gradient(135deg, #9b6b3a, #7a4e22);">
-            <i class='bx bx-award'></i>
+    <div class="dashboard-stat --brown">
+        <div class="dashboard-stat-icon"><i class='bx bx-award'></i></div>
+        <div class="dashboard-stat-content">
+            <div class="dashboard-stat-label">أجزاء الحفظ</div>
+            <div class="dashboard-stat-value">@Model.MemorizationParts.ToString("0.##")</div>
+            <div class="dashboard-stat-hint">عدد الأجزاء التي تم حفظها في المركز</div>
         </div>
-        <div class="card-stat-content">
-            <div class="card-stat-label">أجزاء الحفظ</div>
-            <div class="card-stat-value">@Model.MemorizationParts.ToString("0.##")</div>
-            <div style="font-size:0.78rem; color: var(--text-muted, #888); margin-top:2px;">عدد الاجزاء اللتي تم حفظها
-                في المركز</div>
+    </div>
+
+    <div class="dashboard-stat --indigo">
+        <div class="dashboard-stat-icon"><i class='bx bx-check-shield'></i></div>
+        <div class="dashboard-stat-content">
+            <div class="dashboard-stat-label">الأجزاء المستقلة للمراجعة</div>
+            <div class="dashboard-stat-value">@Model.RevisionJuzParts.ToString("0.##")</div>
+            <div class="dashboard-stat-hint">من جزء إلى جزء</div>
+        </div>
+    </div>
+
+    <div class="dashboard-stat --cyan">
+        <div class="dashboard-stat-icon"><i class='bx bx-bar-chart-alt-2'></i></div>
+        <div class="dashboard-stat-content">
+            <div class="dashboard-stat-label">إجمالي المراجعة</div>
+            <div class="dashboard-stat-value">@Model.RevisionParts.ToString("0.##")</div>
+            <div class="dashboard-stat-hint">أجزاء الصفحات + الأجزاء المستقلة</div>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-secondary-grid">
+    <div class="card card-standard">
+        <div class="card-header">
+            <h3 class="card-title">النشاط الأخير</h3>
+        </div>
+        <div class="card-body">
+            <div class="dashboard-empty-state">
+                <i class='bx bx-history'></i>
+                <div class="dashboard-empty-state-title">لا يوجد نشاط حديث</div>
+                <div class="dashboard-empty-state-text">سيظهر هنا آخر إضافات الطلاب والحلقات وتحديثات البيانات فور توفّرها.</div>
             </div>
         </div>
+    </div>
 
-        <!-- بطاقة الأجزاء المستقلة من المراجعة -->
-        <div class="card card-stat">
-            <div class="card-stat-icon" style="background: linear-gradient(135deg, #5e3b8a, #43296b);">
-                <i class='bx bx-check-shield'></i>
+    <div class="card card-standard">
+        <div class="card-header">
+            <h3 class="card-title">توزيع الطلاب</h3>
+        </div>
+        <div class="card-body">
+            <div class="dashboard-gender-row">
+                <span class="text-medium">الذكور</span>
+                <span class="value">@malePercent%</span>
             </div>
-            <div class="card-stat-content">
-                <div class="card-stat-label">الأجزاء المستقلة للمراجعة</div>
-                <div class="card-stat-value">@Model.RevisionJuzParts.ToString("0.##")</div>
-                <div style="font-size:0.78rem; color: var(--text-muted, #888); margin-top:2px;">من جزء إلى جزء</div>
+            <div class="dashboard-gender-bar">
+                <div class="fill --male" style="width: @(malePercent)%"></div>
+            </div>
+
+            <div class="dashboard-gender-row" style="margin-top: var(--space-lg);">
+                <span class="text-medium">الإناث</span>
+                <span class="value">@femalePercent%</span>
+            </div>
+            <div class="dashboard-gender-bar">
+                <div class="fill --female" style="width: @(femalePercent)%"></div>
+            </div>
+
+            <div class="dashboard-total-row" style="margin-top: var(--space-lg);">
+                <span class="text-medium">إجمالي الطلاب</span>
+                <span class="value">@totalStudents</span>
             </div>
         </div>
-
-        <!-- بطاقة إجمالي أجزاء المراجعة (صفحات + أجزاء مستقلة) -->
-        <div class="card card-stat">
-            <div class="card-stat-icon" style="background: linear-gradient(135deg, #0f7a8a, #0b5e6e);">
-                <i class='bx bx-bar-chart-alt-2'></i>
-            </div>
-            <div class="card-stat-content">
-                <div class="card-stat-label">إجمالي المراجعة</div>
-                <div class="card-stat-value">@Model.RevisionParts.ToString("0.##")</div>
-                <div style="font-size:0.78rem; color: var(--text-muted, #888); margin-top:2px;">أجزاء الصفحات + الأجزاء
-                    المستقلة</div>
-                </div>
-            </div>
-
-
-   
-        </div>
-
-        <!-- Recent Activity -->
-        <div class="grid-2">
-            <div class="card card-standard">
-                <div class="card-header">
-                    <h3 class="card-title">النشاط الأخير</h3>
-                    <a href="#" class="btn btn-sm btn-ghost">عرض الكل</a>
-                </div>
-                <div class="card-body">
-                    <div class="card-list">
-                        <div class="card-list-item">
-                            <div class="card-list-icon">
-                                <i class='bx bx-user-plus'></i>
-                            </div>
-                            <div class="card-list-content">
-                                <div class="card-list-title">طالب جديد</div>
-                                <div class="card-list-subtitle">تم إضافة محمد أحمد إلى الحلقة الأولى</div>
-                            </div>
-                            <span class="text-medium fs-sm">منذ ساعة</span>
-                        </div>
-
-                        <div class="card-list-item">
-                            <div class="card-list-icon" style="background: rgba(255, 193, 7, 0.1); color: #ffc107;">
-                                <i class='bx bx-edit'></i>
-                            </div>
-                            <div class="card-list-content">
-                                <div class="card-list-title">تحديث بيانات</div>
-                                <div class="card-list-subtitle">تم تحديث معلومات المعلم أحمد</div>
-                            </div>
-                            <span class="text-medium fs-sm">منذ ساعتين</span>
-                        </div>
-
-                        <div class="card-list-item">
-                            <div class="card-list-icon" style="background: rgba(220, 53, 69, 0.1); color: #dc3545;">
-                                <i class='bx bx-trash'></i>
-                            </div>
-                            <div class="card-list-content">
-                                <div class="card-list-title">حذف حلقة</div>
-                                <div class="card-list-subtitle">تم حذف الحلقة المسائية</div>
-                            </div>
-                            <span class="text-medium fs-sm">منذ 3 ساعات</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card card-standard">
-                <div class="card-header">
-                    <h3 class="card-title">إحصائيات الطلاب</h3>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-between align-center mb-md">
-                        <span class="text-medium">الذكور</span>
-                        <span class="fw-bold">@malePercent%</span>
-                    </div>
-                    <div style="height: 10px; background: var(--light-gray); border-radius: 9999px; overflow: hidden;">
-                        <div style="width: @(malePercent)%; height: 100%; border-radius: 9999px; background: linear-gradient(90deg, #4a90d9, #2c6fad); transition: width var(--transition-slow);"></div>
-                    </div>
-
-                    <div class="d-flex justify-between align-center mb-md mt-lg">
-                        <span class="text-medium">الإناث</span>
-                        <span class="fw-bold">@femalePercent%</span>
-                    </div>
-                    <div style="height: 10px; background: var(--light-gray); border-radius: 9999px; overflow: hidden;">
-                        <div style="width: @(femalePercent)%; height: 100%; border-radius: 9999px; background: linear-gradient(90deg, #e07b9a, #c0547d); transition: width var(--transition-slow);"></div>
-                    </div>
-
-                    <div class="d-flex justify-between align-center mb-md mt-lg">
-                        <span class="text-medium">إجمالي الطلاب</span>
-                        <span class="fw-bold">@totalStudents</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+    </div>
+</div>

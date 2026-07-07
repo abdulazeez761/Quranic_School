@@ -245,4 +245,20 @@
     <value>Schedule this as a future wird. It won't count toward progress until it is graded.</value>
     <comment/>
   </data>
+  <data name="EquivalentPages" xml:space="preserve">
+    <value>Page Equivalent</value>
+    <comment/>
+  </data>
+  <data name="EquivalentPagesHint" xml:space="preserve">
+    <value>Enter the page-equivalent for these ayahs (e.g. 0.2, 0.5, 2.5) so progress can be counted.</value>
+    <comment/>
+  </data>
+  <data name="EquivalentPagesPlaceholder" xml:space="preserve">
+    <value>e.g. 0.5 or 2.5</value>
+    <comment/>
+  </data>
+  <data name="EquivalentPagesQuickPick" xml:space="preserve">
+    <value>Quick pick page equivalent</value>
+    <comment/>
+  </data>
 </root>

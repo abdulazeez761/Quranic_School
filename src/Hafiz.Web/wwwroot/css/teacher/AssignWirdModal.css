@@ -226,6 +226,49 @@ textarea.form-control {
   box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
 }
 
+/* Equivalent Pages — quick-pick chips */
+.equivalent-pages-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: var(--space-sm);
+}
+
+.equivalent-pages-chips .chip {
+  background: var(--light-gray);
+  color: var(--text-dark);
+  border: 1px solid var(--border-color);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast),
+    border-color var(--transition-fast), transform var(--transition-fast);
+  font-family: var(--font-base);
+  min-width: 44px;
+}
+
+.equivalent-pages-chips .chip:hover {
+  background: rgba(111, 161, 90, 0.12);
+  border-color: var(--primary-green);
+  color: var(--dark-green);
+}
+
+.equivalent-pages-chips .chip.is-active {
+  background: var(--primary-green);
+  color: var(--white);
+  border-color: var(--primary-green);
+}
+
+.form-hint {
+  display: block;
+  color: var(--text-medium);
+  font-size: var(--font-size-xs);
+  margin-top: var(--space-xs);
+  line-height: 1.4;
+}
+
 /* ===================================
    UPCOMING WIRD TOGGLE
    =================================== */

@@ -249,4 +249,20 @@
     <value>جدوِل هذا الورد كورد قادم. لن يُحتسب ضمن تقدّم الطالب حتى يتم تقييمه.</value>
     <comment/>
   </data>
+  <data name="EquivalentPages" xml:space="preserve">
+    <value>ما يعادله بالصفحات</value>
+    <comment/>
+  </data>
+  <data name="EquivalentPagesHint" xml:space="preserve">
+    <value>أدخل ما يعادل عدد الآيات من الصفحات (مثل 0.2 أو 0.5 أو 2.5) حتى تُحتسب ضمن تقدّم الطالب.</value>
+    <comment/>
+  </data>
+  <data name="EquivalentPagesPlaceholder" xml:space="preserve">
+    <value>مثال: 0.5 أو 2.5</value>
+    <comment/>
+  </data>
+  <data name="EquivalentPagesQuickPick" xml:space="preserve">
+    <value>اختيار سريع للمعادل بالصفحات</value>
+    <comment/>
+  </data>
 </root>
