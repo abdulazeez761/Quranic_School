@@ -1,0 +1,46 @@
+@model List<Hafiz.DTOs.Student.StudentReportRow>
+@{
+    var Localizer = (Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer)ViewData["Localizer"]!;
+    var totalHafiz = Model.Count(s => s.IsHafiz);
+    var avgAttendance = Model.Any() ? Math.Round(Model.Average(s => s.AttendanceRate), 1) : 0;
+    var avgMemorization = Model.Any() ? Math.Round((double)Model.Average(s => s.TotalMemorizedPages), 1) : 0;
+}
+
+<div class="stats-grid mb-lg">
+    <div class="card-stat">
+        <div class="stat-icon" style="background: rgba(46,139,87,0.15); color: #2e8b57;">
+            <i class='bx bx-group'></i>
+        </div>
+        <div class="stat-content">
+            <h3>@Model.Count</h3>
+            <p>@Localizer["TotalStudents"]</p>
+        </div>
+    </div>
+    <div class="card-stat">
+        <div class="stat-icon" style="background: rgba(255,152,0,0.15); color: #ff9800;">
+            <i class='bx bxs-award'></i>
+        </div>
+        <div class="stat-content">
+            <h3>@totalHafiz</h3>
+            <p>@Localizer["TotalHafiz"]</p>
+        </div>
+    </div>
+    <div class="card-stat">
+        <div class="stat-icon" style="background: rgba(33,150,243,0.15); color: #2196f3;">
+            <i class='bx bx-calendar-check'></i>
+        </div>
+        <div class="stat-content">
+            <h3>@avgAttendance%</h3>
+            <p>@Localizer["AverageAttendance"]</p>
+        </div>
+    </div>
+    <div class="card-stat">
+        <div class="stat-icon" style="background: rgba(156,39,176,0.15); color: #9c27b0;">
+            <i class='bx bx-book-open'></i>
+        </div>
+        <div class="stat-content">
+            <h3>@avgMemorization</h3>
+            <p>@Localizer["AverageMemorization"]</p>
+        </div>
+    </div>
+</div>

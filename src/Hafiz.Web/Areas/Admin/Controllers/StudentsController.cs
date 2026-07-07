@@ -249,7 +249,7 @@ namespace Hafiz.Areas.Admin.Controllers
 
         public async Task<IActionResult> Edit(Guid id)
         {
-            var student = await _studentService.GetByIdAsync(id);
+            StudentDto? student = await _studentService.GetByIdAsync(id);
 
             if (student is null)
                 return NotFound();
@@ -260,6 +260,8 @@ namespace Hafiz.Areas.Admin.Controllers
                 SecondName = student.SecondName,
                 Email = student.Email,
                 PhoneNumber = student.PhoneNumber,
+                Username = student.Username,
+                // Password = student.,
                 DateOfBirth = student.DateOfBirth,
                 ClassId = student.ClassId,
                 ParentId = student.ParentId,

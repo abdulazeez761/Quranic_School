@@ -1,0 +1,30 @@
+@model Hafiz.DTOs.Student.AdminStudentReportsViewModel
+@{
+    var Localizer = (Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer)ViewData["Localizer"]!;
+
+    string SortHref(string by) => Url.Action("Reports", new
+    {
+        sortBy = by,
+        classId = Model.ClassId,
+        search = Model.Search
+    })!;
+
+    bool IsActiveSort(string by) =>
+        (string.IsNullOrEmpty(Model.SortBy) && by == "memorization") || Model.SortBy == by;
+}
+
+<div class="reports-toolbar">
+    <span class="toolbar-label"><i class='bx bx-sort-alt-2'></i> @Localizer["SortBy"]</span>
+    <div class="sort-chips">
+        <a href="@SortHref("memorization")" class="sort-chip @(IsActiveSort("memorization") ? "active" : "")">
+            <i class='bx bx-book-open'></i> @Localizer["SortMemorization"]
+        </a>
+        <a href="@SortHref("attendance")" class="sort-chip @(IsActiveSort("attendance") ? "active" : "")">
+            <i class='bx bx-calendar-check'></i> @Localizer["SortAttendance"]
+        </a>
+        <a href="@SortHref("name")" class="sort-chip @(IsActiveSort("name") ? "active" : "")">
+            <i class='bx bx-sort-a-z'></i> @Localizer["SortName"]
+        </a>
+    </div>
+    <span class="toolbar-count">@Model.Students.Count @Localizer["StudentsCount"]</span>
+</div>

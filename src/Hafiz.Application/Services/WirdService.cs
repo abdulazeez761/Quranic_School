@@ -150,7 +150,8 @@ namespace Hafiz.Services
             var wird = await _wirdRepository.GetWirdByID(Id);
             if (wird == null)
                 return false;
-            wird.IsUpcoming = false;
+            wird.IsUpcoming = status == AssignmentStatus.notSet;
+            wird.IsCompleted = status != AssignmentStatus.notSet;
             var (oldMem, oldRev) = ProgressContribution(wird);
             bool ok = await _wirdRepository.UpdateStatus(Id, status);
             if (ok)
@@ -196,7 +197,9 @@ namespace Hafiz.Services
         }
 
         // تقرير التصدير: نفس الإحصائيات مع كل الأسطر التفصيلية المطابقة (بدون ترقيم).
-        public async Task<WirdReportViewModel> GetWirdReportForExportAsync(WirdReportFilterDto filter)
+        public async Task<WirdReportViewModel> GetWirdReportForExportAsync(
+            WirdReportFilterDto filter
+        )
         {
             var allItems = await _wirdRepository.GetWirdReportDetailsAsync(filter);
             var stats = await BuildStatsAsync(filter);
@@ -275,7 +278,9 @@ namespace Hafiz.Services
             };
 
         private static string StudentFullName(WirdAssignment w) =>
-            w.Student?.StudentInfo is { } info ? $"{info.FirstName} {info.SecondName}" : string.Empty;
+            w.Student?.StudentInfo is { } info
+                ? $"{info.FirstName} {info.SecondName}"
+                : string.Empty;
 
         private static string StudentClasses(WirdAssignment w) =>
             w.Student?.Classes is { Count: > 0 } classes
@@ -287,12 +292,14 @@ namespace Hafiz.Services
         {
             if (w.FromSurah != null || w.ToSurah != null)
             {
-                var from = w.FromSurah != null
-                    ? $"{Formatting.GetLocalizedSurahName(w.FromSurah.Value)}{(string.IsNullOrEmpty(w.FromAyah) ? "" : $" ({w.FromAyah})")}"
-                    : "";
-                var to = w.ToSurah != null
-                    ? $"{Formatting.GetLocalizedSurahName(w.ToSurah.Value)}{(w.ToAyah != null ? $" ({w.ToAyah})" : "")}"
-                    : "";
+                var from =
+                    w.FromSurah != null
+                        ? $"{Formatting.GetLocalizedSurahName(w.FromSurah.Value)}{(string.IsNullOrEmpty(w.FromAyah) ? "" : $" ({w.FromAyah})")}"
+                        : "";
+                var to =
+                    w.ToSurah != null
+                        ? $"{Formatting.GetLocalizedSurahName(w.ToSurah.Value)}{(w.ToAyah != null ? $" ({w.ToAyah})" : "")}"
+                        : "";
                 if (!string.IsNullOrEmpty(from) && !string.IsNullOrEmpty(to))
                     return $"من {from} إلى {to}";
                 return !string.IsNullOrEmpty(from) ? from : to;

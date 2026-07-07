@@ -1,0 +1,101 @@
+@model Hafiz.DTOs.Student.StudentReportRow
+@using Hafiz.Common.Helper
+@using Hafiz.Web.Helpers
+@{
+    var Localizer = (Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer)ViewData["Localizer"]!;
+
+    var memPercent = Math.Min(
+        100,
+        Math.Round((double)Model.TotalMemorizedPages / WirdPageCalculator.TotalQuranPages * 100)
+    );
+    var attClass = StudentReportViewHelpers.AttendanceClass(Model.AttendanceRate);
+    var initials = StudentReportViewHelpers.GetInitials(Model.FullName);
+
+    var lastWirdText = Model.LastWirdDate.HasValue
+        ? $"{Localizer["LastWird"].Value}: {Model.LastWirdDate.Value:yyyy-MM-dd}"
+        : Localizer["NoCompletedWirds"].Value;
+}
+
+<a asp-action="Details" asp-route-id="@Model.StudentId" class="report-card">
+    <div class="report-card-top">
+        <div class="report-avatar-wrap">
+            <div class="report-avatar">@initials</div>
+            @if (Model.UnreadNotesCount > 0)
+            {
+                <span class="avatar-notes-badge" title="@Localizer["UnreadNotes"]">@Model.UnreadNotesCount</span>
+            }
+        </div>
+        <div class="report-identity">
+            <div class="report-name">
+                @Model.FullName
+                @if (Model.IsHafiz)
+                {
+                    <i class='bx bxs-award hafiz-badge' style="color:#ff9800;" title="@Localizer["Hafiz"]"></i>
+                }
+            </div>
+            <div class="report-class">
+                <i class='bx bx-book'></i>
+                @(string.IsNullOrEmpty(Model.ClassName) ? Localizer["NoClass"].Value : Model.ClassName)
+            </div>
+        </div>
+        <div class="report-chevron">
+            <i class='bx bx-chevron-left'></i>
+        </div>
+    </div>
+
+    <div class="report-progress">
+        <div class="report-progress-head">
+            <span><i class='bx bx-book-open'></i> @Localizer["Memorization"]</span>
+            <span class="report-progress-value">@Model.MemorizedJuz/30</span>
+        </div>
+        <div class="report-bar-track">
+            <div class="report-bar-fill" style="width:@memPercent%"></div>
+        </div>
+    </div>
+
+    <div class="card-pages-summary">
+        <span class="page-summary-item" title="@Localizer["MemorizedPages"]">
+            <i class='bx bx-book-bookmark'></i>
+            <span>@Model.TotalMemorizedPages.ToString("0.##")</span>
+            <small>@Localizer["MemorizedPagesShort"]</small>
+        </span>
+        <span class="page-summary-item" title="@Localizer["ReviewedPages"]">
+            <i class='bx bx-revision'></i>
+            <span>@((Model.ReviewedPages / WirdPageCalculator.PagesPerJuz).ToString("0.##"))</span>
+            <small>@Localizer["JuzShort"] @Localizer["ReviewedPagesShort"]</small>
+        </span>
+    </div>
+
+    <div class="report-metrics">
+        <div class="report-metric">
+            <span class="metric-value">@Model.TotalWirds</span>
+            <span class="metric-label">@Localizer["TotalWirds"]</span>
+        </div>
+        <div class="report-metric">
+            <span class="metric-value">@Model.CompletedWirds</span>
+            <span class="metric-label">@Localizer["CompletedWirds"]</span>
+        </div>
+        <div class="report-metric">
+            <span class="metric-badge att-@attClass">@Model.AttendanceRate%</span>
+            <span class="metric-label">@Localizer["AttendanceRate"]</span>
+        </div>
+        <div class="report-metric">
+            <span class="metric-value tajwid">@Localizer[$"TajwidLevel_{Model.TajwidLevel}"]</span>
+            <span class="metric-label">@Localizer["TajwidLevel"]</span>
+        </div>
+    </div>
+
+    <div class="report-card-footer">
+        <span class="last-active-status @(Model.IsInactiveWarning ? "warning" : "")">
+            <i class='bx bx-time-five'></i>
+            @lastWirdText
+        </span>
+        @if (Model.IsInactiveWarning)
+        {
+            <span class="warning-alert-badge">
+                <i class='bx bxs-error-circle'></i>
+                @Localizer["InactiveWarning"]
+            </span>
+        }
+    </div>
+</a>

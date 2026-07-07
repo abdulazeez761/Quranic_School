@@ -1,0 +1,46 @@
+@model Hafiz.DTOs.Student.AdminStudentReportsViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{
+    var Localizer = (Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer)ViewData["Localizer"]!;
+    var classes = (IEnumerable<SelectListItem>?)ViewBag.Classes;
+}
+
+<div class="card-filters mb-lg">
+    <form method="get" asp-action="Reports">
+        <input type="hidden" name="sortBy" value="@Model.SortBy" />
+        <input type="hidden" name="sortOrder" value="@Model.SortOrder" />
+
+        <div class="filters-grid">
+            <div class="filter-field">
+                <label for="search"><i class='bx bx-search'></i> @Localizer["SearchStudent"]</label>
+                <input type="text" id="search" name="search" class="form-input"
+                       placeholder="@Localizer["SearchPlaceholder"]" value="@Model.Search" />
+            </div>
+
+            <div class="filter-field">
+                <label for="classId"><i class='bx bx-book'></i> @Localizer["ClassCircle"]</label>
+                <select id="classId" name="classId" class="form-select">
+                    <option value="">@Localizer["AllClasses"]</option>
+                    @if (classes != null)
+                    {
+                        foreach (var item in classes)
+                        {
+                            <option value="@item.Value" selected="@(Model.ClassId?.ToString() == item.Value)">
+                                @item.Text
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="filter-buttons">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class='bx bx-filter-alt'></i> @Localizer["Search"]
+                </button>
+                <a asp-action="Reports" class="btn btn-outline btn-sm">
+                    <i class='bx bx-reset'></i> @Localizer["Reset"]
+                </a>
+            </div>
+        </div>
+    </form>
+</div>

@@ -183,7 +183,7 @@ namespace Hafiz.Services
                     age--;
 
                 var lastWird = student
-                    .wirds.Where(w => w.IsCompleted)
+                    .wirds.Where(w => w.Status != AssignmentStatus.notSet)
                     .Select(w => (DateTime?)w.AssignedDate)
                     .Max();
 
@@ -204,7 +204,9 @@ namespace Hafiz.Services
                         MemorizedJuz = juz,
                         ReviewedPages = student.ReviewedPages,
                         TotalWirds = wirdsList.Count,
-                        CompletedWirds = wirdsList.Count(w => w.IsCompleted),
+                        CompletedWirds = wirdsList.Count(w =>
+                            w.Status != AssignmentStatus.notSet
+                        ),
                         AttendanceRate =
                             totalAtt > 0 ? Math.Round((double)presentCount / totalAtt * 100, 1) : 0,
                         TotalAttendance = totalAtt,

@@ -39,13 +39,12 @@ namespace Hafiz.Common.Helper
         /// page-equivalents directly in the database for report aggregates.
         /// Keep in sync with the switch above.
         /// </summary>
-        public static readonly Expression<Func<WirdAssignment, decimal>> ToPagesExpression =
-            wird =>
-                wird.Amount == null || wird.AmountUnit == null ? 0m
-                : wird.AmountUnit == WirdUnit.Pages ? wird.Amount.Value
-                : wird.AmountUnit == WirdUnit.Juz ? wird.Amount.Value * PagesPerJuz
-                : wird.AmountUnit == WirdUnit.Ayahs ? (wird.EquivalentPages ?? 0m)
-                : 0m;
+        public static readonly Expression<Func<WirdAssignment, decimal>> ToPagesExpression = wird =>
+            wird.Amount == null || wird.AmountUnit == null ? 0m
+            : wird.AmountUnit == WirdUnit.Pages ? wird.Amount.Value
+            : wird.AmountUnit == WirdUnit.Juz ? wird.Amount.Value * PagesPerJuz
+            : wird.AmountUnit == WirdUnit.Ayahs ? (wird.EquivalentPages ?? 0m)
+            : 0m;
 
         /// <summary>
         /// True when this wird counts toward the student's memorized progress.

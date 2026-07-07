@@ -213,6 +213,7 @@ namespace Hafiz.Repositories
         {
             var assignment = _context.WirdAssignments.Where(c => c.Id == Id).FirstOrDefault();
             assignment!.Status = status;
+            assignment.IsCompleted = status != AssignmentStatus.notSet;
             // Grading a wird means it's no longer an upcoming (future) assignment.
             if (status != AssignmentStatus.notSet)
                 assignment.IsUpcoming = false;
