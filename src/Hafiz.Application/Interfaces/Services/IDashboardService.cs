@@ -13,5 +13,15 @@ namespace Hafiz.Services.Interfaces
             Guid? instituteId = null,
             DashboardPeriod period = DashboardPeriod.AllTime
         );
+
+        /// <summary>
+        /// يجلب صفحة إضافية من نشاطات اليوم (أوراد أو حضور) لدعم زر "تحميل المزيد".
+        /// </summary>
+        Task<DashboardActivityPage> GetActivityPageAsync(
+            Guid? instituteId,
+            DashboardActivityCategory category,
+            int page,
+            int pageSize
+        );
     }
 }

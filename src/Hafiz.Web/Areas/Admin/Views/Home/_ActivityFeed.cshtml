@@ -1,0 +1,51 @@
+@using Hafiz.DTOs.Dashboard
+@model DashboardActivityPage
+@{
+    var title = ViewData["Title"] as string ?? "النشاط اليوم";
+    var subtitle = ViewData["Subtitle"] as string ?? "أحداث اليوم في المركز";
+    var headerIcon = ViewData["HeaderIcon"] as string ?? "bx bx-time";
+    var categoryValue = ((int)Model.Category).ToString();
+}
+
+<div class="card card-standard dashboard-feed"
+     data-activity-feed
+     data-category="@categoryValue">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class='@headerIcon'></i>
+            @title
+        </h3>
+        <span class="dashboard-feed-counter" data-activity-counter>
+            @Model.TotalToday حدث اليوم
+        </span>
+    </div>
+    <div class="card-body">
+        <p class="dashboard-feed-subtitle">@subtitle</p>
+
+        @if (Model.TotalToday == 0)
+        {
+            <div class="dashboard-empty-state">
+                <i class='bx bx-history'></i>
+                <div class="dashboard-empty-state-title">لا يوجد نشاط اليوم</div>
+                <div class="dashboard-empty-state-text">سيظهر هنا فور تسجيل حدث جديد.</div>
+            </div>
+        }
+        else
+        {
+            <div class="dashboard-activity" data-activity-list>
+                <partial name="_ActivityItems" model="Model" />
+            </div>
+
+            <div class="dashboard-feed-footer" data-activity-footer>
+                <button type="button"
+                        class="btn btn-outline btn-sm dashboard-load-more"
+                        data-activity-load-more
+                        data-next-page="@Model.NextPage"
+                        @(Model.HasMore ? "" : "hidden")>
+                    <i class='bx bx-chevron-down'></i>
+                    <span>تحميل المزيد</span>
+                </button>
+            </div>
+        }
+    </div>
+</div>

@@ -29,6 +29,10 @@ namespace Hafiz.Areas.Admin.Controllers
             return claim != null ? Guid.Parse(claim) : null;
         }
 
+        // حجم صفحة قائمة النشاطات — يجب أن يطابق DashboardService.ActivityPageSize
+        // حتى تتوافق أوّل صفحة (تُحمَّل مع الصفحة) مع بقية الصفحات (تُحمَّل عبر AJAX).
+        private const int ActivityPageSize = 10;
+
         [HttpGet]
         public async Task<IActionResult> Index(DashboardPeriod period = DashboardPeriod.AllTime)
         {
@@ -38,6 +42,26 @@ namespace Hafiz.Areas.Admin.Controllers
                 period
             );
             return View(stats);
+        }
+
+        /// <summary>
+        /// نقطة نهاية AJAX لزر "تحميل المزيد" في قسم نشاط اليوم (أوراد / حضور).
+        /// تُرجع جزءًا HTML يحتوي على عناصر الصفحة الجديدة فقط مع خصائص data للتحديث.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> LoadActivity(
+            DashboardActivityCategory category,
+            int page = 1
+        )
+        {
+            var instituteId = GetInstituteId();
+            var result = await _dashboardService.GetActivityPageAsync(
+                instituteId,
+                category,
+                page,
+                ActivityPageSize
+            );
+            return PartialView("_ActivityItems", result);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

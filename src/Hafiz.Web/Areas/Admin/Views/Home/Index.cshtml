@@ -3,9 +3,6 @@
 @model Hafiz.DTOs.Dashboard.DashboardStatsDto
 @{
     ViewData["Title"] = Localizer["PageTitle"].Value;
-    int totalStudents = Model.MaleStudentsCount + Model.FemaleStudentsCount;
-    double malePercent = totalStudents > 0 ? Math.Round((double)Model.MaleStudentsCount / totalStudents * 100, 1) : 0;
-    double femalePercent = totalStudents > 0 ? Math.Round((double)Model.FemaleStudentsCount / totalStudents * 100, 1) : 0;
 }
 
 <div class="dashboard-header">
@@ -14,7 +11,7 @@
             <i class='bx bx-bar-chart-alt-2'></i>
             إحصائيات المركز
         </h2>
-        <p class="dashboard-header-subtitle">إحصائيات الحفظ والمراجعة محسوبة حسب وحدات الورد (صفحات / أجزاء / آيات)</p>
+        <p class="dashboard-header-subtitle">إحصائيات الحفظ والمراجعة محسوبة حسب وحدات الورد (صفحات / أجزاء / آيات).</p>
     </div>
     <div class="dashboard-period-group" role="tablist" aria-label="فترة الإحصائيات">
         <a asp-action="Index" asp-route-period="@DashboardPeriod.AllTime"
@@ -32,125 +29,29 @@
     </div>
 </div>
 
-<div class="dashboard-kpi-grid">
+<partial name="_KpiCards" model="Model" />
 
-    <div class="dashboard-stat --purple">
-        <div class="dashboard-stat-icon"><i class='bx bx-group'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">عدد الحلقات</div>
-            <div class="dashboard-stat-value">@Model.CirclesCount</div>
-        </div>
-    </div>
-
-    <div class="dashboard-stat --sage">
-        <div class="dashboard-stat-icon"><i class='bx bx-chalkboard'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">عدد المعلمين</div>
-            <div class="dashboard-stat-value">@Model.TeachersCount</div>
-        </div>
-    </div>
-
-    <div class="dashboard-stat --blue">
-        <div class="dashboard-stat-icon"><i class='bx bx-male'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">الطلاب الذكور</div>
-            <div class="dashboard-stat-value">@Model.MaleStudentsCount</div>
-        </div>
-    </div>
-
-    <div class="dashboard-stat --pink">
-        <div class="dashboard-stat-icon"><i class='bx bx-female'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">الطالبات الإناث</div>
-            <div class="dashboard-stat-value">@Model.FemaleStudentsCount</div>
-        </div>
-    </div>
-
-    <div class="dashboard-stat --gold">
-        <div class="dashboard-stat-icon"><i class='bx bx-book-heart'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">صفحات الحفظ</div>
-            <div class="dashboard-stat-value">@Model.MemorizationPages.ToString("0.##")</div>
-            <div class="dashboard-stat-hint">صفحة محفوظة (تشمل آيات الحفظ)</div>
-        </div>
-    </div>
-
-    <div class="dashboard-stat --teal">
-        <div class="dashboard-stat-icon"><i class='bx bx-rotate-left'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">صفحات المراجعة</div>
-            <div class="dashboard-stat-value">@Model.RevisionPages.ToString("0.##")</div>
-            <div class="dashboard-stat-hint">صفحة مراجعة</div>
-        </div>
-    </div>
-
-    <div class="dashboard-stat --brown">
-        <div class="dashboard-stat-icon"><i class='bx bx-award'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">أجزاء الحفظ</div>
-            <div class="dashboard-stat-value">@Model.MemorizationParts.ToString("0.##")</div>
-            <div class="dashboard-stat-hint">عدد الأجزاء التي تم حفظها في المركز</div>
-        </div>
-    </div>
-
-    <div class="dashboard-stat --indigo">
-        <div class="dashboard-stat-icon"><i class='bx bx-check-shield'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">الأجزاء المستقلة للمراجعة</div>
-            <div class="dashboard-stat-value">@Model.RevisionJuzParts.ToString("0.##")</div>
-            <div class="dashboard-stat-hint">من جزء إلى جزء</div>
-        </div>
-    </div>
-
-    <div class="dashboard-stat --cyan">
-        <div class="dashboard-stat-icon"><i class='bx bx-bar-chart-alt-2'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">إجمالي المراجعة</div>
-            <div class="dashboard-stat-value">@Model.RevisionParts.ToString("0.##")</div>
-            <div class="dashboard-stat-hint">أجزاء الصفحات + الأجزاء المستقلة</div>
-        </div>
-    </div>
-</div>
+@{
+    var wirdsViewData = new ViewDataDictionary(ViewData)
+    {
+        ["Title"] = "أوراد اليوم",
+        ["Subtitle"] = "أحدث أوراد الحفظ والمراجعة المُسنَدة اليوم",
+        ["HeaderIcon"] = "bx bx-book-heart",
+    };
+    var attendanceViewData = new ViewDataDictionary(ViewData)
+    {
+        ["Title"] = "حضور اليوم",
+        ["Subtitle"] = "تسجيل حضور الطلاب والمعلمين في الحلقات",
+        ["HeaderIcon"] = "bx bx-user-check",
+    };
+}
 
 <div class="dashboard-secondary-grid">
-    <div class="card card-standard">
-        <div class="card-header">
-            <h3 class="card-title">النشاط الأخير</h3>
-        </div>
-        <div class="card-body">
-            <div class="dashboard-empty-state">
-                <i class='bx bx-history'></i>
-                <div class="dashboard-empty-state-title">لا يوجد نشاط حديث</div>
-                <div class="dashboard-empty-state-text">سيظهر هنا آخر إضافات الطلاب والحلقات وتحديثات البيانات فور توفّرها.</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card card-standard">
-        <div class="card-header">
-            <h3 class="card-title">توزيع الطلاب</h3>
-        </div>
-        <div class="card-body">
-            <div class="dashboard-gender-row">
-                <span class="text-medium">الذكور</span>
-                <span class="value">@malePercent%</span>
-            </div>
-            <div class="dashboard-gender-bar">
-                <div class="fill --male" style="width: @(malePercent)%"></div>
-            </div>
-
-            <div class="dashboard-gender-row" style="margin-top: var(--space-lg);">
-                <span class="text-medium">الإناث</span>
-                <span class="value">@femalePercent%</span>
-            </div>
-            <div class="dashboard-gender-bar">
-                <div class="fill --female" style="width: @(femalePercent)%"></div>
-            </div>
-
-            <div class="dashboard-total-row" style="margin-top: var(--space-lg);">
-                <span class="text-medium">إجمالي الطلاب</span>
-                <span class="value">@totalStudents</span>
-            </div>
-        </div>
-    </div>
+    @await Html.PartialAsync("_ActivityFeed", Model.WirdsActivity, wirdsViewData)
+    @await Html.PartialAsync("_ActivityFeed", Model.AttendanceActivity, attendanceViewData)
+    <partial name="_GenderPanel" model="Model" />
 </div>
+
+@section Scripts {
+    <script src="~/js/admin/dashboardActivity.js" asp-append-version="true"></script>
+}

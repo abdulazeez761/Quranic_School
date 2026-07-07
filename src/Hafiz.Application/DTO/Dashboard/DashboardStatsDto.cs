@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Hafiz.DTOs.Dashboard
 {
     public class DashboardStatsDto
@@ -57,5 +59,11 @@ namespace Hafiz.DTOs.Dashboard
 
         /// <summary>الفترة الزمنية المُطبَّقة على إحصائيات الأوراد (لإبراز الزر المختار في الواجهة).</summary>
         public DashboardPeriod SelectedPeriod { get; set; } = DashboardPeriod.AllTime;
+
+        /// <summary>الصفحة الأولى من أوراد اليوم (حفظ + مراجعة).</summary>
+        public DashboardActivityPage WirdsActivity { get; set; } = new();
+
+        /// <summary>الصفحة الأولى من حضور اليوم (طلاب + معلمين).</summary>
+        public DashboardActivityPage AttendanceActivity { get; set; } = new();
     }
 }

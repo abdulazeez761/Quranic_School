@@ -1,0 +1,38 @@
+@model Hafiz.DTOs.Dashboard.DashboardStatsDto
+@{
+    int totalStudents = Model.MaleStudentsCount + Model.FemaleStudentsCount;
+    double malePercent = totalStudents > 0
+        ? Math.Round((double)Model.MaleStudentsCount / totalStudents * 100, 1)
+        : 0;
+    double femalePercent = totalStudents > 0
+        ? Math.Round((double)Model.FemaleStudentsCount / totalStudents * 100, 1)
+        : 0;
+}
+
+<div class="card card-standard">
+    <div class="card-header">
+        <h3 class="card-title">توزيع الطلاب</h3>
+    </div>
+    <div class="card-body">
+        <div class="dashboard-gender-row">
+            <span class="text-medium">الذكور</span>
+            <span class="value">@malePercent%</span>
+        </div>
+        <div class="dashboard-gender-bar">
+            <div class="fill --male" style="width: @(malePercent)%"></div>
+        </div>
+
+        <div class="dashboard-gender-row" style="margin-top: var(--space-lg);">
+            <span class="text-medium">الإناث</span>
+            <span class="value">@femalePercent%</span>
+        </div>
+        <div class="dashboard-gender-bar">
+            <div class="fill --female" style="width: @(femalePercent)%"></div>
+        </div>
+
+        <div class="dashboard-total-row" style="margin-top: var(--space-lg);">
+            <span class="text-medium">إجمالي الطلاب</span>
+            <span class="value">@totalStudents</span>
+        </div>
+    </div>
+</div>

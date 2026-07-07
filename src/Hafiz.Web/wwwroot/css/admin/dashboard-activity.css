@@ -1,0 +1,174 @@
+/* ===================================
+   Admin Dashboard — activity feed, gender panel, empty state.
+   Separated from dashboard.css to keep both under 200 lines.
+   =================================== */
+
+/* ── Gender distribution panel ───────────────────────────────── */
+.dashboard-gender-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+}
+
+.dashboard-gender-row + .dashboard-gender-bar {
+  margin-bottom: var(--space-lg);
+}
+
+.dashboard-gender-row .value {
+  font-weight: 700;
+  color: var(--text-dark);
+  font-variant-numeric: tabular-nums;
+}
+
+.dashboard-gender-bar {
+  height: 10px;
+  background: var(--light-gray);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.dashboard-gender-bar .fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width var(--transition-slow);
+}
+
+.dashboard-gender-bar .fill.--male   { background: linear-gradient(90deg, #4a90d9, #2c6fad); }
+.dashboard-gender-bar .fill.--female { background: linear-gradient(90deg, #e07b9a, #c0547d); }
+
+.dashboard-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--space-md);
+  border-top: 1px dashed var(--border-color);
+}
+
+/* ── Empty state (used when there is no recent activity) ─────── */
+.dashboard-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-xl) var(--space-md);
+  color: var(--text-medium);
+  gap: var(--space-sm);
+}
+
+.dashboard-empty-state i { font-size: 2.5rem; color: var(--border-color); }
+.dashboard-empty-state-title { font-size: var(--font-size-base); color: var(--text-dark); font-weight: 600; }
+.dashboard-empty-state-text  { font-size: var(--font-size-sm); color: var(--text-medium); }
+
+/* ── Feed shell: counter, subtitle, load-more footer ─────────── */
+.dashboard-feed .card-header { align-items: center; gap: var(--space-sm); flex-wrap: wrap; }
+.dashboard-feed .card-title  { display: inline-flex; align-items: center; gap: var(--space-sm); }
+.dashboard-feed .card-title i { color: var(--primary-green); }
+
+.dashboard-feed-counter {
+  font-size: var(--font-size-xs);
+  color: var(--dark-green);
+  background: rgba(111, 161, 90, 0.12);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.dashboard-feed-subtitle {
+  font-size: var(--font-size-xs);
+  color: var(--text-medium);
+  margin: 0 0 var(--space-md);
+}
+
+.dashboard-feed-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-md);
+}
+
+.dashboard-load-more {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
+}
+
+.dashboard-load-more[hidden] { display: none; }
+
+/* ── Recent activity feed ────────────────────────────────────── */
+.dashboard-activity {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  max-height: 420px;
+  overflow-y: auto;
+  padding-inline-end: 4px;
+}
+
+.dashboard-activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.dashboard-activity-item:hover {
+  border-color: rgba(111, 161, 90, 0.35);
+  background: rgba(111, 161, 90, 0.04);
+}
+
+.dashboard-activity-icon {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--activity-color, var(--primary-green));
+  background: var(--activity-bg, rgba(111, 161, 90, 0.12));
+  font-size: 1.15rem;
+}
+
+.dashboard-activity-body { flex: 1; min-width: 0; }
+
+.dashboard-activity-title {
+  font-weight: 600;
+  color: var(--text-dark);
+  font-size: var(--font-size-sm);
+  margin-bottom: 2px;
+}
+
+.dashboard-activity-subtitle {
+  color: var(--text-medium);
+  font-size: var(--font-size-xs);
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.dashboard-activity-time {
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  padding-top: 2px;
+}
+
+/* Kind-specific tint variables — set on the item, inherited by icon. */
+.dashboard-activity-item.--memorization { --activity-color: #a67c2e; --activity-bg: rgba(191, 145, 59, 0.14); }
+.dashboard-activity-item.--revision     { --activity-color: #138496; --activity-bg: rgba(23, 162, 184, 0.14); }
+.dashboard-activity-item.--attendance   { --activity-color: #2c6fad; --activity-bg: rgba(74, 144, 217, 0.14); }
+.dashboard-activity-item.--teacher      { --activity-color: #5e3b8a; --activity-bg: rgba(94, 59, 138, 0.16); }
+
+@media (max-width: 480px) {
+  .dashboard-activity-item { padding: var(--space-sm); }
+  .dashboard-activity-icon { width: 32px; height: 32px; min-width: 32px; font-size: 1rem; }
+  .dashboard-activity-time { display: none; }
+}
