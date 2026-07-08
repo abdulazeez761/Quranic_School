@@ -38,11 +38,15 @@
         ["Subtitle"] = "أحدث أوراد الحفظ والمراجعة المُسنَدة اليوم",
         ["HeaderIcon"] = "bx bx-book-heart",
     };
+    var attendanceCounter = Model.ExpectedAttendanceToday > 0
+        ? $"داوم {Model.AttendedToday} من أصل {Model.ExpectedAttendanceToday}"
+        : "لا حلقات مجدولة اليوم";
     var attendanceViewData = new ViewDataDictionary(ViewData)
     {
-        ["Title"] = "حضور اليوم",
+        ["Title"] = "الحضور والغياب",
         ["Subtitle"] = "تسجيل حضور الطلاب والمعلمين في الحلقات",
         ["HeaderIcon"] = "bx bx-user-check",
+        ["CounterText"] = attendanceCounter,
     };
 }
 

@@ -36,11 +36,18 @@ namespace Hafiz.Infrastructure.Services
             var (memPages, memJuz, memAyahs, revPages, revJuz, revAyahs) =
                 await AggregateWirdUnitsAsync(instituteId, period);
             var wirdsPage = await _activityQuery.GetTodaysPageAsync(
-                instituteId, DashboardActivityCategory.Wirds, 0, ActivityPageSize
+                instituteId,
+                DashboardActivityCategory.Wirds,
+                0,
+                ActivityPageSize
             );
             var attendancePage = await _activityQuery.GetTodaysPageAsync(
-                instituteId, DashboardActivityCategory.Attendance, 0, ActivityPageSize
+                instituteId,
+                DashboardActivityCategory.Attendance,
+                0,
+                ActivityPageSize
             );
+            var (expectedToday, attendedToday) = await ComputeTodayAttendanceAsync(instituteId);
 
             return new DashboardStatsDto
             {
@@ -57,7 +64,38 @@ namespace Hafiz.Infrastructure.Services
                 SelectedPeriod = period,
                 WirdsActivity = wirdsPage,
                 AttendanceActivity = attendancePage,
+                ExpectedAttendanceToday = expectedToday,
+                AttendedToday = attendedToday,
             };
+        }
+
+        // دوام اليوم: يعتمد على أيام دوام الحلقة (ClassDays).
+        // المتوقع = مجموع أعداد الطلاب في كل حلقة تدرّس اليوم (حصص لا طلاب فريدين).
+        // الفعلي = سجلات الحضور اليوم بحالة "حاضر" أو "متأخر" ضمن هذه الحلقات.
+        private async Task<(int Expected, int Attended)> ComputeTodayAttendanceAsync(
+            Guid? instituteId
+        )
+        {
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+            var currentDay = (ClassDaysEnum)((int)today.DayOfWeek + 1);
+
+            var classesToday = _context.Classes.Where(c => c.ClassDays.Any(d => d == currentDay));
+            if (instituteId.HasValue)
+                classesToday = classesToday.Where(c => c.InstituteId == instituteId);
+
+            var expected = await classesToday.SumAsync(c => c.Students.Count);
+
+            var attended = await _context
+                .StudentAttendances.Where(a =>
+                    a.Date >= today
+                    && a.Date < tomorrow
+                    && (a.Status == AttendanceStatus.Present || a.Status == AttendanceStatus.Late)
+                    && classesToday.Any(c => c.Id == a.ClassId)
+                )
+                .CountAsync();
+
+            return (expected, attended);
         }
 
         public Task<DashboardActivityPage> GetActivityPageAsync(
@@ -91,11 +129,14 @@ namespace Hafiz.Infrastructure.Services
                     : _context.Classes.AsQueryable()
             ).CountAsync();
 
-        private async Task<(double memPages, double memJuz, int memAyahs,
-                            double revPages, double revJuz, int revAyahs)> AggregateWirdUnitsAsync(
-            Guid? instituteId,
-            DashboardPeriod period
-        )
+        private async Task<(
+            double memPages,
+            double memJuz,
+            int memAyahs,
+            double revPages,
+            double revJuz,
+            int revAyahs
+        )> AggregateWirdUnitsAsync(Guid? instituteId, DashboardPeriod period)
         {
             var wirdsQuery = instituteId.HasValue
                 ? _context.WirdAssignments.Where(w =>
@@ -128,8 +169,12 @@ namespace Hafiz.Infrastructure.Services
                 })
                 .ToListAsync();
 
-            double memPages = 0, memJuz = 0, revPages = 0, revJuz = 0;
-            int memAyahs = 0, revAyahs = 0;
+            double memPages = 0,
+                memJuz = 0,
+                revPages = 0,
+                revJuz = 0;
+            int memAyahs = 0,
+                revAyahs = 0;
 
             foreach (var w in assignments)
             {

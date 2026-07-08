@@ -4,6 +4,7 @@
     var title = ViewData["Title"] as string ?? "النشاط اليوم";
     var subtitle = ViewData["Subtitle"] as string ?? "أحداث اليوم في المركز";
     var headerIcon = ViewData["HeaderIcon"] as string ?? "bx bx-time";
+    var counterText = ViewData["CounterText"] as string;
     var categoryValue = ((int)Model.Category).ToString();
 }
 
@@ -16,7 +17,7 @@
             @title
         </h3>
         <span class="dashboard-feed-counter" data-activity-counter>
-            @Model.TotalToday حدث اليوم
+            @(counterText ?? $"{Model.TotalToday} حدث اليوم")
         </span>
     </div>
     <div class="card-body">

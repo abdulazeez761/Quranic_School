@@ -65,5 +65,18 @@ namespace Hafiz.DTOs.Dashboard
 
         /// <summary>الصفحة الأولى من حضور اليوم (طلاب + معلمين).</summary>
         public DashboardActivityPage AttendanceActivity { get; set; } = new();
+
+        // ── دوام اليوم (per-slot: طالب × حلقة تدرّس اليوم) ─────────────────────
+
+        /// <summary>
+        /// إجمالي الحضور المتوقع اليوم = مجموع أعداد الطلاب في الحلقات التي تدرّس اليوم
+        /// حسب ايام الدوام. يُحسب لكل حصة على حدة (الطالب المسجّل في حلقتين تدرّسان اليوم يُحسب مرتين).
+        /// </summary>
+        public int ExpectedAttendanceToday { get; set; }
+
+        /// <summary>
+        /// عدد الحضور الفعلي المسجّل اليوم (حاضر + متأخر) في الحلقات التي تدرّس اليوم.
+        /// </summary>
+        public int AttendedToday { get; set; }
     }
 }
