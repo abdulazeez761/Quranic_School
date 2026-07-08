@@ -17,6 +17,8 @@
         <span id="form-error" class="text-danger" style="display:none"></span>
         <form id="wirdAssignmentForm" asp-action="AssignWird" asp-controller="Student" method="post">
             <input type="hidden" id="StudentId" asp-for="StudentId" />
+            @* Round-trips the current class; the server re-reads the cookie authoritatively. *@
+            <input type="hidden" id="ClassId" asp-for="ClassId" value="@Context.Request.Cookies["selectedClassId"]" />
 
             <div class="modal-body">
                 <!-- Assignment Type -->

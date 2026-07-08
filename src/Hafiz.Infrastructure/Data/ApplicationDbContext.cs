@@ -119,6 +119,15 @@ public class ApplicationDbContext : DbContext
             .WithMany(c => c.wirds)
             .HasForeignKey(w => w.StudentId);
 
+        // Wird belongs to the class it was assigned within. SetNull on delete so
+        // deleting a class doesn't wipe historical wirds — they just lose the class link.
+        modelBuilder
+            .Entity<WirdAssignment>()
+            .HasOne(w => w.Class)
+            .WithMany()
+            .HasForeignKey(w => w.ClassId)
+            .OnDelete(DeleteBehavior.SetNull);
+
         //parent --> student
         modelBuilder
             .Entity<Parent>()

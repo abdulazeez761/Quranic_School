@@ -62,16 +62,30 @@ namespace Hafiz.Repositories
             var from = fromDate.Date;
             var toExclusive = toDate.Date.AddDays(1);
 
-            var wirds = await _context
-                .WirdAssignments.Include(w => w.Student)
-                .Include(w => w.Student.StudentInfo)
-                .Where(wird => wird.Student.Classes.Any(cl => cl.Id == classID))
+            var wirds = await FilterByClass(
+                    _context
+                        .WirdAssignments.Include(w => w.Student)
+                        .Include(w => w.Student.StudentInfo),
+                    classID
+                )
                 .Where(w => w.AssignedDate >= from && w.AssignedDate < toExclusive)
                 .OrderByDescending(w => w.AssignedDate)
                 .ToListAsync();
 
             return wirds;
         }
+
+        // A wird belongs to the class it was assigned within (WirdAssignment.ClassId).
+        // Legacy rows created before class-scoping fall back to student→class membership so
+        // they keep appearing under the student's class(es) until backfilled/edited.
+        private static IQueryable<WirdAssignment> FilterByClass(
+            IQueryable<WirdAssignment> query,
+            Guid classId
+        ) =>
+            query.Where(w =>
+                w.ClassId == classId
+                || (w.ClassId == null && w.Student.Classes.Any(c => c.Id == classId))
+            );
 
         public Task<List<WirdAssignment>> GetWirdAssignmentsByStudentIdAsync(Guid studentID)
         {
@@ -156,7 +170,7 @@ namespace Hafiz.Repositories
                 query = query.Where(w => w.Student.StudentInfo.InstituteId == filter.InstituteId);
 
             if (filter.ClassId.HasValue)
-                query = query.Where(w => w.Student.Classes.Any(c => c.Id == filter.ClassId));
+                query = FilterByClass(query, filter.ClassId.Value);
 
             if (filter.StudentId.HasValue)
                 query = query.Where(w => w.StudentId == filter.StudentId);

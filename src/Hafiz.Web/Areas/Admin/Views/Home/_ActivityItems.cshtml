@@ -4,42 +4,44 @@
 @functions {
     static (string modifier, string icon) StyleFor(DashboardActivityKind kind) => kind switch
     {
-        DashboardActivityKind.WirdMemorization  => ("--memorization", "bx bx-book-heart"),
-        DashboardActivityKind.WirdRevision      => ("--revision",     "bx bx-rotate-left"),
-        DashboardActivityKind.StudentAttendance => ("--attendance",   "bx bx-user-check"),
-        DashboardActivityKind.TeacherAttendance => ("--teacher",      "bx bx-chalkboard"),
+        DashboardActivityKind.WirdMemorization => ("--memorization", "bx bx-book-heart"),
+        DashboardActivityKind.WirdRevision => ("--revision", "bx bx-rotate-left"),
+        DashboardActivityKind.StudentAttendance => ("--attendance", "bx bx-user-check"),
+        DashboardActivityKind.TeacherAttendance => ("--teacher", "bx bx-chalkboard"),
         _ => ("", "bx bx-time"),
     };
-
+    string StyleForTeacherAbsence(DashboardActivityKind kind, bool isAbsent) => kind switch
+    {
+        DashboardActivityKind.TeacherAttendance => isAbsent ? "--teacher-absent" : "--teacher",
+        _ => "",
+    };
     static string FormatTimestamp(DateTime ts)
     {
         var diff = DateTime.Now - ts;
         if (diff.TotalMinutes < 1) return "الآن";
         if (diff.TotalMinutes < 60) return $"منذ {(int)diff.TotalMinutes} د";
-        if (diff.TotalHours < 24)   return $"منذ {(int)diff.TotalHours} س";
+        if (diff.TotalHours < 24) return $"منذ {(int)diff.TotalHours} س";
         return ts.ToString("HH:mm");
     }
 }
 
 @* عناصر هذه الدفعة — تُلحق بواسطة JS بعد كل نداء AJAX. *@
-@foreach (var item in Model.Items)
+@foreach (DashboardActivityItem item in Model.Items)
 {
     var (mod, icon) = StyleFor(item.Kind);
+
     <div class="dashboard-activity-item @mod">
         <div class="dashboard-activity-icon"><i class='@icon'></i></div>
         <div class="dashboard-activity-body">
             <div class="dashboard-activity-title">@item.Title</div>
             <div class="dashboard-activity-subtitle">@item.Subtitle</div>
         </div>
-        <span class="dashboard-activity-time"
-              title="@item.Timestamp.ToString("yyyy/MM/dd HH:mm")">
+        <span class="dashboard-activity-time" title="@item.Timestamp.ToString("yyyy/MM/dd HH:mm")">
             @FormatTimestamp(item.Timestamp)
         </span>
     </div>
 }
 
 @* حاوية بيانات وحيدة تنقل حالة "تحميل المزيد" إلى الـJS بعد ردّ AJAX. *@
-<div class="dashboard-activity-state"
-     data-has-more="@(Model.HasMore ? "true" : "false")"
-     data-next-page="@Model.NextPage"
-     hidden></div>
+<div class="dashboard-activity-state" data-has-more="@(Model.HasMore ? "true" : "false")"
+     data-next-page="@Model.NextPage" hidden></div>

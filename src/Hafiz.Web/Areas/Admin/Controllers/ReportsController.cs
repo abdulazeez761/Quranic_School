@@ -91,8 +91,17 @@ namespace Hafiz.Areas.Admin.Controllers
                                 )
                                 .Select(a => (AttendanceStatus?)a.Status)
                                 .FirstOrDefault(),
+                            // Only wirds assigned within THIS class. Legacy wirds with
+                            // ClassId == null fall back to student→class membership so
+                            // pre-scoping history still shows up somewhere.
                             Wirds = s
-                                .wirds.Where(w => w.AssignedDate.Date == selectedDate)
+                                .wirds.Where(w =>
+                                    w.AssignedDate.Date == selectedDate
+                                    && (
+                                        w.ClassId == c.Id
+                                        || (w.ClassId == null && s.Classes.Any(sc => sc.Id == c.Id))
+                                    )
+                                )
                                 .OrderBy(w => w.Type)
                                 .ToList(),
                         })

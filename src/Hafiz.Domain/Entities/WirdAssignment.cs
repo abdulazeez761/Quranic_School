@@ -13,6 +13,12 @@ namespace Hafiz.Models
         [ForeignKey("Student")]
         public Guid StudentId { get; set; }
 
+        // The class this wird was assigned within. Nullable so legacy rows created before
+        // multi-class enrollment kept working; new wirds are stamped with the teacher's
+        // currently selected class so they don't leak into the student's other classes.
+        [ForeignKey("Class")]
+        public Guid? ClassId { get; set; }
+
         [Required(ErrorMessage = "Assignment Type is required.")]
         public AssignmentType Type { get; set; }
 
@@ -68,5 +74,7 @@ namespace Hafiz.Models
         public AssignmentStatus Status { get; set; }
 
         public Student Student { get; set; }
+
+        public Class? Class { get; set; }
     }
 }

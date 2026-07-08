@@ -109,8 +109,17 @@ namespace Hafiz.Areas.Teacher.Controllers
             }
         }
 
+        [HttpPost]
         public async Task<IActionResult> AssignWird(WirdAssignment model)
         {
+            // Bind the wird to the teacher's currently selected class. We trust the
+            // cookie over the form field so a tampered ClassId can't pin the wird to
+            // a class the teacher isn't scoped to.
+            if (Guid.TryParse(Request.Cookies["selectedClassId"], out var classId))
+                model.ClassId = classId;
+            else
+                model.ClassId = null;
+
             (bool isAdded, string message) = await _wirdService.AddWirdAsync(model);
 
             if (isAdded)
