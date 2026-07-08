@@ -160,8 +160,15 @@ namespace Hafiz.Infrastructure.Services.Dashboard
             {
                 Kind = DashboardActivityKind.StudentAttendance,
                 Title = "تسجيل حضور طلاب",
-                Subtitle =
-                    $"حلقة {r.Name} — حاضر: {r.Present} / غائب: {r.Absent}  / معذور: {r.Excused} / متأخر: {r.Late} / من اصل: {r.total}",
+                Subtitle = $"حلقة {r.Name}",
+                Counts = new AttendanceCountsSummary
+                {
+                    Present = r.Present,
+                    Absent = r.Absent,
+                    Excused = r.Excused,
+                    Late = r.Late,
+                    Total = r.total,
+                },
                 Timestamp = r.Date,
             });
         }
@@ -199,9 +206,9 @@ namespace Hafiz.Infrastructure.Services.Dashboard
                 Subtitle = DashboardActivityFormatter.BuildTeacherAttendanceSubtitle(
                     r.First,
                     r.Second,
-                    r.ClassName,
-                    r.Status
+                    r.ClassName
                 ),
+                TeacherStatus = r.Status,
                 Timestamp = r.Date,
             });
         }

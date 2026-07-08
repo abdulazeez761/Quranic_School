@@ -1,4 +1,6 @@
 @using Hafiz.DTOs.Dashboard
+@using Hafiz.Models
+
 @model DashboardActivityPage
 
 @functions {
@@ -10,11 +12,6 @@
         DashboardActivityKind.TeacherAttendance => ("--teacher", "bx bx-chalkboard"),
         _ => ("", "bx bx-time"),
     };
-    string StyleForTeacherAbsence(DashboardActivityKind kind, bool isAbsent) => kind switch
-    {
-        DashboardActivityKind.TeacherAttendance => isAbsent ? "--teacher-absent" : "--teacher",
-        _ => "",
-    };
     static string FormatTimestamp(DateTime ts)
     {
         var diff = DateTime.Now - ts;
@@ -23,6 +20,14 @@
         if (diff.TotalHours < 24) return $"منذ {(int)diff.TotalHours} س";
         return ts.ToString("HH:mm");
     }
+    static (string label, string cssClass) TeacherStatusStyle(AttendanceStatus status) => status switch
+    {
+        AttendanceStatus.Present => ("حاضر", "--present"),
+        AttendanceStatus.Absent  => ("غائب", "--absent"),
+        AttendanceStatus.Late    => ("متأخر", "--late"),
+        AttendanceStatus.Excused => ("بعذر", "--excused"),
+        _ => (status.ToString(), ""),
+    };
 }
 
 @* عناصر هذه الدفعة — تُلحق بواسطة JS بعد كل نداء AJAX. *@
@@ -34,7 +39,24 @@
         <div class="dashboard-activity-icon"><i class='@icon'></i></div>
         <div class="dashboard-activity-body">
             <div class="dashboard-activity-title">@item.Title</div>
-            <div class="dashboard-activity-subtitle">@item.Subtitle</div>
+            <div class="dashboard-activity-subtitle">
+                <span>@item.Subtitle</span>
+                @if (item.Counts is { } c)
+                {
+                    <span class="attendance-counts">
+                        <span class="attendance-count --present" title="حاضر">حاضر: @c.Present</span>
+                        <span class="attendance-count --absent"  title="غائب">غائب: @c.Absent</span>
+                        <span class="attendance-count --excused" title="معذور">معذور: @c.Excused</span>
+                        <span class="attendance-count --late"    title="متأخر">متأخر: @c.Late</span>
+                        <span class="attendance-count --total"   title="إجمالي طلاب الحلقة">من أصل: @c.Total</span>
+                    </span>
+                }
+                @if (item.TeacherStatus is { } s)
+                {
+                    var (label, css) = TeacherStatusStyle(s);
+                    <span class="attendance-count @css">@label</span>
+                }
+            </div>
         </div>
         <span class="dashboard-activity-time" title="@item.Timestamp.ToString("yyyy/MM/dd HH:mm")">
             @FormatTimestamp(item.Timestamp)

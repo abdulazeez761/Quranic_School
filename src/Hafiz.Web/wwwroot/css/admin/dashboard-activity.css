@@ -151,7 +151,37 @@
   font-size: var(--font-size-xs);
   line-height: 1.4;
   word-break: break-word;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs) var(--space-sm);
 }
+
+/* Attendance counts — colored inline chips so حاضر/غائب pop for the admin. */
+.attendance-counts {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  align-items: center;
+}
+
+.attendance-count {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.attendance-count.--present { color: var(--success); background: rgba(40, 167, 69, 0.14); }
+.attendance-count.--absent  { color: var(--danger);  background: rgba(220, 53, 69, 0.16); }
+.attendance-count.--late    { color: #b48200;        background: rgba(255, 193, 7, 0.20); }
+.attendance-count.--excused { color: var(--text-medium); background: rgba(0, 0, 0, 0.06); }
+.attendance-count.--total   { color: var(--text-dark); background: var(--light-gray); }
 
 .dashboard-activity-time {
   color: var(--text-muted);

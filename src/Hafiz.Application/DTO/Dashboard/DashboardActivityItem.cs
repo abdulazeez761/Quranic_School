@@ -1,4 +1,5 @@
 using System;
+using Hafiz.Models;
 
 namespace Hafiz.DTOs.Dashboard
 {
@@ -21,6 +22,16 @@ namespace Hafiz.DTOs.Dashboard
         Attendance = 1,
     }
 
+    /// <summary>ملخّص أعداد الحضور لصف واحد في يوم واحد — يُلوَّن في الواجهة لجذب الانتباه.</summary>
+    public sealed class AttendanceCountsSummary
+    {
+        public int Present { get; init; }
+        public int Absent { get; init; }
+        public int Excused { get; init; }
+        public int Late { get; init; }
+        public int Total { get; init; }
+    }
+
     /// <summary>عنصر نشاط واحد يظهر ضمن قائمة النشاطات على لوحة الإدارة.</summary>
     public sealed class DashboardActivityItem
     {
@@ -28,5 +39,11 @@ namespace Hafiz.DTOs.Dashboard
         public string Title { get; init; } = string.Empty;
         public string Subtitle { get; init; } = string.Empty;
         public DateTime Timestamp { get; init; }
+
+        /// <summary>يُعبَّأ فقط لعناصر حضور الطلاب — تُعرض أرقامه بألوان دلالية.</summary>
+        public AttendanceCountsSummary? Counts { get; init; }
+
+        /// <summary>يُعبَّأ فقط لعناصر حضور المعلم — تُعرض حالته بلون دلالي.</summary>
+        public AttendanceStatus? TeacherStatus { get; init; }
     }
 }

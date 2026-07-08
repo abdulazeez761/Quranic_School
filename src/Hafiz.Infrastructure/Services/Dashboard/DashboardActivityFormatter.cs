@@ -35,25 +35,15 @@ namespace Hafiz.Infrastructure.Services.Dashboard
             return $"{head} — {pretty} {unitLabel}";
         }
 
+        // حالة المعلم تُعرض في الواجهة كشارة ملوّنة، لذا لم تعد تُدرج ضمن النص هنا.
         public static string BuildTeacherAttendanceSubtitle(
             string first,
             string second,
-            string className,
-            AttendanceStatus status
+            string className
         )
         {
             var teacherName = $"{first} {second}".Trim();
-            return $"{teacherName} — حلقة {className} ({FormatStatus(status)})";
+            return $"{teacherName} — حلقة {className}";
         }
-
-        private static string FormatStatus(AttendanceStatus status) =>
-            status switch
-            {
-                AttendanceStatus.Present => "حاضر",
-                AttendanceStatus.Absent => "غائب",
-                AttendanceStatus.Late => "متأخر",
-                AttendanceStatus.Excused => "بعذر",
-                _ => status.ToString(),
-            };
     }
 }
