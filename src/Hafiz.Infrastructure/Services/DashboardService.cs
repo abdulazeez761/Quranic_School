@@ -48,7 +48,8 @@ namespace Hafiz.Infrastructure.Services
                 ActivityPageSize
             );
             var (expectedToday, attendedToday) = await ComputeTodayAttendanceAsync(instituteId);
-
+            var (expectedTeachersToday, attendedTeachersToday) =
+                await ComputeTodayTeacherAttendanceAsync(instituteId);
             return new DashboardStatsDto
             {
                 CirclesCount = circlesCount,
@@ -66,6 +67,8 @@ namespace Hafiz.Infrastructure.Services
                 AttendanceActivity = attendancePage,
                 ExpectedAttendanceToday = expectedToday,
                 AttendedToday = attendedToday,
+                ExpectedTeachersToday = expectedTeachersToday,
+                AttendedTeachersToday = attendedTeachersToday,
             };
         }
 
@@ -80,7 +83,9 @@ namespace Hafiz.Infrastructure.Services
             var tomorrow = today.AddDays(1);
             var currentDay = (ClassDaysEnum)((int)today.DayOfWeek + 1);
 
-            var classesToday = _context.Classes.Where(c => c.ClassDays.Any(d => d == currentDay));
+            var classesToday = _context
+                .Classes.Where(c => c.ClassDays.Any(d => d == currentDay))
+                .AsNoTracking();
             if (instituteId.HasValue)
                 classesToday = classesToday.Where(c => c.InstituteId == instituteId);
 
@@ -93,8 +98,36 @@ namespace Hafiz.Infrastructure.Services
                     && (a.Status == AttendanceStatus.Present || a.Status == AttendanceStatus.Late)
                     && classesToday.Any(c => c.Id == a.ClassId)
                 )
+                .AsNoTracking()
                 .CountAsync();
 
+            return (expected, attended);
+        }
+
+        private async Task<(int Expected, int Attended)> ComputeTodayTeacherAttendanceAsync(
+            Guid? instituteId
+        )
+        {
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+            var currentDay = (ClassDaysEnum)((int)today.DayOfWeek + 1);
+            IQueryable<Teacher>? teachersToday = _context
+                .Teachers.Where(t => t.Classes.Any(c => c.ClassDays.Any(d => d == currentDay)))
+                .AsNoTracking();
+
+            if (instituteId.HasValue)
+                teachersToday = teachersToday.Where(t => t.TeacherInfo.InstituteId == instituteId);
+
+            var expected = await teachersToday.CountAsync();
+            var attended = await _context
+                .teacherAttendances.Where(a =>
+                    a.Date >= today
+                    && a.Date < tomorrow
+                    && (a.Status == AttendanceStatus.Present || a.Status == AttendanceStatus.Late)
+                    && teachersToday.Any(t => t.Attendances.Any(att => att.Id == a.Id))
+                )
+                .AsNoTracking()
+                .CountAsync();
             return (expected, attended);
         }
 

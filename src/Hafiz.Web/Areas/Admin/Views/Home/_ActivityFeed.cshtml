@@ -8,9 +8,7 @@
     var categoryValue = ((int)Model.Category).ToString();
 }
 
-<div class="card card-standard dashboard-feed"
-     data-activity-feed
-     data-category="@categoryValue">
+<div class="card card-standard dashboard-feed" data-activity-feed data-category="@categoryValue">
     <div class="card-header">
         <h3 class="card-title">
             <i class='@headerIcon'></i>
@@ -19,6 +17,25 @@
         <span class="dashboard-feed-counter" data-activity-counter>
             @(counterText ?? $"{Model.TotalToday} حدث اليوم")
         </span>
+        @if (categoryValue == "1")
+        {
+            <p style="
+                font-family: system-ui, -apple-system, sans-serif;
+                font-size: 12px;
+                color: #4a5568;
+                background-color: #f7fafc;
+                border-right: 4px solid #3182ce;
+                padding: 8px 12px;
+                margin: 10px 0;
+                border-radius: 4px 0 0 4px;
+                direction: rtl;
+                text-align: right;
+                line-height: 1.6;
+                display: inline-block;
+                ">
+                <strong>ملاحظة:</strong> يتم حساب فقط من دوامه اليوم
+            </p>
+        }
     </div>
     <div class="card-body">
         <p class="dashboard-feed-subtitle">@subtitle</p>
@@ -38,11 +55,8 @@
             </div>
 
             <div class="dashboard-feed-footer" data-activity-footer>
-                <button type="button"
-                        class="btn btn-outline btn-sm dashboard-load-more"
-                        data-activity-load-more
-                        data-next-page="@Model.NextPage"
-                        @(Model.HasMore ? "" : "hidden")>
+                <button type="button" class="btn btn-outline btn-sm dashboard-load-more" data-activity-load-more
+                        data-next-page="@Model.NextPage" @(Model.HasMore ? "" : "hidden")>
                     <i class='bx bx-chevron-down'></i>
                     <span>تحميل المزيد</span>
                 </button>

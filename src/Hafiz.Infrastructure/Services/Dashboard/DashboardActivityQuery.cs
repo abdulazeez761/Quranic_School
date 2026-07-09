@@ -82,12 +82,12 @@ namespace Hafiz.Infrastructure.Services.Dashboard
                     // The class the wird was assigned within. Legacy rows without a
                     // ClassId fall back to any of the student's classes so the feed row
                     // still has a class label.
-                    ClassName =
-                        w.Class != null
-                            ? w.Class.Name
-                            : w.Student.Classes.OrderBy(c => c.Name)
-                                .Select(c => c.Name)
-                                .FirstOrDefault(),
+                    ClassName = w.Class != null
+                        ? w.Class.Name
+                        : w
+                            .Student.Classes.OrderBy(c => c.Name)
+                            .Select(c => c.Name)
+                            .FirstOrDefault(),
                 })
                 .ToListAsync();
 

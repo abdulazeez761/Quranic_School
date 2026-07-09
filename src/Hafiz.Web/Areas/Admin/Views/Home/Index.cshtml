@@ -38,9 +38,9 @@
         ["Subtitle"] = "أحدث أوراد الحفظ والمراجعة المُسنَدة اليوم",
         ["HeaderIcon"] = "bx bx-book-heart",
     };
-    var attendanceCounter = Model.ExpectedAttendanceToday > 0
-        ? $"داوم {Model.AttendedToday} من أصل {Model.ExpectedAttendanceToday}"
-        : "لا حلقات مجدولة اليوم";
+    var attendanceCounter = Model.ExpectedAttendanceToday > 0 ?
+               $"📊 الطلاب: {Model.AttendedToday} من {Model.ExpectedAttendanceToday} | المعلمون: {Model.AttendedTeachersToday} من {Model.ExpectedTeachersToday}" :
+                 "لا حلقات مجدولة اليوم";
     var attendanceViewData = new ViewDataDictionary(ViewData)
     {
         ["Title"] = "الحضور والغياب",

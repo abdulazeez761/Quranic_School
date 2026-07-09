@@ -78,5 +78,16 @@ namespace Hafiz.DTOs.Dashboard
         /// عدد الحضور الفعلي المسجّل اليوم (حاضر + متأخر) في الحلقات التي تدرّس اليوم.
         /// </summary>
         public int AttendedToday { get; set; }
+
+        /// <summary>
+        /// إجمالي الحضور المتوقع للمعلمين اليوم = مجموع أعداد المعلمين في الحلقات التي تدرّس اليوم
+        /// حسب ايام الدوام. يُحسب لكل حصة على حدة (المعلم المسجّل في حلقتين تدرّسان اليوم يُحسب مرتين).
+        /// </summary>
+        public int ExpectedTeachersToday { get; set; }
+
+        /// <summary>
+        /// عدد الحضور الفعلي للمعلمين المسجّل اليوم (حاضر + متأخر) في الحلقات التي تدرّس اليوم.
+        /// </summary>
+        public int AttendedTeachersToday { get; set; }
     }
 }
