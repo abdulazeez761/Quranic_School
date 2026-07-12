@@ -9,6 +9,15 @@ $(document).ready(function () {
     dir: 'rtl',
   });
 
+  // Initialize Select2 for parents dropdown
+  $('.select2-parents').select2({
+    placeholder: "",
+    allowClear: true,
+    width: '100%',
+    language: 'ar',
+    dir: 'rtl',
+  });
+
   // Form submission with loading state
   $('#studentForm').on('submit', function () {
     const submitBtn = document.getElementById('submitBtn');

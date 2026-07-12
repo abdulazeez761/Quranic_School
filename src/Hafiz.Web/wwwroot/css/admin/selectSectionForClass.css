@@ -1,35 +1,207 @@
-/* Select2 custom styles */
+/* ==========================================================================
+   Select2 Premium Styling & Override System
+   ========================================================================== */
+
+/* 1. General Container styling to match premium form-inputs */
 .select2-container--default .select2-selection {
-  background-color: var(--white);
-  border: 1px solid var(--secondary-green);
-  border-radius: 0.5rem;
-  min-height: 45px;
-  padding: 0.25rem 0.5rem;
-  box-shadow: var(--shadow);
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  background-color: var(--white) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius-md) !important;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast) !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
-.select2-container--default .select2-selection:focus,
+/* Hover and Focus States */
 .select2-container--default .select2-selection:hover {
-  border-color: var(--primary-green);
-  box-shadow: var(--shadow-hover);
+  border-color: var(--secondary-green) !important;
 }
 
+.select2-container--default.select2-container--focus .select2-selection,
+.select2-container--default.select2-container--open .select2-selection {
+  border-color: var(--primary-green) !important;
+  box-shadow: 0 0 0 3px rgba(111, 161, 90, 0.15) !important;
+}
+
+/* 2. Multiple Selection Choices Styling */
+.select2-container--default .select2-selection--multiple {
+  min-height: 45px !important;
+  padding: 0.25rem 0.5rem !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: var(--space-xs) !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__rendered {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: var(--space-xs) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+}
+
+/* Custom Tag Pill Styling */
 .select2-container--default .select2-selection__choice {
-  background-color: var(--primary-green);
-  color: var(--text-dark);
-  border-radius: 0.25rem;
-  padding: 0 0.5rem;
-  margin-top: 0.25rem;
+  background-color: var(--light-gray) !important;
+  color: var(--text-dark) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: 0.25rem 0.6rem !important;
+  margin: 0 !important;
+  font-size: var(--font-size-sm) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+}
+
+/* Reverse for RTL direction */
+body[dir='rtl'] .select2-container--default .select2-selection__choice {
+  flex-direction: row-reverse !important;
 }
 
 .select2-container--default .select2-selection__choice__remove {
-  color: var(--white);
-  margin-right: 0.25rem;
+  color: var(--text-medium) !important;
+  margin: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  font-weight: bold !important;
+  transition: color var(--transition-fast) !important;
 }
 
+.select2-container--default .select2-selection__choice__remove:hover {
+  color: var(--danger) !important;
+  background-color: transparent !important;
+}
+
+/* 3. CRITICAL: Reset the Inline Search Input (fixes layout ruin in multiple select) */
+.select2-container--default .select2-search--inline {
+  display: inline-flex !important;
+  align-items: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.select2-container--default .select2-search--inline .select2-search__field {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  font-family: inherit !important;
+  font-size: var(--font-size-base) !important;
+  height: 30px !important;
+  min-height: auto !important;
+}
+
+/* 4. Single Selection Container Styling */
+.select2-container--default .select2-selection--single {
+  height: 45px !important;
+  padding: 0.5rem var(--space-md) !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  padding: 0 !important;
+  color: var(--text-dark) !important;
+  line-height: normal !important;
+  font-size: var(--font-size-base) !important;
+  width: 100% !important;
+}
+
+body[dir='rtl'] .select2-container--default .select2-selection--single .select2-selection__rendered {
+  text-align: right !important;
+}
+
+/* Arrow position & style */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 100% !important;
+  top: 0 !important;
+  right: var(--space-sm) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+body[dir='rtl'] .select2-container--default .select2-selection--single .select2-selection__arrow {
+  left: var(--space-sm) !important;
+  right: auto !important;
+}
+
+/* 5. Dropdown Menu container */
 .select2-container--default .select2-dropdown {
-  border-radius: 0.5rem;
-  border: 1px solid var(--secondary-green);
-  box-shadow: var(--shadow);
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow-md) !important;
+  background-color: var(--white) !important;
+  overflow: hidden !important;
+  z-index: var(--z-dropdown) !important;
+}
+
+/* Dropdown Search Box container */
+.select2-container--default .select2-search--dropdown {
+  padding: var(--space-sm) !important;
+  background-color: var(--white) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+/* 6. Dropdown Search Box Input Styling (to match premium form inputs) */
+.select2-container--default .select2-search--dropdown .select2-search__field {
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: var(--space-xs) var(--space-sm) !important;
+  background: var(--white) !important;
+  color: var(--text-dark) !important;
+  font-family: inherit !important;
+  font-size: var(--font-size-sm) !important;
+  box-shadow: none !important;
+  outline: none !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast) !important;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field:focus {
+  border-color: var(--primary-green) !important;
+  box-shadow: 0 0 0 3px rgba(111, 161, 90, 0.15) !important;
+}
+
+/* 7. Dropdown Results & Option Styling */
+.select2-container--default .select2-results > .select2-results__options {
+  max-height: 250px !important;
+}
+
+.select2-container--default .select2-results__option {
+  padding: var(--space-sm) var(--space-md) !important;
+  font-size: var(--font-size-sm) !important;
+  color: var(--text-dark) !important;
+  transition: background-color var(--transition-fast), color var(--transition-fast) !important;
+}
+
+/* Highlighted & Hovered Options */
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+  background-color: var(--primary-green) !important;
+  color: var(--white) !important;
+}
+
+/* Selected Option style in list */
+.select2-container--default .select2-results__option[aria-selected="true"] {
+  background-color: var(--light-gray) !important;
+  color: var(--text-dark) !important;
+}
+
+/* Clear icon styling */
+.select2-container--default .select2-selection--clear {
+  margin-right: var(--space-sm) !important;
+  color: var(--text-muted) !important;
+  font-size: 1.1rem !important;
+}
+
+body[dir='rtl'] .select2-container--default .select2-selection--clear {
+  margin-left: var(--space-sm) !important;
+  margin-right: 0 !important;
 }

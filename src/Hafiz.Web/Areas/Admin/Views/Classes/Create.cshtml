@@ -198,30 +198,32 @@
     }
 
     <script>
-        $(document).ready(function () {
-            // Initialize Select2 for Teachers
-            $('.select2-teachers').select2({
-                placeholder: "@Localizer["SelectTeachers"]",
-                allowClear: true,
-                width: '100%',
-                language: {
-                    noResults: function () {
-                        return "@Localizer["NoResults"]";
-                    }
-                }
-            });
 
-            // Initialize Select2 for Students
-            $('.select2-students').select2({
-                placeholder: "@Localizer["SelectStudents"]",
-                allowClear: true,
-                width: '100%',
-                language: {
-                    noResults: function () {
-                        return "@Localizer["NoResults"]";
-                    }
-                }
-            });
+        $(document).ready(function () {
+        // Initialize Select2 for Teachers
+        $('.select2-teachers').select2({
+        placeholder: "@Localizer["SelectTeachers"]",
+        allowClear: true,
+        minimumResultsForSearch: 0 ,
+        width: '100%',
+        language: {
+        noResults: function () {
+        return "@Localizer["NoResults"]";
+        }
+        }
+        });
+
+        // Initialize Select2 for Students
+        $('.select2-students').select2({
+        placeholder: "@Localizer["SelectStudents"]",
+        allowClear: true,
+        width: '100%',
+        language: {
+        noResults: function () {
+        return "@Localizer["NoResults"]";
+        }
+        }
+        });
         });
     </script>
 }

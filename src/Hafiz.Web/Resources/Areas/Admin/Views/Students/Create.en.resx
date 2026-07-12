@@ -316,4 +316,16 @@
     <comment>Instruction 6</comment>
   </data>
   
+  <data name="Parent" xml:space="preserve">
+    <value>Student's Parent</value>
+    <comment/>
+  </data>
+  <data name="SelectParent" xml:space="preserve">
+    <value>Select Student's Parent</value>
+    <comment/>
+  </data>
+  <data name="ParentHelper" xml:space="preserve">
+    <value>Chose the parent so he can check the student progress</value>
+    <comment/>
+  </data>
 </root>

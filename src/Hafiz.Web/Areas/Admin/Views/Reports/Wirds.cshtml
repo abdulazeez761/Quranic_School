@@ -250,7 +250,7 @@
                                            class="fw-medium">@s.FullName</a>
                                     </td>
                                     <td data-label="@Localizer["Class"]">@(string.IsNullOrWhiteSpace(s.ClassName) ?
-                                                                                                                                                                                                                                                                                                                                                                                                                                                Localizer["NoClass"].Value : s.ClassName)</td>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Localizer["NoClass"].Value : s.ClassName)</td>
                                         <td data-label="@Localizer["TotalWirds"]">@s.TotalWirds</td>
                                         <td data-label="@Localizer["Completed"]">@s.CompletedWirds</td>
                                         <td data-label="@Localizer["CompletionRate"]">@s.CompletionRate%</td>
@@ -293,7 +293,8 @@
                             <div class="wr-mcard wr-detail-row" data-search="@($"{d.StudentName} {d.ClassName} {d.Description}")">
                                 <div class="wr-mcard-head">
                                     <div class="wr-mcard-title">
-                                        <a asp-controller="Students" asp-action="Details" asp-route-id="@d.StudentId" class="wr-mcard-name">@d.StudentName</a>
+                                        <a asp-controller="Students" asp-action="Details" asp-route-id="@d.StudentId"
+                                           class="wr-mcard-name">@d.StudentName</a>
                                         @if (!string.IsNullOrWhiteSpace(d.ClassName))
                                         {
                                             <span class="wr-mcard-sep">·</span>
@@ -324,121 +325,124 @@
                                     </div>
                                     <div class="wr-mcard-stat wr-mcard-desc">
                                         <span class="wr-mcard-label">@Localizer["DescriptionCol"]</span>
-                                        <span class="wr-mcard-value">@(string.IsNullOrEmpty(d.Description) ? "—" : d.Description)</span>
-                                        @if (d.Note is { Length: > 0 })
+                                        <span class="wr-mcard-value">@(string.IsNullOrEmpty(d.Description) ? "—" :
+                                                                            d.Description)</span>
+                                            @if (d.Note is { Length: > 0 })
+                                            {
+                                                <span class="wr-note-inline">
+                                                    <i class='bx bx-note' style="color:#9c27b0;"></i>
+                                                    <span class="wr-note-text">@d.Note</span>
+                                                </span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="wr-mcard-foot">
+                                        <span class="wr-mcard-label">@Localizer["Grade"]</span>
+                                        <span class="wr-mcard-grade">@(d.Status == AssignmentStatus.notSet ? "—" :
+                                                                        StatusLabel(d.Status))</span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="table-wrapper wr-details-desktop">
+                                <table class="table table-responsive-cards">
+                                    <thead>
+                                        <tr>
+                                            <th>@Localizer["Student"]</th>
+                                            <th>@Localizer["Class"]</th>
+                                            <th>@Localizer["Type"]</th>
+                                            <th>@Localizer["DescriptionCol"]</th>
+                                            <th>@Localizer["Date"]</th>
+                                            <th>@Localizer["Status"]</th>
+                                            <th>@Localizer["Grade"]</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var d in Model.Details)
                                         {
-                                            <span class="wr-note-inline">
-                                                <i class='bx bx-note' style="color:#9c27b0;"></i>
-                                                <span class="wr-note-text">@d.Note</span>
-                                            </span>
+                                            <tr class="wr-detail-row" data-search="@($"{d.StudentName} {d.ClassName} {d.Description}")">
+                                                <td data-label="@Localizer["Student"]" class="wr-card-name">
+                                                    <a asp-controller="Students" asp-action="Details" asp-route-id="@d.StudentId"
+                                                       class="fw-medium">@d.StudentName</a>
+                                                </td>
+                                                <td data-label="@Localizer["Class"]">@(string.IsNullOrWhiteSpace(d.ClassName) ? "—" :
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            d.ClassName)</td>
+                                                    <td data-label="@Localizer["Type"]"><span
+                                                        class="wr-badge wr-type-badge">@TypeLabel(d.Type)</span></td>
+                                                        <td data-label="@Localizer["DescriptionCol"]">
+                                                            <div class="wr-description-container">
+                                                                <span class="wr-description-text">@(string.IsNullOrEmpty(d.Description) ? "—" :
+                                                                                                            d.Description)</span>
+                                                                    @if (d.Note is { Length: > 0 })
+                                                                    {
+                                                                        <span class="wr-note-inline" title="@d.Note">
+                                                                            <i class='bx bx-note' style="color:#9c27b0;"></i>
+                                                                            <span class="wr-note-text">@d.Note</span>
+                                                                        </span>
+                                                                    }
+                                                                </div>
+                                                            </td>
+                                                            <td data-label="@Localizer["Date"]">@d.AssignedDate.ToString("yyyy-MM-dd")</td>
+                                                            <td data-label="@Localizer["Status"]">
+                                                                @if (d.IsUpcoming)
+                                                                {
+                                                                    <span class="wr-badge wr-badge-upcoming">@Localizer["Upcoming"]</span>
+                                                                }
+                                                                else if (d.IsCompleted)
+                                                                {
+                                                                    <span class="wr-badge wr-badge-done">@Localizer["Completed"]</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="wr-badge wr-badge-pending">@Localizer["Pending"]</span>
+                                                                }
+                                                            </td>
+                                                            <td data-label="@Localizer["Grade"]">@(d.Status == AssignmentStatus.notSet ? "—" :
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        StatusLabel(d.Status))</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            <!-- ترقيم الصفحات -->
+                                            <div class="wr-pagination">
+                                                @if (Model.HasPreviousPage)
+                                                {
+                                                    <a asp-action="Wirds" asp-all-route-data="RouteFor(f.Page - 1)" class="btn btn-outline btn-sm">
+                                                        <i class='bx bx-chevron-right'></i> @Localizer["Previous"]
+                                                    </a>
+                                                }
+                                                <span class="text-medium fs-sm">
+                                                    @Localizer["ShowingRange", firstRow, lastRow, Model.TotalCount] — @Localizer["PageOf", f.Page,
+                                                    Math.Max(Model.TotalPages, 1)]
+                                                </span>
+                                                @if (Model.HasNextPage)
+                                                {
+                                                    <a asp-action="Wirds" asp-all-route-data="RouteFor(f.Page + 1)" class="btn btn-outline btn-sm">
+                                                        @Localizer["Next"] <i class='bx bx-chevron-left'></i>
+                                                    </a>
+                                                }
+                                            </div>
                                         }
                                     </div>
                                 </div>
-                                <div class="wr-mcard-foot">
-                                    <span class="wr-mcard-label">@Localizer["Grade"]</span>
-                                    <span class="wr-mcard-grade">@(d.Status == AssignmentStatus.notSet ? "—" : StatusLabel(d.Status))</span>
-                                </div>
                             </div>
-                        }
-                    </div>
 
-                    <div class="table-wrapper wr-details-desktop">
-                        <table class="table table-responsive-cards">
-                            <thead>
-                                <tr>
-                                    <th>@Localizer["Student"]</th>
-                                    <th>@Localizer["Class"]</th>
-                                    <th>@Localizer["Type"]</th>
-                                    <th>@Localizer["DescriptionCol"]</th>
-                                    <th>@Localizer["Date"]</th>
-                                    <th>@Localizer["Status"]</th>
-                                    <th>@Localizer["Grade"]</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var d in Model.Details)
-                                {
-                                    <tr class="wr-detail-row" data-search="@($"{d.StudentName} {d.ClassName} {d.Description}")">
-                                        <td data-label="@Localizer["Student"]" class="wr-card-name">
-                                            <a asp-controller="Students" asp-action="Details" asp-route-id="@d.StudentId"
-                                               class="fw-medium">@d.StudentName</a>
-                                        </td>
-                                        <td data-label="@Localizer["Class"]">@(string.IsNullOrWhiteSpace(d.ClassName) ? "—" :
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        d.ClassName)</td>
-                                            <td data-label="@Localizer["Type"]"><span
-                                                class="wr-badge wr-type-badge">@TypeLabel(d.Type)</span></td>
-                                                <td data-label="@Localizer["DescriptionCol"]">
-                                                    <div class="wr-description-container">
-                                                        <span class="wr-description-text">@(string.IsNullOrEmpty(d.Description) ? "—" : d.Description)</span>
-                                                        @if (d.Note is { Length: > 0 })
-                                                        {
-                                                            <span class="wr-note-inline" title="@d.Note">
-                                                                <i class='bx bx-note' style="color:#9c27b0;"></i>
-                                                                <span class="wr-note-text">@d.Note</span>
-                                                            </span>
-                                                        }
-                                                    </div>
-                                                </td>
-                                                <td data-label="@Localizer["Date"]">@d.AssignedDate.ToString("yyyy-MM-dd")</td>
-                                                <td data-label="@Localizer["Status"]">
-                                                    @if (d.IsUpcoming)
-                                                    {
-                                                        <span class="wr-badge wr-badge-upcoming">@Localizer["Upcoming"]</span>
-                                                    }
-                                                    else if (d.IsCompleted)
-                                                    {
-                                                        <span class="wr-badge wr-badge-done">@Localizer["Completed"]</span>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span class="wr-badge wr-badge-pending">@Localizer["Pending"]</span>
-                                                    }
-                                                </td>
-                                                <td data-label="@Localizer["Grade"]">@(d.Status == AssignmentStatus.notSet ? "—" :
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        StatusLabel(d.Status))</td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
+                            @section Scripts {
+                                <script src="~/js/admin-wird-reports.js" asp-append-version="true"></script>
+                                <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+                                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                                <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+                                <script>
+                                    $(document).ready(function () {
+                                    $('#StudentId').select2({
+                                    placeholder: "@Localizer["AllStudents"]",
+                                    allowClear: true,
+                                    width: '100%' // Ensures it fits your Bootstrap layout properly
 
-                                <!-- ترقيم الصفحات -->
-                                <div class="wr-pagination">
-                                    @if (Model.HasPreviousPage)
-                                    {
-                                        <a asp-action="Wirds" asp-all-route-data="RouteFor(f.Page - 1)" class="btn btn-outline btn-sm">
-                                            <i class='bx bx-chevron-right'></i> @Localizer["Previous"]
-                                        </a>
-                                    }
-                                    <span class="text-medium fs-sm">
-                                        @Localizer["ShowingRange", firstRow, lastRow, Model.TotalCount] — @Localizer["PageOf", f.Page,
-                                        Math.Max(Model.TotalPages, 1)]
-                                    </span>
-                                    @if (Model.HasNextPage)
-                                    {
-                                        <a asp-action="Wirds" asp-all-route-data="RouteFor(f.Page + 1)" class="btn btn-outline btn-sm">
-                                            @Localizer["Next"] <i class='bx bx-chevron-left'></i>
-                                        </a>
-                                    }
-                                </div>
+                                    });
+                                    });
+                                </script>
                             }
-                        </div>
-                    </div>
-                </div>
-
-                @section Scripts {
-                    <script src="~/js/admin-wird-reports.js" asp-append-version="true"></script>
-                    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-                    <script>
-                        $(document).ready(function () {
-                        $('#StudentId').select2({
-                        placeholder: "@Localizer["AllStudents"]",
-                        allowClear: true,
-                        width: '100%' // Ensures it fits your Bootstrap layout properly
-
-                        });
-                        });
-                    </script>
-                }

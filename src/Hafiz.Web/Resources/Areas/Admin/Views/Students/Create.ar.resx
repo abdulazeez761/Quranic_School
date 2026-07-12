@@ -316,4 +316,16 @@
     <comment>إرشاد 6</comment>
   </data>
   
+  <data name="SelectParent" xml:space="preserve">
+    <value>اختر الاب</value>
+    <comment/>
+  </data>
+  <data name="Parent" xml:space="preserve">
+    <value>أب الطالب</value>
+    <comment/>
+  </data>
+  <data name="ParentHelper" xml:space="preserve">
+    <value>اختر اب الطاب حتى يمكنه ان يتابع انجاز ولده</value>
+    <comment/>
+  </data>
 </root>

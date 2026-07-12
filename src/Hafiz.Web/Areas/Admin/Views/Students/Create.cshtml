@@ -216,7 +216,7 @@
                     <i class='bx bx-user-circle'></i>
                     @Localizer["Parent"]
                 </label>
-                <select asp-for="ParentId" class="form-select" asp-items="ViewBag.Parents">
+                <select asp-for="ParentId" class="form-select select2-parents" asp-items="ViewBag.Parents">
                     <option value="">@Localizer["SelectParent"]</option>
                 </select>
                 <small class="helper-text">
