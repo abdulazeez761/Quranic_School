@@ -11,7 +11,8 @@ namespace Hafiz.Services.Interfaces
         /// </summary>
         Task<DashboardStatsDto> GetDashboardStatsAsync(
             Guid? instituteId = null,
-            DashboardPeriod period = DashboardPeriod.AllTime
+            DashboardPeriod period = DashboardPeriod.AllTime,
+            DateTime? today = null
         );
 
         /// <summary>

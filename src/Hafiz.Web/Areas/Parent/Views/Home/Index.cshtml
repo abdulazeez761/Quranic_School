@@ -27,7 +27,7 @@ List<Hafiz.Models.Student>();
             </div>
             <div class="welcome-date">
                 <i class='bx bx-calendar'></i>
-                <span>@DateTime.Now.ToString("dddd, dd MMMM yyyy")</span>
+                <span>@TimeZoneHelper.GetUserToday(Context).ToString("dddd, dd MMMM yyyy")</span>
             </div>
         </div>
     </div>

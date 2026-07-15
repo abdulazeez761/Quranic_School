@@ -76,7 +76,7 @@
                                         <span class="badge badge-danger">غير نشط</span>
                                     }
                                 </td>
-                                <td>@institute.CreatedAt.ToString("yyyy/MM/dd")</td>
+                                <td>@institute.CreatedAt.ToUserTime(Context).ToString("yyyy/MM/dd")</td>
                                 <td>
                                     <a asp-area="SuperAdmin" asp-controller="Institutes" asp-action="Details" asp-route-id="@institute.Id" class="btn btn-sm btn-ghost">
                                         <i class='bx bx-show'></i> تفاصيل

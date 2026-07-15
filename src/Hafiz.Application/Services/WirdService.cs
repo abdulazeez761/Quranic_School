@@ -264,7 +264,7 @@ namespace Hafiz.Services
                 WirdId = w.Id,
                 StudentId = w.StudentId,
                 StudentName = StudentFullName(w),
-                ClassName = StudentClasses(w),
+                ClassName = WirdClassName(w),
                 Type = w.Type,
                 Amount = w.Amount,
                 AmountUnit = w.AmountUnit,
@@ -282,10 +282,12 @@ namespace Hafiz.Services
                 ? $"{info.FirstName} {info.SecondName}"
                 : string.Empty;
 
-        private static string StudentClasses(WirdAssignment w) =>
-            w.Student?.Classes is { Count: > 0 } classes
+        // الحلقة المعروضة هي حلقة الورد نفسه؛ الأوراد القديمة بلا ClassId تعود لحلقات الطالب.
+        private static string WirdClassName(WirdAssignment w) =>
+            w.Class is { } wirdClass ? wirdClass.Name
+            : w.Student?.Classes is { Count: > 0 } classes
                 ? string.Join("، ", classes.Select(c => c.Name))
-                : string.Empty;
+            : string.Empty;
 
         /// <summary>يبني وصفاً مقروءاً للورد: نطاق السور إن وُجد، وإلا الكمية والوحدة.</summary>
         private static string BuildDescription(WirdAssignment w)

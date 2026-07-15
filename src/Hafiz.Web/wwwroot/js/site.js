@@ -1,4 +1,4 @@
-﻿if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
       const registration = await navigator.serviceWorker.register('/sw.js');
@@ -33,3 +33,24 @@
     }
   });
 }
+
+// Timezone Cookie Detection
+(function() {
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const cookieName = "UserTimeZone";
+  
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
+    return null;
+  }
+  
+  const existingTimeZone = getCookie(cookieName);
+  if (existingTimeZone !== timeZone) {
+    document.cookie = `${cookieName}=${encodeURIComponent(timeZone)}; path=/; max-age=31536000; SameSite=Lax`;
+    if (existingTimeZone) {
+      window.location.reload();
+    }
+  }
+})();

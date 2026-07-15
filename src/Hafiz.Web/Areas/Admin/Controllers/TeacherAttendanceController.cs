@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Hafiz.DTOs;
 using Hafiz.Models;
 using Hafiz.Services.Interfaces;
+using Hafiz.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -46,11 +47,11 @@ namespace Hafiz.Areas.Admin.Controllers
             if (ViewBag.Classes[0].Value != "all")
                 teachers = await _teacherAttendanceService.GetTeachersByClass(
                     Guid.Parse(ViewBag.Classes[0].Value),
-                    DateTime.Now.Date
+                    TimeZoneHelper.GetUserToday(HttpContext)
                 );
             else
                 teachers = await _teacherAttendanceService.GetAllTeachersByDateAndInstitute(
-                    DateTime.Now.Date,
+                    TimeZoneHelper.GetUserToday(HttpContext),
                     instituteId.Value
                 );
 

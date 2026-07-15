@@ -156,7 +156,11 @@
                         </div>
                         <div class="record-info-row">
                             <i class='bx bx-time-five'></i>
-                            <span class="record-info-value">@cl.ClassTime.ToString("HH:mm")</span>
+                            <span class="record-info-value">@cl.ClassTime.ToString("hh:mm tt")</span>
+                        </div>
+                        <div class="record-info-row">
+                            <i class='bx bx-group'></i>
+                            <span class="record-info-value">@cl.Students.Count @Localizer["Students"]</span>
                         </div>
                     </div>
 
@@ -193,7 +197,8 @@
     <!-- Table Footer -->
     <div class="table-footer">
         <div class="table-info">
-            @Localizer["ShowingResults"] <strong><span id="visibleCount">@(Model?.Count() ?? 0)</span></strong> @Localizer["Of"]
+            @Localizer["ShowingResults"] <strong><span id="visibleCount">@(Model?.Count() ?? 0)</span></strong>
+            @Localizer["Of"]
             <strong>@(Model?.Count() ?? 0)</strong> @Localizer["Class"]
         </div>
     </div>

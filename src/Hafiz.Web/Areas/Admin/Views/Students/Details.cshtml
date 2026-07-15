@@ -680,7 +680,7 @@
                                                                     </span>
                                                                     <span class="note-date">
                                                                         <i class='bx bx-time-five'></i>
-                                                                        @note.CreatedAt.ToString("MMM dd, yyyy HH:mm")
+                                                                        @note.CreatedAt.ToUserTime(Context).ToString("MMM dd, yyyy HH:mm")
                                                                     </span>
                                                                 </div>
                                                             </div>

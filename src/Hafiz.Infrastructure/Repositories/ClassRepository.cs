@@ -62,6 +62,7 @@ namespace Hafiz.Repositories
             return await _context
                 .Classes.Include(c => c.Teachers)
                 .ThenInclude(t => t.TeacherInfo)
+                .Include(c => c.Students)
                 .ToListAsync();
         }
 
@@ -131,6 +132,7 @@ namespace Hafiz.Repositories
             return await _context
                 .Classes.Include(c => c.Teachers)
                 .ThenInclude(t => t.TeacherInfo)
+                .Include(c => c.Students)
                 .Where(c => c.InstituteId == instituteId)
                 .ToListAsync();
         }
@@ -143,6 +145,7 @@ namespace Hafiz.Repositories
             return await _context
                 .Classes.Include(c => c.Teachers)
                 .ThenInclude(t => t.TeacherInfo)
+                .Include(c => c.Students)
                 .Where(c =>
                     c.InstituteId == instituteId && c.ClassDays.Any(day => day == workingDays)
                 )

@@ -91,7 +91,7 @@
                         @Localizer["DateOfBirth"]
                     </label>
                     <input asp-for="DateOfBirth" type="date" class="form-input"
-                        max="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        max="@TimeZoneHelper.GetUserToday(Context).ToString("yyyy-MM-dd")" />
                     <span asp-validation-for="DateOfBirth" class="form-feedback form-feedback-invalid"></span>
                 </div>
             </div>

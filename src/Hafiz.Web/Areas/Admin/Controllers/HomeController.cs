@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Hafiz.DTOs.Dashboard;
 using Hafiz.Services.Interfaces;
+using Hafiz.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -39,7 +40,8 @@ namespace Hafiz.Areas.Admin.Controllers
             var instituteId = GetInstituteId();
             DashboardStatsDto stats = await _dashboardService.GetDashboardStatsAsync(
                 instituteId,
-                period
+                period,
+                TimeZoneHelper.GetUserToday(HttpContext)
             );
             return View(stats);
         }

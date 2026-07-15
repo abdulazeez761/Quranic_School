@@ -160,9 +160,10 @@ namespace Hafiz.Services
                     search
                 );
 
-            var unreadNotesCounts = await _parentNoteRepository.GetUnreadNotesCountByStudentIdsAsync(
-                students.Select(s => s.UserId)
-            );
+            var unreadNotesCounts =
+                await _parentNoteRepository.GetUnreadNotesCountByStudentIdsAsync(
+                    students.Select(s => s.UserId)
+                );
 
             var reportRows = new List<StudentReportRow>();
             foreach (var student in students)
@@ -204,9 +205,7 @@ namespace Hafiz.Services
                         MemorizedJuz = juz,
                         ReviewedPages = student.ReviewedPages,
                         TotalWirds = wirdsList.Count,
-                        CompletedWirds = wirdsList.Count(w =>
-                            w.Status != AssignmentStatus.notSet
-                        ),
+                        CompletedWirds = wirdsList.Count(w => w.Status != AssignmentStatus.notSet),
                         AttendanceRate =
                             totalAtt > 0 ? Math.Round((double)presentCount / totalAtt * 100, 1) : 0,
                         TotalAttendance = totalAtt,

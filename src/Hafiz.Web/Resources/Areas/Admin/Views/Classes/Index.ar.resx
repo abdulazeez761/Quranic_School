@@ -142,4 +142,7 @@
   <data name="Gender_female" xml:space="preserve">
     <value>أنثى</value>
   </data>
-</root>
+  <data name="Students" xml:space="preserve">
+    <value>الطلاب</value>
+  </data>
+</root>

@@ -27,12 +27,11 @@ namespace Hafiz.Infrastructure.Services
 
         public async Task<DashboardStatsDto> GetDashboardStatsAsync(
             Guid? instituteId = null,
-            DashboardPeriod period = DashboardPeriod.AllTime
+            DashboardPeriod period = DashboardPeriod.AllTime,
+            DateTime? today = null
         )
         {
-            var teachersCount = await CountTeachersAsync(instituteId);
-            var (maleCount, femaleCount) = await CountStudentsAsync(instituteId);
-            var circlesCount = await CountClassesAsync(instituteId);
+            var counts = await LoadCountsAsync(instituteId, today);
             var (memPages, memJuz, memAyahs, revPages, revJuz, revAyahs) =
                 await AggregateWirdUnitsAsync(instituteId, period);
             var wirdsPage = await _activityQuery.GetTodaysPageAsync(
@@ -47,15 +46,12 @@ namespace Hafiz.Infrastructure.Services
                 0,
                 ActivityPageSize
             );
-            var (expectedToday, attendedToday) = await ComputeTodayAttendanceAsync(instituteId);
-            var (expectedTeachersToday, attendedTeachersToday) =
-                await ComputeTodayTeacherAttendanceAsync(instituteId);
             return new DashboardStatsDto
             {
-                CirclesCount = circlesCount,
-                TeachersCount = teachersCount,
-                MaleStudentsCount = maleCount,
-                FemaleStudentsCount = femaleCount,
+                CirclesCount = counts.Classes,
+                TeachersCount = counts.Teachers,
+                MaleStudentsCount = counts.MaleStudents,
+                FemaleStudentsCount = counts.FemaleStudents,
                 MemorizationPages = Math.Round(memPages, 2),
                 MemorizationJuz = Math.Round(memJuz, 2),
                 MemorizationAyahs = memAyahs,
@@ -65,70 +61,86 @@ namespace Hafiz.Infrastructure.Services
                 SelectedPeriod = period,
                 WirdsActivity = wirdsPage,
                 AttendanceActivity = attendancePage,
-                ExpectedAttendanceToday = expectedToday,
-                AttendedToday = attendedToday,
-                ExpectedTeachersToday = expectedTeachersToday,
-                AttendedTeachersToday = attendedTeachersToday,
+                ExpectedAttendanceToday = counts.ExpectedStudentsToday,
+                AttendedToday = counts.AttendedStudentsToday,
+                ExpectedTeachersToday = counts.ExpectedTeachersToday,
+                AttendedTeachersToday = counts.AttendedTeachersToday,
             };
         }
 
-        // دوام اليوم: يعتمد على أيام دوام الحلقة (ClassDays).
-        // المتوقع = مجموع أعداد الطلاب في كل حلقة تدرّس اليوم (حصص لا طلاب فريدين).
-        // الفعلي = سجلات الحضور اليوم بحالة "حاضر" أو "متأخر" ضمن هذه الحلقات.
-        private async Task<(int Expected, int Attended)> ComputeTodayAttendanceAsync(
-            Guid? instituteId
-        )
+        /// <summary>
+        /// كل الأعداد العددية للوحة تُجلب باستعلام واحد (استعلامات فرعية داخل SELECT)
+        /// بدل ثماني رحلات منفصلة إلى قاعدة البيانات.
+        ///
+        /// دوام اليوم: يعتمد على أيام دوام الحلقة (ClassDays).
+        /// المتوقع = مجموع أعداد الطلاب في كل حلقة تدرّس اليوم (حصص لا طلاب فريدين).
+        /// الفعلي = سجلات الحضور اليوم بحالة "حاضر" أو "متأخر" ضمن هذه الحلقات.
+        /// </summary>
+        private Task<DashboardCounts> LoadCountsAsync(Guid? instituteId, DateTime? todayParam)
         {
-            var today = DateTime.Today;
+            var today = todayParam?.Date ?? DateTime.Today;
             var tomorrow = today.AddDays(1);
             var currentDay = (ClassDaysEnum)((int)today.DayOfWeek + 1);
 
-            var classesToday = _context
-                .Classes.Where(c => c.ClassDays.Any(d => d == currentDay))
-                .AsNoTracking();
+            IQueryable<Teacher> teachers = _context.Teachers;
+            IQueryable<Student> students = _context.Students;
+            IQueryable<Class> classes = _context.Classes;
             if (instituteId.HasValue)
-                classesToday = classesToday.Where(c => c.InstituteId == instituteId);
+            {
+                teachers = teachers.Where(t => t.TeacherInfo.InstituteId == instituteId);
+                students = students.Where(s => s.StudentInfo.InstituteId == instituteId);
+                classes = classes.Where(c => c.InstituteId == instituteId);
+            }
 
-            var expected = await classesToday.SumAsync(c => c.Students.Count);
+            var classesToday = classes.Where(c => c.ClassDays.Any(d => d == currentDay));
+            var teachersToday = teachers.Where(t =>
+                t.Classes.Any(c => c.ClassDays.Any(d => d == currentDay))
+            );
 
-            var attended = await _context
-                .StudentAttendances.Where(a =>
-                    a.Date >= today
-                    && a.Date < tomorrow
-                    && (a.Status == AttendanceStatus.Present || a.Status == AttendanceStatus.Late)
-                    && classesToday.Any(c => c.Id == a.ClassId)
-                )
+            // صفّ واحد يُستخدم كمرساة للاستعلام؛ جدول المستخدمين لا يخلو أبدًا (يُزرع SuperAdmin عند الإقلاع).
+            return _context
+                .Users.Take(1)
+                .Select(_ => new DashboardCounts
+                {
+                    Teachers = teachers.Count(),
+                    MaleStudents = students.Count(s => s.sex == Sex.male),
+                    FemaleStudents = students.Count(s => s.sex == Sex.female),
+                    Classes = classes.Count(),
+                    ExpectedStudentsToday = classesToday.Sum(c => c.Students.Count),
+                    AttendedStudentsToday = _context.StudentAttendances.Count(a =>
+                        a.Date >= today
+                        && a.Date < tomorrow
+                        && (
+                            a.Status == AttendanceStatus.Present
+                            || a.Status == AttendanceStatus.Late
+                        )
+                        && classesToday.Any(c => c.Id == a.ClassId)
+                    ),
+                    ExpectedTeachersToday = teachersToday.Count(),
+                    AttendedTeachersToday = _context.teacherAttendances.Count(a =>
+                        a.Date >= today
+                        && a.Date < tomorrow
+                        && (
+                            a.Status == AttendanceStatus.Present
+                            || a.Status == AttendanceStatus.Late
+                        )
+                        && teachersToday.Any(t => t.UserId == a.TeacherId)
+                    ),
+                })
                 .AsNoTracking()
-                .CountAsync();
-
-            return (expected, attended);
+                .FirstAsync();
         }
 
-        private async Task<(int Expected, int Attended)> ComputeTodayTeacherAttendanceAsync(
-            Guid? instituteId
-        )
+        private sealed class DashboardCounts
         {
-            var today = DateTime.Today;
-            var tomorrow = today.AddDays(1);
-            var currentDay = (ClassDaysEnum)((int)today.DayOfWeek + 1);
-            IQueryable<Teacher>? teachersToday = _context
-                .Teachers.Where(t => t.Classes.Any(c => c.ClassDays.Any(d => d == currentDay)))
-                .AsNoTracking();
-
-            if (instituteId.HasValue)
-                teachersToday = teachersToday.Where(t => t.TeacherInfo.InstituteId == instituteId);
-
-            var expected = await teachersToday.CountAsync();
-            var attended = await _context
-                .teacherAttendances.Where(a =>
-                    a.Date >= today
-                    && a.Date < tomorrow
-                    && (a.Status == AttendanceStatus.Present || a.Status == AttendanceStatus.Late)
-                    && teachersToday.Any(t => t.Attendances.Any(att => att.Id == a.Id))
-                )
-                .AsNoTracking()
-                .CountAsync();
-            return (expected, attended);
+            public int Teachers { get; set; }
+            public int MaleStudents { get; set; }
+            public int FemaleStudents { get; set; }
+            public int Classes { get; set; }
+            public int ExpectedStudentsToday { get; set; }
+            public int AttendedStudentsToday { get; set; }
+            public int ExpectedTeachersToday { get; set; }
+            public int AttendedTeachersToday { get; set; }
         }
 
         public Task<DashboardActivityPage> GetActivityPageAsync(
@@ -137,30 +149,6 @@ namespace Hafiz.Infrastructure.Services
             int page,
             int pageSize
         ) => _activityQuery.GetTodaysPageAsync(instituteId, category, page, pageSize);
-
-        private Task<int> CountTeachersAsync(Guid? instituteId) =>
-            (
-                instituteId.HasValue
-                    ? _context.Teachers.Where(t => t.TeacherInfo.InstituteId == instituteId)
-                    : _context.Teachers.AsQueryable()
-            ).CountAsync();
-
-        private async Task<(int Male, int Female)> CountStudentsAsync(Guid? instituteId)
-        {
-            var q = instituteId.HasValue
-                ? _context.Students.Where(s => s.StudentInfo.InstituteId == instituteId)
-                : _context.Students.AsQueryable();
-            var male = await q.CountAsync(s => s.sex == Sex.male);
-            var female = await q.CountAsync(s => s.sex == Sex.female);
-            return (male, female);
-        }
-
-        private Task<int> CountClassesAsync(Guid? instituteId) =>
-            (
-                instituteId.HasValue
-                    ? _context.Classes.Where(c => c.InstituteId == instituteId)
-                    : _context.Classes.AsQueryable()
-            ).CountAsync();
 
         private async Task<(
             double memPages,

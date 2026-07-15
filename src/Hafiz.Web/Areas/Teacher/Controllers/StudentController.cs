@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Hafiz.DTOs.Student;
 using Hafiz.Models;
 using Hafiz.Services.Interfaces;
+using Hafiz.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StudentModel = Hafiz.Models.Student;
@@ -119,6 +120,9 @@ namespace Hafiz.Areas.Teacher.Controllers
                 model.ClassId = classId;
             else
                 model.ClassId = null;
+
+            // Set the correct local assigned date for the user
+            model.AssignedDate = TimeZoneHelper.GetUserNow(HttpContext);
 
             (bool isAdded, string message) = await _wirdService.AddWirdAsync(model);
 

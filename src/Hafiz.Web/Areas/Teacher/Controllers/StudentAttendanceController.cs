@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Hafiz.DTOs.Attendance;
 using Hafiz.Models;
 using Hafiz.Services.Interfaces;
+using Hafiz.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -53,7 +54,7 @@ namespace Hafiz.Areas.Teacher.Controllers
 
             var students = await _studentAttendanceService.GetStudentsByClass(
                 classId,
-                DateTime.Now.Date
+                TimeZoneHelper.GetUserToday(HttpContext)
             );
 
             return View(students);

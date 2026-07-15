@@ -54,7 +54,7 @@
                                         <span class="badge badge-danger">غير نشط</span>
                                     }
                                 </td>
-                                <td>@institute.CreatedAt.ToString("yyyy/MM/dd")</td>
+                                <td>@institute.CreatedAt.ToUserTime(Context).ToString("yyyy/MM/dd")</td>
                                 <td>
                                     <div class="d-flex" style="gap: 0.5rem;">
                                         <a asp-action="Details" asp-route-id="@institute.Id" class="btn btn-sm btn-ghost">

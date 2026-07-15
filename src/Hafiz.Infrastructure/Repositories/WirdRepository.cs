@@ -151,7 +151,10 @@ namespace Hafiz.Repositories
                     StudentId = w.StudentId,
                     FirstName = w.Student.StudentInfo.FirstName,
                     SecondName = w.Student.StudentInfo.SecondName,
-                    ClassNames = w.Student.Classes.Select(c => c.Name).ToList(),
+                    ClassNames =
+                        w.Class != null
+                            ? new List<string> { w.Class.Name }
+                            : w.Student.Classes.Select(c => c.Name).ToList(),
                     IsCompleted = w.Status != AssignmentStatus.notSet,
                     Amount = w.Amount,
                     AmountUnit = w.AmountUnit,
@@ -200,11 +203,13 @@ namespace Hafiz.Repositories
             return query;
         }
 
-        // يُضيف بيانات الطالب وشُعبه اللازمة لعرض أسطر التفاصيل.
+        // يُضيف بيانات الطالب وحلقة الورد اللازمة لعرض أسطر التفاصيل.
+        // حلقات الطالب تبقى مضمّنة كبديل للأوراد القديمة التي لا تحمل ClassId.
         private static IQueryable<WirdAssignment> WithStudentDetails(
             IQueryable<WirdAssignment> query
         ) =>
             query
+                .Include(w => w.Class)
                 .Include(w => w.Student)
                 .ThenInclude(s => s.StudentInfo)
                 .Include(w => w.Student)

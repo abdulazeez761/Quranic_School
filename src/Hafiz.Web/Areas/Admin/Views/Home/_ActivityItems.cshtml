@@ -12,13 +12,15 @@
         DashboardActivityKind.TeacherAttendance => ("--teacher", "bx bx-chalkboard"),
         _ => ("", "bx bx-time"),
     };
-    static string FormatTimestamp(DateTime ts)
+    string FormatTimestamp(DateTime ts, HttpContext httpContext)
     {
-        var diff = DateTime.Now - ts;
+        var userNow = TimeZoneHelper.GetUserNow(httpContext);
+        var userTs = ts.ToUserTime(httpContext);
+        var diff = userNow - userTs;
         if (diff.TotalMinutes < 1) return "الآن";
         if (diff.TotalMinutes < 60) return $"منذ {(int)diff.TotalMinutes} د";
         if (diff.TotalHours < 24) return $"منذ {(int)diff.TotalHours} س";
-        return ts.ToString("HH:mm");
+        return userTs.ToString("HH:mm");
     }
     static (string label, string cssClass) TeacherStatusStyle(AttendanceStatus status) => status switch
     {
@@ -58,8 +60,8 @@
                 }
             </div>
         </div>
-        <span class="dashboard-activity-time" title="@item.Timestamp.ToString("yyyy/MM/dd HH:mm")">
-            @FormatTimestamp(item.Timestamp)
+        <span class="dashboard-activity-time" title="@item.Timestamp.ToUserTime(Context).ToString("yyyy/MM/dd HH:mm")">
+            @FormatTimestamp(item.Timestamp, Context)
         </span>
     </div>
 }

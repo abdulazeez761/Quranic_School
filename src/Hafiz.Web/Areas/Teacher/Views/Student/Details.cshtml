@@ -9,7 +9,7 @@
 @{
     ViewData["Title"] = Localizer["StudentDetails"].Value;
     var studentFullName = $"{Model.Student.StudentInfo.FirstName} {Model.Student.StudentInfo.SecondName}";
-    var age = DateTime.Now.Year - Model.Student.DateOfBirth.Year;
+    var age = DateTime.UtcNow.Year - Model.Student.DateOfBirth.Year;
 }
 
 <link rel="stylesheet" href="~/css/teacher/Students.css" asp-append-version="true" />
@@ -379,10 +379,10 @@
                                 <i class="bi bi-person-circle"></i> @Localizer["By"] @note.CreatedByUser.FirstName @note.CreatedByUser.SecondName
                             </div>
                             <div class="note-date">
-                                <i class="bi bi-calendar"></i> @note.CreatedAt.ToString("MMM dd, yyyy 'at' h:mm tt")
+                                <i class="bi bi-calendar"></i> @note.CreatedAt.ToUserTime(Context).ToString("MMM dd, yyyy 'at' h:mm tt")
                                 @if (note.UpdatedAt != null)
                                 {
-                                    <span> @Localizer["Updated"] @note.UpdatedAt.Value.ToString("MMM dd, yyyy"))</span>
+                                    <span> @Localizer["Updated"] @note.UpdatedAt.Value.ToUserTime(Context).ToString("MMM dd, yyyy")</span>
                                 }
                             </div>
                         </div>

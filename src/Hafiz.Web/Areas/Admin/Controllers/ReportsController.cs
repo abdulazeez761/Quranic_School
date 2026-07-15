@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Hafiz.DTOs.Reports;
 using Hafiz.Models;
 using Hafiz.Services.Interfaces;
+using Hafiz.Web.Helpers;
 using Hafiz.Web.Reporting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -45,7 +46,7 @@ namespace Hafiz.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Daily(DateTime? date = null)
         {
-            DateTime selectedDate = (date ?? DateTime.Today).Date;
+            DateTime selectedDate = date ?? TimeZoneHelper.GetUserToday(HttpContext);
             var instituteId = GetInstituteId();
 
             IEnumerable<StudentModel> students;
@@ -146,7 +147,7 @@ namespace Hafiz.Areas.Admin.Controllers
             var vm = await _wirdService.GetWirdReportForExportAsync(filter);
 
             var bytes = WirdReportExcelExporter.Build(vm);
-            var fileName = $"wird-report-{DateTime.Today:yyyy-MM-dd}.xlsx";
+            var fileName = $"wird-report-{TimeZoneHelper.GetUserToday(HttpContext):yyyy-MM-dd}.xlsx";
             return File(bytes, WirdReportExcelExporter.ContentType, fileName);
         }
 
