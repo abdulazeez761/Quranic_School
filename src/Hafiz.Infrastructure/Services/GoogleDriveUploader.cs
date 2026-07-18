@@ -31,22 +31,52 @@ namespace Hafiz.Infrastructure.Services
         private async Task<DriveService> GetServiceAsync(CancellationToken ct)
         {
             UserCredential credential;
-            await using (var stream = File.OpenRead(_credentialsFilePath))
+            try
             {
-                credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    GoogleClientSecrets.FromStream(stream).Secrets,
-                    new[] { DriveService.Scope.DriveFile },
-                    "user",
-                    ct,
-                    new FileDataStore(_tokenFolder, true)
-                );
+                credential = await AuthorizeInternalAsync(ct);
             }
+            catch (Exception ex) when (ex.ToString().Contains("invalid_grant") || 
+                                       ex.ToString().Contains("expired") || 
+                                       ex.ToString().Contains("revoked"))
+            {
+                // Delete the token folder contents to reset authentication state
+                try
+                {
+                    if (System.IO.Directory.Exists(_tokenFolder))
+                    {
+                        foreach (var file in System.IO.Directory.GetFiles(_tokenFolder))
+                        {
+                            System.IO.File.Delete(file);
+                        }
+                    }
+                }
+                catch
+                {
+                    // Ignore folder/file deletion failures
+                }
+
+                // Retry authorization flow, which will prompt user in browser since token is deleted
+                credential = await AuthorizeInternalAsync(ct);
+            }
+
             return new DriveService(
                 new BaseClientService.Initializer()
                 {
                     HttpClientInitializer = credential,
                     ApplicationName = "Hafiz backup",
                 }
+            );
+        }
+
+        private async Task<UserCredential> AuthorizeInternalAsync(CancellationToken ct)
+        {
+            await using var stream = System.IO.File.OpenRead(_credentialsFilePath);
+            return await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                GoogleClientSecrets.FromStream(stream).Secrets,
+                new[] { DriveService.Scope.DriveFile },
+                "user",
+                ct,
+                new FileDataStore(_tokenFolder, true)
             );
         }
 
