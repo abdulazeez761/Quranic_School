@@ -1,4 +1,5 @@
 using System;
+using Hafiz.Domain.Common;
 using Hafiz.Domain.Entities;
 using Hafiz.Models;
 using Microsoft.EntityFrameworkCore;
@@ -24,9 +25,17 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
+        base.OnModelCreating(modelBuilder); // to not ignore the base modelBuilder configurations
 
+        // Global Query Filters لإخفاء المحذوفين ناعماً
+        modelBuilder.Entity<User>().HasQueryFilter(u => !u.IsDeleted);
+        modelBuilder.Entity<Student>().HasQueryFilter(s => !s.IsDeleted);
+        modelBuilder.Entity<Teacher>().HasQueryFilter(t => !t.IsDeleted);
+        modelBuilder.Entity<Class>().HasQueryFilter(c => !c.IsDeleted);
+        modelBuilder.Entity<Institute>().HasQueryFilter(i => !i.IsDeleted);
+        modelBuilder.Entity<Parent>().HasQueryFilter(p => !p.IsDeleted);
+
+        modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique(); // Ensure unique usernames even if soft-deleted because i might return the user
         modelBuilder
             .Entity<Class>()
             .HasMany(c => c.Teachers)
@@ -181,5 +190,43 @@ public class ApplicationDbContext : DbContext
             .WithOne(c => c.Institute)
             .HasForeignKey(c => c.InstituteId)
             .OnDelete(DeleteBehavior.Restrict);
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        ApplySoftDeleteRules();
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
+    public override int SaveChanges()
+    {
+        ApplySoftDeleteRules();
+        return base.SaveChanges();
+    }
+
+    private void ApplySoftDeleteRules()
+    {
+        // change tracker is a property of the DbContext that monitors all the entities in the context and that being modified.
+        var entries = ChangeTracker
+            .Entries<ISoftDeletable>()
+            .Where(e => e.State == EntityState.Deleted);
+
+        foreach (var entry in entries)
+        {
+            /*
+            the state = entitystate.modified is used to indicate that the entity has been modified and
+            should be updated in the database.
+            because in case of deletion this will be stat = delete and will delete the recode from the db we want to avoid that
+            and just update the isdeleted and deletedat fields so we will change the state to modified
+
+            State = Modified
+            IsDeleted = true
+            DeletedAt = now
+            */
+            entry.State = EntityState.Modified;
+
+            entry.CurrentValues["IsDeleted"] = true;
+            entry.CurrentValues["DeletedAt"] = DateTime.UtcNow;
+        }
     }
 }
