@@ -1,12 +1,13 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Hafiz.Domain.Common;
 using Hafiz.Domain.Entities;
 using Hafiz.Models.enums;
 
 namespace Hafiz.Models;
 
-public class Class
+public class Class : ISoftDeletable
 {
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -40,4 +41,9 @@ public class Class
     public DateTime ClassTime { get; set; }
 
     public bool IsMeetingActive { get; set; } = false;
+
+    // Implementation of ISoftDeletable
+    public bool IsDeleted { get; set; } = false;
+    public DateTime? DeletedAt { get; set; }
+    public Guid? DeletedBy { get; set; }
 }

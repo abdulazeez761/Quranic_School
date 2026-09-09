@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Hafiz.Domain.Common;
 using Hafiz.Models;
 
 namespace Hafiz.Domain.Entities
 {
-    public class Institute
+    public class Institute : ISoftDeletable
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
@@ -38,5 +39,10 @@ namespace Hafiz.Domain.Entities
         public User? Manager { get; set; }
         public ICollection<User> Users { get; set; } = new List<User>();
         public ICollection<Class> Classes { get; set; } = new List<Class>();
+
+        // Implementation of ISoftDeletable
+        public bool IsDeleted { get; set; } = false;
+        public DateTime? DeletedAt { get; set; }
+        public Guid? DeletedBy { get; set; }
     }
 }

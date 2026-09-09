@@ -1,11 +1,12 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Hafiz.Domain.Common;
 using Hafiz.Models.enums;
 
 namespace Hafiz.Models
 {
-    public class Student
+    public class Student : ISoftDeletable
     {
         [Key]
         [Required(ErrorMessage = "User ID is required.")]
@@ -56,5 +57,10 @@ namespace Hafiz.Models
             new List<StudentAttendance>();
 
         public ICollection<WirdAssignment> wirds { get; set; } = new List<WirdAssignment>();
+
+        // Implementation of ISoftDeletable
+        public bool IsDeleted { get; set; } = false;
+        public DateTime? DeletedAt { get; set; }
+        public Guid? DeletedBy { get; set; }
     }
 }
