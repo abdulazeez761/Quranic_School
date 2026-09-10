@@ -46,12 +46,18 @@ namespace Hafiz.Repositories
 
         public async Task DeleteAsync(Guid id)
         {
-            var student = await GetByIdAsync(id);
+            var student = await _context
+                .Students.Include(s => s.StudentInfo)
+                .FirstOrDefaultAsync(s => s.UserId == id);
 
             if (student is null)
                 return;
+
             _context.Students.Remove(student);
-            _context.Users.Remove(student.StudentInfo);
+            if (student.StudentInfo != null)
+            {
+                _context.Users.Remove(student.StudentInfo);
+            }
 
             await _context.SaveChangesAsync();
         }
@@ -229,6 +235,29 @@ namespace Hafiz.Repositories
                 .Where(s => s.Classes.Any(c => c.Id == classId))
                 .AsNoTracking()
                 .ToListAsync();
+        }
+
+        public async Task<bool> RestoreStudentAsync(Guid studentId)
+        {
+            var student = await _context
+                .Students.IgnoreQueryFilters()
+                .Include(s => s.StudentInfo)
+                .FirstOrDefaultAsync(s => s.UserId == studentId);
+
+            if (student == null || !student.IsDeleted)
+                return false;
+
+            student.IsDeleted = false;
+            student.DeletedAt = null;
+            student.DeletedBy = null;
+            if (student.StudentInfo != null)
+            {
+                student.StudentInfo.IsDeleted = false;
+                student.StudentInfo.DeletedAt = null;
+                student.StudentInfo.DeletedBy = null;
+            }
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

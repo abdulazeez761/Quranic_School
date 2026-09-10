@@ -19,5 +19,6 @@ namespace Hafiz.Repositories.Interfaces
         Task UpdateAsync(TeacherDto teacher);
         Task<IList<Class>> GetTeacherClasses(Guid teacherId);
         Task<IEnumerable<Teacher>> GetAllByInstituteAsync(Guid instituteId);
+        Task<bool> RestoreTeacherAsync(Guid teacherId);
     }
 }

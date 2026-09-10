@@ -35,26 +35,14 @@ namespace Hafiz.Repositories
 
         public async Task<bool> Delete(Guid Id)
         {
-            var classToDelete = await _context
-                .Classes.Include(c => c.StudentAttendances)
-                .Include(c => c.TeacherAttendance)
-                .Include(c => c.Students)
-                .FirstOrDefaultAsync(c => c.Id == Id);
-
+            var classToDelete = await _context.Classes.FirstOrDefaultAsync(c => c.Id == Id);
             if (classToDelete != null)
             {
-                _context.StudentAttendances.RemoveRange(classToDelete.StudentAttendances);
-                foreach (Student student in classToDelete.Students)
-                {
-                    student.ClassId = null;
-                }
-
                 _context.Classes.Remove(classToDelete);
-
                 await _context.SaveChangesAsync();
+                return true;
             }
-
-            return true;
+            return false;
         }
 
         public async Task<IEnumerable<Class>> GetAllAsync()
@@ -150,6 +138,20 @@ namespace Hafiz.Repositories
                     c.InstituteId == instituteId && c.ClassDays.Any(day => day == workingDays)
                 )
                 .ToListAsync();
+        }
+
+        public async Task<bool> RestoreClassAsync(Guid classId)
+        {
+            Class? foundClass = await _context
+                .Classes.IgnoreQueryFilters()
+                .FirstOrDefaultAsync(c => c.Id == classId);
+            if (foundClass == null || !foundClass.IsDeleted)
+                return false;
+            foundClass.IsDeleted = false;
+            foundClass.DeletedAt = null;
+            foundClass.DeletedBy = null;
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

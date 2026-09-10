@@ -20,5 +20,6 @@ namespace Hafiz.Repositories.Interfaces
             Guid instituteId,
             ClassDaysEnum workingDays
         );
+        Task<bool> RestoreClassAsync(Guid classId);
     }
 }

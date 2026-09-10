@@ -34,11 +34,14 @@ namespace Hafiz.Repositories
                 .ToListAsync();
         }
 
-        public Task DeleteAsync(Teacher teacher)
+        public async Task DeleteAsync(Teacher teacher)
         {
             _context.Teachers.Remove(teacher);
-            _context.Users.Remove(teacher.TeacherInfo);
-            return _context.SaveChangesAsync();
+            if (teacher.TeacherInfo != null)
+            {
+                _context.Users.Remove(teacher.TeacherInfo);
+            }
+            await _context.SaveChangesAsync();
         }
 
         public async Task<Teacher?> GetTeacherByIDAsync(Guid teacherId)
@@ -97,6 +100,28 @@ namespace Hafiz.Repositories
                 .Include(t => t.Attendances)
                 .Where(t => t.TeacherInfo.InstituteId == instituteId)
                 .ToListAsync();
+        }
+
+        public async Task<bool> RestoreTeacherAsync(Guid teacherId)
+        {
+            var teacher = await _context
+                .Teachers.IgnoreQueryFilters()
+                .Include(t => t.TeacherInfo)
+                .FirstOrDefaultAsync(t => t.UserId == teacherId);
+
+            if (teacher == null || !teacher.IsDeleted)
+                return false;
+            teacher.IsDeleted = false;
+            teacher.DeletedAt = null;
+            teacher.DeletedBy = null;
+            if (teacher.TeacherInfo != null)
+            {
+                teacher.TeacherInfo.IsDeleted = false;
+                teacher.TeacherInfo.DeletedAt = null;
+                teacher.TeacherInfo.DeletedBy = null;
+            }
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

@@ -19,5 +19,6 @@ namespace Hafiz.Application.Interfaces.Repositories
         Task<int> GetInstituteStudentCountAsync(Guid instituteId);
         Task<int> GetInstituteTeacherCountAsync(Guid instituteId);
         Task<int> GetInstituteClassCountAsync(Guid instituteId);
+        Task<bool> RestoreInstituteAsync(Guid instituteId);
     }
 }

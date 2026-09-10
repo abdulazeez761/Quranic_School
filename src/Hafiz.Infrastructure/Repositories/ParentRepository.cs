@@ -46,9 +46,9 @@ namespace Hafiz.Repositories
             return await _context
                 .Parents.Include(p => p.ParentInfo)
                 .Include(p => p.Students)
-                    .ThenInclude(s => s.StudentInfo)
+                .ThenInclude(s => s.StudentInfo)
                 .Include(p => p.Students)
-                    .ThenInclude(s => s.Classes)
+                .ThenInclude(s => s.Classes)
                 .FirstOrDefaultAsync(p => p.UserId == userId);
         }
 
@@ -96,6 +96,28 @@ namespace Hafiz.Repositories
                 _context.Users.Remove(parent.ParentInfo);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<bool> RestoreParentAsync(Guid parentId)
+        {
+            var parent = await _context
+                .Parents.IgnoreQueryFilters()
+                .Include(p => p.ParentInfo)
+                .FirstOrDefaultAsync(p => p.UserId == parentId);
+
+            if (parent == null || !parent.IsDeleted)
+                return false;
+            parent.IsDeleted = false;
+            parent.DeletedAt = null;
+            parent.DeletedBy = null;
+            if (parent.ParentInfo != null)
+            {
+                parent.ParentInfo.IsDeleted = false;
+                parent.ParentInfo.DeletedAt = null;
+                parent.ParentInfo.DeletedBy = null;
+            }
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<IEnumerable<Parent>> GetAllByInstituteAsync(Guid instituteId)

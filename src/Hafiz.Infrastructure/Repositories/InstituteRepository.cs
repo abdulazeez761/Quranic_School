@@ -103,5 +103,19 @@ namespace Hafiz.Infrastructure.Repositories
         {
             return await _context.Institutes.AnyAsync(i => i.Name == name);
         }
+
+        public async Task<bool> RestoreInstituteAsync(Guid instituteId)
+        {
+            var institute = await _context
+                .Institutes.IgnoreQueryFilters()
+                .FirstOrDefaultAsync(i => i.Id == instituteId);
+            if (institute == null || !institute.IsDeleted)
+                return false;
+            institute.IsDeleted = false;
+            institute.DeletedAt = null;
+            institute.DeletedBy = null;
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }
