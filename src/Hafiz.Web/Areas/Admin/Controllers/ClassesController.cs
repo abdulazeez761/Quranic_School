@@ -10,6 +10,7 @@ using Hafiz.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Hafiz.Areas.Admin.Controllers
@@ -111,7 +112,10 @@ namespace Hafiz.Areas.Admin.Controllers
             var instituteId = GetInstituteId();
             if (classDto.Id.HasValue)
             {
-                var existingClass = await _ClassService.GetClassById(classDto.Id.Value, instituteId);
+                var existingClass = await _ClassService.GetClassById(
+                    classDto.Id.Value,
+                    instituteId
+                );
                 if (existingClass == null)
                     return Forbid();
             }
@@ -132,11 +136,27 @@ namespace Hafiz.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var instituteId = GetInstituteId();
-            var deleted = await _ClassService.DeleteClass(id, instituteId);
-            if (!deleted)
+            try
             {
-                TempData["ErrorMessage"] = "غير مصرح لك بحذف هذه الشعبة أو أنها غير موجودة.";
+                var instituteId = GetInstituteId();
+                var deleted = await _ClassService.DeleteClass(id, instituteId);
+                if (!deleted)
+                {
+                    TempData["ErrorMessage"] = "غير مصرح لك بحذف هذه الشعبة أو أنها غير موجودة.";
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "تم حذف الشعبة بنجاح.";
+                }
+            }
+            catch (DbUpdateException ex)
+            {
+                TempData["ErrorMessage"] = "تعذر حذف الشعبة نظراً لوجود بيانات مرتبطة بها.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] =
+                    "حدث خطأ غير متوقع أثناء محاولة الحذف، يرجى المحاولة لاحقاً.";
             }
             return RedirectToAction(nameof(Index));
         }
