@@ -33,9 +33,15 @@ namespace Hafiz.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> Delete(Guid Id)
+        public async Task<bool> Delete(Guid Id, Guid? instituteId = null)
         {
-            var classToDelete = await _context.Classes.FirstOrDefaultAsync(c => c.Id == Id);
+            var query = _context.Classes.AsQueryable();
+            if (instituteId.HasValue)
+            {
+                query = query.Where(c => c.InstituteId == instituteId.Value);
+            }
+
+            var classToDelete = await query.FirstOrDefaultAsync(c => c.Id == Id);
             if (classToDelete != null)
             {
                 _context.Classes.Remove(classToDelete);
@@ -54,14 +60,21 @@ namespace Hafiz.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Class?> GetById(Guid id)
+        public async Task<Class?> GetById(Guid id, Guid? instituteId = null)
         {
-            return await _context
+            var query = _context
                 .Classes.Include(c => c.Teachers)
                 .ThenInclude(t => t.TeacherInfo)
                 .Include(c => c.Students)
                 .ThenInclude(s => s.StudentInfo)
-                .SingleOrDefaultAsync(c => c.Id == id);
+                .AsQueryable();
+
+            if (instituteId.HasValue)
+            {
+                query = query.Where(c => c.InstituteId == instituteId.Value);
+            }
+
+            return await query.SingleOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<bool> UpdateAsync(Class newClass)
@@ -140,11 +153,15 @@ namespace Hafiz.Repositories
                 .ToListAsync();
         }
 
-        public async Task<bool> RestoreClassAsync(Guid classId)
+        public async Task<bool> RestoreClassAsync(Guid classId, Guid? instituteId = null)
         {
-            Class? foundClass = await _context
-                .Classes.IgnoreQueryFilters()
-                .FirstOrDefaultAsync(c => c.Id == classId);
+            var query = _context.Classes.IgnoreQueryFilters().AsQueryable();
+            if (instituteId.HasValue)
+            {
+                query = query.Where(c => c.InstituteId == instituteId.Value);
+            }
+
+            Class? foundClass = await query.FirstOrDefaultAsync(c => c.Id == classId);
             if (foundClass == null || !foundClass.IsDeleted)
                 return false;
             foundClass.IsDeleted = false;

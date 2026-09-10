@@ -70,7 +70,8 @@ namespace Hafiz.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
-            var parent = await _parentService.GetByIdAsync(id);
+            var instituteId = GetInstituteId();
+            var parent = await _parentService.GetByIdAsync(id, instituteId);
 
             if (parent is null)
                 return NotFound();
@@ -96,6 +97,14 @@ namespace Hafiz.Areas.Admin.Controllers
                 if (!ModelState.IsValid)
                     return View(newData);
 
+                var instituteId = GetInstituteId();
+                if (newData.ParentID.HasValue)
+                {
+                    var existingParent = await _parentService.GetByIdAsync(newData.ParentID.Value, instituteId);
+                    if (existingParent == null)
+                        return Forbid();
+                }
+
                 await _parentService.UpdateAsync(newData);
                 return RedirectToAction(nameof(Index));
             }
@@ -109,7 +118,24 @@ namespace Hafiz.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _parentService.DeleteAsync(id);
+            var instituteId = GetInstituteId();
+            var deleted = await _parentService.DeleteAsync(id, instituteId);
+            if (!deleted)
+            {
+                TempData["ErrorMessage"] = "غير مصرح لك بحذف ولي الأمر هذا أو أنه غير موجود.";
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Restore(Guid id)
+        {
+            var instituteId = GetInstituteId();
+            var restored = await _parentService.RestoreParentAsync(id, instituteId);
+            if (!restored)
+            {
+                TempData["ErrorMessage"] = "غير مصرح لك باستعادة ولي الأمر هذا أو أنه غير موجود.";
+            }
             return RedirectToAction(nameof(Index));
         }
     }

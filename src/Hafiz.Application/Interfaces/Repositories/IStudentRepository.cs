@@ -12,9 +12,9 @@ namespace Hafiz.Repositories.Interfaces
     {
         Task<IEnumerable<Student>> GetAllAsync();
         Task AddAsync(User user, Student ReceivedStudent);
-        Task<Student?> GetByIdAsync(Guid id);
+        Task<Student?> GetByIdAsync(Guid id, Guid? instituteId = null);
         Task<Student?> GetByEmailAsync(string email);
-        Task DeleteAsync(Guid id);
+        Task<bool> DeleteAsync(Guid id, Guid? instituteId = null);
         Task UpdateAsync(EditStudentDto student);
         Task<IEnumerable<Student>> GetAllByInstituteAsync(Guid instituteId);
         Task<IEnumerable<Student>> GetStudentsWithWirdsAndAttendancesByInstituteAsync(
@@ -39,6 +39,6 @@ namespace Hafiz.Repositories.Interfaces
         );
 
         Task<IEnumerable<Student>> GetStudentsByClassIdAsync(Guid classId);
-        Task<bool> RestoreStudentAsync(Guid studentId);
+        Task<bool> RestoreStudentAsync(Guid studentId, Guid? instituteId = null);
     }
 }

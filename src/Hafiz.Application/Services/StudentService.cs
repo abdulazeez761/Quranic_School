@@ -94,14 +94,19 @@ namespace Hafiz.Services
             return (true, "تم التسجيل بنجاح");
         }
 
-        public Task DeleteAsync(Guid id)
+        public Task<bool> DeleteAsync(Guid id, Guid? instituteId = null)
         {
-            return _studentRepository.DeleteAsync(id);
+            return _studentRepository.DeleteAsync(id, instituteId);
         }
 
-        public async Task<StudentDto?> GetByIdAsync(Guid id)
+        public Task<bool> RestoreStudentAsync(Guid studentId, Guid? instituteId = null)
         {
-            Student? student = await _studentRepository.GetByIdAsync(id);
+            return _studentRepository.RestoreStudentAsync(studentId, instituteId);
+        }
+
+        public async Task<StudentDto?> GetByIdAsync(Guid id, Guid? instituteId = null)
+        {
+            Student? student = await _studentRepository.GetByIdAsync(id, instituteId);
             if (student is null)
                 return null;
             StudentDto studentDto = new StudentDto
@@ -262,9 +267,9 @@ namespace Hafiz.Services
             return await _studentRepository.GetByIdAsync(userId);
         }
 
-        public async Task<Student?> GetStudentByIdAsync(Guid studentId)
+        public async Task<Student?> GetStudentByIdAsync(Guid studentId, Guid? instituteId = null)
         {
-            return await _studentRepository.GetByIdAsync(studentId);
+            return await _studentRepository.GetByIdAsync(studentId, instituteId);
         }
 
         public async Task<IEnumerable<StudentAttendance>> GetStudentAttendanceAsync(Guid studentId)

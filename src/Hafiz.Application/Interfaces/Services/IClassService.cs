@@ -11,8 +11,9 @@ namespace Hafiz.Services.Interfaces
     {
         Task<List<ClassDto>> GetClassesAsync();
         Task<IEnumerable<Class>> ViewClasses();
-        Task<ClassDto> GetClassById(Guid id);
-        Task<bool> DeleteClass(Guid Id);
+        Task<ClassDto?> GetClassById(Guid id, Guid? instituteId = null);
+        Task<bool> DeleteClass(Guid Id, Guid? instituteId = null);
+        Task<bool> RestoreClassAsync(Guid classId, Guid? instituteId = null);
         Task<bool> UpdateAsync(ClassDto classDto);
         Task<List<ClassDto>> GetClassesByInstituteAsync(Guid instituteId);
         Task<IEnumerable<Class>> ViewClassesByInstitute(Guid instituteId);

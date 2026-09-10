@@ -74,7 +74,8 @@ namespace Hafiz.Areas.Admin.Controllers
             string? tab = null
         )
         {
-            var student = await _studentService.GetStudentByIdAsync(id);
+            var instituteId = GetInstituteId();
+            var student = await _studentService.GetStudentByIdAsync(id, instituteId);
             if (student == null)
             {
                 TempData["ErrorMessage"] = "Student not found.";
@@ -242,14 +243,33 @@ namespace Hafiz.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _studentService.DeleteAsync(id);
+            var instituteId = GetInstituteId();
+            var deleted = await _studentService.DeleteAsync(id, instituteId);
+            if (!deleted)
+            {
+                TempData["ErrorMessage"] = "غير مصرح لك بحذف هذا الطالب أو أنه غير موجود.";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Restore(Guid id)
+        {
+            var instituteId = GetInstituteId();
+            var restored = await _studentService.RestoreStudentAsync(id, instituteId);
+            if (!restored)
+            {
+                TempData["ErrorMessage"] = "غير مصرح لك باستعادة هذا الطالب أو أنه غير موجود.";
+            }
 
             return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Edit(Guid id)
         {
-            StudentDto? student = await _studentService.GetByIdAsync(id);
+            var instituteId = GetInstituteId();
+            StudentDto? student = await _studentService.GetByIdAsync(id, instituteId);
 
             if (student is null)
                 return NotFound();
@@ -287,6 +307,15 @@ namespace Hafiz.Areas.Admin.Controllers
                     await PopulateParentsDropdown();
                     return View(newData);
                 }
+
+                var instituteId = GetInstituteId();
+                if (newData.StudentID.HasValue)
+                {
+                    var existingStudent = await _studentService.GetByIdAsync(newData.StudentID.Value, instituteId);
+                    if (existingStudent is null)
+                        return Forbid();
+                }
+
                 await _studentService.UpdateAsync(newData);
                 return RedirectToAction(nameof(Index));
             }

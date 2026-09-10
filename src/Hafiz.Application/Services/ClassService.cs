@@ -88,17 +88,25 @@ namespace Hafiz.Services
             return classes;
         }
 
-        public async Task<bool> DeleteClass(Guid Id)
+        public async Task<bool> DeleteClass(Guid Id, Guid? instituteId = null)
         {
             if (Id == Guid.Empty)
                 throw new ArgumentException("Id cannot be empty.", nameof(Id));
 
-            return await _classRepository.Delete(Id);
+            return await _classRepository.Delete(Id, instituteId);
         }
 
-        public async Task<ClassDto> GetClassById(Guid id)
+        public async Task<bool> RestoreClassAsync(Guid classId, Guid? instituteId = null)
         {
-            var classFromDb = await _classRepository.GetById(id);
+            if (classId == Guid.Empty)
+                throw new ArgumentException("Id cannot be empty.", nameof(classId));
+
+            return await _classRepository.RestoreClassAsync(classId, instituteId);
+        }
+
+        public async Task<ClassDto?> GetClassById(Guid id, Guid? instituteId = null)
+        {
+            var classFromDb = await _classRepository.GetById(id, instituteId);
 
             if (classFromDb == null)
                 return null;

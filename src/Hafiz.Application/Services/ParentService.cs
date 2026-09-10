@@ -72,9 +72,9 @@ namespace Hafiz.Services
             return _parentRepository.GetAllByInstituteAsync(instituteId);
         }
 
-        public async Task<ParentDto?> GetByIdAsync(Guid id)
+        public async Task<ParentDto?> GetByIdAsync(Guid id, Guid? instituteId = null)
         {
-            Parent? parent = await _parentRepository.GetByIdAsync(id);
+            Parent? parent = await _parentRepository.GetByIdAsync(id, instituteId);
             if (parent is null)
                 return null;
 
@@ -116,9 +116,14 @@ namespace Hafiz.Services
             return parent.Students ?? Enumerable.Empty<Student>();
         }
 
-        public Task DeleteAsync(Guid id)
+        public Task<bool> DeleteAsync(Guid id, Guid? instituteId = null)
         {
-            return _parentRepository.DeleteAsync(id);
+            return _parentRepository.DeleteAsync(id, instituteId);
+        }
+
+        public Task<bool> RestoreParentAsync(Guid parentId, Guid? instituteId = null)
+        {
+            return _parentRepository.RestoreParentAsync(parentId, instituteId);
         }
     }
 }

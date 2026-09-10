@@ -33,12 +33,19 @@ namespace Hafiz.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Parent?> GetByIdAsync(Guid id)
+        public async Task<Parent?> GetByIdAsync(Guid id, Guid? instituteId = null)
         {
-            return await _context
+            var query = _context
                 .Parents.Include(p => p.ParentInfo)
                 .Include(p => p.Students)
-                .FirstOrDefaultAsync(p => p.UserId == id);
+                .AsQueryable();
+
+            if (instituteId.HasValue)
+            {
+                query = query.Where(p => p.ParentInfo.InstituteId == instituteId.Value);
+            }
+
+            return await query.FirstOrDefaultAsync(p => p.UserId == id);
         }
 
         public async Task<Parent?> GetByUserIdAsync(Guid userId)
@@ -83,11 +90,18 @@ namespace Hafiz.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task<bool> DeleteAsync(Guid id, Guid? instituteId = null)
         {
-            var parent = await _context
+            var query = _context
                 .Parents.Include(p => p.ParentInfo)
-                .FirstOrDefaultAsync(p => p.UserId == id);
+                .AsQueryable();
+
+            if (instituteId.HasValue)
+            {
+                query = query.Where(p => p.ParentInfo.InstituteId == instituteId.Value);
+            }
+
+            var parent = await query.FirstOrDefaultAsync(p => p.UserId == id);
 
             if (parent != null)
             {
@@ -95,15 +109,24 @@ namespace Hafiz.Repositories
                 _context.Parents.Remove(parent);
                 _context.Users.Remove(parent.ParentInfo);
                 await _context.SaveChangesAsync();
+                return true;
             }
+            return false;
         }
 
-        public async Task<bool> RestoreParentAsync(Guid parentId)
+        public async Task<bool> RestoreParentAsync(Guid parentId, Guid? instituteId = null)
         {
-            var parent = await _context
+            var query = _context
                 .Parents.IgnoreQueryFilters()
                 .Include(p => p.ParentInfo)
-                .FirstOrDefaultAsync(p => p.UserId == parentId);
+                .AsQueryable();
+
+            if (instituteId.HasValue)
+            {
+                query = query.Where(p => p.ParentInfo.InstituteId == instituteId.Value);
+            }
+
+            var parent = await query.FirstOrDefaultAsync(p => p.UserId == parentId);
 
             if (parent == null || !parent.IsDeleted)
                 return false;

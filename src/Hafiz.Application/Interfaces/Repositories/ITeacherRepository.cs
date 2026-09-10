@@ -15,10 +15,11 @@ namespace Hafiz.Repositories.Interfaces
         Task<IEnumerable<Teacher>> GetAllAsync();
 
         Task DeleteAsync(Teacher teacher);
-        Task<Teacher?> GetTeacherByIDAsync(Guid teacherId);
+        Task<bool> DeleteAsync(Guid teacherId, Guid? instituteId = null);
+        Task<Teacher?> GetTeacherByIDAsync(Guid teacherId, Guid? instituteId = null);
         Task UpdateAsync(TeacherDto teacher);
         Task<IList<Class>> GetTeacherClasses(Guid teacherId);
         Task<IEnumerable<Teacher>> GetAllByInstituteAsync(Guid instituteId);
-        Task<bool> RestoreTeacherAsync(Guid teacherId);
+        Task<bool> RestoreTeacherAsync(Guid teacherId, Guid? instituteId = null);
     }
 }

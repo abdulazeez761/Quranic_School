@@ -11,11 +11,11 @@ namespace Hafiz.Repositories.Interfaces
     {
         Task AddAsync(Parent parent);
         Task<IEnumerable<Parent>> GetAllAsync();
-        Task<Parent?> GetByIdAsync(Guid id);
+        Task<Parent?> GetByIdAsync(Guid id, Guid? instituteId = null);
         Task<Parent?> GetByUserIdAsync(Guid userId);
         Task UpdateAsync(EditParentDto dto);
-        Task DeleteAsync(Guid id);
+        Task<bool> DeleteAsync(Guid id, Guid? instituteId = null);
         Task<IEnumerable<Parent>> GetAllByInstituteAsync(Guid instituteId);
-        Task<bool> RestoreParentAsync(Guid parentId);
+        Task<bool> RestoreParentAsync(Guid parentId, Guid? instituteId = null);
     }
 }

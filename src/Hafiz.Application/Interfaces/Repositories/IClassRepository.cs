@@ -12,14 +12,14 @@ namespace Hafiz.Repositories.Interfaces
     {
         Task<IEnumerable<Class>> GetAllAsync();
         Task AddAsync(Class classInfo);
-        Task<Class> GetById(Guid id);
-        Task<bool> Delete(Guid Id);
+        Task<Class?> GetById(Guid id, Guid? instituteId = null);
+        Task<bool> Delete(Guid Id, Guid? instituteId = null);
         Task<bool> UpdateAsync(Class newClass);
         Task<IEnumerable<Class>> GetAllByInstituteAsync(Guid instituteId);
         Task<IEnumerable<Class>> GetAllByInstituteAndClassDaysAsync(
             Guid instituteId,
             ClassDaysEnum workingDays
         );
-        Task<bool> RestoreClassAsync(Guid classId);
+        Task<bool> RestoreClassAsync(Guid classId, Guid? instituteId = null);
     }
 }

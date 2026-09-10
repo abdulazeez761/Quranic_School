@@ -11,8 +11,9 @@ namespace Hafiz.Services.Interfaces
     {
         Task<IEnumerable<Teacher>> GetAllTeachersAsync();
         Task<IEnumerable<Teacher>> GetAllTeachersByInstituteAsync(Guid instituteId);
-        Task<bool> DeleteTeacherAsync(Guid teacherId);
-        Task<TeacherDto?> GetTeacherByIDAsync(Guid teacherId);
+        Task<bool> DeleteTeacherAsync(Guid teacherId, Guid? instituteId = null);
+        Task<TeacherDto?> GetTeacherByIDAsync(Guid teacherId, Guid? instituteId = null);
+        Task<bool> RestoreTeacherAsync(Guid teacherId, Guid? instituteId = null);
         Task UpdateTeacherAsync(TeacherDto teacher);
         Task<IList<Class>> GetTeacherClasses(Guid teacherId);
     }

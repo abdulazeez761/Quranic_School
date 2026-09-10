@@ -44,13 +44,44 @@ namespace Hafiz.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Teacher?> GetTeacherByIDAsync(Guid teacherId)
+        public async Task<bool> DeleteAsync(Guid teacherId, Guid? instituteId = null)
         {
-            Teacher? teacher = _context
-                .Teachers.Include(t => t.TeacherInfo)
-                .FirstOrDefaultAsync(t => t.UserId == teacherId)
-                .Result;
-            return teacher;
+            var query = _context.Teachers
+                .Include(t => t.TeacherInfo)
+                .AsQueryable();
+
+            if (instituteId.HasValue)
+            {
+                query = query.Where(t => t.TeacherInfo.InstituteId == instituteId.Value);
+            }
+
+            var teacher = await query.FirstOrDefaultAsync(t => t.UserId == teacherId);
+            if (teacher == null)
+                return false;
+
+            _context.Teachers.Remove(teacher);
+            if (teacher.TeacherInfo != null)
+            {
+                _context.Users.Remove(teacher.TeacherInfo);
+            }
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<Teacher?> GetTeacherByIDAsync(Guid teacherId, Guid? instituteId = null)
+        {
+            var query = _context.Teachers
+                .Include(t => t.TeacherInfo)
+                .Include(t => t.Classes)
+                .Include(t => t.Attendances)
+                .AsQueryable();
+
+            if (instituteId.HasValue)
+            {
+                query = query.Where(t => t.TeacherInfo.InstituteId == instituteId.Value);
+            }
+
+            return await query.FirstOrDefaultAsync(t => t.UserId == teacherId);
         }
 
         public async Task UpdateAsync(TeacherDto teacher)
@@ -102,12 +133,19 @@ namespace Hafiz.Repositories
                 .ToListAsync();
         }
 
-        public async Task<bool> RestoreTeacherAsync(Guid teacherId)
+        public async Task<bool> RestoreTeacherAsync(Guid teacherId, Guid? instituteId = null)
         {
-            var teacher = await _context
-                .Teachers.IgnoreQueryFilters()
+            var query = _context.Teachers
+                .IgnoreQueryFilters()
                 .Include(t => t.TeacherInfo)
-                .FirstOrDefaultAsync(t => t.UserId == teacherId);
+                .AsQueryable();
+
+            if (instituteId.HasValue)
+            {
+                query = query.Where(t => t.TeacherInfo.InstituteId == instituteId.Value);
+            }
+
+            var teacher = await query.FirstOrDefaultAsync(t => t.UserId == teacherId);
 
             if (teacher == null || !teacher.IsDeleted)
                 return false;

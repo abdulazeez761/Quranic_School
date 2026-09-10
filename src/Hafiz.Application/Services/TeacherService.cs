@@ -27,34 +27,32 @@ namespace Hafiz.Services
             return _teacherRepository.GetAllByInstituteAsync(instituteId);
         }
 
-        public async Task<bool> DeleteTeacherAsync(Guid teacherId)
+        public async Task<bool> DeleteTeacherAsync(Guid teacherId, Guid? instituteId = null)
         {
-            var teachers = await _teacherRepository.GetAllAsync();
-            var teacher = teachers.FirstOrDefault(t => t.UserId == teacherId);
-            if (teacher == null)
-            {
-                return false;
-            }
-            await _teacherRepository.DeleteAsync(teacher);
-            return true;
+            return await _teacherRepository.DeleteAsync(teacherId, instituteId);
         }
 
-        public async Task<TeacherDto?> GetTeacherByIDAsync(Guid teacherId)
+        public async Task<bool> RestoreTeacherAsync(Guid teacherId, Guid? instituteId = null)
         {
-            Teacher? teacher = await _teacherRepository.GetTeacherByIDAsync(teacherId);
+            return await _teacherRepository.RestoreTeacherAsync(teacherId, instituteId);
+        }
+
+        public async Task<TeacherDto?> GetTeacherByIDAsync(Guid teacherId, Guid? instituteId = null)
+        {
+            Teacher? teacher = await _teacherRepository.GetTeacherByIDAsync(teacherId, instituteId);
+            if (teacher == null)
+                return null;
+
             var teacherDto = new TeacherDto
             {
                 Id = teacher.UserId,
-                Username = teacher.TeacherInfo.Username,
-                FirstName = teacher.TeacherInfo.FirstName,
-                SecondName = teacher.TeacherInfo.SecondName,
-                PhoneNumber = teacher.TeacherInfo.PhoneNumber,
-                Email = teacher.TeacherInfo.Email,
+                Username = teacher.TeacherInfo?.Username ?? string.Empty,
+                FirstName = teacher.TeacherInfo?.FirstName ?? string.Empty,
+                SecondName = teacher.TeacherInfo?.SecondName ?? string.Empty,
+                PhoneNumber = teacher.TeacherInfo?.PhoneNumber ?? string.Empty,
+                Email = teacher.TeacherInfo?.Email,
             };
-            if (teacher == null)
-                return null;
-            else
-                return teacherDto;
+            return teacherDto;
         }
 
         public async Task UpdateTeacherAsync(TeacherDto teacher)

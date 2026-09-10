@@ -82,15 +82,15 @@ namespace Hafiz.Areas.Admin.Controllers
 
         public async Task<IActionResult> Edit([FromRoute] Guid id)
         {
-            var teacher = await _teacherService.GetTeacherByIDAsync(id);
+            var instituteId = GetInstituteId();
+            var teacher = await _teacherService.GetTeacherByIDAsync(id, instituteId);
 
             if (teacher == null)
             {
-                ModelState.AddModelError(string.Empty, "Teacher not found");
-                return View();
+                TempData["ErrorMessage"] = "Teacher not found or not authorized.";
+                return RedirectToAction(nameof(Index));
             }
-            else
-                return View(teacher);
+            return View(teacher);
         }
 
         [HttpPost]
@@ -99,6 +99,11 @@ namespace Hafiz.Areas.Admin.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
+            var instituteId = GetInstituteId();
+            var existingTeacher = await _teacherService.GetTeacherByIDAsync(model.Id, instituteId);
+            if (existingTeacher == null)
+                return Forbid();
+
             await _teacherService.UpdateTeacherAsync(model);
             return RedirectToAction(nameof(Index));
         }
@@ -106,7 +111,24 @@ namespace Hafiz.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _teacherService.DeleteTeacherAsync(id);
+            var instituteId = GetInstituteId();
+            var deleted = await _teacherService.DeleteTeacherAsync(id, instituteId);
+            if (!deleted)
+            {
+                TempData["ErrorMessage"] = "غير مصرح لك بحذف هذا المعلم أو أنه غير موجود.";
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Restore(Guid id)
+        {
+            var instituteId = GetInstituteId();
+            var restored = await _teacherService.RestoreTeacherAsync(id, instituteId);
+            if (!restored)
+            {
+                TempData["ErrorMessage"] = "غير مصرح لك باستعادة هذا المعلم أو أنه غير موجود.";
+            }
             return RedirectToAction(nameof(Index));
         }
 

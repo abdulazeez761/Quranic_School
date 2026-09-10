@@ -44,14 +44,21 @@ namespace Hafiz.Repositories
             }
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task<bool> DeleteAsync(Guid id, Guid? instituteId = null)
         {
-            var student = await _context
+            var query = _context
                 .Students.Include(s => s.StudentInfo)
-                .FirstOrDefaultAsync(s => s.UserId == id);
+                .AsQueryable();
+
+            if (instituteId.HasValue)
+            {
+                query = query.Where(s => s.StudentInfo.InstituteId == instituteId.Value);
+            }
+
+            var student = await query.FirstOrDefaultAsync(s => s.UserId == id);
 
             if (student is null)
-                return;
+                return false;
 
             _context.Students.Remove(student);
             if (student.StudentInfo != null)
@@ -60,6 +67,7 @@ namespace Hafiz.Repositories
             }
 
             await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<IEnumerable<Student>> GetAllAsync()
@@ -78,15 +86,22 @@ namespace Hafiz.Repositories
                 .FirstOrDefaultAsync(t => t.StudentInfo.Email == email);
         }
 
-        public async Task<Student?> GetByIdAsync(Guid id)
+        public async Task<Student?> GetByIdAsync(Guid id, Guid? instituteId = null)
         {
-            return await _context
+            var query = _context
                 .Students.Include(t => t.StudentInfo)
                 .Include(s => s.wirds)
                 .Include(s => s.Classes)
                 .Include(s => s.Attendances)
                 .ThenInclude(a => a.Class)
-                .FirstOrDefaultAsync(t => t.UserId == id);
+                .AsQueryable();
+
+            if (instituteId.HasValue)
+            {
+                query = query.Where(s => s.StudentInfo.InstituteId == instituteId.Value);
+            }
+
+            return await query.FirstOrDefaultAsync(t => t.UserId == id);
         }
 
         public async Task UpdateAsync(EditStudentDto student)
@@ -237,12 +252,19 @@ namespace Hafiz.Repositories
                 .ToListAsync();
         }
 
-        public async Task<bool> RestoreStudentAsync(Guid studentId)
+        public async Task<bool> RestoreStudentAsync(Guid studentId, Guid? instituteId = null)
         {
-            var student = await _context
+            var query = _context
                 .Students.IgnoreQueryFilters()
                 .Include(s => s.StudentInfo)
-                .FirstOrDefaultAsync(s => s.UserId == studentId);
+                .AsQueryable();
+
+            if (instituteId.HasValue)
+            {
+                query = query.Where(s => s.StudentInfo.InstituteId == instituteId.Value);
+            }
+
+            var student = await query.FirstOrDefaultAsync(s => s.UserId == studentId);
 
             if (student == null || !student.IsDeleted)
                 return false;

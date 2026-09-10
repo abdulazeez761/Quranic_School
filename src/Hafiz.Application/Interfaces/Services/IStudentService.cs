@@ -19,15 +19,16 @@ namespace Hafiz.Services.Interfaces
             RegisterStudentDto student,
             Guid? instituteId = null
         );
-        public Task DeleteAsync(Guid id);
-        public Task<StudentDto?> GetByIdAsync(Guid id);
+        public Task<bool> DeleteAsync(Guid id, Guid? instituteId = null);
+        public Task<bool> RestoreStudentAsync(Guid studentId, Guid? instituteId = null);
+        public Task<StudentDto?> GetByIdAsync(Guid id, Guid? instituteId = null);
 
         public Task UpdateAsync(EditStudentDto student);
         public Task<IEnumerable<Student>> GetStudentsByClassID(Guid? classID);
 
         // Student Portal Methods
         public Task<Student?> GetStudentByUserIdAsync(Guid userId);
-        public Task<Student?> GetStudentByIdAsync(Guid studentId);
+        public Task<Student?> GetStudentByIdAsync(Guid studentId, Guid? instituteId = null);
         public Task<IEnumerable<StudentAttendance>> GetStudentAttendanceAsync(Guid studentId);
         public Task<IEnumerable<WirdAssignment>> GetStudentWirdsAsync(Guid studentId);
         public Task<Hafiz.DTOs.Wird.PaginatedWirdsResponse> GetStudentWirdsPaginatedAsync(
