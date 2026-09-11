@@ -334,9 +334,11 @@
 
 ### المرحلة 05: الأمان والمصادقة (Authentication & Authorization)
 
-- [ ] **5.1 حظر تسجيل الدخول للمستخدمين المحذوفين ناعماً**
-  - في `AuthService.LoginAsync`: استعلام `UserRepository.GetByUsernameAsync` يستبعد المحذوفين تلقائياً بفضل الفلتر العام، فتفشل محاولة الدخول مباشرة.
-- [ ] **5.2 إبطال الجلسات النشطة فور الحذف (Cookie Invalidation)**
+- [x] **5.1 حظر تسجيل الدخول للمستخدمين المحذوفين ناعماً والتابعين لمراكز معطلة أو محذوفة**
+  - في `UserRepository.GetByUsernameAsync`: استعلام المستخدم مع `.Include(u => u.Institute)` وفحص `!u.IsDeleted`.
+  - في `AuthController.Login`: فحص أمني دقيق لحالة المعهد (`IsDeleted || !IsActive`) ومنع تسجيل الدخول فوراً.
+- [x] **5.2 إبطال الجلسات النشطة فور الحذف أو تعطيل المركز (Cookie Invalidation)**
+  - في إعدادات `CookieAuthenticationEvents.OnValidatePrincipal` في `ServiceExtensions.cs`: فحص حالة المستخدم وحالة مركزه باستعلام خفيف وموحد وطرد الجلسة فوراً.
   - في إعدادات `CookieAuthenticationEvents.OnValidatePrincipal` في `Program.cs`:
   ```csharp
   options.Events = new CookieAuthenticationEvents

@@ -33,22 +33,45 @@ namespace Hafiz.Controllers
 
             if (user is null)
             {
-                ModelState.AddModelError("", "كلمة السر أو اسم المستخدم غير صحيح.");
+                ModelState.AddModelError(string.Empty, "كلمة السر أو اسم المستخدم غير صحيح.");
                 return View(dto);
             }
 
+            if (user.InstituteId is null && user.Role != UserRole.SuperAdmin)
+            {
+                ModelState.AddModelError(string.Empty, "لا يوجد مركز تحفيظ مرتبط بهذا الحساب.");
+                return View(dto);
+            }
+
+            if (user.Institute is not null && (user.Institute.IsDeleted || !user.Institute.IsActive))
+            {
+                ModelState.AddModelError(string.Empty, "المعهد المرتبط بحسابك غير مفعّل أو تم إيقافه مؤقتاً.");
+                return View(dto);
+            }
+
+            await SignInUserAsync(user);
+
+            if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
+                return LocalRedirect(ReturnUrl);
+
+            return RedirectByUserRole(user.Role);
+        }
+
+        private async Task SignInUserAsync(User user)
+        {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.FirstName + " " + user.SecondName),
-                new Claim("Username", user.Username),
-                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new(ClaimTypes.Name, $"{user.FirstName} {user.SecondName}"),
+                new("Username", user.Username),
+                new(ClaimTypes.Role, user.Role.ToString()),
             };
 
             if (user.InstituteId.HasValue)
             {
                 claims.Add(new Claim("InstituteId", user.InstituteId.Value.ToString()));
             }
+
             var identity = new ClaimsIdentity(
                 claims,
                 CookieAuthenticationDefaults.AuthenticationScheme
@@ -64,26 +87,17 @@ namespace Hafiz.Controllers
                     ExpiresUtc = DateTime.UtcNow.AddDays(30),
                 }
             );
-
-            if (ReturnUrl != null && Url.IsLocalUrl(ReturnUrl))
-                return LocalRedirect(ReturnUrl);
-
-            switch (user.Role)
-            {
-                case UserRole.Admin:
-                    return RedirectToAction("Index", "Home", new { area = "Admin" });
-                case UserRole.Teacher:
-                    return RedirectToAction("Index", "Home", new { area = "Teacher" });
-                case UserRole.Student:
-                    return RedirectToAction("Index", "Student");
-                case UserRole.Parent:
-                    return RedirectToAction("Index", "Parent");
-                case UserRole.SuperAdmin:
-                    return RedirectToAction("Index", "Home", new { area = "SuperAdmin" });
-                default:
-                    return RedirectToAction("Index", "Home");
-            }
         }
+
+        private IActionResult RedirectByUserRole(UserRole role) => role switch
+        {
+            UserRole.Admin => RedirectToAction("Index", "Home", new { area = "Admin" }),
+            UserRole.Teacher => RedirectToAction("Index", "Home", new { area = "Teacher" }),
+            UserRole.Student => RedirectToAction("Index", "Student"),
+            UserRole.Parent => RedirectToAction("Index", "Parent"),
+            UserRole.SuperAdmin => RedirectToAction("Index", "Home", new { area = "SuperAdmin" }),
+            _ => RedirectToAction("Index", "Home"),
+        };
 
         // GET: Register
         [HttpGet]

@@ -5,9 +5,11 @@ using System.Security.Claims;
 using System.Threading.RateLimiting;
 using System.Threading.Tasks;
 using Hafiz.Application;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Hafiz.Web.Extensions
@@ -61,6 +63,47 @@ namespace Hafiz.Web.Extensions
                             CookieAuthenticationDefaults.AuthenticationScheme
                         );
                         await Task.CompletedTask;
+                    };
+                    options.Events.OnValidatePrincipal = async context =>
+                    {
+                        var dbContext =
+                            context.HttpContext.RequestServices.GetRequiredService<Hafiz.Data.ApplicationDbContext>();
+                        var userIdStr = context
+                            .Principal?.FindFirst(ClaimTypes.NameIdentifier)
+                            ?.Value;
+                        if (Guid.TryParse(userIdStr, out var userId))
+                        {
+                            // نجلب حالة المستخدم وحالة مركزه باستعلام خفيف واحد
+                            var userStatus = await dbContext
+                                .Users.IgnoreQueryFilters()
+                                .Where(u => u.Id == userId)
+                                .Select(u => new
+                                {
+                                    u.IsDeleted,
+                                    // إذا كان المستخدم يتبع مركزاً، نتأكد أن المركز ليس محذوفاً وليس معطلاً
+                                    IsInstituteDeactivated = u.Institute != null
+                                        && (u.Institute.IsDeleted || !u.Institute.IsActive),
+                                })
+                                .FirstOrDefaultAsync();
+                            // يطرد المستخدم فوراً إذا:
+                            // 1. المستخدم غير موجود
+                            // 2. أو المستخدم محذوف شخصياً
+                            // 3. أو المركز التابع له محذوف/معطل
+                            if (
+                                userStatus == null
+                                || userStatus.IsDeleted
+                                || userStatus.IsInstituteDeactivated
+                            )
+                            {
+                                context.RejectPrincipal();
+                                await context.HttpContext.SignOutAsync();
+                            }
+                        }
+                        else
+                        {
+                            context.RejectPrincipal();
+                            await context.HttpContext.SignOutAsync();
+                        }
                     };
                 });
 

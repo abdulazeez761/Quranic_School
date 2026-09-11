@@ -36,7 +36,10 @@ namespace Hafiz.Repositories
 
         public Task<User?> GetByUsernameAsync(string username)
         {
-            return _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+            return _context.Users
+                .IgnoreQueryFilters()
+                .Include(u => u.Institute)
+                .FirstOrDefaultAsync(u => u.Username == username && !u.IsDeleted);
         }
 
         public Task<User?> GetByIdAsync(Guid id)
