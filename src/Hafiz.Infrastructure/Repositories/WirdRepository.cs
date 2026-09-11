@@ -64,7 +64,9 @@ namespace Hafiz.Repositories
 
             var wirds = await FilterByClass(
                     _context
-                        .WirdAssignments.Include(w => w.Student)
+                        .WirdAssignments.IgnoreQueryFilters()
+                        .AsNoTracking()
+                        .Include(w => w.Student)
                         .Include(w => w.Student.StudentInfo),
                     classID
                 )
@@ -167,7 +169,7 @@ namespace Hafiz.Repositories
         // تشترك فيه صفحة التفاصيل والإحصائيات والترتيب.
         private IQueryable<WirdAssignment> BuildReportQuery(WirdReportFilterDto filter)
         {
-            var query = _context.WirdAssignments.AsNoTracking();
+            var query = _context.WirdAssignments.IgnoreQueryFilters().AsNoTracking();
 
             if (filter.InstituteId.HasValue)
                 query = query.Where(w => w.Student.StudentInfo.InstituteId == filter.InstituteId);

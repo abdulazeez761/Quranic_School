@@ -42,9 +42,23 @@ namespace Hafiz.Repositories
             DateTime date
         )
         {
-            var students = await _context
-                .Students.Include(t => t.Attendances)
-                .Where(t => t.Classes.Any(c => c.Id == classId))
+            bool isPastDate = date.Date < DateTime.Today;
+            var query = _context.Students.AsQueryable();
+            if (isPastDate)
+            {
+                query = query
+                    .IgnoreQueryFilters()
+                    .Where(t =>
+                        !t.IsDeleted
+                        || t.Attendances.Any(a => a.Date.Date == date.Date && a.ClassId == classId)
+                    );
+            }
+
+            return await query
+                .Where(t =>
+                    t.Classes.Any(c => c.Id == classId)
+                    || (isPastDate && t.Attendances.Any(a => a.Date.Date == date.Date && a.ClassId == classId))
+                )
                 .Select(t => new StudentAttendanceDto
                 {
                     Id = t.UserId,
@@ -55,15 +69,13 @@ namespace Hafiz.Repositories
                         .Select(a => new PreviousStudentAttendanceDto
                         {
                             StudentId = a.StudentId,
-                            Status = (int)a.Status, // convert enum to int
+                            Status = (int)a.Status,
                             ClassId = a.ClassId,
                             Date = a.Date,
                         })
                         .FirstOrDefault(),
                 })
                 .ToListAsync();
-
-            return students;
         }
 
         public async Task UpdateStudentAttendance(StudentAttendance attendanceInfo)

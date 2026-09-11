@@ -35,7 +35,7 @@ namespace Hafiz.Repositories.Interfaces
 
         Task<IEnumerable<Student>> GetStudentByInstituteIdAsyncAndClassDay(
             Guid instituteId,
-            ClassDaysEnum dayOfWeek
+            DateTime selectedDate
         );
 
         Task<IEnumerable<Student>> GetStudentsByClassIdAsync(Guid classId);

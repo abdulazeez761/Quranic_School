@@ -46,9 +46,7 @@ namespace Hafiz.Repositories
 
         public async Task<bool> DeleteAsync(Guid id, Guid? instituteId = null)
         {
-            var query = _context
-                .Students.Include(s => s.StudentInfo)
-                .AsQueryable();
+            var query = _context.Students.Include(s => s.StudentInfo).AsQueryable();
 
             if (instituteId.HasValue)
             {
@@ -225,17 +223,36 @@ namespace Hafiz.Repositories
 
         public async Task<IEnumerable<Student>> GetStudentByInstituteIdAsyncAndClassDay(
             Guid instituteId,
-            ClassDaysEnum dayOfWeek
+            DateTime selectedDate
         )
         {
-            return await _context
-                .Students.Include(t => t.StudentInfo)
+            ClassDaysEnum dayOfWeek = (ClassDaysEnum)(int)(selectedDate.DayOfWeek + 1);
+            bool isPastDate = selectedDate.Date < DateTime.Today;
+            var query = _context.Students.AsQueryable();
+
+            if (isPastDate)
+            {
+                query = query
+                    .IgnoreQueryFilters()
+                    .Where(s =>
+                        !s.IsDeleted
+                        || s.Attendances.Any(a => a.Date.Date == selectedDate.Date)
+                        || s.wirds.Any(w => w.AssignedDate.Date == selectedDate.Date)
+                    );
+            }
+
+            return await query
+                .Include(t => t.StudentInfo)
                 .Include(s => s.Classes)
-                .Include(s => s.Attendances)
-                .Include(s => s.wirds)
+                .Include(s => s.Attendances.Where(a => a.Date.Date == selectedDate.Date))
+                .Include(s => s.wirds.Where(w => w.AssignedDate.Date == selectedDate.Date))
                 .Where(s =>
                     s.StudentInfo.InstituteId == instituteId
-                    && s.Classes.Any(c => c.ClassDays.Any(day => day == dayOfWeek))
+                    && (
+                        s.Classes.Any(c => c.ClassDays.Any(day => day == dayOfWeek))
+                        || s.Attendances.Any(a => a.Date.Date == selectedDate.Date)
+                        || s.wirds.Any(w => w.AssignedDate.Date == selectedDate.Date)
+                    )
                 )
                 .AsNoTracking()
                 .ToListAsync();

@@ -321,13 +321,12 @@ namespace Hafiz.Services
 
         public Task<IEnumerable<Student>> GetStudentByInstituteIdAsyncAndClassDay(
             Guid instituteId,
-            DateTime dayOfWeek
+            DateTime selectedDate
         )
         {
-            ClassDaysEnum classDay = (ClassDaysEnum)(int)(dayOfWeek.DayOfWeek + 1);
             return _studentRepository.GetStudentByInstituteIdAsyncAndClassDay(
                 instituteId,
-                classDay
+                selectedDate
             );
         }
     }

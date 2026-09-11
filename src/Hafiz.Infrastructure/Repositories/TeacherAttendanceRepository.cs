@@ -30,8 +30,20 @@ namespace Hafiz.Repositories
             Guid instituteId
         )
         {
-            var teachers = await _context
-                .Teachers.Include(t => t.Attendances)
+            var isPastDate = date.Date < DateTime.Today;
+            var query = _context.Teachers.AsQueryable();
+
+            if (isPastDate)
+            {
+                query = query
+                    .IgnoreQueryFilters()
+                    .Where(t =>
+                        !t.IsDeleted
+                        || t.Attendances.Any(a => a.Date == date.Date)
+                    );
+            }
+
+            var teachers = await query
                 .Where(t => t.TeacherInfo.InstituteId == instituteId)
                 .Select(t => new TeacherAttendanceDto
                 {
@@ -73,9 +85,24 @@ namespace Hafiz.Repositories
             DateTime date
         )
         {
-            var teachers = await _context
-                .Teachers.Include(t => t.Attendances)
-                .Where(t => t.Classes.Any(cl => cl.Id == classId))
+            var isPastDate = date.Date < DateTime.Today;
+            var query = _context.Teachers.AsQueryable();
+
+            if (isPastDate)
+            {
+                query = query
+                    .IgnoreQueryFilters()
+                    .Where(t =>
+                        !t.IsDeleted
+                        || t.Attendances.Any(a => a.Date == date.Date && a.ClassId == classId)
+                    );
+            }
+
+            var teachers = await query
+                .Where(t =>
+                    t.Classes.Any(cl => cl.Id == classId)
+                    || (isPastDate && t.Attendances.Any(a => a.Date == date.Date && a.ClassId == classId))
+                )
                 .Select(t => new TeacherAttendanceDto
                 {
                     Id = t.UserId,

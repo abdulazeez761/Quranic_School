@@ -270,7 +270,7 @@
 
 ### المرحلة 04: حماية الإحصائيات ولوحة التحكم والتقارير
 
-- [ ] **4.1 حماية إحصائيات حفظ ومراجعة القرآن التراكمية في `DashboardService.cs`**
+- [x] **4.1 حماية إحصائيات حفظ ومراجعة القرآن التراكمية في `DashboardService.cs`**
   - **الملف:** `src/Hafiz.Infrastructure/Services/DashboardService.cs`
   - في دالة `AggregateWirdUnitsAsync`:
   ```csharp
@@ -279,7 +279,7 @@
       // استخدام IgnoreQueryFilters لضمان بقاء أوراد الطلاب المحذوفين ضمن إنجاز المركز
       var wirdsQuery = _context.WirdAssignments
           .IgnoreQueryFilters()
-          .AsQueryable();
+          .AsNoTracking();
 
       if (instituteId.HasValue)
       {
@@ -301,11 +301,11 @@
   }
   ```
 
-- [ ] **4.2 حماية تقارير الأوراد وتصدير Excel في `WirdRepository.cs`**
+- [x] **4.2 حماية تقارير الأوراد وتصدير Excel في `WirdRepository.cs`**
   - **الملف:** `src/Hafiz.Infrastructure/Repositories/WirdRepository.cs`
-  - في دالة `BuildWirdReportQuery`:
+  - في دالة `BuildReportQuery`:
   ```csharp
-  private IQueryable<WirdAssignment> BuildWirdReportQuery(WirdReportFilterDto filter)
+  private IQueryable<WirdAssignment> BuildReportQuery(WirdReportFilterDto filter)
   {
       var query = _context.WirdAssignments
           .IgnoreQueryFilters()
@@ -319,9 +319,16 @@
   }
   ```
 
-- [ ] **4.3 فحص الأعداد اللحظية في لوحة التحكم (Live Counts)**
+- [x] **4.3 فحص الأعداد اللحظية في لوحة التحكم (Live Counts)**
   - في `DashboardService.LoadCountsAsync`:
   - أعداد `MaleStudents`، `FemaleStudents`، `Teachers`، `Classes`، و `ExpectedStudentsToday` تعتمد على الفلتر التلقائي `!IsDeleted` وتستبعد المحذوفين بشكل سليم وتلقائي.
+  - الحضور اللحظي الفعلي للطلاب والمعلمين مؤمن بشرط `IsDeleted == false` صريح.
+
+- [x] **4.4 حماية التقارير اليومية وسجلات الحضور والأوراد للأيام السابقة (Historical Data Protection)**
+  - في `StudentRepository.GetStudentByInstituteIdAsyncAndClassDay`: عند طلب تاريخ سابق، يُستخدم `.IgnoreQueryFilters()` لجلب الطلاب الذين أنجزوا أوراداً أو سجلوا حضوراً في ذلك اليوم.
+  - في `StudentAttendanceRepository.GetStudentsByClassId`: للأيام السابقة يتم جلب الطلاب المحذوفين الذين حضروا في تلك الحلقة.
+  - في `TeacherAttendanceRepository`: للأيام السابقة يتم جلب المعلمين المحذوفين الذين سجلوا دواماً.
+  - في `WirdRepository.GetWirdAssignmentsByClassIdAsync`: دعم بقاء أوراد الطلاب المحذوفين في استعراض الحلقة.
 
 ---
 

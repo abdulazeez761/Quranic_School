@@ -115,6 +115,7 @@ namespace Hafiz.Infrastructure.Services
                             || a.Status == AttendanceStatus.Late
                         )
                         && classesToday.Any(c => c.Id == a.ClassId)
+                        && a.Student.StudentInfo.IsDeleted == false
                     ),
                     ExpectedTeachersToday = teachersToday.Count(),
                     AttendedTeachersToday = _context.teacherAttendances.Count(a =>
@@ -124,6 +125,7 @@ namespace Hafiz.Infrastructure.Services
                             a.Status == AttendanceStatus.Present
                             || a.Status == AttendanceStatus.Late
                         )
+                        && a.Teacher.IsDeleted == false
                         && teachersToday.Any(t => t.UserId == a.TeacherId)
                     ),
                 })
@@ -159,11 +161,11 @@ namespace Hafiz.Infrastructure.Services
             int revAyahs
         )> AggregateWirdUnitsAsync(Guid? instituteId, DashboardPeriod period)
         {
-            var wirdsQuery = instituteId.HasValue
-                ? _context.WirdAssignments.Where(w =>
+            var wirdsQuery = _context.WirdAssignments.IgnoreQueryFilters().AsNoTracking();
+            if (instituteId.HasValue)
+                wirdsQuery = wirdsQuery.Where(w =>
                     w.Student.StudentInfo.InstituteId == instituteId
-                )
-                : _context.WirdAssignments.AsQueryable();
+                );
 
             var (from, toExclusive) = DashboardPeriodRange.Resolve(period);
             if (from.HasValue)
