@@ -142,5 +142,20 @@ namespace Hafiz.Services
         {
             return _instituteRepository.GetInstituteClassCountAsync(instituteId);
         }
+
+        public Task<bool> RestoreInstituteAsync(Guid instituteId)
+        {
+            return _instituteRepository.RestoreInstituteAsync(instituteId);
+        }
+
+        public Task<List<Institute>> GetArchivedInstitutesAsync()
+        {
+            return _instituteRepository.GetArchivedInstitutesAsync();
+        }
+
+        public Task<(int activeCount, int archivedCount)> GetCountsAsync()
+        {
+            return _instituteRepository.GetCountsAsync();
+        }
     }
 }

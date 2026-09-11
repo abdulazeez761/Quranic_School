@@ -16,5 +16,8 @@ namespace Hafiz.Services.Interfaces
         Task<bool> RestoreTeacherAsync(Guid teacherId, Guid? instituteId = null);
         Task UpdateTeacherAsync(TeacherDto teacher);
         Task<IList<Class>> GetTeacherClasses(Guid teacherId);
+        Task<IEnumerable<Teacher>> GetArchivedTeachersByInstituteAsync(Guid instituteId);
+        Task<IEnumerable<Teacher>> GetArchivedTeachersAsync();
+        Task<(int activeCount, int archivedCount)> GetCountsAsync(Guid? instituteId = null);
     }
 }

@@ -87,7 +87,8 @@ namespace Hafiz.Repositories
         public async Task<Student?> GetByIdAsync(Guid id, Guid? instituteId = null)
         {
             var query = _context
-                .Students.Include(t => t.StudentInfo)
+                .Students.IgnoreQueryFilters()
+                .Include(t => t.StudentInfo)
                 .Include(s => s.wirds)
                 .Include(s => s.Classes)
                 .Include(s => s.Attendances)
@@ -297,6 +298,47 @@ namespace Hafiz.Repositories
             }
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<IEnumerable<Student>> GetArchivedByInstituteAsync(Guid instituteId)
+        {
+            return await _context.Students
+                .IgnoreQueryFilters()
+                .Include(t => t.StudentInfo)
+                .Include(s => s.Classes)
+                .Where(s => s.IsDeleted && s.StudentInfo.InstituteId == instituteId)
+                .OrderByDescending(s => s.DeletedAt)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Student>> GetArchivedAsync()
+        {
+            return await _context.Students
+                .IgnoreQueryFilters()
+                .Include(t => t.StudentInfo)
+                .Include(s => s.Classes)
+                .Where(s => s.IsDeleted)
+                .OrderByDescending(s => s.DeletedAt)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<(int activeCount, int archivedCount)> GetCountsAsync(Guid? instituteId = null)
+        {
+            var query = _context.Students
+                .IgnoreQueryFilters()
+                .AsQueryable();
+
+            if (instituteId.HasValue)
+            {
+                query = query.Where(s => s.StudentInfo.InstituteId == instituteId.Value);
+            }
+
+            var activeCount = await query.CountAsync(s => !s.IsDeleted);
+            var archivedCount = await query.CountAsync(s => s.IsDeleted);
+
+            return (activeCount, archivedCount);
         }
     }
 }

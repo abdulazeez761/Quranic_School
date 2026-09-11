@@ -14,11 +14,24 @@
         <p class="text-medium">تاريخ الإنشاء: @Model.CreatedAt.ToUserTime(Context).ToString("yyyy/MM/dd")</p>
     </div>
     <div class="d-flex gap-sm">
-        <form asp-action="Delete" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('هل أنت متأكد من حذف هذا المركز بالكامل وكل البيانات المرتبطة به؟');">
-            <button type="submit" class="btn btn-danger">
-                <i class='bx bx-trash'></i> حذف المركز
-            </button>
-        </form>
+        @if (Model.IsDeleted)
+        {
+            <form asp-action="Restore" asp-route-id="@Model.Id" method="post">
+                <button type="submit" class="btn btn-success"
+                        data-confirm-restore="هل أنت متأكد من استعادة المركز '@Model.Name' وإعادة تفعيله؟">
+                    <i class='bx bx-undo'></i> استعادة المركز
+                </button>
+            </form>
+        }
+        else
+        {
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                <button type="submit" class="btn btn-danger"
+                        data-confirm-delete="هل أنت متأكد من حذف المركز '@Model.Name'؟ سيتم أرشفة المركز وإيقاف الحسابات التابعة له مع الحفاظ على البيانات التاريخية.">
+                    <i class='bx bx-trash'></i> أرشفة المركز
+                </button>
+            </form>
+        }
         <a asp-action="Index" class="btn btn-outline">
             <i class='bx bx-arrow-back'></i> العودة للقائمة
         </a>
@@ -153,3 +166,9 @@
         </div>
     </div>
 </div>
+
+@section scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/confirmModal.js" asp-append-version="true"></script>
+}
+

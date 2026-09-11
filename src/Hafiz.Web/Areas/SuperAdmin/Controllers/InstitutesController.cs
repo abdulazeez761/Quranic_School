@@ -20,9 +20,23 @@ namespace Hafiz.Areas.SuperAdmin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool archived = false)
         {
-            var institutes = await _instituteService.GetAllAsync();
+            List<Institute> institutes;
+            if (archived)
+            {
+                institutes = await _instituteService.GetArchivedInstitutesAsync();
+            }
+            else
+            {
+                institutes = await _instituteService.GetAllAsync();
+            }
+
+            var (activeCount, archivedCount) = await _instituteService.GetCountsAsync();
+            ViewBag.IsArchived = archived;
+            ViewBag.ActiveCount = activeCount;
+            ViewBag.ArchivedCount = archivedCount;
+
             return View(institutes);
         }
 
@@ -71,8 +85,23 @@ namespace Hafiz.Areas.SuperAdmin.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             await _instituteService.DeleteAsync(id);
-            TempData["SuccessMessage"] = "تم حذف المركز بنجاح!";
+            TempData["SuccessMessage"] = "تمت أرشفة المركز بنجاح، ويمكنك استعادته من قسم الأرشيف.";
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Restore(Guid id)
+        {
+            var restored = await _instituteService.RestoreInstituteAsync(id);
+            if (!restored)
+            {
+                TempData["ErrorMessage"] = "تعذر استعادة المركز أو أنه غير موجود.";
+            }
+            else
+            {
+                TempData["SuccessMessage"] = "تمت استعادة المركز بنجاح وإعادة تفعيله.";
+            }
+            return RedirectToAction(nameof(Index), new { archived = true });
         }
     }
 }

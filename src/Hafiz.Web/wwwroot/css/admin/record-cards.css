@@ -246,3 +246,91 @@
 body[dir='rtl'] .record-actions {
   flex-direction: row-reverse;
 }
+
+/* ---- Archive Navigation Tabs ----------------------------------- */
+.archive-nav-tabs {
+  display: inline-flex;
+  background: #f1f4ef;
+  padding: 4px;
+  border-radius: 14px;
+  gap: 6px;
+  border: 1px solid #e2e8df;
+  margin-bottom: 20px;
+}
+
+.archive-nav-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #5d6f60;
+  text-decoration: none;
+  transition: all 180ms ease;
+}
+
+.archive-nav-tab i {
+  font-size: 18px;
+}
+
+.archive-nav-tab:hover {
+  color: #2c3e50;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.archive-nav-tab.active {
+  background: #fff;
+  color: #3b6c2c;
+  box-shadow: 0 2px 6px rgba(44, 62, 80, 0.08);
+}
+
+.archive-nav-tab .tab-count-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #e2e8df;
+  color: #556559;
+}
+
+.archive-nav-tab.active .tab-count-pill {
+  background: #eaf4e2;
+  color: #3b6c2c;
+}
+
+.tab-count-pill--warning {
+  background: #fdf2d2 !important;
+  color: #8c6812 !important;
+}
+
+/* ---- Archived Badge & Restore Button --------------------------- */
+.record-badge--archived {
+  background: #fdf3e2;
+  color: #925f16;
+  border: 1px solid #fae6c6;
+}
+
+.record-btn-restore {
+  flex: 1;
+  background: #eaf4e2;
+  color: #2f6b21;
+  border: 1px solid #cce5be;
+}
+
+.record-btn-restore:hover {
+  background: #dbedd0;
+  color: #245519;
+}
+
+.record-actions .restore-form {
+  flex: 1;
+  display: flex;
+}
+

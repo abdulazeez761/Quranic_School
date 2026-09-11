@@ -201,5 +201,20 @@ namespace Hafiz.Services
 
             return _classRepository.GetAllByInstituteAndClassDaysAsync(instituteId, currentDay);
         }
+
+        public Task<IEnumerable<Class>> GetArchivedClassesByInstituteAsync(Guid instituteId)
+        {
+            return _classRepository.GetArchivedClassesByInstituteAsync(instituteId);
+        }
+
+        public Task<IEnumerable<Class>> GetArchivedClassesAsync()
+        {
+            return _classRepository.GetArchivedClassesAsync();
+        }
+
+        public Task<(int activeCount, int archivedCount)> GetCountsAsync(Guid? instituteId = null)
+        {
+            return _classRepository.GetCountsAsync(instituteId);
+        }
     }
 }

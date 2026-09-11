@@ -40,5 +40,8 @@ namespace Hafiz.Repositories.Interfaces
 
         Task<IEnumerable<Student>> GetStudentsByClassIdAsync(Guid classId);
         Task<bool> RestoreStudentAsync(Guid studentId, Guid? instituteId = null);
+        Task<IEnumerable<Student>> GetArchivedByInstituteAsync(Guid instituteId);
+        Task<IEnumerable<Student>> GetArchivedAsync();
+        Task<(int activeCount, int archivedCount)> GetCountsAsync(Guid? instituteId = null);
     }
 }

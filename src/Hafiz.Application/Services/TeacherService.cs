@@ -76,5 +76,20 @@ namespace Hafiz.Services
             var teacherClasses = await _teacherRepository.GetTeacherClasses(teacherId);
             return teacherClasses;
         }
+
+        public Task<IEnumerable<Teacher>> GetArchivedTeachersByInstituteAsync(Guid instituteId)
+        {
+            return _teacherRepository.GetArchivedTeachersByInstituteAsync(instituteId);
+        }
+
+        public Task<IEnumerable<Teacher>> GetArchivedTeachersAsync()
+        {
+            return _teacherRepository.GetArchivedTeachersAsync();
+        }
+
+        public Task<(int activeCount, int archivedCount)> GetCountsAsync(Guid? instituteId = null)
+        {
+            return _teacherRepository.GetCountsAsync(instituteId);
+        }
     }
 }

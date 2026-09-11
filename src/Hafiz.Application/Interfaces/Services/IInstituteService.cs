@@ -23,5 +23,8 @@ namespace Hafiz.Services.Interfaces
         Task<int> GetStudentCountAsync(Guid instituteId);
         Task<int> GetTeacherCountAsync(Guid instituteId);
         Task<int> GetClassCountAsync(Guid instituteId);
+        Task<bool> RestoreInstituteAsync(Guid instituteId);
+        Task<List<Institute>> GetArchivedInstitutesAsync();
+        Task<(int activeCount, int archivedCount)> GetCountsAsync();
     }
 }

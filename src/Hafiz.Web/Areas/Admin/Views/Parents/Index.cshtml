@@ -3,6 +3,25 @@
 
 @{
     ViewData["Title"] = @Localizer["Title"];
+    bool isArchived = ViewBag.IsArchived == true;
+    int activeCount = ViewBag.ActiveCount ?? 0;
+    int archivedCount = ViewBag.ArchivedCount ?? 0;
+}
+
+<!-- Alerts -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mb-md d-flex align-center gap-sm">
+        <i class='bx bx-check-circle' style="font-size: 1.25rem;"></i>
+        <span>@TempData["SuccessMessage"]</span>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger mb-md d-flex align-center gap-sm">
+        <i class='bx bx-error-circle' style="font-size: 1.25rem;"></i>
+        <span>@TempData["ErrorMessage"]</span>
+    </div>
 }
 
 <!-- Page Header -->
@@ -28,10 +47,10 @@
 
 <!-- Statistics Cards -->
 @{
-    var totalParents = Model.Count();
-    var parentsWithChildren = Model.Count(p => p.Students != null && p.Students.Any());
+    var totalParents = Model?.Count() ?? 0;
+    var parentsWithChildren = Model?.Count(p => p.Students != null && p.Students.Any()) ?? 0;
     var parentsWithoutChildren = totalParents - parentsWithChildren;
-    var totalChildren = Model.Sum(p => p.Students?.Count ?? 0);
+    var totalChildren = Model?.Sum(p => p.Students?.Count ?? 0) ?? 0;
 }
 
 <div class="grid-auto-fit mb-lg">
@@ -40,7 +59,7 @@
             <i class='bx bx-user-circle'></i>
         </div>
         <div class="card-stat-content">
-            <div class="card-stat-label">@Localizer["TotalParents"]</div>
+            <div class="card-stat-label">@(isArchived ? Localizer["ArchivedRecords"] : Localizer["TotalParents"])</div>
             <div class="card-stat-value">@totalParents</div>
         </div>
     </div>
@@ -76,9 +95,23 @@
     </div>
 </div>
 
+<!-- Archive Navigation Tabs -->
+<div class="archive-nav-tabs">
+    <a asp-action="Index" asp-route-archived="false" class="archive-nav-tab @(!isArchived ? "active" : "")">
+        <i class='bx bx-check-circle'></i>
+        <span>@Localizer["ActiveRecords"]</span>
+        <span class="tab-count-pill">@activeCount</span>
+    </a>
+    <a asp-action="Index" asp-route-archived="true" class="archive-nav-tab @(isArchived ? "active" : "")">
+        <i class='bx bx-archive'></i>
+        <span>@Localizer["ArchivedRecords"]</span>
+        <span class="tab-count-pill @(archivedCount > 0 ? "tab-count-pill--warning" : "")">@archivedCount</span>
+    </a>
+</div>
+
 <!-- Parents Table -->
 <div class="table-container">
-    <!-- Search Toolbar -->
+    <!-- Search and Filter Toolbar -->
     <div class="table-toolbar">
         <div class="table-search">
             <input type="text" id="searchInput" placeholder="@Localizer["SearchPlaceholder"]">
@@ -102,9 +135,10 @@
                 var childrenCount = parent.Students?.Count ?? 0;
                 var hasChildren = childrenCount > 0;
                 var avatarVariant = index % 5;
+                var badgeVariant = hasChildren ? "record-badge--green" : "record-badge--empty";
 
                 <div class="record-card" data-firstname="@parent.ParentInfo.FirstName.ToLower()"
-                     data-secondname="@parent.ParentInfo.SecondName.ToLower()">
+                     data-secondname="@parent.ParentInfo.SecondName.ToLower()" data-username="@parent.ParentInfo.Username.ToLower()">
 
                     <div class="record-card-header">
                         <div class="record-avatar record-avatar--@avatarVariant">
@@ -112,9 +146,16 @@
                         </div>
                         <div class="record-identity">
                             <span class="record-name">@parent.ParentInfo.FirstName @parent.ParentInfo.SecondName</span>
-                            @if (hasChildren)
+                            @if (isArchived)
                             {
-                                <span class="record-badge record-badge--green">
+                                <span class="record-badge record-badge--archived">
+                                    <i class='bx bx-archive'></i>
+                                    <span>@Localizer["Archived"]</span>
+                                </span>
+                            }
+                            else if (hasChildren)
+                            {
+                                <span class="record-badge @badgeVariant">
                                     <i class='bx bx-group'></i>
                                     <span>@childrenCount @Localizer["ChildrenCount"]</span>
                                 </span>
@@ -123,7 +164,7 @@
                             {
                                 <span class="record-badge record-badge--empty">
                                     <i class='bx bx-info-circle'></i>
-                                    <span>@Localizer["NoChildren"]</span>
+                                    <span>@Localizer["WithoutChildren"]</span>
                                 </span>
                             }
                         </div>
@@ -138,20 +179,41 @@
                             <i class='bx bx-phone'></i>
                             <span class="record-info-value">@parent.ParentInfo.PhoneNumber</span>
                         </div>
+                        @if (isArchived && parent.DeletedAt.HasValue)
+                        {
+                            <div class="record-info-row text-muted" style="font-size: 12.5px;">
+                                <i class='bx bx-time'></i>
+                                <span>@Localizer["ArchivedAt"]: @parent.DeletedAt.Value.ToString("yyyy/MM/dd")</span>
+                            </div>
+                        }
                     </div>
 
                     <div class="record-actions">
-                        <a asp-action="Edit" asp-route-id="@parent.UserId" class="record-btn record-btn-edit">
-                            <i class='bx bx-edit'></i>
-                            <span>@Localizer["Edit"]</span>
-                        </a>
-                        <form asp-action="Delete" asp-route-id="@parent.UserId" method="post" class="delete-form">
-                            <button type="submit" class="record-btn record-btn-delete"
-                                    data-confirm-delete="@string.Format(Localizer["DeleteConfirmation"].Value, parent.ParentInfo.FirstName, parent.ParentInfo.SecondName)"
-                                    data-tooltip="@Localizer["Delete"]">
-                                <i class='bx bx-trash'></i>
-                            </button>
-                        </form>
+                        @if (isArchived)
+                        {
+                            <form asp-action="Restore" asp-route-id="@parent.UserId" method="post" class="restore-form">
+                                <button type="submit" class="record-btn record-btn-restore"
+                                        data-confirm-restore="@string.Format(Localizer["RestoreConfirmation"].Value, parent.ParentInfo.FirstName, parent.ParentInfo.SecondName)"
+                                        data-tooltip="@Localizer["Restore"]">
+                                    <i class='bx bx-undo'></i>
+                                    <span>@Localizer["Restore"]</span>
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-action="Edit" asp-route-id="@parent.UserId" class="record-btn record-btn-edit">
+                                <i class='bx bx-edit'></i>
+                                <span>@Localizer["Edit"]</span>
+                            </a>
+                            <form asp-action="Delete" asp-route-id="@parent.UserId" method="post" class="delete-form">
+                                <button type="submit" class="record-btn record-btn-delete"
+                                        data-confirm-delete="@string.Format(Localizer["DeleteConfirmation"].Value, parent.ParentInfo.FirstName, parent.ParentInfo.SecondName)"
+                                        data-tooltip="@Localizer["Delete"]">
+                                    <i class='bx bx-trash'></i>
+                                </button>
+                            </form>
+                        }
                     </div>
                 </div>
                 index++;
@@ -159,14 +221,28 @@
         }
         else
         {
-            <div class="record-empty">
-                <i class='bx bx-user-x'></i>
-                <h3 class="record-empty-title">@Localizer["NoDataAvailable"]</h3>
-                <p class="text-medium">@Localizer["NoParentsAdded"]</p>
-                <a asp-action="Create" class="btn btn-primary mt-md">
-                    <i class='bx bx-user-plus'></i> @Localizer["AddNewParent"]
-                </a>
-            </div>
+            if (isArchived)
+            {
+                <div class="record-empty">
+                    <i class='bx bx-archive'></i>
+                    <h3 class="record-empty-title">@Localizer["NoArchivedDataAvailable"]</h3>
+                    <p class="text-medium">@Localizer["NoArchivedParents"]</p>
+                    <a asp-action="Index" asp-route-archived="false" class="btn btn-outline mt-md">
+                        <i class='bx bx-arrow-back'></i> @Localizer["ActiveRecords"]
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="record-empty">
+                    <i class='bx bx-user-x'></i>
+                    <h3 class="record-empty-title">@Localizer["NoDataAvailable"]</h3>
+                    <p class="text-medium">@Localizer["NoParentsAdded"]</p>
+                    <a asp-action="Create" class="btn btn-primary mt-md">
+                        <i class='bx bx-user-plus'></i> @Localizer["AddNewParent"]
+                    </a>
+                </div>
+            }
         }
     </div>
 

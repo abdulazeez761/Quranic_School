@@ -276,7 +276,8 @@ namespace Hafiz.Repositories
         )
         {
             var query = _context
-                .WirdAssignments.Include(w => w.Student)
+                .WirdAssignments.IgnoreQueryFilters()
+                .Include(w => w.Student)
                 .Include(w => w.Student.StudentInfo)
                 .Where(w => w.StudentId == studentID);
 
@@ -305,7 +306,8 @@ namespace Hafiz.Repositories
             // Upcoming count is always over the whole student so the summary stays
             // meaningful even while the list is filtered by status/type.
             var upcomingCount = await _context
-                .WirdAssignments.Where(w => w.StudentId == studentID && w.IsUpcoming)
+                .WirdAssignments.IgnoreQueryFilters()
+                .Where(w => w.StudentId == studentID && w.IsUpcoming)
                 .CountAsync();
 
             var wirds = await query

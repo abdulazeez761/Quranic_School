@@ -177,7 +177,7 @@
   </data>
   
   <data name="DeleteConfirmation" xml:space="preserve">
-    <value>هل أنت متأكد من حذف ولي الأمر {0} {1}؟ سيتم حذف جميع البيانات المرتبطة به.</value>
+    <value>هل أنت متأكد من حذف ولي الأمر {0} {1}؟ سيتم أرشفة السجل وإيقاف الحساب، ولن تتأثر بيانات وسجلات الأبناء السابقة.</value>
     <comment>رسالة تأكيد لحذف ولي أمر. {0} = الاسم الأول، {1} = الاسم الثاني</comment>
   </data>
   
@@ -207,6 +207,32 @@
   <data name="ChildrenCount" xml:space="preserve">
     <value>ابن/ابنة</value>
     <comment>نص عدد الأبناء</comment>
+  </data>
+
+  <!-- Archive & Restore -->
+  <data name="ActiveRecords" xml:space="preserve">
+    <value>أولياء الأمور النشطون</value>
+  </data>
+  <data name="ArchivedRecords" xml:space="preserve">
+    <value>سجل الأرشيف</value>
+  </data>
+  <data name="Archived" xml:space="preserve">
+    <value>مؤرشف</value>
+  </data>
+  <data name="ArchivedAt" xml:space="preserve">
+    <value>تاريخ الأرشفة</value>
+  </data>
+  <data name="Restore" xml:space="preserve">
+    <value>استعادة</value>
+  </data>
+  <data name="RestoreConfirmation" xml:space="preserve">
+    <value>هل أنت متأكد من استعادة ولي الأمر {0} {1} وإعادة تنشيط حسابه؟</value>
+  </data>
+  <data name="NoArchivedDataAvailable" xml:space="preserve">
+    <value>لا يوجد أولياء أمور مؤرشفون</value>
+  </data>
+  <data name="NoArchivedParents" xml:space="preserve">
+    <value>سجل الأرشيف فارغ، جميع أولياء الأمور نشطون حالياً</value>
   </data>
   
 </root>

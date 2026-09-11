@@ -3,6 +3,25 @@
 
 @{
     ViewData["Title"] = @Localizer["Title"];
+    bool isArchived = ViewBag.IsArchived == true;
+    int activeCount = ViewBag.ActiveCount ?? 0;
+    int archivedCount = ViewBag.ArchivedCount ?? 0;
+}
+
+<!-- Alerts -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mb-md d-flex align-center gap-sm">
+        <i class='bx bx-check-circle' style="font-size: 1.25rem;"></i>
+        <span>@TempData["SuccessMessage"]</span>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger mb-md d-flex align-center gap-sm">
+        <i class='bx bx-error-circle' style="font-size: 1.25rem;"></i>
+        <span>@TempData["ErrorMessage"]</span>
+    </div>
 }
 
 <!-- Page Header -->
@@ -28,9 +47,9 @@
 
 <!-- Statistics Cards -->
 @{
-    var totalTeachers = Model.Count();
-    var totalClasses = Model.SelectMany(t => t.Classes).Select(c => c.Id).Distinct().Count();
-    var teachersWithClasses = Model.Count(t => t.Classes.Any());
+    var totalTeachers = Model?.Count() ?? 0;
+    var totalClasses = Model?.SelectMany(t => t.Classes).Select(c => c.Id).Distinct().Count() ?? 0;
+    var teachersWithClasses = Model?.Count(t => t.Classes.Any()) ?? 0;
     var teachersWithoutClasses = totalTeachers - teachersWithClasses;
 }
 
@@ -40,7 +59,7 @@
             <i class='bx bx-user'></i>
         </div>
         <div class="card-stat-content">
-            <div class="card-stat-label">@Localizer["Total_Teachers"]</div>
+            <div class="card-stat-label">@(isArchived ? Localizer["ArchivedRecords"] : Localizer["Total_Teachers"])</div>
             <div class="card-stat-value">@totalTeachers</div>
         </div>
     </div>
@@ -76,6 +95,20 @@
     </div>
 </div>
 
+<!-- Archive Navigation Tabs -->
+<div class="archive-nav-tabs">
+    <a asp-action="Index" asp-route-archived="false" class="archive-nav-tab @(!isArchived ? "active" : "")">
+        <i class='bx bx-check-circle'></i>
+        <span>@Localizer["ActiveRecords"]</span>
+        <span class="tab-count-pill">@activeCount</span>
+    </a>
+    <a asp-action="Index" asp-route-archived="true" class="archive-nav-tab @(isArchived ? "active" : "")">
+        <i class='bx bx-archive'></i>
+        <span>@Localizer["ArchivedRecords"]</span>
+        <span class="tab-count-pill @(archivedCount > 0 ? "tab-count-pill--warning" : "")">@archivedCount</span>
+    </a>
+</div>
+
 <!-- Teachers Table -->
 <div class="table-container">
     <!-- Search and Filter Toolbar -->
@@ -88,10 +121,10 @@
             <select class="form-select form-input-sm" id="classFilter">
                 <option value="">@Localizer["All_Sessions"]</option>
                 @{
-                    var allClasses = Model.SelectMany(s => s.Classes)
-                    .Select(c => c.Name)
-                    .Distinct()
-                    .OrderBy(name => name);
+                    var allClasses = Model?.SelectMany(s => s.Classes)
+                        .Select(c => c.Name)
+                        .Distinct()
+                        .OrderBy(name => name) ?? Enumerable.Empty<string>();
 
                     foreach (var className in allClasses)
                     {
@@ -128,7 +161,14 @@
                         </div>
                         <div class="record-identity">
                             <span class="record-name">@teacher.TeacherInfo.FirstName @teacher.TeacherInfo.SecondName</span>
-                            @if (hasClasses)
+                            @if (isArchived)
+                            {
+                                <span class="record-badge record-badge--archived">
+                                    <i class='bx bx-archive'></i>
+                                    <span>@Localizer["Archived"]</span>
+                                </span>
+                            }
+                            else if (hasClasses)
                             {
                                 <span class="record-badge @badgeVariant" title="@string.Join(", ", teacher.Classes.Select(c => c.Name))">
                                     <i class='bx bx-book'></i>
@@ -154,20 +194,41 @@
                             <i class='bx bx-phone'></i>
                             <span class="record-info-value">@teacher.TeacherInfo.PhoneNumber</span>
                         </div>
+                        @if (isArchived && teacher.DeletedAt.HasValue)
+                        {
+                            <div class="record-info-row text-muted" style="font-size: 12.5px;">
+                                <i class='bx bx-time'></i>
+                                <span>@Localizer["ArchivedAt"]: @teacher.DeletedAt.Value.ToString("yyyy/MM/dd")</span>
+                            </div>
+                        }
                     </div>
 
                     <div class="record-actions">
-                        <a asp-action="Edit" asp-route-id="@teacher.UserId" class="record-btn record-btn-edit">
-                            <i class='bx bx-edit'></i>
-                            <span>@Localizer["Edit"]</span>
-                        </a>
-                        <form method="post" asp-action="Delete" asp-route-id="@teacher.UserId" class="delete-form">
-                            <button type="submit" class="record-btn record-btn-delete"
-                                    data-confirm-delete="@Localizer["Delete_confirm"] @teacher.TeacherInfo.FirstName @teacher.TeacherInfo.SecondName؟"
-                                    data-tooltip="@Localizer["Delete"]">
-                                <i class='bx bx-trash'></i>
-                            </button>
-                        </form>
+                        @if (isArchived)
+                        {
+                            <form method="post" asp-action="Restore" asp-route-id="@teacher.UserId" class="restore-form">
+                                <button type="submit" class="record-btn record-btn-restore"
+                                        data-confirm-restore="@string.Format(Localizer["Restore_confirm"].Value, teacher.TeacherInfo.FirstName, teacher.TeacherInfo.SecondName)"
+                                        data-tooltip="@Localizer["Restore"]">
+                                    <i class='bx bx-undo'></i>
+                                    <span>@Localizer["Restore"]</span>
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-action="Edit" asp-route-id="@teacher.UserId" class="record-btn record-btn-edit">
+                                <i class='bx bx-edit'></i>
+                                <span>@Localizer["Edit"]</span>
+                            </a>
+                            <form method="post" asp-action="Delete" asp-route-id="@teacher.UserId" class="delete-form">
+                                <button type="submit" class="record-btn record-btn-delete"
+                                        data-confirm-delete="@string.Format(Localizer["Delete_confirm"].Value, teacher.TeacherInfo.FirstName, teacher.TeacherInfo.SecondName)"
+                                        data-tooltip="@Localizer["Delete"]">
+                                    <i class='bx bx-trash'></i>
+                                </button>
+                            </form>
+                        }
                     </div>
                 </div>
                 index++;
@@ -175,14 +236,28 @@
         }
         else
         {
-            <div class="record-empty">
-                <i class='bx bx-user-x'></i>
-                <h3 class="record-empty-title">@Localizer["No_Data"]</h3>
-                <p class="text-medium">@Localizer["Not_Added_yet"]</p>
-                <a asp-action="Create" class="btn btn-primary mt-md">
-                    <i class='bx bx-plus'></i> @Localizer["Add"]
-                </a>
-            </div>
+            if (isArchived)
+            {
+                <div class="record-empty">
+                    <i class='bx bx-archive'></i>
+                    <h3 class="record-empty-title">@Localizer["NoArchivedDataAvailable"]</h3>
+                    <p class="text-medium">@Localizer["NoArchivedTeachers"]</p>
+                    <a asp-action="Index" asp-route-archived="false" class="btn btn-outline mt-md">
+                        <i class='bx bx-arrow-back'></i> @Localizer["ActiveRecords"]
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="record-empty">
+                    <i class='bx bx-user-x'></i>
+                    <h3 class="record-empty-title">@Localizer["No_Data"]</h3>
+                    <p class="text-medium">@Localizer["Not_Added_yet"]</p>
+                    <a asp-action="Create" class="btn btn-primary mt-md">
+                        <i class='bx bx-plus'></i> @Localizer["Add"]
+                    </a>
+                </div>
+            }
         }
     </div>
 
@@ -192,18 +267,11 @@
             @Localizer["show"] <strong><span id="visibleCount">@totalTeachers</span></strong> @Localizer["outOf"]
             <strong>@totalTeachers</strong> @Localizer["teaher"]
         </div>
-        <!-- Optional: Add pagination here if needed -->
     </div>
 </div>
 
-
-
-
 @section scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <script src="~/js/teacher/search.js" asp-append-version="true"></script>
     <script src="~/js/confirmModal.js" asp-append-version="true"></script>
-
-
 }

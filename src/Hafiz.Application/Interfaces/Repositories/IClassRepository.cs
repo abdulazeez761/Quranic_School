@@ -21,5 +21,8 @@ namespace Hafiz.Repositories.Interfaces
             ClassDaysEnum workingDays
         );
         Task<bool> RestoreClassAsync(Guid classId, Guid? instituteId = null);
+        Task<IEnumerable<Class>> GetArchivedClassesByInstituteAsync(Guid instituteId);
+        Task<IEnumerable<Class>> GetArchivedClassesAsync();
+        Task<(int activeCount, int archivedCount)> GetCountsAsync(Guid? instituteId = null);
     }
 }

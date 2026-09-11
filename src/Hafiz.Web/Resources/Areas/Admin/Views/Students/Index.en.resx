@@ -182,7 +182,7 @@
   </data>
   
   <data name="DeleteConfirmation" xml:space="preserve">
-    <value>Are you sure you want to delete student {0} {1}? All associated data will be deleted.</value>
+    <value>Are you sure you want to delete student {0} {1}? The record will be archived and the account deactivated; previous memorization statistics, attendance records, and reports will remain unaffected.</value>
     <comment>Confirmation message for deleting a student. {0} = first name, {1} = last name</comment>
   </data>
   
@@ -201,6 +201,32 @@
   <data name="ShowingStudents" xml:space="preserve">
     <value>Showing {0} of {1} students</value>
     <comment>Footer text showing filtered results. {0} = visible count, {1} = total count</comment>
+  </data>
+
+  <!-- Archive & Restore -->
+  <data name="ActiveRecords" xml:space="preserve">
+    <value>Active Students</value>
+  </data>
+  <data name="ArchivedRecords" xml:space="preserve">
+    <value>Archived Students</value>
+  </data>
+  <data name="Archived" xml:space="preserve">
+    <value>Archived</value>
+  </data>
+  <data name="ArchivedAt" xml:space="preserve">
+    <value>Archived at</value>
+  </data>
+  <data name="Restore" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="RestoreConfirmation" xml:space="preserve">
+    <value>Are you sure you want to restore student {0} {1} and reactivate the account?</value>
+  </data>
+  <data name="NoArchivedDataAvailable" xml:space="preserve">
+    <value>No Archived Records</value>
+  </data>
+  <data name="NoArchivedStudents" xml:space="preserve">
+    <value>The archive is currently empty; all students are active.</value>
   </data>
   
 </root>

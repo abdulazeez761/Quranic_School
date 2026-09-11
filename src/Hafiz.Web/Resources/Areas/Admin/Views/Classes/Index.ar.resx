@@ -119,7 +119,7 @@
     <value>حذف</value>
   </data>
   <data name="DeleteConfirmation" xml:space="preserve">
-    <value>هل أنت متأكد من حذف</value>
+    <value>هل أنت متأكد من حذف الحلقة {0}؟ سيتم أرشفة الحلقة، ولن تتأثر سجلات الحضور والأوراد السابقة للطلاب.</value>
   </data>
   <data name="NoClasses" xml:space="preserve">
     <value>لا توجد حلقات متاحة</value>
@@ -144,5 +144,29 @@
   </data>
   <data name="Students" xml:space="preserve">
     <value>الطلاب</value>
+  </data>
+  <data name="ActiveRecords" xml:space="preserve">
+    <value>الحلقات النشطة</value>
+  </data>
+  <data name="ArchivedRecords" xml:space="preserve">
+    <value>سجل الأرشيف</value>
+  </data>
+  <data name="Archived" xml:space="preserve">
+    <value>مؤرشف</value>
+  </data>
+  <data name="ArchivedAt" xml:space="preserve">
+    <value>تاريخ الأرشفة</value>
+  </data>
+  <data name="Restore" xml:space="preserve">
+    <value>استعادة</value>
+  </data>
+  <data name="RestoreConfirmation" xml:space="preserve">
+    <value>هل أنت متأكد من استعادة الحلقة {0} وإعادة تفعيلها؟</value>
+  </data>
+  <data name="NoArchivedDataAvailable" xml:space="preserve">
+    <value>لا توجد حلقات مؤرشفة</value>
+  </data>
+  <data name="NoArchivedClasses" xml:space="preserve">
+    <value>سجل الأرشيف فارغ، جميع الحلقات نشطة حالياً</value>
   </data>
 </root>

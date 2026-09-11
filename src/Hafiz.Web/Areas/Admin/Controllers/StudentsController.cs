@@ -49,15 +49,28 @@ namespace Hafiz.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool archived = false)
         {
             var instituteId = GetInstituteId();
             IEnumerable<StudentModel> students;
 
-            if (instituteId.HasValue)
-                students = await _studentService.GetAllByInstituteAsync(instituteId.Value);
+            if (archived)
+            {
+                students = instituteId.HasValue
+                    ? await _studentService.GetArchivedByInstituteAsync(instituteId.Value)
+                    : await _studentService.GetArchivedAsync();
+            }
             else
-                students = await _studentService.GetAllAsync();
+            {
+                students = instituteId.HasValue
+                    ? await _studentService.GetAllByInstituteAsync(instituteId.Value)
+                    : await _studentService.GetAllAsync();
+            }
+
+            var (activeCount, archivedCount) = await _studentService.GetCountsAsync(instituteId);
+            ViewBag.IsArchived = archived;
+            ViewBag.ActiveCount = activeCount;
+            ViewBag.ArchivedCount = archivedCount;
 
             return View(students);
         }
@@ -78,7 +91,7 @@ namespace Hafiz.Areas.Admin.Controllers
             var student = await _studentService.GetStudentByIdAsync(id, instituteId);
             if (student == null)
             {
-                TempData["ErrorMessage"] = "Student not found.";
+                TempData["ErrorMessage"] = "تعذر العثور على بيانات الطالب المطلوب.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -249,6 +262,10 @@ namespace Hafiz.Areas.Admin.Controllers
             {
                 TempData["ErrorMessage"] = "غير مصرح لك بحذف هذا الطالب أو أنه غير موجود.";
             }
+            else
+            {
+                TempData["SuccessMessage"] = "تمت أرشفة الطالب بنجاح، ويمكنك استعادته في أي وقت من قسم الأرشيف.";
+            }
 
             return RedirectToAction(nameof(Index));
         }
@@ -262,8 +279,12 @@ namespace Hafiz.Areas.Admin.Controllers
             {
                 TempData["ErrorMessage"] = "غير مصرح لك باستعادة هذا الطالب أو أنه غير موجود.";
             }
+            else
+            {
+                TempData["SuccessMessage"] = "تمت استعادة الطالب بنجاح وإعادة تفعيله.";
+            }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { archived = true });
         }
 
         public async Task<IActionResult> Edit(Guid id)

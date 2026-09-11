@@ -17,13 +17,32 @@
     var isHafiz = WirdPageCalculator.IsHafiz(student);
     var activeTab = Model.ActiveTab;
 
-      var referer = Context.Request.Headers["Referer"].ToString();
+    var isArchivedStudent = student.IsDeleted;
+    var referer = Context.Request.Headers["Referer"].ToString();
     var backUrl = string.IsNullOrEmpty(referer) 
-        ? Url.Action("Index", "Students", new { area = "Admin" }) 
+        ? Url.Action("Index", "Students", new { area = "Admin", archived = isArchivedStudent }) 
         : referer;
 }
 
 <div class="admin-student-details">
+    @if (isArchivedStudent)
+    {
+        <div class="archive-alert-banner" style="background: rgba(234, 88, 12, 0.08); border: 1px solid rgba(234, 88, 12, 0.25); border-radius: 10px; padding: 12px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px; color: #c2410c;">
+                <i class='bx bx-archive-in' style="font-size: 24px;"></i>
+                <span style="font-size: 14px;"><strong>سجل مؤرشف:</strong> هذا الطالب مؤرشف حالياً. يمكنك تصفح كامل سجلاته وإحصائياته وأوراده السابقة، أو استعادته للنظام في أي وقت.</span>
+            </div>
+            <form asp-action="Restore" asp-route-id="@student.UserId" method="post" style="margin: 0;">
+                <button type="submit" class="btn btn-sm btn-success"
+                        data-confirm-restore="@string.Format(Localizer["RestoreConfirmation"]?.Value ?? "هل أنت متأكد من استعادة الطالب {0} {1}؟", student.StudentInfo.FirstName, student.StudentInfo.SecondName)"
+                        style="height: 36px; display: inline-flex; align-items: center; gap: 6px; padding: 0 14px; font-weight: 600;">
+                    <i class='bx bx-undo'></i>
+                    <span>@Localizer["Restore"]</span>
+                </button>
+            </form>
+        </div>
+    }
+
     <!-- Header -->
     <div class="student-detail-header">
         <div class="student-detail-avatar">
@@ -36,6 +55,12 @@
                 {
                     <span class="hafiz-badge" title="@Localizer["HafizTitle"]">
                         <i class='bx bxs-award'></i> @Localizer["Hafiz"]
+                    </span>
+                }
+                @if (isArchivedStudent)
+                {
+                    <span class="record-badge record-badge--archived" style="margin-inline-start: 8px; font-size: 13px;">
+                        <i class='bx bx-archive'></i> @Localizer["Archived"]
                     </span>
                 }
             </h1>
@@ -52,7 +77,18 @@
                 }
             </p>
         </div>
-        <div class="header-actions">
+        <div class="header-actions" style="display: flex; gap: 8px; align-items: center;">
+            @if (isArchivedStudent)
+            {
+                <form asp-action="Restore" asp-route-id="@student.UserId" method="post" style="margin: 0;">
+                    <button type="submit" class="btn btn-sm btn-success"
+                            data-confirm-restore="@string.Format(Localizer["RestoreConfirmation"]?.Value ?? "هل أنت متأكد من استعادة الطالب {0} {1}؟", student.StudentInfo.FirstName, student.StudentInfo.SecondName)"
+                            style="height: 38px; display: inline-flex; align-items: center; gap: 6px; padding: 0 14px; font-weight: 600;">
+                        <i class='bx bx-undo'></i>
+                        <span>@Localizer["Restore"]</span>
+                    </button>
+                </form>
+            }
             <a href="@backUrl" class="back-btn">
                 <i class='bx bx-arrow-back'></i>
                 @Localizer["BackToList"]
@@ -808,3 +844,8 @@
                                 if (activeTab) activeTab.scrollIntoView({ inline: 'center', block: 'nearest' });
                             });
                         </script>
+
+@section scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/confirmModal.js" asp-append-version="true"></script>
+}

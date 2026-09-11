@@ -125,5 +125,20 @@ namespace Hafiz.Services
         {
             return _parentRepository.RestoreParentAsync(parentId, instituteId);
         }
+
+        public Task<IEnumerable<Parent>> GetArchivedParentsByInstituteAsync(Guid instituteId)
+        {
+            return _parentRepository.GetArchivedParentsByInstituteAsync(instituteId);
+        }
+
+        public Task<IEnumerable<Parent>> GetArchivedParentsAsync()
+        {
+            return _parentRepository.GetArchivedParentsAsync();
+        }
+
+        public Task<(int activeCount, int archivedCount)> GetCountsAsync(Guid? instituteId = null)
+        {
+            return _parentRepository.GetCountsAsync(instituteId);
+        }
     }
 }

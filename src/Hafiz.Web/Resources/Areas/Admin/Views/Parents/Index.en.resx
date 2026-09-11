@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
@@ -177,7 +177,7 @@
   </data>
   
   <data name="DeleteConfirmation" xml:space="preserve">
-    <value>Are you sure you want to delete parent {0} {1}? All associated data will be deleted.</value>
+    <value>Are you sure you want to delete parent {0} {1}? The record will be archived and the account deactivated; previous records of children will remain unaffected.</value>
     <comment>Confirmation message for deleting a parent. {0} = first name, {1} = last name</comment>
   </data>
   
@@ -205,6 +205,32 @@
   <data name="ChildrenCount" xml:space="preserve">
     <value>child(ren)</value>
     <comment>Text for children count</comment>
+  </data>
+
+  <!-- Archive & Restore -->
+  <data name="ActiveRecords" xml:space="preserve">
+    <value>Active Parents</value>
+  </data>
+  <data name="ArchivedRecords" xml:space="preserve">
+    <value>Archived Parents</value>
+  </data>
+  <data name="Archived" xml:space="preserve">
+    <value>Archived</value>
+  </data>
+  <data name="ArchivedAt" xml:space="preserve">
+    <value>Archived at</value>
+  </data>
+  <data name="Restore" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="RestoreConfirmation" xml:space="preserve">
+    <value>Are you sure you want to restore parent {0} {1} and reactivate the account?</value>
+  </data>
+  <data name="NoArchivedDataAvailable" xml:space="preserve">
+    <value>No Archived Parents</value>
+  </data>
+  <data name="NoArchivedParents" xml:space="preserve">
+    <value>The archive is currently empty; all parents are active.</value>
   </data>
 </root>
 

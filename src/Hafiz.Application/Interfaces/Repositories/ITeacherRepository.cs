@@ -21,5 +21,8 @@ namespace Hafiz.Repositories.Interfaces
         Task<IList<Class>> GetTeacherClasses(Guid teacherId);
         Task<IEnumerable<Teacher>> GetAllByInstituteAsync(Guid instituteId);
         Task<bool> RestoreTeacherAsync(Guid teacherId, Guid? instituteId = null);
+        Task<IEnumerable<Teacher>> GetArchivedTeachersByInstituteAsync(Guid instituteId);
+        Task<IEnumerable<Teacher>> GetArchivedTeachersAsync();
+        Task<(int activeCount, int archivedCount)> GetCountsAsync(Guid? instituteId = null);
     }
 }

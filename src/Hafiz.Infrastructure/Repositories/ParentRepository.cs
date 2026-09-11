@@ -36,7 +36,8 @@ namespace Hafiz.Repositories
         public async Task<Parent?> GetByIdAsync(Guid id, Guid? instituteId = null)
         {
             var query = _context
-                .Parents.Include(p => p.ParentInfo)
+                .Parents.IgnoreQueryFilters()
+                .Include(p => p.ParentInfo)
                 .Include(p => p.Students)
                 .AsQueryable();
 
@@ -150,6 +151,47 @@ namespace Hafiz.Repositories
                 .Include(p => p.Students)
                 .Where(p => p.ParentInfo.InstituteId == instituteId)
                 .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Parent>> GetArchivedParentsByInstituteAsync(Guid instituteId)
+        {
+            return await _context.Parents
+                .IgnoreQueryFilters()
+                .Include(p => p.ParentInfo)
+                .Include(p => p.Students)
+                .Where(p => p.IsDeleted && p.ParentInfo.InstituteId == instituteId)
+                .OrderByDescending(p => p.DeletedAt)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Parent>> GetArchivedParentsAsync()
+        {
+            return await _context.Parents
+                .IgnoreQueryFilters()
+                .Include(p => p.ParentInfo)
+                .Include(p => p.Students)
+                .Where(p => p.IsDeleted)
+                .OrderByDescending(p => p.DeletedAt)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<(int activeCount, int archivedCount)> GetCountsAsync(Guid? instituteId = null)
+        {
+            var query = _context.Parents
+                .IgnoreQueryFilters()
+                .AsQueryable();
+
+            if (instituteId.HasValue)
+            {
+                query = query.Where(p => p.ParentInfo.InstituteId == instituteId.Value);
+            }
+
+            var activeCount = await query.CountAsync(p => !p.IsDeleted);
+            var archivedCount = await query.CountAsync(p => p.IsDeleted);
+
+            return (activeCount, archivedCount);
         }
     }
 }

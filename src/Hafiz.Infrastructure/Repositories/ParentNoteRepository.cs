@@ -21,6 +21,7 @@ namespace Hafiz.Repositories
         public async Task<IEnumerable<ParentNote>> GetNotesByStudentIdAsync(Guid studentId)
         {
             return await _context.ParentNotes
+                .IgnoreQueryFilters()
                 .Include(pn => pn.CreatedByUser)
                 .Where(pn => pn.StudentId == studentId)
                 .OrderByDescending(pn => pn.CreatedAt)

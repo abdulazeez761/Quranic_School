@@ -71,6 +71,7 @@ namespace Hafiz.Repositories
         public async Task<Teacher?> GetTeacherByIDAsync(Guid teacherId, Guid? instituteId = null)
         {
             var query = _context.Teachers
+                .IgnoreQueryFilters()
                 .Include(t => t.TeacherInfo)
                 .Include(t => t.Classes)
                 .Include(t => t.Attendances)
@@ -160,6 +161,47 @@ namespace Hafiz.Repositories
             }
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<IEnumerable<Teacher>> GetArchivedTeachersByInstituteAsync(Guid instituteId)
+        {
+            return await _context.Teachers
+                .IgnoreQueryFilters()
+                .Include(t => t.TeacherInfo)
+                .Include(t => t.Classes)
+                .Where(t => t.IsDeleted && t.TeacherInfo.InstituteId == instituteId)
+                .OrderByDescending(t => t.DeletedAt)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Teacher>> GetArchivedTeachersAsync()
+        {
+            return await _context.Teachers
+                .IgnoreQueryFilters()
+                .Include(t => t.TeacherInfo)
+                .Include(t => t.Classes)
+                .Where(t => t.IsDeleted)
+                .OrderByDescending(t => t.DeletedAt)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<(int activeCount, int archivedCount)> GetCountsAsync(Guid? instituteId = null)
+        {
+            var query = _context.Teachers
+                .IgnoreQueryFilters()
+                .AsQueryable();
+
+            if (instituteId.HasValue)
+            {
+                query = query.Where(t => t.TeacherInfo.InstituteId == instituteId.Value);
+            }
+
+            var activeCount = await query.CountAsync(t => !t.IsDeleted);
+            var archivedCount = await query.CountAsync(t => t.IsDeleted);
+
+            return (activeCount, archivedCount);
         }
     }
 }

@@ -41,15 +41,28 @@ namespace Hafiz.Areas.Admin.Controllers
             return claim != null ? Guid.Parse(claim) : null;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool archived = false)
         {
             var instituteId = GetInstituteId();
             IEnumerable<Models.Teacher> list;
 
-            if (instituteId.HasValue)
-                list = await _teacherService.GetAllTeachersByInstituteAsync(instituteId.Value);
+            if (archived)
+            {
+                list = instituteId.HasValue
+                    ? await _teacherService.GetArchivedTeachersByInstituteAsync(instituteId.Value)
+                    : await _teacherService.GetArchivedTeachersAsync();
+            }
             else
-                list = await _teacherService.GetAllTeachersAsync();
+            {
+                list = instituteId.HasValue
+                    ? await _teacherService.GetAllTeachersByInstituteAsync(instituteId.Value)
+                    : await _teacherService.GetAllTeachersAsync();
+            }
+
+            var (activeCount, archivedCount) = await _teacherService.GetCountsAsync(instituteId);
+            ViewBag.IsArchived = archived;
+            ViewBag.ActiveCount = activeCount;
+            ViewBag.ArchivedCount = archivedCount;
 
             return View(list);
         }
@@ -117,6 +130,10 @@ namespace Hafiz.Areas.Admin.Controllers
             {
                 TempData["ErrorMessage"] = "غير مصرح لك بحذف هذا المعلم أو أنه غير موجود.";
             }
+            else
+            {
+                TempData["SuccessMessage"] = "تمت أرشفة المعلم بنجاح، ويمكنك استعادته في أي وقت من قسم الأرشيف.";
+            }
             return RedirectToAction(nameof(Index));
         }
 
@@ -129,7 +146,11 @@ namespace Hafiz.Areas.Admin.Controllers
             {
                 TempData["ErrorMessage"] = "غير مصرح لك باستعادة هذا المعلم أو أنه غير موجود.";
             }
-            return RedirectToAction(nameof(Index));
+            else
+            {
+                TempData["SuccessMessage"] = "تمت استعادة المعلم بنجاح وإعادة تفعيله.";
+            }
+            return RedirectToAction(nameof(Index), new { archived = true });
         }
 
         private async Task PopulateClassesDropdown()

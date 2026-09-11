@@ -67,7 +67,8 @@ namespace Hafiz.Infrastructure.Repositories
         public async Task<Institute> GetByIdAsync(Guid id)
         {
             return await _context
-                .Institutes.Include(i => i.Manager)
+                .Institutes.IgnoreQueryFilters()
+                .Include(i => i.Manager)
                 .Include(i => i.Users)
                 .Include(i => i.Classes)
                 .FirstOrDefaultAsync(i => i.Id == id);
@@ -116,6 +117,24 @@ namespace Hafiz.Infrastructure.Repositories
             institute.DeletedBy = null;
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<List<Institute>> GetArchivedInstitutesAsync()
+        {
+            return await _context.Institutes
+                .IgnoreQueryFilters()
+                .Include(i => i.Manager)
+                .Where(i => i.IsDeleted)
+                .OrderByDescending(i => i.DeletedAt)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<(int activeCount, int archivedCount)> GetCountsAsync()
+        {
+            var activeCount = await _context.Institutes.CountAsync(i => !i.IsDeleted);
+            var archivedCount = await _context.Institutes.IgnoreQueryFilters().CountAsync(i => i.IsDeleted);
+            return (activeCount, archivedCount);
         }
     }
 }

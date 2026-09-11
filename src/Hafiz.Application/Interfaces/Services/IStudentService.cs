@@ -43,5 +43,8 @@ namespace Hafiz.Services.Interfaces
             Guid instituteId,
             DateTime dayOfWeek
         );
+        public Task<IEnumerable<Student>> GetArchivedByInstituteAsync(Guid instituteId);
+        public Task<IEnumerable<Student>> GetArchivedAsync();
+        public Task<(int activeCount, int archivedCount)> GetCountsAsync(Guid? instituteId = null);
     }
 }

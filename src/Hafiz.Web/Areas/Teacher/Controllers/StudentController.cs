@@ -63,7 +63,7 @@ namespace Hafiz.Areas.Teacher.Controllers
                 StudentModel? student = await _studentService.GetStudentByIdAsync(id);
                 if (student == null)
                 {
-                    TempData["ErrorMessage"] = "Student not found.";
+                    TempData["ErrorMessage"] = "تعذر العثور على بيانات الطالب المطلوب.";
                     return RedirectToAction("Index");
                 }
 

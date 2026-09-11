@@ -63,7 +63,8 @@ namespace Hafiz.Repositories
         public async Task<Class?> GetById(Guid id, Guid? instituteId = null)
         {
             var query = _context
-                .Classes.Include(c => c.Teachers)
+                .Classes.IgnoreQueryFilters()
+                .Include(c => c.Teachers)
                 .ThenInclude(t => t.TeacherInfo)
                 .Include(c => c.Students)
                 .ThenInclude(s => s.StudentInfo)
@@ -169,6 +170,49 @@ namespace Hafiz.Repositories
             foundClass.DeletedBy = null;
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<IEnumerable<Class>> GetArchivedClassesByInstituteAsync(Guid instituteId)
+        {
+            return await _context.Classes
+                .IgnoreQueryFilters()
+                .Include(c => c.Teachers)
+                .ThenInclude(t => t.TeacherInfo)
+                .Include(c => c.Students)
+                .Where(c => c.IsDeleted && c.InstituteId == instituteId)
+                .OrderByDescending(c => c.DeletedAt)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Class>> GetArchivedClassesAsync()
+        {
+            return await _context.Classes
+                .IgnoreQueryFilters()
+                .Include(c => c.Teachers)
+                .ThenInclude(t => t.TeacherInfo)
+                .Include(c => c.Students)
+                .Where(c => c.IsDeleted)
+                .OrderByDescending(c => c.DeletedAt)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<(int activeCount, int archivedCount)> GetCountsAsync(Guid? instituteId = null)
+        {
+            var query = _context.Classes
+                .IgnoreQueryFilters()
+                .AsQueryable();
+
+            if (instituteId.HasValue)
+            {
+                query = query.Where(c => c.InstituteId == instituteId.Value);
+            }
+
+            var activeCount = await query.CountAsync(c => !c.IsDeleted);
+            var archivedCount = await query.CountAsync(c => c.IsDeleted);
+
+            return (activeCount, archivedCount);
         }
     }
 }

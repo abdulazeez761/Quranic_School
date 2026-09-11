@@ -41,15 +41,28 @@ namespace Hafiz.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool archived = false)
         {
             var instituteId = GetInstituteId();
             IEnumerable<Class> classes;
 
-            if (instituteId.HasValue)
-                classes = await _ClassService.ViewClassesByInstitute(instituteId.Value);
+            if (archived)
+            {
+                classes = instituteId.HasValue
+                    ? await _ClassService.GetArchivedClassesByInstituteAsync(instituteId.Value)
+                    : await _ClassService.GetArchivedClassesAsync();
+            }
             else
-                classes = await _ClassService.ViewClasses();
+            {
+                classes = instituteId.HasValue
+                    ? await _ClassService.ViewClassesByInstitute(instituteId.Value)
+                    : await _ClassService.ViewClasses();
+            }
+
+            var (activeCount, archivedCount) = await _ClassService.GetCountsAsync(instituteId);
+            ViewBag.IsArchived = archived;
+            ViewBag.ActiveCount = activeCount;
+            ViewBag.ArchivedCount = archivedCount;
 
             return View(classes);
         }
@@ -146,14 +159,14 @@ namespace Hafiz.Areas.Admin.Controllers
                 }
                 else
                 {
-                    TempData["SuccessMessage"] = "تم حذف الشعبة بنجاح.";
+                    TempData["SuccessMessage"] = "تمت أرشفة الشعبة بنجاح، ويمكنك استعادتها في أي وقت من قسم الأرشيف.";
                 }
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException)
             {
                 TempData["ErrorMessage"] = "تعذر حذف الشعبة نظراً لوجود بيانات مرتبطة بها.";
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData["ErrorMessage"] =
                     "حدث خطأ غير متوقع أثناء محاولة الحذف، يرجى المحاولة لاحقاً.";
@@ -170,7 +183,11 @@ namespace Hafiz.Areas.Admin.Controllers
             {
                 TempData["ErrorMessage"] = "غير مصرح لك باستعادة هذه الشعبة أو أنها غير موجودة.";
             }
-            return RedirectToAction(nameof(Index));
+            else
+            {
+                TempData["SuccessMessage"] = "تمت استعادة الشعبة بنجاح وإعادة تفعيلها.";
+            }
+            return RedirectToAction(nameof(Index), new { archived = true });
         }
 
         private async Task PopulateTeachersDropdown()

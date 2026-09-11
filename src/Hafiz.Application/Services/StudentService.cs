@@ -329,5 +329,20 @@ namespace Hafiz.Services
                 selectedDate
             );
         }
+
+        public Task<IEnumerable<Student>> GetArchivedByInstituteAsync(Guid instituteId)
+        {
+            return _studentRepository.GetArchivedByInstituteAsync(instituteId);
+        }
+
+        public Task<IEnumerable<Student>> GetArchivedAsync()
+        {
+            return _studentRepository.GetArchivedAsync();
+        }
+
+        public Task<(int activeCount, int archivedCount)> GetCountsAsync(Guid? instituteId = null)
+        {
+            return _studentRepository.GetCountsAsync(instituteId);
+        }
     }
 }

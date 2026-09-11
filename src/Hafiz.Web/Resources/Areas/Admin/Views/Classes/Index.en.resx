@@ -119,7 +119,7 @@
     <value>Delete</value>
   </data>
   <data name="DeleteConfirmation" xml:space="preserve">
-    <value>Are you sure you want to delete</value>
+    <value>Are you sure you want to delete class {0}? The class will be archived; previous student attendance and assignment records will remain unaffected.</value>
   </data>
   <data name="NoClasses" xml:space="preserve">
     <value>No Classes Available</value>
@@ -144,5 +144,29 @@
   </data>
   <data name="Students" xml:space="preserve">
     <value>Students</value>
+  </data>
+  <data name="ActiveRecords" xml:space="preserve">
+    <value>Active Classes</value>
+  </data>
+  <data name="ArchivedRecords" xml:space="preserve">
+    <value>Archived Classes</value>
+  </data>
+  <data name="Archived" xml:space="preserve">
+    <value>Archived</value>
+  </data>
+  <data name="ArchivedAt" xml:space="preserve">
+    <value>Archived at</value>
+  </data>
+  <data name="Restore" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="RestoreConfirmation" xml:space="preserve">
+    <value>Are you sure you want to restore class {0} and reactivate it?</value>
+  </data>
+  <data name="NoArchivedDataAvailable" xml:space="preserve">
+    <value>No Archived Classes</value>
+  </data>
+  <data name="NoArchivedClasses" xml:space="preserve">
+    <value>The archive is currently empty; all classes are active.</value>
   </data>
 </root>

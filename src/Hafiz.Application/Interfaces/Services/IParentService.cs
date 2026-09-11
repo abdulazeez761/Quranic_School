@@ -17,5 +17,8 @@ namespace Hafiz.Services.Interfaces
         Task UpdateAsync(EditParentDto parent);
         Task<bool> DeleteAsync(Guid id, Guid? instituteId = null);
         Task<bool> RestoreParentAsync(Guid parentId, Guid? instituteId = null);
+        Task<IEnumerable<Parent>> GetArchivedParentsByInstituteAsync(Guid instituteId);
+        Task<IEnumerable<Parent>> GetArchivedParentsAsync();
+        Task<(int activeCount, int archivedCount)> GetCountsAsync(Guid? instituteId = null);
     }
 }

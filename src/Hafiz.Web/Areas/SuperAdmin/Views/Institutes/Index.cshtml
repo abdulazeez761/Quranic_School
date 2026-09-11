@@ -1,25 +1,58 @@
 @model List<Hafiz.Domain.Entities.Institute>
 @{
     ViewData["Title"] = "إدارة المراكز";
+    bool isArchived = ViewBag.IsArchived == true;
+    int activeCount = ViewBag.ActiveCount ?? 0;
+    int archivedCount = ViewBag.ArchivedCount ?? 0;
 }
 
-<div class="d-flex justify-between align-center mb-lg">
-    <h2>إدارة المراكز</h2>
-    <a asp-action="Create" class="btn btn-primary">
-        <i class='bx bx-plus'></i> إنشاء مركز جديد
-    </a>
+<div class="d-flex justify-between align-center mb-lg flex-wrap gap-md">
+    <div>
+        <h2 class="section-title mb-sm">
+            <i class='bx bx-building-house' style="color: var(--primary-green);"></i>
+            إدارة المراكز
+        </h2>
+        <p class="text-medium">استعراض وإدارة المراكز القرآنية والتحكم في حالتها وأرشيفها</p>
+    </div>
+    <div class="btn-group">
+        <a asp-action="Create" class="btn btn-primary">
+            <i class='bx bx-plus'></i> إنشاء مركز جديد
+        </a>
+    </div>
 </div>
 
 @if (TempData["SuccessMessage"] != null)
 {
-    <div class="alert alert-success mb-md">
-        @TempData["SuccessMessage"]
+    <div class="alert alert-success mb-md d-flex align-center gap-sm">
+        <i class='bx bx-check-circle' style="font-size: 1.25rem;"></i>
+        <span>@TempData["SuccessMessage"]</span>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger mb-md d-flex align-center gap-sm">
+        <i class='bx bx-error-circle' style="font-size: 1.25rem;"></i>
+        <span>@TempData["ErrorMessage"]</span>
     </div>
 }
 
+<!-- Archive Navigation Tabs -->
+<div class="archive-nav-tabs mb-md">
+    <a asp-action="Index" asp-route-archived="false" class="archive-nav-tab @(!isArchived ? "active" : "")">
+        <i class='bx bx-check-circle'></i>
+        <span>المراكز النشطة</span>
+        <span class="tab-count-pill">@activeCount</span>
+    </a>
+    <a asp-action="Index" asp-route-archived="true" class="archive-nav-tab @(isArchived ? "active" : "")">
+        <i class='bx bx-archive'></i>
+        <span>سجل الأرشيف</span>
+        <span class="tab-count-pill @(archivedCount > 0 ? "tab-count-pill--warning" : "")">@archivedCount</span>
+    </a>
+</div>
+
 <div class="card card-standard">
     <div class="card-body">
-        @if (Model.Any())
+        @if (Model != null && Model.Any())
         {
             <div class="table-responsive">
                 <table class="table">
@@ -31,7 +64,7 @@
                             <th>الهاتف</th>
                             <th>المدير</th>
                             <th>الحالة</th>
-                            <th>تاريخ الإنشاء</th>
+                            <th>@(isArchived ? "تاريخ الأرشفة" : "تاريخ الإنشاء")</th>
                             <th>إجراءات</th>
                         </tr>
                     </thead>
@@ -45,7 +78,13 @@
                                 <td>@(institute.PhoneNumber ?? "—")</td>
                                 <td>@(institute.Manager != null ? $"{institute.Manager.FirstName} {institute.Manager.SecondName}" : "—")</td>
                                 <td>
-                                    @if (institute.IsActive)
+                                    @if (isArchived)
+                                    {
+                                        <span class="badge badge-warning">
+                                            <i class='bx bx-archive'></i> مؤرشف
+                                        </span>
+                                    }
+                                    else if (institute.IsActive)
                                     {
                                         <span class="badge badge-success">نشط</span>
                                     }
@@ -54,18 +93,41 @@
                                         <span class="badge badge-danger">غير نشط</span>
                                     }
                                 </td>
-                                <td>@institute.CreatedAt.ToUserTime(Context).ToString("yyyy/MM/dd")</td>
                                 <td>
-                                    <div class="d-flex" style="gap: 0.5rem;">
-                                        <a asp-action="Details" asp-route-id="@institute.Id" class="btn btn-sm btn-ghost">
+                                    @if (isArchived && institute.DeletedAt.HasValue)
+                                    {
+                                        @institute.DeletedAt.Value.ToUserTime(Context).ToString("yyyy/MM/dd")
+                                    }
+                                    else
+                                    {
+                                        @institute.CreatedAt.ToUserTime(Context).ToString("yyyy/MM/dd")
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex align-center" style="gap: 0.5rem;">
+                                        <a asp-action="Details" asp-route-id="@institute.Id" class="btn btn-sm btn-ghost" title="عرض التفاصيل">
                                             <i class='bx bx-show'></i>
                                         </a>
-                                        <form asp-action="Delete" asp-route-id="@institute.Id" method="post"
-                                              onsubmit="return confirm('هل أنت متأكد من حذف هذا المركز؟');">
-                                            <button type="submit" class="btn btn-sm btn-danger">
-                                                <i class='bx bx-trash'></i>
-                                            </button>
-                                        </form>
+                                        @if (isArchived)
+                                        {
+                                            <form asp-action="Restore" asp-route-id="@institute.Id" method="post">
+                                                <button type="submit" class="btn btn-sm btn-success"
+                                                        data-confirm-restore="هل أنت متأكد من استعادة المركز '@institute.Name' وإعادة تفعيله في النظام؟"
+                                                        title="استعادة المركز">
+                                                    <i class='bx bx-undo'></i> استعادة
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-action="Delete" asp-route-id="@institute.Id" method="post">
+                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                        data-confirm-delete="هل أنت متأكد من حذف المركز '@institute.Name'؟ سيتم أرشفة المركز وإيقاف الحسابات التابعة له مع الحفاظ على البيانات التاريخية."
+                                                        title="أرشفة المركز">
+                                                    <i class='bx bx-trash'></i>
+                                                </button>
+                                            </form>
+                                        }
                                     </div>
                                 </td>
                             </tr>
@@ -76,10 +138,32 @@
         }
         else
         {
-            <div class="text-center" style="padding: 2rem;">
-                <i class='bx bx-building-house' style="font-size: 3rem; color: var(--text-muted);"></i>
-                <p class="text-muted mt-md">لا توجد مراكز بعد.</p>
+            <div class="text-center" style="padding: 2.5rem 1rem;">
+                <i class='bx @(isArchived ? "bx-archive" : "bx-building-house")' style="font-size: 3.5rem; color: var(--text-muted);"></i>
+                <h3 class="mt-md" style="font-size: 1.15rem; color: var(--text-dark);">
+                    @(isArchived ? "لا توجد مراكز مؤرشفة حالياً" : "لا توجد مراكز بعد")
+                </h3>
+                <p class="text-muted mt-xs">
+                    @(isArchived ? "سجل الأرشيف فارغ، جميع المراكز نشطة." : "ابدأ بإنشاء أول مركز في النظام.")
+                </p>
+                @if (isArchived)
+                {
+                    <a asp-action="Index" asp-route-archived="false" class="btn btn-outline mt-md">
+                        <i class='bx bx-arrow-back'></i> المراكز النشطة
+                    </a>
+                }
+                else
+                {
+                    <a asp-action="Create" class="btn btn-primary mt-md">
+                        <i class='bx bx-plus'></i> إنشاء مركز جديد
+                    </a>
+                }
             </div>
         }
     </div>
 </div>
+
+@section scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/confirmModal.js" asp-append-version="true"></script>
+}

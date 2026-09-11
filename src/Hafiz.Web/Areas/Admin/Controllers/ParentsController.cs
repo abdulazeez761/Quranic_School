@@ -29,15 +29,28 @@ namespace Hafiz.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool archived = false)
         {
             var instituteId = GetInstituteId();
             IEnumerable<Models.Parent> parents;
 
-            if (instituteId.HasValue)
-                parents = await _parentService.GetAllByInstituteAsync(instituteId.Value);
+            if (archived)
+            {
+                parents = instituteId.HasValue
+                    ? await _parentService.GetArchivedParentsByInstituteAsync(instituteId.Value)
+                    : await _parentService.GetArchivedParentsAsync();
+            }
             else
-                parents = await _parentService.GetAllAsync();
+            {
+                parents = instituteId.HasValue
+                    ? await _parentService.GetAllByInstituteAsync(instituteId.Value)
+                    : await _parentService.GetAllAsync();
+            }
+
+            var (activeCount, archivedCount) = await _parentService.GetCountsAsync(instituteId);
+            ViewBag.IsArchived = archived;
+            ViewBag.ActiveCount = activeCount;
+            ViewBag.ArchivedCount = archivedCount;
 
             return View(parents);
         }
@@ -124,6 +137,10 @@ namespace Hafiz.Areas.Admin.Controllers
             {
                 TempData["ErrorMessage"] = "غير مصرح لك بحذف ولي الأمر هذا أو أنه غير موجود.";
             }
+            else
+            {
+                TempData["SuccessMessage"] = "تمت أرشفة ولي الأمر بنجاح، ويمكنك استعادته في أي وقت من قسم الأرشيف.";
+            }
             return RedirectToAction(nameof(Index));
         }
 
@@ -136,7 +153,11 @@ namespace Hafiz.Areas.Admin.Controllers
             {
                 TempData["ErrorMessage"] = "غير مصرح لك باستعادة ولي الأمر هذا أو أنه غير موجود.";
             }
-            return RedirectToAction(nameof(Index));
+            else
+            {
+                TempData["SuccessMessage"] = "تمت استعادة ولي الأمر بنجاح وإعادة تفعيله.";
+            }
+            return RedirectToAction(nameof(Index), new { archived = true });
         }
     }
 }

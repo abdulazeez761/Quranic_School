@@ -190,7 +190,7 @@
     <comment/>
   </data>
   <data name="Delete_confirm" xml:space="preserve">
-    <value>Are You Sure You Want To Delete This Teacher</value>
+    <value>Are you sure you want to delete teacher {0} {1}? The record will be archived and the account deactivated; previous attendance records, work hours, and reports will remain unaffected.</value>
     <comment/>
   </data>
   <data name="NO_Sesstions" xml:space="preserve">
@@ -224,5 +224,29 @@
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
     <comment/>
+  </data>
+  <data name="ActiveRecords" xml:space="preserve">
+    <value>Active Teachers</value>
+  </data>
+  <data name="ArchivedRecords" xml:space="preserve">
+    <value>Archived Teachers</value>
+  </data>
+  <data name="Archived" xml:space="preserve">
+    <value>Archived</value>
+  </data>
+  <data name="ArchivedAt" xml:space="preserve">
+    <value>Archived at</value>
+  </data>
+  <data name="Restore" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="Restore_confirm" xml:space="preserve">
+    <value>Are you sure you want to restore teacher {0} {1} and reactivate the account?</value>
+  </data>
+  <data name="NoArchivedDataAvailable" xml:space="preserve">
+    <value>No Archived Records</value>
+  </data>
+  <data name="NoArchivedTeachers" xml:space="preserve">
+    <value>The archive is currently empty; all teachers are active.</value>
   </data>
 </root>
