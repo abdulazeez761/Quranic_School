@@ -43,9 +43,12 @@ namespace Hafiz.Controllers
                 return View(dto);
             }
 
-            if (user.Institute is not null && (user.Institute.IsDeleted || !user.Institute.IsActive))
+            if (user.Institute is not null && user.Institute.IsDeleted)
             {
-                ModelState.AddModelError(string.Empty, "المعهد المرتبط بحسابك غير مفعّل أو تم إيقافه مؤقتاً.");
+                ModelState.AddModelError(
+                    string.Empty,
+                    "المعهد المرتبط بحسابك غير مفعّل أو تم إيقافه مؤقتاً."
+                );
                 return View(dto);
             }
 
@@ -89,15 +92,20 @@ namespace Hafiz.Controllers
             );
         }
 
-        private IActionResult RedirectByUserRole(UserRole role) => role switch
-        {
-            UserRole.Admin => RedirectToAction("Index", "Home", new { area = "Admin" }),
-            UserRole.Teacher => RedirectToAction("Index", "Home", new { area = "Teacher" }),
-            UserRole.Student => RedirectToAction("Index", "Student"),
-            UserRole.Parent => RedirectToAction("Index", "Parent"),
-            UserRole.SuperAdmin => RedirectToAction("Index", "Home", new { area = "SuperAdmin" }),
-            _ => RedirectToAction("Index", "Home"),
-        };
+        private IActionResult RedirectByUserRole(UserRole role) =>
+            role switch
+            {
+                UserRole.Admin => RedirectToAction("Index", "Home", new { area = "Admin" }),
+                UserRole.Teacher => RedirectToAction("Index", "Home", new { area = "Teacher" }),
+                UserRole.Student => RedirectToAction("Index", "Student"),
+                UserRole.Parent => RedirectToAction("Index", "Parent"),
+                UserRole.SuperAdmin => RedirectToAction(
+                    "Index",
+                    "Home",
+                    new { area = "SuperAdmin" }
+                ),
+                _ => RedirectToAction("Index", "Home"),
+            };
 
         // GET: Register
         [HttpGet]
