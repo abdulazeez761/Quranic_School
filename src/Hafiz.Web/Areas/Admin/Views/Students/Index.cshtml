@@ -1,4 +1,4 @@
-@model IEnumerable<Hafiz.Models.Student>
+@model Hafiz.Application.Common.PagedResult<Hafiz.Models.Student>
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 @{
@@ -51,10 +51,13 @@
 
 <!-- Statistics Cards -->
 @{
-    var totalStudents = Model?.Count() ?? 0;
-    var totalClasses = Model?.SelectMany(s => s.Classes).Select(c => c.Id).Distinct().Count() ?? 0;
-    var studentsWithClasses = Model?.Count(s => s.Classes.Any()) ?? 0;
-    var studentsWithoutClasses = totalStudents - studentsWithClasses;
+    var totalStudents = ViewBag.TotalStudents ?? Model?.TotalCount ?? 0;
+    var totalClasses = ViewBag.TotalClasses ?? 0;
+    var studentsWithClasses = ViewBag.StudentsWithClasses ?? 0;
+    var studentsWithoutClasses = ViewBag.StudentsWithoutClasses ?? 0;
+    var selectedClassId = ViewBag.ClassId?.ToString() ?? "";
+    var currentSearch = ViewBag.Search as string ?? "";
+    var instituteClasses = ViewBag.InstituteClasses as List<Hafiz.Models.Class>;
 }
 
 <div class="grid-auto-fit mb-lg">
@@ -116,39 +119,40 @@
 <!-- Students Table -->
 <div class="table-container">
     <!-- Search and Filter Toolbar -->
-    <div class="table-toolbar">
+    <form method="get" asp-action="Index" class="table-toolbar">
+        <input type="hidden" name="archived" value="@isArchived.ToString().ToLower()" />
         <div class="table-search">
-            <input type="text" id="searchInput" placeholder="@Localizer["SearchPlaceholder"]">
+            <input type="text" name="search" id="searchInput" value="@currentSearch" placeholder="@Localizer["SearchPlaceholder"]">
             <i class='bx bx-search'></i>
         </div>
         <div class="table-filters">
-            <select class="form-select form-input-sm" id="classFilter">
+            <select class="form-select form-input-sm" name="classId" id="classFilter" onchange="this.form.submit()">
                 <option value="">@Localizer["AllClasses"]</option>
-                @{
-                    var allClasses = Model?.SelectMany(s => s.Classes)
-                        .Select(c => c.Name)
-                        .Distinct()
-                        .OrderBy(name => name) ?? Enumerable.Empty<string>();
-
-                    foreach (var className in allClasses)
+                @if (instituteClasses != null)
+                {
+                    foreach (var c in instituteClasses)
                     {
-                        <option value="@className">@className</option>
+                        <option value="@c.Id" selected="@(selectedClassId == c.Id.ToString())">@c.Name</option>
                     }
                 }
             </select>
-            <button id="clearFilters" class="btn btn-outline btn-sm">
+            <button type="submit" class="btn btn-primary btn-sm">
+                <i class='bx bx-filter-alt'></i>
+                <span class="d-none d-md-inline">@Localizer["Search"]</span>
+            </button>
+            <a asp-action="Index" asp-route-archived="@isArchived.ToString().ToLower()" id="clearFilters" class="btn btn-outline btn-sm">
                 <i class='bx bx-refresh'></i>
                 <span class="d-none d-md-inline">@Localizer["Reset"]</span>
-            </button>
+            </a>
         </div>
-    </div>
+    </form>
 
     <!-- Records grid -->
     <div class="record-grid" id="studentsGrid">
-        @if (Model != null && Model.Any())
+        @if (Model != null && Model.Items.Any())
         {
             int index = 0;
-            foreach (var student in Model)
+            foreach (var student in Model.Items)
             {
                 var classesData = string.Join(",", student.Classes.Select(c => c.Name));
                 var hasClasses = student.Classes.Any();
@@ -273,14 +277,8 @@
         }
     </div>
 
-    <!-- Table Footer -->
-    <div class="table-footer">
-        <div class="table-info">
-            @Html.Raw(string.Format(Localizer["ShowingStudents"].Value,
-            $"<strong><span id='visibleCount'>{totalStudents}</span></strong>",
-                        $"<strong>{totalStudents}</strong>"))
-        </div>
-    </div>
+    <!-- Table Footer with Pagination -->
+    @await Html.PartialAsync("_Pagination", Model)
 </div>
 
 @section scripts {

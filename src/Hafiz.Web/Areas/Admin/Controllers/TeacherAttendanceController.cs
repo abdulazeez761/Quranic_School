@@ -43,6 +43,9 @@ namespace Hafiz.Areas.Admin.Controllers
         {
             await PopulateClassesDropdown();
             Guid? instituteId = GetInstituteId();
+            if (!instituteId.HasValue)
+                return Forbid();
+
             IEnumerable<TeacherAttendanceDto> teachers;
             if (ViewBag.Classes[0].Value != "all")
                 teachers = await _teacherAttendanceService.GetTeachersByClass(
@@ -76,6 +79,9 @@ namespace Hafiz.Areas.Admin.Controllers
             if (classId == Guid.Empty)
             {
                 Guid? instituteId = GetInstituteId();
+                if (!instituteId.HasValue)
+                    return Forbid();
+
                 result = await _teacherAttendanceService.GetAllTeachersByDateAndInstitute(
                     date,
                     instituteId.Value

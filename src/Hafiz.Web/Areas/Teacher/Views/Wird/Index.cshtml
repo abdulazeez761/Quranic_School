@@ -1,5 +1,5 @@
 @using Hafiz.Common.Helper
-@model IEnumerable<Hafiz.Models.WirdAssignment>
+@model Hafiz.Application.Common.PagedResult<Hafiz.Models.WirdAssignment>
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 @{
@@ -28,7 +28,7 @@
             </div>
             <div class="filter-bar-right">
                 <div class="results-count" id="resultsCount">
-                    <strong>@Model.Count()</strong> @Localizer["Assignments"]
+                    <strong>@(ViewBag.TotalCount ?? Model?.TotalCount ?? 0)</strong> @Localizer["Assignments"]
                 </div>
                 <button class="filter-toggle" id="filterToggle">
                     <i class='bx bx-chevron-down'></i>
@@ -107,11 +107,16 @@
     }
     <!-- WIRD CARDS -->
     <div class="wird-cards-grid">
-        @foreach (var item in Model)
+        @if (Model != null && Model.Items.Any())
         {
-            @await Html.PartialAsync("_WirdCard", item)
+            @foreach (var item in Model.Items)
+            {
+                @await Html.PartialAsync("_WirdCard", item)
+            }
         }
     </div>
+
+    @await Html.PartialAsync("_Pagination", Model)
 </div>
 
 @section scripts {

@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Hafiz.Application.Common;
+using Hafiz.Application.Extensions;
 using Hafiz.Common.Helper;
 using Hafiz.DTOs;
 using Hafiz.DTOs.Student;
@@ -49,7 +51,13 @@ namespace Hafiz.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(bool archived = false)
+        public async Task<IActionResult> Index(
+            bool archived = false,
+            int page = 1,
+            int pageSize = 12,
+            string? search = null,
+            Guid? classId = null
+        )
         {
             var instituteId = GetInstituteId();
             IEnumerable<StudentModel> students;
@@ -67,12 +75,50 @@ namespace Hafiz.Areas.Admin.Controllers
                     : await _studentService.GetAllAsync();
             }
 
+            var studentList = students.ToList();
+            var totalStudents = studentList.Count;
+            var totalClasses = studentList.SelectMany(s => s.Classes).Select(c => c.Id).Distinct().Count();
+            var studentsWithClasses = studentList.Count(s => s.Classes.Any());
+            var studentsWithoutClasses = totalStudents - studentsWithClasses;
+
+            ViewBag.TotalStudents = totalStudents;
+            ViewBag.TotalClasses = totalClasses;
+            ViewBag.StudentsWithClasses = studentsWithClasses;
+            ViewBag.StudentsWithoutClasses = studentsWithoutClasses;
+
+            if (instituteId.HasValue)
+            {
+                var classes = await _classService.GetClassesByInstituteAsync(instituteId.Value);
+                ViewBag.InstituteClasses = classes.OrderBy(c => c.Name).ToList();
+            }
+
+            var filtered = studentList.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim();
+                filtered = filtered.Where(s =>
+                    (s.StudentInfo.FirstName != null && s.StudentInfo.FirstName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                    (s.StudentInfo.SecondName != null && s.StudentInfo.SecondName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                    (s.StudentInfo.Username != null && s.StudentInfo.Username.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                    (s.StudentInfo.PhoneNumber != null && s.StudentInfo.PhoneNumber.Contains(term, StringComparison.OrdinalIgnoreCase))
+                );
+            }
+
+            if (classId.HasValue && classId.Value != Guid.Empty)
+            {
+                filtered = filtered.Where(s => s.Classes.Any(c => c.Id == classId.Value));
+            }
+
+            var pagedStudents = filtered.ToPagedResult(page, pageSize);
+
             var (activeCount, archivedCount) = await _studentService.GetCountsAsync(instituteId);
             ViewBag.IsArchived = archived;
             ViewBag.ActiveCount = activeCount;
             ViewBag.ArchivedCount = archivedCount;
+            ViewBag.Search = search;
+            ViewBag.ClassId = classId;
 
-            return View(students);
+            return View(pagedStudents);
         }
 
         [HttpGet]
@@ -166,7 +212,9 @@ namespace Hafiz.Areas.Admin.Controllers
             Guid? classId = null,
             string? search = null,
             string? sortBy = null,
-            string? sortOrder = null
+            string? sortOrder = null,
+            int page = 1,
+            int pageSize = 10
         )
         {
             var instituteId = GetInstituteId();
@@ -187,9 +235,13 @@ namespace Hafiz.Areas.Admin.Controllers
                 sortOrder
             );
 
+            var rowsList = reportRows.ToList();
+            var pagedRows = rowsList.ToPagedResult(page, pageSize);
+
             var viewModel = new AdminStudentReportsViewModel
             {
-                Students = reportRows.ToList(),
+                Students = rowsList,
+                PagedStudents = pagedRows,
                 SortBy = sortBy,
                 SortOrder = sortOrder,
                 ClassId = classId,

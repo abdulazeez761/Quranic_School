@@ -175,15 +175,87 @@ body[dir='rtl'] .table th.sortable::after {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-lg);
+  padding: 0.875rem 1.25rem;
   border-top: 1px solid var(--border-color);
   flex-wrap: wrap;
   gap: var(--space-md);
+  background: var(--white);
+  border-bottom-left-radius: var(--radius-lg, 12px);
+  border-bottom-right-radius: var(--radius-lg, 12px);
 }
 
 .table-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
   color: var(--text-medium);
   font-size: var(--font-size-sm);
+}
+
+.pagination-count-text {
+  color: var(--text-medium);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.pagination-count-text strong {
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+.pagination-divider {
+  display: inline-block;
+  width: 1px;
+  height: 18px;
+  background-color: var(--border-color, #e2e8f0);
+}
+
+.page-size-selector {
+  display: inline-flex;
+  align-items: center;
+}
+
+.pagination-size-select {
+  height: 34px;
+  min-width: 60px;
+  padding: 4px 24px 4px 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 24px;
+  color: var(--text-dark, #1e293b);
+  background-color: #ffffff;
+  border: 1px solid var(--border-color, #cbd5e1);
+  border-radius: 6px;
+  cursor: pointer;
+  outline: none;
+  box-sizing: border-box;
+  text-align: center;
+  text-align-last: center;
+  transition: all 0.2s ease;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 10px 10px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+html[dir="rtl"] .pagination-size-select,
+body[dir="rtl"] .pagination-size-select,
+[dir="rtl"] .pagination-size-select {
+  padding: 4px 10px 4px 24px;
+  background-position: left 8px center;
+}
+
+.pagination-size-select:hover {
+  border-color: var(--primary-green, #10b981);
+}
+
+.pagination-size-select:focus {
+  border-color: var(--primary-green, #10b981);
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
 }
 
 .table-pagination {
@@ -196,7 +268,13 @@ body[dir='rtl'] .table th.sortable::after {
   margin: 0;
 }
 
-.table-pagination button {
+.table-pagination button,
+.table-pagination a,
+.pagination-nav-btn,
+.pagination-num-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-width: 36px;
   height: 36px;
   padding: 0 var(--space-sm);
@@ -205,26 +283,51 @@ body[dir='rtl'] .table th.sortable::after {
   color: var(--text-dark);
   border-radius: var(--radius-sm);
   cursor: pointer;
+  text-decoration: none;
   transition: all var(--transition-fast);
   font-size: var(--font-size-sm);
+  font-weight: 500;
+  gap: 4px;
 }
 
-.table-pagination button:hover:not(:disabled) {
-  background: var(--primary-green);
-  color: var(--white);
+.table-pagination button:hover:not(:disabled):not(.active),
+.table-pagination a:hover:not(.active),
+.pagination-nav-btn:hover:not(.disabled):not(:disabled),
+.pagination-num-btn:hover:not(.active) {
+  background: rgba(40, 167, 69, 0.08);
+  color: var(--primary-green);
   border-color: var(--primary-green);
 }
 
-.table-pagination button.active {
+.table-pagination button.active,
+.table-pagination a.active,
+.pagination-num-btn.active {
   background: var(--primary-green);
-  color: var(--white);
+  color: var(--white) !important;
   border-color: var(--primary-green);
   font-weight: 600;
+  pointer-events: none;
 }
 
-.table-pagination button:disabled {
-  opacity: 0.5;
+.table-pagination button:disabled,
+.table-pagination button.disabled,
+.table-pagination a.disabled,
+.pagination-nav-btn.disabled {
+  opacity: 0.45;
   cursor: not-allowed;
+  pointer-events: none;
+  background: var(--light-gray, #f8f9fa);
+  color: var(--text-muted, #6c757d);
+}
+
+.pagination-ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 36px;
+  color: var(--text-medium);
+  font-size: var(--font-size-sm);
 }
 
 /* Table Search & Filters */

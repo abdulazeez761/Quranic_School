@@ -30,21 +30,28 @@
 
     @if (students.Any())
     {
+        var pagedStudents = Model.PagedStudents?.Items ?? students;
+
         <partial name="_ReportsSortToolbar" model="Model" />
 
         <div class="report-cards d-none-mobile">
-            @foreach (var row in students)
+            @foreach (var row in pagedStudents)
             {
                 <partial name="_ReportCard" model="row" />
             }
         </div>
 
         <div class="report-list-mobile d-none-desktop" data-accordion>
-            @foreach (var row in students)
+            @foreach (var row in pagedStudents)
             {
                 <partial name="_ReportRowMobile" model="row" />
             }
         </div>
+
+        @if (Model.PagedStudents != null)
+        {
+            @await Html.PartialAsync("_Pagination", Model.PagedStudents)
+        }
     }
     else
     {

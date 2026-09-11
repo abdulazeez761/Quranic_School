@@ -1,4 +1,4 @@
-@model List<Hafiz.Domain.Entities.Institute>
+@model Hafiz.Application.Common.PagedResult<Hafiz.Domain.Entities.Institute>
 @{
     ViewData["Title"] = "إدارة المراكز";
     bool isArchived = ViewBag.IsArchived == true;
@@ -52,7 +52,7 @@
 
 <div class="card card-standard">
     <div class="card-body">
-        @if (Model != null && Model.Any())
+        @if (Model != null && Model.Items.Any())
         {
             <div class="table-responsive">
                 <table class="table">
@@ -69,7 +69,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var institute in Model)
+                        @foreach (var institute in Model.Items)
                         {
                             <tr>
                                 <td><strong>@institute.Name</strong></td>
@@ -135,6 +135,8 @@
                     </tbody>
                 </table>
             </div>
+
+            @await Html.PartialAsync("_Pagination", Model)
         }
         else
         {

@@ -1,0 +1,147 @@
+@using Hafiz.Application.Common
+@model IPagedResult
+
+@{
+    if (Model == null || Model.TotalCount == 0)
+    {
+        return;
+    }
+
+    bool isArabic = System.Globalization.CultureInfo.CurrentUICulture.Name.StartsWith("ar");
+
+    var query = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+    foreach (var item in Context.Request.Query)
+    {
+        if (!string.IsNullOrEmpty(item.Value) && !string.Equals(item.Key, "page", StringComparison.OrdinalIgnoreCase))
+        {
+            query[item.Key] = item.Value.ToString();
+        }
+    }
+
+    string GetPageUrl(int pageNum)
+    {
+        query["page"] = pageNum.ToString();
+        var qs = string.Join("&", query.Select(kvp => $"{System.Net.WebUtility.UrlEncode(kvp.Key)}={System.Net.WebUtility.UrlEncode(kvp.Value)}"));
+        return $"{Context.Request.Path}?{qs}";
+    }
+
+    string GetPageSizeUrl(int newSize)
+    {
+        query["page"] = "1";
+        query["pageSize"] = newSize.ToString();
+        var qs = string.Join("&", query.Select(kvp => $"{System.Net.WebUtility.UrlEncode(kvp.Key)}={System.Net.WebUtility.UrlEncode(kvp.Value)}"));
+        return $"{Context.Request.Path}?{qs}";
+    }
+
+    int currentPage = Model.PageNumber;
+    int totalPages = Model.TotalPages;
+    string selectPadding = isArabic ? "padding: 4px 10px 4px 24px;" : "padding: 4px 24px 4px 10px;";
+}
+
+<div class="table-footer pagination-wrapper">
+    <div class="table-info">
+        <span class="pagination-count-text">
+            @if (isArabic)
+            {
+                <text>عرض <strong>@Model.StartRecord - @Model.EndRecord</strong> من أصل <strong>@Model.TotalCount</strong></text>
+            }
+            else
+            {
+                <text>Showing <strong>@Model.StartRecord - @Model.EndRecord</strong> of <strong>@Model.TotalCount</strong></text>
+            }
+        </span>
+
+        @if (Model.TotalCount > 10)
+        {
+            <span class="pagination-divider"></span>
+            <div class="page-size-selector" title="@(isArabic ? "عدد العناصر لكل صفحة" : "Items per page")">
+                <select class="pagination-size-select" 
+                        style="height: 34px; min-width: 60px; @selectPadding font-size: 0.875rem; font-weight: 600; line-height: 24px; border-radius: 6px; border: 1px solid #cbd5e1; background-color: #ffffff; color: #1e293b; cursor: pointer; text-align: center; text-align-last: center; box-sizing: border-box;"
+                        onchange="window.location.href=this.value" 
+                        aria-label="@(isArabic ? "عدد العناصر في الصفحة" : "Items per page")">
+                    @foreach (var size in new[] { 10, 12, 24, 48 })
+                    {
+                        <option value="@GetPageSizeUrl(size)" selected="@(Model.PageSize == size)">@size</option>
+                    }
+                </select>
+            </div>
+        }
+    </div>
+
+    @if (totalPages > 1)
+    {
+        <ul class="table-pagination m-0">
+            @* Previous Button *@
+            <li>
+                @if (Model.HasPreviousPage)
+                {
+                    <a href="@GetPageUrl(currentPage - 1)" class="pagination-nav-btn prev-btn" title="@(isArabic ? "الصفحة السابقة" : "Previous page")">
+                        <i class='bx @(isArabic ? "bx-chevron-right" : "bx-chevron-left")'></i>
+                        <span class="d-none d-sm-inline">@(isArabic ? "السابق" : "Previous")</span>
+                    </a>
+                }
+                else
+                {
+                    <button class="pagination-nav-btn disabled" disabled>
+                        <i class='bx @(isArabic ? "bx-chevron-right" : "bx-chevron-left")'></i>
+                        <span class="d-none d-sm-inline">@(isArabic ? "السابق" : "Previous")</span>
+                    </button>
+                }
+            </li>
+
+            @* Page Numbers *@
+            @{
+                int startPage = Math.Max(1, currentPage - 2);
+                int endPage = Math.Min(totalPages, currentPage + 2);
+
+                if (startPage > 1)
+                {
+                    <li><a href="@GetPageUrl(1)" class="pagination-num-btn">1</a></li>
+                    if (startPage > 2)
+                    {
+                        <li><span class="pagination-ellipsis">...</span></li>
+                    }
+                }
+
+                for (int i = startPage; i <= endPage; i++)
+                {
+                    if (i == currentPage)
+                    {
+                        <li><span class="pagination-num-btn active">@i</span></li>
+                    }
+                    else
+                    {
+                        <li><a href="@GetPageUrl(i)" class="pagination-num-btn">@i</a></li>
+                    }
+                }
+
+                if (endPage < totalPages)
+                {
+                    if (endPage < totalPages - 1)
+                    {
+                        <li><span class="pagination-ellipsis">...</span></li>
+                    }
+                    <li><a href="@GetPageUrl(totalPages)" class="pagination-num-btn">@totalPages</a></li>
+                }
+            }
+
+            @* Next Button *@
+            <li>
+                @if (Model.HasNextPage)
+                {
+                    <a href="@GetPageUrl(currentPage + 1)" class="pagination-nav-btn next-btn" title="@(isArabic ? "الصفحة التالية" : "Next page")">
+                        <span class="d-none d-sm-inline">@(isArabic ? "التالي" : "Next")</span>
+                        <i class='bx @(isArabic ? "bx-chevron-left" : "bx-chevron-right")'></i>
+                    </a>
+                }
+                else
+                {
+                    <button class="pagination-nav-btn disabled" disabled>
+                        <span class="d-none d-sm-inline">@(isArabic ? "التالي" : "Next")</span>
+                        <i class='bx @(isArabic ? "bx-chevron-left" : "bx-chevron-right")'></i>
+                    </button>
+                }
+            </li>
+        </ul>
+    }
+</div>

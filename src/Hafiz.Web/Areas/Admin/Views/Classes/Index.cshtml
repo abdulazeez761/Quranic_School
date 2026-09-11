@@ -1,6 +1,6 @@
 @using Hafiz.Common.Helper
 @using Hafiz.DTOs
-@model IEnumerable<Hafiz.Models.Class>
+@model Hafiz.Application.Common.PagedResult<Hafiz.Models.Class>
 
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
@@ -50,10 +50,12 @@
 
 <!-- Statistics Cards -->
 @{
-    var totalClasses = Model?.Count() ?? 0;
-    var maleClasses = Model?.Count(c => c.Gender.ToString() == "male") ?? 0;
-    var femaleClasses = Model?.Count(c => c.Gender.ToString() == "female") ?? 0;
-    var totalTeachers = Model?.SelectMany(c => c.Teachers).Distinct().Count() ?? 0;
+    var totalClasses = ViewBag.TotalClasses ?? Model?.TotalCount ?? 0;
+    var maleClasses = ViewBag.MaleClasses ?? 0;
+    var femaleClasses = ViewBag.FemaleClasses ?? 0;
+    var totalTeachers = ViewBag.TotalTeachers ?? 0;
+    var selectedGender = ViewBag.Gender as string ?? "";
+    var currentSearch = ViewBag.Search as string ?? "";
 }
 
 <div class="grid-auto-fit mb-lg">
@@ -116,41 +118,35 @@
 <div class="table-container">
 
     <!-- Search and Filter Toolbar -->
-    <div class="table-toolbar">
+    <form method="get" asp-action="Index" class="table-toolbar">
+        <input type="hidden" name="archived" value="@isArchived.ToString().ToLower()" />
         <div class="table-search">
-            <input type="text" id="searchInput" placeholder="@Localizer["SearchPlaceholder"]">
+            <input type="text" name="search" id="searchInput" value="@currentSearch" placeholder="@Localizer["SearchPlaceholder"]">
             <i class='bx bx-search'></i>
         </div>
         <div class="table-filters">
-            <select id="genderFilter" class="form-select form-input-sm">
+            <select id="genderFilter" name="gender" class="form-select form-input-sm" onchange="this.form.submit()">
                 <option value="">@Localizer["AllTypes"]</option>
-                @{
-                    var genders = Model?.Select(c => c.Gender)
-                        .Distinct()
-                        .OrderBy(g => g);
-
-                    if (genders != null)
-                    {
-                        foreach (var gender in genders)
-                        {
-                            <option value="@gender">@Localizer[$"Gender_{gender}"]</option>
-                        }
-                    }
-                }
+                <option value="male" selected="@(selectedGender == "male")">@Localizer["Gender_male"]</option>
+                <option value="female" selected="@(selectedGender == "female")">@Localizer["Gender_female"]</option>
             </select>
-            <button id="clearFilters" class="btn btn-outline btn-sm">
+            <button type="submit" class="btn btn-primary btn-sm">
+                <i class='bx bx-filter-alt'></i>
+                <span class="d-none d-md-inline">@Localizer["Search"]</span>
+            </button>
+            <a asp-action="Index" asp-route-archived="@isArchived.ToString().ToLower()" id="clearFilters" class="btn btn-outline btn-sm">
                 <i class='bx bx-refresh'></i>
                 <span class="d-none d-md-inline">@Localizer["Reset"]</span>
-            </button>
+            </a>
         </div>
-    </div>
+    </form>
 
     <!-- Records grid -->
     <div class="record-grid" id="classesGrid">
-        @if (Model != null && Model.Any())
+        @if (Model != null && Model.Items.Any())
         {
             int index = 0;
-            foreach (var cl in Model)
+            foreach (var cl in Model.Items)
             {
                 var teacherNames = string.Join("، ", cl.Teachers.Select(t => t.TeacherInfo.FirstName));
                 var hasTeachers = cl.Teachers.Any();
@@ -275,14 +271,8 @@
         }
     </div>
 
-    <!-- Table Footer -->
-    <div class="table-footer">
-        <div class="table-info">
-            @Localizer["ShowingResults"] <strong><span id="visibleCount">@(Model?.Count() ?? 0)</span></strong>
-            @Localizer["Of"]
-            <strong>@(Model?.Count() ?? 0)</strong> @Localizer["Class"]
-        </div>
-    </div>
+    <!-- Table Footer with Pagination -->
+    @await Html.PartialAsync("_Pagination", Model)
 </div>
 
 @section scripts {

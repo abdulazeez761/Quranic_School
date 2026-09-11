@@ -1,5 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Hafiz.Application.Common;
+using Hafiz.Application.Extensions;
 using Hafiz.Domain.Entities;
 using Hafiz.DTOs;
 using Hafiz.Services.Interfaces;
@@ -20,7 +24,12 @@ namespace Hafiz.Areas.SuperAdmin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(bool archived = false)
+        public async Task<IActionResult> Index(
+            bool archived = false,
+            int page = 1,
+            int pageSize = 10,
+            string? search = null
+        )
         {
             List<Institute> institutes;
             if (archived)
@@ -32,12 +41,32 @@ namespace Hafiz.Areas.SuperAdmin.Controllers
                 institutes = await _instituteService.GetAllAsync();
             }
 
+            var list = institutes ?? new List<Institute>();
+            var filtered = list.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim();
+                filtered = filtered.Where(i =>
+                    (i.Name != null && i.Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                    (i.PhoneNumber != null && i.PhoneNumber.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                    (i.Address != null && i.Address.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                    (i.Manager != null && (
+                        (i.Manager.FirstName != null && i.Manager.FirstName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                        (i.Manager.SecondName != null && i.Manager.SecondName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                        (i.Manager.Email != null && i.Manager.Email.Contains(term, StringComparison.OrdinalIgnoreCase))
+                    ))
+                );
+            }
+
+            var pagedInstitutes = filtered.ToPagedResult(page, pageSize);
+
             var (activeCount, archivedCount) = await _instituteService.GetCountsAsync();
             ViewBag.IsArchived = archived;
             ViewBag.ActiveCount = activeCount;
             ViewBag.ArchivedCount = archivedCount;
+            ViewBag.Search = search;
 
-            return View(institutes);
+            return View(pagedInstitutes);
         }
 
         [HttpGet]

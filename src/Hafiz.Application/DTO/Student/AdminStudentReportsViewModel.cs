@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Hafiz.Application.Common;
 using Hafiz.Models;
 using Hafiz.Models.enums;
 
@@ -8,6 +9,7 @@ namespace Hafiz.DTOs.Student
     public class AdminStudentReportsViewModel
     {
         public List<StudentReportRow> Students { get; set; } = new();
+        public PagedResult<StudentReportRow>? PagedStudents { get; set; }
         public string? SortBy { get; set; }
         public string? SortOrder { get; set; }
         public Guid? ClassId { get; set; }

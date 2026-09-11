@@ -1,6 +1,10 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Hafiz.Application.Common;
+using Hafiz.Application.Extensions;
 using Hafiz.Data;
 using Hafiz.DTOs;
 using Hafiz.Models;
@@ -41,7 +45,14 @@ namespace Hafiz.Areas.Admin.Controllers
             return claim != null ? Guid.Parse(claim) : null;
         }
 
-        public async Task<IActionResult> Index(bool archived = false)
+        [HttpGet]
+        public async Task<IActionResult> Index(
+            bool archived = false,
+            int page = 1,
+            int pageSize = 12,
+            string? search = null,
+            string? className = null
+        )
         {
             var instituteId = GetInstituteId();
             IEnumerable<Models.Teacher> list;
@@ -59,12 +70,52 @@ namespace Hafiz.Areas.Admin.Controllers
                     : await _teacherService.GetAllTeachersAsync();
             }
 
+            var teachersList = list.ToList();
+            var totalTeachers = teachersList.Count;
+            var totalClasses = teachersList.SelectMany(t => t.Classes).Select(c => c.Id).Distinct().Count();
+            var teachersWithClasses = teachersList.Count(t => t.Classes.Any());
+            var teachersWithoutClasses = totalTeachers - teachersWithClasses;
+
+            ViewBag.TotalTeachers = totalTeachers;
+            ViewBag.TotalClasses = totalClasses;
+            ViewBag.TeachersWithClasses = teachersWithClasses;
+            ViewBag.TeachersWithoutClasses = teachersWithoutClasses;
+
+            var allClasses = teachersList
+                .SelectMany(t => t.Classes)
+                .Select(c => c.Name)
+                .Distinct()
+                .OrderBy(name => name)
+                .ToList();
+            ViewBag.AllClassNames = allClasses;
+
+            var filtered = teachersList.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim();
+                filtered = filtered.Where(t =>
+                    (t.TeacherInfo.FirstName != null && t.TeacherInfo.FirstName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                    (t.TeacherInfo.SecondName != null && t.TeacherInfo.SecondName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                    (t.TeacherInfo.Username != null && t.TeacherInfo.Username.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                    (t.TeacherInfo.PhoneNumber != null && t.TeacherInfo.PhoneNumber.Contains(term, StringComparison.OrdinalIgnoreCase))
+                );
+            }
+
+            if (!string.IsNullOrWhiteSpace(className))
+            {
+                filtered = filtered.Where(t => t.Classes.Any(c => string.Equals(c.Name, className, StringComparison.OrdinalIgnoreCase)));
+            }
+
+            var pagedTeachers = filtered.ToPagedResult(page, pageSize);
+
             var (activeCount, archivedCount) = await _teacherService.GetCountsAsync(instituteId);
             ViewBag.IsArchived = archived;
             ViewBag.ActiveCount = activeCount;
             ViewBag.ArchivedCount = archivedCount;
+            ViewBag.Search = search;
+            ViewBag.ClassName = className;
 
-            return View(list);
+            return View(pagedTeachers);
         }
 
         public async Task<IActionResult> Create()

@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Hafiz.Application.Common;
+using Hafiz.Application.Extensions;
 using Hafiz.DTOs;
 using Hafiz.Models;
 using Hafiz.Services.Interfaces;
@@ -41,7 +43,13 @@ namespace Hafiz.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(bool archived = false)
+        public async Task<IActionResult> Index(
+            bool archived = false,
+            int page = 1,
+            int pageSize = 12,
+            string? search = null,
+            string? gender = null
+        )
         {
             var instituteId = GetInstituteId();
             IEnumerable<Class> classes;
@@ -59,12 +67,45 @@ namespace Hafiz.Areas.Admin.Controllers
                     : await _ClassService.ViewClasses();
             }
 
+            var classesList = classes.ToList();
+            var totalClasses = classesList.Count;
+            var maleClasses = classesList.Count(c => c.Gender.ToString() == "male");
+            var femaleClasses = classesList.Count(c => c.Gender.ToString() == "female");
+            var totalTeachers = classesList.SelectMany(c => c.Teachers).Distinct().Count();
+
+            ViewBag.TotalClasses = totalClasses;
+            ViewBag.MaleClasses = maleClasses;
+            ViewBag.FemaleClasses = femaleClasses;
+            ViewBag.TotalTeachers = totalTeachers;
+
+            var filtered = classesList.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim();
+                filtered = filtered.Where(c =>
+                    (c.Name != null && c.Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                    c.Teachers.Any(t =>
+                        (t.TeacherInfo.FirstName != null && t.TeacherInfo.FirstName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                        (t.TeacherInfo.SecondName != null && t.TeacherInfo.SecondName.Contains(term, StringComparison.OrdinalIgnoreCase))
+                    )
+                );
+            }
+
+            if (!string.IsNullOrWhiteSpace(gender))
+            {
+                filtered = filtered.Where(c => string.Equals(c.Gender.ToString(), gender, StringComparison.OrdinalIgnoreCase));
+            }
+
+            var pagedClasses = filtered.ToPagedResult(page, pageSize);
+
             var (activeCount, archivedCount) = await _ClassService.GetCountsAsync(instituteId);
             ViewBag.IsArchived = archived;
             ViewBag.ActiveCount = activeCount;
             ViewBag.ArchivedCount = archivedCount;
+            ViewBag.Search = search;
+            ViewBag.Gender = gender;
 
-            return View(classes);
+            return View(pagedClasses);
         }
 
         public async Task<IActionResult> Create()

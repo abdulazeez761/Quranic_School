@@ -1,4 +1,4 @@
-@model IEnumerable<Hafiz.Models.StudentAttendance>
+@model Hafiz.Application.Common.PagedResult<Hafiz.Models.StudentAttendance>
 
 @{
     ViewData["Title"] = Localizer["PageTitle"].Value;
@@ -51,35 +51,35 @@
             <i class='bx bx-check-circle'></i>
             <div class="stat-info">
                 <h3>@Localizer["Present"]</h3>
-                <p class="stat-value">@Model.Count(a => a.Status == Hafiz.Models.AttendanceStatus.Present)</p>
+                <p class="stat-value">@(ViewBag.TotalPresent ?? 0)</p>
             </div>
         </div>
         <div class="stat-card stat-absent">
             <i class='bx bx-x-circle'></i>
             <div class="stat-info">
                 <h3>@Localizer["Absent"]</h3>
-                <p class="stat-value">@Model.Count(a => a.Status == Hafiz.Models.AttendanceStatus.Absent)</p>
+                <p class="stat-value">@(ViewBag.TotalAbsent ?? 0)</p>
             </div>
         </div>
         <div class="stat-card stat-late">
             <i class='bx bx-time'></i>
             <div class="stat-info">
                 <h3>@Localizer["Late"]</h3>
-                <p class="stat-value">@Model.Count(a => a.Status == Hafiz.Models.AttendanceStatus.Late)</p>
+                <p class="stat-value">@(ViewBag.TotalLate ?? 0)</p>
             </div>
         </div>
         <div class="stat-card stat-total">
             <i class='bx bx-calendar'></i>
             <div class="stat-info">
                 <h3>@Localizer["Total"]</h3>
-                <p class="stat-value">@Model.Count()</p>
+                <p class="stat-value">@(Model?.TotalCount ?? 0)</p>
             </div>
         </div>
     </div>
 
     <!-- Attendance Table -->
     <div class="attendance-table-container">
-        @if (Model.Any())
+        @if (Model != null && Model.Items.Any())
         {
             <table class="attendance-table">
                 <thead>
@@ -90,7 +90,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var attendance in Model)
+                    @foreach (var attendance in Model.Items)
                     {
                         var statusClass = attendance.Status.ToString().ToLower();
                         <tr>
@@ -111,6 +111,8 @@
                     }
                 </tbody>
             </table>
+
+            @await Html.PartialAsync("_Pagination", Model)
         }
         else
         {

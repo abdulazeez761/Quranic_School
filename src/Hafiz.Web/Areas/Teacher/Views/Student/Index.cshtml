@@ -1,7 +1,7 @@
 @using Hafiz.Models
 @using Hafiz.Models.enums
 @using Hafiz.Common.Helper
-@model IEnumerable<Student>
+@model Hafiz.Application.Common.PagedResult<Student>
 
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
@@ -9,14 +9,13 @@
     var pageTitle = Localizer["PageTitle"].Value;
 
     var classId = ViewBag.ClassId != null ? Guid.Parse(ViewBag.ClassId.ToString()) : Guid.Empty;
-    var className = Model.FirstOrDefault()?.Classes.FirstOrDefault(c => c.Id == classId)?.Name
-                    ?? Localizer["Students"].Value;
+    var className = ViewBag.ClassName as string ?? Localizer["Students"].Value;
 
-    var students = Model?.ToList() ?? new List<Student>();
-    var totalStudents = students.Count;
-    var boysCount = students.Count(s => s.sex == Sex.male);
-    var girlsCount = students.Count(s => s.sex == Sex.female);
-    var avgAge = totalStudents > 0
+    var students = Model?.Items ?? new List<Student>();
+    var totalStudents = ViewBag.TotalStudents ?? Model?.TotalCount ?? 0;
+    var boysCount = ViewBag.BoysCount ?? 0;
+    var girlsCount = ViewBag.GirlsCount ?? 0;
+    var avgAge = totalStudents > 0 && students.Any()
         ? (int)Math.Round(students.Average(s => DateTime.Now.Year - s.DateOfBirth.Year))
         : 0;
 }
@@ -287,6 +286,8 @@
             </tbody>
         </table>
     </div>
+
+    @await Html.PartialAsync("_Pagination", Model)
 
     <div class="students-empty" id="studentsEmpty" style="display: @(totalStudents == 0 ? "flex" : "none");">
         <div class="empty-icon"><i class='bx bx-user-x'></i></div>

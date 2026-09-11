@@ -1,5 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Hafiz.Application.Common;
+using Hafiz.Application.Extensions;
 using Hafiz.DTOs.Wird;
 using Hafiz.Models;
 using Hafiz.Services.Interfaces;
@@ -20,7 +25,12 @@ namespace Hafiz.Areas.Teacher.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index([FromQuery] string? fromDate, string? toDate)
+        public async Task<IActionResult> Index(
+            [FromQuery] string? fromDate,
+            string? toDate,
+            int page = 1,
+            int pageSize = 12
+        )
         {
             string? selectedClassFromCookies = Request.Cookies["selectedClassId"];
             Guid selectedClass;
@@ -29,7 +39,7 @@ namespace Hafiz.Areas.Teacher.Controllers
             else
             {
                 ModelState.AddModelError("NoClass", "you did not select a class");
-                return View(new List<WirdAssignment>());
+                return View(new PagedResult<WirdAssignment>());
             }
 
             List<WirdAssignment>? assignmentList =
@@ -39,7 +49,14 @@ namespace Hafiz.Areas.Teacher.Controllers
                     toDate
                 );
 
-            return View(assignmentList);
+            var list = assignmentList ?? new List<WirdAssignment>();
+            ViewBag.TotalCount = list.Count;
+            ViewBag.FromDate = fromDate;
+            ViewBag.ToDate = toDate;
+
+            var paged = list.ToPagedResult(page, pageSize);
+
+            return View(paged);
         }
 
         [HttpGet]

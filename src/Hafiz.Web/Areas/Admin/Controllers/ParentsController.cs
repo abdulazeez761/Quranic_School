@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Hafiz.Application.Common;
+using Hafiz.Application.Extensions;
 using Hafiz.DTOs;
 using Hafiz.Models;
 using Hafiz.Services.Interfaces;
@@ -29,7 +31,12 @@ namespace Hafiz.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(bool archived = false)
+        public async Task<IActionResult> Index(
+            bool archived = false,
+            int page = 1,
+            int pageSize = 12,
+            string? search = null
+        )
         {
             var instituteId = GetInstituteId();
             IEnumerable<Models.Parent> parents;
@@ -47,12 +54,40 @@ namespace Hafiz.Areas.Admin.Controllers
                     : await _parentService.GetAllAsync();
             }
 
+            var parentsList = parents.ToList();
+            var totalParents = parentsList.Count;
+            var parentsWithChildren = parentsList.Count(p => p.Students != null && p.Students.Any());
+            var parentsWithoutChildren = totalParents - parentsWithChildren;
+            var totalChildren = parentsList.Sum(p => p.Students?.Count ?? 0);
+
+            ViewBag.TotalParents = totalParents;
+            ViewBag.ParentsWithChildren = parentsWithChildren;
+            ViewBag.ParentsWithoutChildren = parentsWithoutChildren;
+            ViewBag.TotalChildren = totalChildren;
+
+            var filtered = parentsList.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim();
+                filtered = filtered.Where(p =>
+                    p.ParentInfo != null && (
+                        (p.ParentInfo.FirstName != null && p.ParentInfo.FirstName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                        (p.ParentInfo.SecondName != null && p.ParentInfo.SecondName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                        (p.ParentInfo.Username != null && p.ParentInfo.Username.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                        (p.ParentInfo.PhoneNumber != null && p.ParentInfo.PhoneNumber.Contains(term, StringComparison.OrdinalIgnoreCase))
+                    )
+                );
+            }
+
+            var pagedParents = filtered.ToPagedResult(page, pageSize);
+
             var (activeCount, archivedCount) = await _parentService.GetCountsAsync(instituteId);
             ViewBag.IsArchived = archived;
             ViewBag.ActiveCount = activeCount;
             ViewBag.ArchivedCount = archivedCount;
+            ViewBag.Search = search;
 
-            return View(parents);
+            return View(pagedParents);
         }
 
         [HttpGet]

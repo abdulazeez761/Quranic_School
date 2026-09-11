@@ -1,5 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Hafiz.Application.Common;
+using Hafiz.Application.Extensions;
 using Hafiz.DTOs.Student;
 using Hafiz.Models;
 using Hafiz.Services.Interfaces;
@@ -32,11 +37,13 @@ namespace Hafiz.Areas.Teacher.Controllers
             _parentNoteService = parentNoteService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            int page = 1,
+            int pageSize = 12,
+            string? search = null,
+            string? level = null
+        )
         {
-            // _ = Guid.Parse(
-            //     User.FindFirstValue(ClaimTypes.NameIdentifier)! //always exist because he cant teach the page if he is not logged in
-            // );
             string? selectedClassFromCookies = Request.Cookies["selectedClassId"];
             ViewBag.ClassId = selectedClassFromCookies;
             Guid? selectedClass;
@@ -45,13 +52,45 @@ namespace Hafiz.Areas.Teacher.Controllers
             else
             {
                 ModelState.AddModelError(string.Empty, "");
-                return View(new List<StudentModel>());
+                return View(new PagedResult<StudentModel>());
             }
 
             IEnumerable<StudentModel> students = await _studentService.GetStudentsByClassID(
                 selectedClass
             );
-            return View(students);
+
+            var studentList = students.ToList();
+            var totalStudents = studentList.Count;
+            var boysCount = studentList.Count(s => s.sex == Hafiz.Models.enums.Sex.male);
+            var girlsCount = studentList.Count(s => s.sex == Hafiz.Models.enums.Sex.female);
+            var className = studentList.FirstOrDefault()?.Classes.FirstOrDefault(c => c.Id == selectedClass)?.Name;
+
+            ViewBag.TotalStudents = totalStudents;
+            ViewBag.BoysCount = boysCount;
+            ViewBag.GirlsCount = girlsCount;
+            ViewBag.ClassName = className;
+            ViewBag.Search = search;
+            ViewBag.Level = level;
+
+            var filtered = studentList.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim();
+                filtered = filtered.Where(s =>
+                    (s.StudentInfo.FirstName != null && s.StudentInfo.FirstName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                    (s.StudentInfo.SecondName != null && s.StudentInfo.SecondName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                    (s.StudentInfo.Username != null && s.StudentInfo.Username.Contains(term, StringComparison.OrdinalIgnoreCase))
+                );
+            }
+
+            if (!string.IsNullOrWhiteSpace(level) && level != "all")
+            {
+                filtered = filtered.Where(s => string.Equals(s.TajwidLevel.ToString(), level, StringComparison.OrdinalIgnoreCase));
+            }
+
+            var pagedStudents = filtered.ToPagedResult(page, pageSize);
+
+            return View(pagedStudents);
         }
 
         public async Task<IActionResult> Details(Guid id, int page = 1)
