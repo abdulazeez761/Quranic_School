@@ -1,3 +1,4 @@
+using Hafiz.Application.Services;
 using Hafiz.Services;
 using Hafiz.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,7 @@ namespace Hafiz.Application.Extensions
             services.AddScoped<IWirdService, WirdService>();
             services.AddScoped<IParentNoteService, ParentNoteService>();
             services.AddScoped<IInstituteService, InstituteService>();
+            services.AddScoped<IStudentRoutinePlanService, StudentRoutinePlanService>();
             return services;
         }
     }

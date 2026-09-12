@@ -2,6 +2,7 @@ using Hafiz.Application.Interfaces;
 using Hafiz.Application.Interfaces.Repositories;
 using Hafiz.Application.Interfaces.Services;
 using Hafiz.Data;
+using Hafiz.Infrastructure.Repositories;
 using Hafiz.Infrastructure.Security;
 using Hafiz.Infrastructure.Services;
 using Hafiz.Repositories;
@@ -35,7 +36,8 @@ namespace Hafiz.Infrastructure.Extensions
             services.AddScoped<IStudentAttendanceRepository, StudentAttendanceRepository>();
             services.AddScoped<IWirdRepository, WirdRepository>();
             services.AddScoped<IParentNoteRepository, ParentNoteRepository>();
-            services.AddScoped<IInstituteRepository, Hafiz.Infrastructure.Repositories.InstituteRepository>();
+            services.AddScoped<IInstituteRepository, InstituteRepository>();
+            services.AddScoped<IStudentRoutinePlanRepository, StudentRoutinePlanRepository>();
 
             // Infrastructure services
             services.AddScoped<IPasswordHasher, PasswordHasher>();
