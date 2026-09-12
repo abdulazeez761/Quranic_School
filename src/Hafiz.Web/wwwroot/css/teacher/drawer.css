@@ -1,0 +1,897 @@
+/* ==========================================================================
+   Model 2 - Offcanvas Drawer & Mobile Bottom Sheet Styles
+   Optimized for Mobile Phones (No scrolling down past 30 students!)
+   ========================================================================== */
+
+/* Main Layout for Desktop */
+.split-layout {
+  display: grid;
+  grid-template-columns: 1fr 440px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Student List Panel */
+.students-compact-panel {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.students-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.students-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.students-panel-title h3 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+
+.students-compact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.student-compact-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border-color);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  background: #ffffff;
+  position: relative;
+  gap: 12px;
+}
+
+.student-compact-row:hover {
+  border-color: var(--secondary-green);
+  background: #fafcf8;
+}
+
+.student-compact-row.active {
+  border-color: var(--primary-green);
+  background: #f0f7ec;
+  box-shadow: 0 0 0 2px var(--primary-green);
+}
+
+.student-row-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.student-row-left .student-avatar {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  max-width: 42px;
+  border-radius: 50%;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-xs);
+}
+
+.student-info-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.student-info-text h4 {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  line-height: 1.3;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.student-info-text span {
+  font-size: 0.74rem;
+  color: var(--text-medium);
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.student-row-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.student-row-right .wird-badge {
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-size: 0.76rem;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+}
+
+.student-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   DRAWER CONTAINER & RESPONSIVE BEHAVIOR
+   ========================================================================== */
+
+/* Backdrop overlay (active on mobile) */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-base);
+}
+
+.drawer-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* The Drawer Panel */
+.drawer-panel {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all var(--transition-bounce);
+}
+
+/* Desktop: Offcanvas Side Drawer (Screen > 1100px) */
+@media (min-width: 1101px) {
+  .drawer-panel {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 520px !important;
+    max-width: 90vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    border-radius: 20px 0 0 20px !important;
+    z-index: 2100 !important;
+    box-shadow: -10px 0 35px rgba(0, 0, 0, 0.25) !important;
+    transform: translateX(-105%);
+    transition: transform 0.35s cubic-bezier(0.32, 1.25, 0.32, 1);
+    border-left: none !important;
+  }
+  .drawer-panel.active,
+  .drawer-panel.mobile-open {
+    transform: translateX(0) !important;
+  }
+  .drawer-mobile-handle {
+    display: none;
+  }
+  .drawer-close-btn {
+    display: flex !important;
+  }
+}
+
+/* Mobile & Tablet: Native Bottom Sheet / Slide-Over Drawer! (Screen <= 1100px) */
+@media (max-width: 1100px) {
+  .split-layout {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .drawer-panel {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    height: 92vh !important;
+    max-height: 92vh !important;
+    border-radius: 22px 22px 0 0 !important;
+    z-index: 2100 !important;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.35) !important;
+    border: 1.5px solid var(--border-color) !important;
+    border-bottom: none !important;
+    transform: translateY(105%);
+    transition: transform 0.35s cubic-bezier(0.32, 1.25, 0.32, 1);
+    box-sizing: border-box !important;
+  }
+
+  .drawer-panel.active,
+  .drawer-panel.mobile-open {
+    transform: translateY(0) !important;
+  }
+
+  .drawer-mobile-handle {
+    display: block;
+    width: 48px;
+    height: 5px;
+    background: #cbd5e1;
+    border-radius: 99px;
+    margin: 10px auto 4px;
+    cursor: grab;
+  }
+
+  .drawer-close-btn {
+    display: flex;
+  }
+}
+
+/* Drawer Header with Clean Student Identity Profile */
+.drawer-header {
+  background: #f8fafc;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.drawer-student-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.drawer-student-avatar {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-green), #0d9488);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
+  flex-shrink: 0;
+}
+
+.drawer-student-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.drawer-student-meta h3 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin: 0;
+  line-height: 1.3;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.drawer-student-subtitle {
+  font-size: 0.76rem;
+  color: var(--text-medium);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.drawer-close-btn {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: var(--text-medium);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.drawer-close-btn:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: var(--danger);
+  transform: rotate(90deg);
+}
+
+/* Quick Action Routine Buttons */
+.drawer-quick-actions {
+  display: flex;
+  gap: 8px;
+  padding: 10px 18px 0;
+}
+
+.drawer-quick-actions .btn {
+  flex: 1;
+  font-size: 0.76rem;
+  padding: 6px 8px;
+}
+
+/* Segmented Pills for Tab Switching */
+.segmented-nav {
+  display: flex;
+  background: var(--light-gray);
+  padding: 4px;
+  border-radius: var(--radius-full);
+  margin: 10px 18px 0;
+  overflow-x: auto;
+}
+
+.segmented-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 6px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.segmented-btn.active {
+  background: var(--white);
+  color: var(--text-dark);
+  box-shadow: var(--shadow-xs);
+}
+
+/* Drawer Body */
+.drawer-body {
+  padding: 16px 18px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: #fdfdfd;
+}
+
+/* Drawer Wird Box */
+.drawer-wird-box {
+  background: #ffffff;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-xs);
+}
+
+.drawer-wird-box.type-memorization { border-right: 4px solid var(--wird-memorize); }
+.drawer-wird-box.type-recentRevision { border-right: 4px solid var(--wird-recent); }
+.drawer-wird-box.type-oldRevision { border-right: 4px solid var(--wird-old); }
+.drawer-wird-box.type-recitation { border-right: 4px solid var(--wird-recite); }
+
+.drawer-wird-box.is-disabled {
+  opacity: 0.55;
+  background: #f8fafc;
+}
+
+.drawer-wird-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.drawer-wird-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+/* Drawer Footer - Modern 1-Row Stepper */
+.drawer-footer {
+  padding: 12px 18px;
+  background: #ffffff;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-shrink: 0;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.drawer-prev-btn {
+  flex: 0 0 auto;
+  min-width: 92px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.drawer-prev-btn:disabled,
+.drawer-prev-btn.is-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #94a3b8;
+}
+
+.drawer-save-btn {
+  flex: 0 0 auto;
+  min-width: 95px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.drawer-save-next-btn {
+  flex: 1;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 800;
+  background: var(--primary-green);
+  border-color: var(--primary-green);
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.28);
+}
+
+.drawer-save-next-btn:hover {
+  background: var(--dark-green);
+  border-color: var(--dark-green);
+  transform: translateY(-1px);
+}
+
+/* Drawer Wird Field Groups - Prominent & Legible Data Input */
+.compact-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.drawer-fields-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.form-control-prominent {
+  height: 42px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border-color);
+  background: #ffffff;
+}
+
+.drawer-range-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.range-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.range-box .surah-select {
+  flex: 1;
+  height: 38px;
+  font-size: 0.82rem;
+}
+
+.range-box .ayah-input {
+  width: 52px;
+  height: 38px;
+  text-align: center;
+  font-size: 0.84rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.drawer-bottom-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.upcoming-badge-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #faf5ff;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid #e9d5ff;
+  flex-shrink: 0;
+}
+
+/* Floating Mobile Trigger Button */
+.mobile-open-pill-btn {
+  display: none;
+}
+
+/* ==========================================================================
+   Comprehensive Mobile Enhancements for Model 2
+   Maximized space for inputs, minimized button clutter!
+   ========================================================================== */
+@media (max-width: 1100px) {
+  .mobile-open-pill-btn {
+    position: fixed;
+    bottom: max(16px, env(safe-area-inset-bottom));
+    left: 14px;
+    right: 14px;
+    background: linear-gradient(135deg, #1e3a1e, var(--primary-green));
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 10px 25px rgba(35, 65, 30, 0.4);
+    z-index: 1500;
+    cursor: pointer;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.88rem;
+    animation: bounceIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes bounceIn {
+    0% { transform: translateY(30px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
+  .students-compact-panel {
+    padding: 10px 8px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .students-panel-header {
+    margin-bottom: 10px;
+    gap: 8px;
+  }
+
+  .students-panel-title h3 {
+    font-size: 0.95rem;
+  }
+
+  /* Fixed student row on mobile - No squished avatar, No clipped badges! */
+  .student-compact-row {
+    padding: 10px 10px;
+    gap: 8px;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  .student-row-left {
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .student-row-left .student-avatar {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    max-width: 38px;
+    font-size: 0.88rem;
+    flex-shrink: 0;
+  }
+
+  .student-info-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .student-info-text h4 {
+    font-size: 0.86rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .student-info-text span {
+    font-size: 0.7rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .student-row-right {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .student-row-right .wird-badge {
+    font-size: 0.72rem;
+    padding: 3px 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* On mobile <= 600px, hide edit button because clicking the whole card opens the sheet */
+  @media (max-width: 600px) {
+    .student-edit-btn {
+      display: none !important;
+    }
+  }
+
+  /* Drawer Bottom Sheet Layout: 92% of screen */
+  .drawer-panel {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: 92vh !important;
+    max-height: 92vh !important;
+    border-radius: 22px 22px 0 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Mobile Header with Full Student Identity */
+  .drawer-header {
+    padding: 10px 14px;
+    height: auto;
+    min-height: 52px;
+  }
+
+  .drawer-student-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .drawer-student-avatar {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    font-size: 0.88rem;
+  }
+
+  .drawer-student-meta h3 {
+    font-size: 0.96rem;
+    font-weight: 800;
+    white-space: normal;
+    line-height: 1.25;
+  }
+
+  .drawer-student-subtitle {
+    font-size: 0.72rem;
+  }
+
+  .drawer-close-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 1.15rem;
+    background: #f1f5f9;
+    color: var(--text-dark);
+    flex-shrink: 0;
+    border-radius: 50%;
+  }
+
+  .drawer-close-btn:hover {
+    background: #e2e8f0;
+  }
+
+  /* Compact Quick Action Pills - SINGLE ROW! */
+  .drawer-quick-actions {
+    padding: 6px 12px 2px;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .drawer-quick-actions::-webkit-scrollbar {
+    display: none;
+  }
+
+  .drawer-quick-actions .btn {
+    flex: 1 1 auto;
+    min-height: 32px;
+    height: 32px;
+    padding: 4px 10px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+  }
+
+  /* Compact Segmented Tabs */
+  .segmented-nav {
+    margin: 4px 12px 6px;
+    padding: 3px;
+    height: 34px;
+    align-items: center;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .segmented-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .segmented-btn {
+    flex: 0 0 auto;
+    height: 28px;
+    padding: 2px 10px;
+    font-size: 0.74rem;
+  }
+
+  /* MAXIMIZED Input Body: Takes 75%+ of the screen! */
+  .drawer-body {
+    padding: 8px 12px 16px;
+    gap: 10px;
+    flex: 1 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .drawer-wird-box {
+    padding: 12px 12px;
+    border-radius: var(--radius-md);
+  }
+
+  .drawer-fields-grid {
+    grid-template-columns: 1fr 1.25fr !important;
+    gap: 10px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .form-control-prominent {
+    height: 44px !important;
+    font-size: 0.98rem !important;
+  }
+
+  /* Stack range rows on mobile so Surah dropdown has full width & never clips! */
+  .drawer-range-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .range-box {
+    width: 100% !important;
+  }
+
+  .range-box .surah-select {
+    flex: 1 !important;
+    min-width: 0 !important;
+    height: 42px !important;
+    font-size: 0.92rem !important;
+    font-weight: 600 !important;
+    padding: 0 10px !important;
+  }
+
+  .range-box .ayah-input {
+    width: 65px !important;
+    min-width: 65px !important;
+    height: 42px !important;
+    font-size: 0.95rem !important;
+    font-weight: 800 !important;
+    text-align: center !important;
+  }
+
+  /* SLIM Ergonomic Stepper Mobile Footer */
+  .drawer-footer {
+    padding: 8px 10px max(8px, env(safe-area-inset-bottom)) !important;
+    flex-direction: row !important;
+    gap: 6px !important;
+    align-items: center !important;
+    background: #ffffff;
+    box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.08);
+    border-top: 1.5px solid var(--border-color);
+  }
+
+  .drawer-footer .drawer-prev-btn {
+    flex: 0 0 78px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    font-size: 0.76rem !important;
+    padding: 0 6px !important;
+    white-space: nowrap;
+  }
+
+  .drawer-footer .drawer-save-btn {
+    flex: 0 0 84px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    font-size: 0.76rem !important;
+    white-space: nowrap;
+    padding: 0 6px !important;
+  }
+
+  .drawer-footer .drawer-save-next-btn {
+    flex: 1 !important;
+    min-width: 0 !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    font-size: 0.84rem !important;
+    font-weight: 800;
+    white-space: nowrap;
+    padding: 0 8px !important;
+  }
+
+  @media (max-width: 480px) {
+    .drawer-bottom-row {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 8px !important;
+    }
+
+    .upcoming-badge-toggle {
+      align-self: flex-start !important;
+    }
+  }
+}
+

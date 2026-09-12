@@ -1,4 +1,10 @@
-﻿/* Modal Overlay */
+/* ==========================================================================
+   Hafiz Web - Drawer & Modal Styles for Assign Wird
+   ========================================================================== */
+@import url('shared.css');
+@import url('drawer.css');
+
+/* Modal Overlay (Backwards compatibility & fallback) */
 .modal-overlay {
   position: fixed;
   top: 0;

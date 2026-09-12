@@ -22,6 +22,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Video> Videos { get; set; }
     public DbSet<ParentNote> ParentNotes { get; set; }
     public DbSet<Institute> Institutes { get; set; }
+    public DbSet<StudentRoutinePlan> StudentRoutinePlans { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

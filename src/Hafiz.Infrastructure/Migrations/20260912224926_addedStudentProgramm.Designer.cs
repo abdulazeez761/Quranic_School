@@ -4,16 +4,19 @@ using Hafiz.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Hafiz.Migrations
+namespace Hafiz.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260912224926_addedStudentProgramm")]
+    partial class addedStudentProgramm
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -503,70 +506,6 @@ namespace Hafiz.Migrations
                     b.ToTable("WirdAssignments");
                 });
 
-            modelBuilder.Entity("StudentRoutinePlan", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ClassId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("DefaultNote")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("MemActive")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal>("MemAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("MemEquivalentPages")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("MemUnit")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("OldRevActive")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal>("OldRevAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("OldRevUnit")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("RecentRevActive")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal>("RecentRevAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("RecentRevUnit")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("RecitationActive")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal>("RecitationAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("RecitationUnit")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("StudentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("StudentRoutinePlans");
-                });
-
             modelBuilder.Entity("ClassStudents", b =>
                 {
                     b.HasOne("Hafiz.Models.Class", null)
@@ -737,17 +676,6 @@ namespace Hafiz.Migrations
                         .IsRequired();
 
                     b.Navigation("Class");
-
-                    b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("StudentRoutinePlan", b =>
-                {
-                    b.HasOne("Hafiz.Models.Student", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("Student");
                 });
