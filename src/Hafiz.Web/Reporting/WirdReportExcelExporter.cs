@@ -34,13 +34,13 @@ namespace Hafiz.Web.Reporting
             var stats = vm.Stats;
             var rows = new (string Label, object Value)[]
             {
-                ("إجمالي الأوراد", stats.TotalAssignments),
-                ("المكتملة", stats.CompletedCount),
-                ("المعلّقة", stats.PendingCount),
-                ("القادمة", stats.UpcomingCount),
+                ("إجمالي الأوراد المسندة", stats.TotalAssignments),
+                ("الأوراد المكتملة (تم تسميعها وتقييمها)", stats.CompletedCount),
+                ("الأوراد المعلّقة (لم تُسمّع بعد)", stats.PendingCount),
+                ("الأوراد القادمة", stats.UpcomingCount),
                 ("نسبة الإنجاز %", stats.CompletionRate),
-                ("إجمالي الصفحات المكافئة", stats.TotalEquivalentPages),
-                ("الصفحات المكافئة المكتملة", stats.CompletedEquivalentPages),
+                ("الصفحات المكتملة والمسمّعة", stats.CompletedEquivalentPages),
+                ("إجمالي الصفحات المسندة", stats.TotalEquivalentPages),
             };
 
             sheet.Cell(1, 1).Value = "مؤشّرات عامة";

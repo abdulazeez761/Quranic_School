@@ -288,13 +288,14 @@ namespace Hafiz.Services
                             : string.Empty,
                         TotalWirds = g.Count(),
                         CompletedWirds = g.Count(r => r.IsCompleted),
-                        TotalPages = g.Sum(r =>
+                        TotalPages = g.Where(r => r.IsCompleted).Sum(r =>
                             WirdPageCalculator.ToPages(r.Amount, r.AmountUnit, r.EquivalentPages)
                         ),
                     };
                 })
                 .OrderByDescending(r => r.CompletionRate)
-                .ThenByDescending(r => r.TotalWirds)
+                .ThenByDescending(r => r.TotalPages)
+                .ThenByDescending(r => r.CompletedWirds)
                 .Take(10)
                 .ToList();
         }

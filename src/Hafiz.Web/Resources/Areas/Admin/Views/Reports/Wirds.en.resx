@@ -90,6 +90,7 @@
   <data name="Upcoming" xml:space="preserve"><value>Upcoming</value></data>
   <data name="CompletionRate" xml:space="preserve"><value>Completion rate</value></data>
   <data name="TotalPagesEquiv" xml:space="preserve"><value>Total pages</value></data>
+  <data name="CompletedPagesEquiv" xml:space="preserve"><value>Recited &amp; Evaluated Pages</value></data>
   <data name="PagesShort" xml:space="preserve"><value>pages</value></data>
   <data name="TopStudents" xml:space="preserve"><value>Student rankings</value></data>
   <data name="TotalWirds" xml:space="preserve"><value>Total wirds</value></data>

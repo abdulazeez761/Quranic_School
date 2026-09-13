@@ -181,7 +181,8 @@ namespace Hafiz.Infrastructure.Services
 
             var assignments = await wirdsQuery
                 .Where(w =>
-                    w.Type == AssignmentType.Memorization || w.Type == AssignmentType.Revision || w.Type == AssignmentType.Tajwid
+                    w.Status != AssignmentStatus.notSet
+                    && (w.Type == AssignmentType.Memorization || w.Type == AssignmentType.Revision || w.Type == AssignmentType.Tajwid)
                 )
                 .Select(w => new WirdUnitsProjection
                 {

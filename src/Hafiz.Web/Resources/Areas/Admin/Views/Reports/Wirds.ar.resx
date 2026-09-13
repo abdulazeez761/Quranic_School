@@ -90,6 +90,7 @@
   <data name="Upcoming" xml:space="preserve"><value>قادم</value></data>
   <data name="CompletionRate" xml:space="preserve"><value>نسبة الإنجاز</value></data>
   <data name="TotalPagesEquiv" xml:space="preserve"><value>إجمالي الصفحات</value></data>
+  <data name="CompletedPagesEquiv" xml:space="preserve"><value>الصفحات المسمّعة والمقيّمة</value></data>
   <data name="PagesShort" xml:space="preserve"><value>صفحة</value></data>
   <data name="TopStudents" xml:space="preserve"><value>ترتيب الطلاب</value></data>
   <data name="TotalWirds" xml:space="preserve"><value>عدد الأوراد</value></data>
