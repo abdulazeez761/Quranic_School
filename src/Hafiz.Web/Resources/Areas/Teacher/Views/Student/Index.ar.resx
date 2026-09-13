@@ -229,4 +229,32 @@
     <value>حافظ</value>
     <comment/>
   </data>
+  <data name="Actions" xml:space="preserve">
+    <value>الإجراءات</value>
+    <comment/>
+  </data>
+  <data name="StudentRoutinePlan" xml:space="preserve">
+    <value>خطة الطالب</value>
+    <comment/>
+  </data>
+  <data name="GridView" xml:space="preserve">
+    <value>بطاقات</value>
+    <comment/>
+  </data>
+  <data name="TableView" xml:space="preserve">
+    <value>جدول</value>
+    <comment/>
+  </data>
+  <data name="ColJuz" xml:space="preserve">
+    <value>الأجزاء</value>
+    <comment/>
+  </data>
+  <data name="ColActive" xml:space="preserve">
+    <value>الأوراد</value>
+    <comment/>
+  </data>
+  <data name="ColActions" xml:space="preserve">
+    <value>إجراءات</value>
+    <comment/>
+  </data>
 </root>

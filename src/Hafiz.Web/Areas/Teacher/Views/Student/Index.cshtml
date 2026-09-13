@@ -18,6 +18,7 @@
     var avgAge = totalStudents > 0 && students.Any()
         ? (int)Math.Round(students.Average(s => DateTime.Now.Year - s.DateOfBirth.Year))
         : 0;
+    var isArabic = System.Threading.Thread.CurrentThread.CurrentCulture.Name.StartsWith("ar");
 }
 
 <link rel="stylesheet" href="~/css/teacher/Students.css" asp-append-version="true" />
@@ -83,12 +84,6 @@
                 <input id="studentSearch" type="text" class="search-input" placeholder="@Localizer["SearchPlaceholder"]"
                        autocomplete="off" />
             </div>
-            @* <div class="filter-pills" role="tablist" aria-label="@Localizer["TajwidLevel"]">
-                <button type="button" class="filter-pill active" data-level="all">@Localizer["All"]</button>
-                <button type="button" class="filter-pill" data-level="First">@Localizer["First"]</button>
-                <button type="button" class="filter-pill" data-level="Second">@Localizer["Second"]</button>
-                <button type="button" class="filter-pill" data-level="Third">@Localizer["Third"]</button>
-            </div> *@
         </div>
     }
 
@@ -191,9 +186,9 @@
                         <i class='bx bx-show'></i>
                         <span>@Localizer["ViewDetails"]</span>
                     </a>
-                    <button type="button" class="btn btn-routine-plan" onclick="openStudentPlanModal('@student.UserId', '@studentFullName', '@student.TajwidLevel')" title="إعداد الخطة المعتادة للطالب">
+                    <button type="button" class="btn btn-routine-plan" onclick="openStudentPlanModal('@student.UserId', '@studentFullName', '@student.TajwidLevel')" title="@Localizer["StudentRoutinePlan"]">
                         <i class='bx bx-calendar-star'></i>
-                        <span>خطة الطالب</span>
+                        <span>@Localizer["StudentRoutinePlan"]</span>
                     </button>
                     <button class="btn btn-primary" onclick="openWirdModal('@student.UserId', '@studentFullName')">
                         <span class="plus-icon">+</span>
@@ -209,9 +204,9 @@
             <thead>
                 <tr>
                     <th class="col-student">@Localizer["Students"]</th>
-                    <th class="col-juz">@Localizer["JuzMemorized"]</th>
-                    <th class="col-active">@Localizer["ActiveWirds"]</th>
-                    <th class="col-actions" aria-label="actions"></th>
+                    <th class="col-juz">@Localizer["ColJuz"]</th>
+                    <th class="col-active">@Localizer["ColActive"]</th>
+                    <th class="col-actions">@Localizer["ColActions"]</th>
                 </tr>
             </thead>
             <tbody>
@@ -273,21 +268,21 @@
                         </td>
                         <td class="col-actions">
                             <div class="row-actions">
-                                <a asp-action="Details" asp-route-id="@student.UserId"
-                                   class="row-icon-btn outline" aria-label="@Localizer["ViewDetails"]"
-                                   title="@Localizer["ViewDetails"]">
-                                    <i class='bx bx-show'></i>
-                                </a>
-                                <button type="button" class="row-icon-btn routine-plan"
-                                        aria-label="خطة الطالب المعتادة" title="خطة الطالب المعتادة"
-                                        onclick="openStudentPlanModal('@student.UserId', '@rFullName', '@student.TajwidLevel')">
-                                    <i class='bx bx-calendar-star'></i>
-                                </button>
                                 <button type="button" class="row-icon-btn primary"
                                         aria-label="@Localizer["AddWird"]" title="@Localizer["AddWird"]"
                                         onclick="openWirdModal('@student.UserId', '@rFullName')">
                                     <i class='bx bx-plus'></i>
                                 </button>
+                                <button type="button" class="row-icon-btn routine-plan"
+                                        aria-label="@Localizer["StudentRoutinePlan"]" title="@Localizer["StudentRoutinePlan"]"
+                                        onclick="openStudentPlanModal('@student.UserId', '@rFullName', '@student.TajwidLevel')">
+                                    <i class='bx bx-calendar-star'></i>
+                                </button>
+                                <a asp-action="Details" asp-route-id="@student.UserId"
+                                   class="row-icon-btn outline" aria-label="@Localizer["ViewDetails"]"
+                                   title="@Localizer["ViewDetails"]">
+                                    <i class='bx bx-show'></i>
+                                </a>
                             </div>
                         </td>
                     </tr>
@@ -312,6 +307,9 @@
 </div>
 
 <script>
+    const lingeringPill = document.getElementById('mobileOpenPillBtn');
+    if (lingeringPill) lingeringPill.remove();
+
     setTimeout(function () {
         const successAlert = document.getElementById('successAlert');
         const errorAlert = document.getElementById('errorAlert');
@@ -328,22 +326,17 @@
 
     (function () {
         const searchInput = document.getElementById('studentSearch');
-        const pills = document.querySelectorAll('.filter-pill');
         const cards = document.querySelectorAll('#studentsGrid .student-card');
         const rows = document.querySelectorAll('#studentsTableWrap .student-row');
         const noMatch = document.getElementById('studentsNoMatch');
         const grid = document.getElementById('studentsGrid');
         const tableWrap = document.getElementById('studentsTableWrap');
 
-        let activeLevel = 'all';
         let activeQuery = '';
 
         function matches(el) {
             const name = el.getAttribute('data-name') || '';
-            const level = el.getAttribute('data-level') || '';
-            const okQuery = activeQuery === '' || name.indexOf(activeQuery) !== -1;
-            const okLevel = activeLevel === 'all' || level === activeLevel;
-            return okQuery && okLevel;
+            return activeQuery === '' || name.indexOf(activeQuery) !== -1;
         }
 
         function applyFilters() {
@@ -354,8 +347,10 @@
                 if (show) visible++;
             });
             rows.forEach(row => {
-                row.style.display = matches(row) ? '' : 'none';
+                const show = matches(row);
+                row.style.display = show ? '' : 'none';
             });
+
             const total = cards.length || rows.length;
             const empty = visible === 0 && total > 0;
             if (noMatch) noMatch.style.display = empty ? 'flex' : 'none';
@@ -369,15 +364,6 @@
                 applyFilters();
             });
         }
-
-        pills.forEach(pill => {
-            pill.addEventListener('click', function () {
-                pills.forEach(p => p.classList.remove('active'));
-                this.classList.add('active');
-                activeLevel = this.getAttribute('data-level');
-                applyFilters();
-            });
-        });
     })();
 </script>
 

@@ -207,8 +207,8 @@ function discoverStudentsFromPage() {
     prefetchClassBaselinePlans();
 
     const pillBtn = document.getElementById('mobileOpenPillBtn');
-    if (pillBtn && window.classStudents.length > 0) {
-        pillBtn.style.display = window.innerWidth <= 1100 ? 'flex' : 'none';
+    if (pillBtn) {
+        pillBtn.remove();
     }
 }
 

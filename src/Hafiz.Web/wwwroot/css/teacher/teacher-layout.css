@@ -309,8 +309,8 @@
   right: 0;
   background: var(--white);
   border-top: 1px solid var(--border-color);
-  padding: var(--space-xs) 0;
-  padding-bottom: env(safe-area-inset-bottom, var(--space-xs));
+  padding: 4px 0;
+  padding-bottom: max(6px, env(safe-area-inset-bottom, 6px));
   z-index: 1001;
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
 }
@@ -319,18 +319,31 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 2px;
-  padding: var(--space-xs) var(--space-sm);
+  padding: 4px 2px;
   color: var(--text-medium);
   text-decoration: none;
-  font-size: 0.65rem;
+  font-size: 11px;
   font-weight: 500;
   transition: all 0.2s ease;
   position: relative;
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.mobile-nav-item span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
+  letter-spacing: -0.2px;
 }
 
 .mobile-nav-item i {
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   transition: transform 0.2s ease;
 }
 
@@ -455,7 +468,12 @@
 
 @media (max-width: 480px) {
   .teacher-header {
-    padding: var(--space-xs) var(--space-sm);
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .header-brand {
+    gap: 6px;
   }
 
   .brand-icon {
@@ -463,12 +481,85 @@
   }
 
   .header-title {
-    font-size: var(--font-size-sm);
+    font-size: 15px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .header-right {
+    gap: 6px;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .logout-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    justify-content: center;
+    border-radius: var(--radius-md);
+  }
+
+  .language-btn {
+    padding: 5px 8px;
+    font-size: 12px;
+    gap: 4px;
   }
 
   .teacher-content {
     padding: var(--space-sm);
     padding-bottom: 90px;
+    overflow-x: hidden;
+  }
+}
+
+@media (max-width: 360px) {
+  .teacher-header {
+    padding: 6px 6px;
+    gap: 4px;
+  }
+
+  .header-title {
+    font-size: 13.5px;
+  }
+
+  .language-btn {
+    padding: 4px 6px;
+    font-size: 11px;
+    gap: 2px;
+  }
+
+  .language-btn span {
+    font-size: 11px;
+  }
+
+  .user-avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+
+  .logout-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .teacher-content {
+    padding: 8px;
+    padding-bottom: 90px;
+  }
+
+  .mobile-nav-item {
+    font-size: 10px;
+    padding: 4px 1px;
+  }
+
+  .mobile-nav-item i {
+    font-size: 1.25rem;
   }
 }
 
@@ -489,8 +580,7 @@
 /* Prevent zoom on input focus (iOS) */
 input,
 select,
-textarea,
-button {
+textarea {
   font-size: 16px;
 }
 

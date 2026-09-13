@@ -229,4 +229,32 @@
     <value>Hafiz</value>
     <comment/>
   </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Actions</value>
+    <comment/>
+  </data>
+  <data name="StudentRoutinePlan" xml:space="preserve">
+    <value>Student Plan</value>
+    <comment/>
+  </data>
+  <data name="GridView" xml:space="preserve">
+    <value>Cards</value>
+    <comment/>
+  </data>
+  <data name="TableView" xml:space="preserve">
+    <value>Table</value>
+    <comment/>
+  </data>
+  <data name="ColJuz" xml:space="preserve">
+    <value>Juz</value>
+    <comment/>
+  </data>
+  <data name="ColActive" xml:space="preserve">
+    <value>Wirds</value>
+    <comment/>
+  </data>
+  <data name="ColActions" xml:space="preserve">
+    <value>Actions</value>
+    <comment/>
+  </data>
 </root>

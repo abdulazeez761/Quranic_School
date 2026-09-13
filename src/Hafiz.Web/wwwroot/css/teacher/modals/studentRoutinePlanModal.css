@@ -651,4 +651,44 @@ input:checked + .routine-slider:before {
         width: 100%;
         justify-content: center;
     }
+
+    @media (max-width: 480px) {
+        .routine-card-inputs {
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .routine-amount-box {
+            min-width: 100px;
+        }
+
+        .routine-header-titles h3 {
+            font-size: 1rem;
+        }
+
+        .routine-header-titles p {
+            font-size: 0.78rem;
+        }
+
+        .routine-student-bar {
+            padding: 10px 14px;
+        }
+
+        .routine-modal-body {
+            padding: 12px 12px;
+        }
+
+        .routine-modal-footer {
+            padding: 10px 12px;
+        }
+
+        .routine-equiv-chips {
+            gap: 4px;
+        }
+
+        .routine-equiv-chip {
+            padding: 3px 8px;
+            font-size: 0.75rem;
+        }
+    }
 }

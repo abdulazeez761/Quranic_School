@@ -20,7 +20,7 @@
                 <i class='bx bx-user'></i>
             </div>
             <div class="drawer-student-meta">
-                <h3 id="drawerStudentName">@Localizer["StudentName"]</h3>
+                <h3 id="drawerStudentName">@(System.Threading.Thread.CurrentThread.CurrentCulture.Name.StartsWith("ar") ? "اسم الطالب" : "Student Name")</h3>
                 <span class="drawer-student-subtitle" id="drawerStudentIndex">
                     <span id="drawerStudentCounter">طالب 1 من 1</span>
                     <span id="drawerStudentLevelTag" style="margin-right: 6px;"></span>
@@ -578,12 +578,6 @@
         </div>
     </form>
 </div>
-
-<!-- Mobile Floating Pill Button to open Drawer from anywhere on phone -->
-<button type="button" class="mobile-open-pill-btn" id="mobileOpenPillBtn" onclick="openWirdDrawer()">
-    <span><i class='bx bx-edit-alt'></i> تخصيص أوراد الطالب المحدد</span>
-    <i class='bx bx-chevron-up' style="font-size: 1.4rem;"></i>
-</button>
 
 <!-- Toast Container for instant notifications -->
 <div class="toast-container" id="drawerToastContainer"></div>
