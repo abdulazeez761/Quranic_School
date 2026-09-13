@@ -2,9 +2,7 @@
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 <!-- Load Drawer & Rating Styles -->
-<link rel="stylesheet" href="~/css/teacher/shared.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/teacher/drawer.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/teacher/AssignWirdModal.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/teacher/modals/wirdAssignmentModal.css" asp-append-version="true" />
 
 <!-- Backdrop overlay for Drawer & Mobile Bottom Sheet -->
 <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeWirdDrawer()"></div>
@@ -37,10 +35,6 @@
 
     <!-- Quick 1-Click Action Buttons -->
     <div class="drawer-quick-actions">
-        <button type="button" class="btn btn-outline" onclick="applyStudentBaseline()"
-                title="استرجاع وتطبيق خطة الطالب المعتادة">
-            <i class='bx bx-bolt-circle' style="color: var(--primary-green);"></i> ⚡ الخطة المعتادة
-        </button>
         <button type="button" class="btn btn-outline" onclick="autoComputeNextWirds()"
                 title="استكمال نطاق الآيات تلقائياً من حيث انتهى الطالب">
             <i class='bx bx-sync' style="color: #0284c7;"></i> 📋 استكمال من الأمس
@@ -89,7 +83,7 @@
                     <div class="field-item">
                         <label class="compact-label" for="amount-memorization">المقدار المحدد:</label>
                         <input type="number" step="any" min="0.1" class="form-control form-control-prominent"
-                               id="amount-memorization" value="1.0" placeholder="1.0"
+                               id="amount-memorization" value="" placeholder="المقدار"
                                oninput="onAmountChanged('memorization', this.value)">
                     </div>
                     <div class="field-item">
@@ -131,7 +125,7 @@
                             <select class="form-control surah-select" id="fromSurah-memorization">
                                 @await Html.PartialAsync("_SurahOptions")
                             </select>
-                            <input type="text" class="form-control ayah-input" id="fromAyah-memorization" placeholder="آية" value="1">
+                            <input type="text" class="form-control ayah-input" id="fromAyah-memorization" placeholder="الآية" value="">
                         </div>
                     </div>
                     <div class="range-box">
@@ -140,7 +134,7 @@
                             <select class="form-control surah-select" id="toSurah-memorization">
                                 @await Html.PartialAsync("_SurahOptions")
                             </select>
-                            <input type="number" class="form-control ayah-input" id="toAyah-memorization" placeholder="آية" value="15">
+                            <input type="number" class="form-control ayah-input" id="toAyah-memorization" placeholder="الآية" value="">
                         </div>
                     </div>
                 </div>
@@ -225,7 +219,7 @@
                     <div class="field-item">
                         <label class="compact-label" for="amount-recentRevision">المقدار المحدد:</label>
                         <input type="number" step="any" min="0.1" class="form-control form-control-prominent"
-                               id="amount-recentRevision" value="5.0" placeholder="5.0"
+                               id="amount-recentRevision" value="" placeholder="المقدار"
                                oninput="onAmountChanged('recentRevision', this.value)">
                     </div>
                     <div class="field-item">
@@ -252,7 +246,7 @@
                             <select class="form-control surah-select" id="fromSurah-recentRevision">
                                 @await Html.PartialAsync("_SurahOptions")
                             </select>
-                            <input type="text" class="form-control ayah-input" id="fromAyah-recentRevision" placeholder="آية" value="1">
+                            <input type="text" class="form-control ayah-input" id="fromAyah-recentRevision" placeholder="الآية" value="">
                         </div>
                     </div>
                     <div class="range-box">
@@ -261,7 +255,7 @@
                             <select class="form-control surah-select" id="toSurah-recentRevision">
                                 @await Html.PartialAsync("_SurahOptions")
                             </select>
-                            <input type="number" class="form-control ayah-input" id="toAyah-recentRevision" placeholder="آية" value="40">
+                            <input type="number" class="form-control ayah-input" id="toAyah-recentRevision" placeholder="الآية" value="">
                         </div>
                     </div>
                 </div>
@@ -345,7 +339,7 @@
                     <div class="field-item">
                         <label class="compact-label" for="amount-oldRevision">المقدار المحدد:</label>
                         <input type="number" step="any" min="0.1" class="form-control form-control-prominent"
-                               id="amount-oldRevision" value="1.0" placeholder="1.0"
+                               id="amount-oldRevision" value="" placeholder="المقدار"
                                oninput="onAmountChanged('oldRevision', this.value)">
                     </div>
                     <div class="field-item">
@@ -372,7 +366,7 @@
                             <select class="form-control surah-select" id="fromSurah-oldRevision">
                                 @await Html.PartialAsync("_SurahOptions")
                             </select>
-                            <input type="text" class="form-control ayah-input" id="fromAyah-oldRevision" placeholder="آية" value="1">
+                            <input type="text" class="form-control ayah-input" id="fromAyah-oldRevision" placeholder="الآية" value="">
                         </div>
                     </div>
                     <div class="range-box">
@@ -381,7 +375,7 @@
                             <select class="form-control surah-select" id="toSurah-oldRevision">
                                 @await Html.PartialAsync("_SurahOptions")
                             </select>
-                            <input type="number" class="form-control ayah-input" id="toAyah-oldRevision" placeholder="آية" value="50">
+                            <input type="number" class="form-control ayah-input" id="toAyah-oldRevision" placeholder="الآية" value="">
                         </div>
                     </div>
                 </div>
@@ -465,7 +459,7 @@
                     <div class="field-item">
                         <label class="compact-label" for="amount-recitation">المقدار المحدد:</label>
                         <input type="number" step="any" min="0.1" class="form-control form-control-prominent"
-                               id="amount-recitation" value="2.0" placeholder="2.0"
+                               id="amount-recitation" value="" placeholder="المقدار"
                                oninput="onAmountChanged('recitation', this.value)">
                     </div>
                     <div class="field-item">
@@ -492,7 +486,7 @@
                             <select class="form-control surah-select" id="fromSurah-recitation">
                                 @await Html.PartialAsync("_SurahOptions")
                             </select>
-                            <input type="text" class="form-control ayah-input" id="fromAyah-recitation" placeholder="آية" value="1">
+                            <input type="text" class="form-control ayah-input" id="fromAyah-recitation" placeholder="الآية" value="">
                         </div>
                     </div>
                     <div class="range-box">
@@ -501,7 +495,7 @@
                             <select class="form-control surah-select" id="toSurah-recitation">
                                 @await Html.PartialAsync("_SurahOptions")
                             </select>
-                            <input type="number" class="form-control ayah-input" id="toAyah-recitation" placeholder="آية" value="20">
+                            <input type="number" class="form-control ayah-input" id="toAyah-recitation" placeholder="الآية" value="">
                         </div>
                     </div>
                 </div>
@@ -594,7 +588,11 @@
 <!-- Toast Container for instant notifications -->
 <div class="toast-container" id="drawerToastContainer"></div>
 
-<!-- SweetAlert & Modern Scripts -->
+<!-- SweetAlert & Modular Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="~/js/teacher_portal/quranData.js" asp-append-version="true"></script>
-<script src="~/js/teacher_portal/assignWirdModal.js" asp-append-version="true"></script>
+<script src="~/js/teacher_portal/modals/wird_drawer/wirdState.js" asp-append-version="true"></script>
+<script src="~/js/teacher_portal/modals/wird_drawer/wirdForm.js" asp-append-version="true"></script>
+<script src="~/js/teacher_portal/modals/wird_drawer/wirdActions.js" asp-append-version="true"></script>
+<script src="~/js/teacher_portal/modals/wird_drawer/wirdService.js" asp-append-version="true"></script>
+<script src="~/js/teacher_portal/modals/wird_drawer/wirdDrawer.js" asp-append-version="true"></script>

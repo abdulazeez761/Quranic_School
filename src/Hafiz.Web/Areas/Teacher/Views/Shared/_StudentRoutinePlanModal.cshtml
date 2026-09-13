@@ -1,0 +1,246 @@
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+<!-- Load Student Routine Plan Styles -->
+<link rel="stylesheet" href="~/css/teacher/modals/studentRoutinePlanModal.css" asp-append-version="true" />
+
+<!-- Backdrop overlay -->
+<div class="routine-modal-backdrop" id="routineModalBackdrop" onclick="closeStudentPlanModal()"></div>
+
+<!-- Routine Plan Dialog / Mobile Bottom Sheet -->
+<div class="routine-modal-dialog" id="routineModalDialog" role="dialog" aria-modal="true" aria-labelledby="routineModalTitle">
+
+    <!-- Touch Grab Handle for Mobile -->
+    <div class="routine-sheet-handle" onclick="closeStudentPlanModal()" title="سحب أو نقر للإغلاق"></div>
+
+    <!-- Modal Header -->
+    <div class="routine-modal-header">
+        <div class="routine-header-info">
+            <div class="routine-header-icon">
+                <i class='bx bx-calendar-star'></i>
+            </div>
+            <div class="routine-header-titles">
+                <h3 id="routineModalTitle">خطة الطالب المعتادة</h3>
+                <p>تحديد وتيرة الحفظ والمراجعة الدائمة للطالب وتطبيقها تلقائياً</p>
+            </div>
+        </div>
+        <button type="button" class="routine-modal-close" onclick="closeStudentPlanModal()" title="إغلاق">
+            <i class='bx bx-x'></i>
+        </button>
+    </div>
+
+    <!-- Student Identity Profile Strip -->
+    <div class="routine-student-bar">
+        <div class="routine-student-profile">
+            <div class="routine-student-avatar" id="routineStudentAvatar">ط</div>
+            <div class="routine-student-meta">
+                <h4 id="routineStudentName">اسم الطالب</h4>
+                <span id="routineStudentLevel">المستوى</span>
+            </div>
+        </div>
+        <div id="routinePlanStatusBadge" class="plan-status-pill default">
+            <i class='bx bx-info-circle'></i> الخطة الافتراضية العامة
+        </div>
+    </div>
+
+    <!-- Modal Body (The 4 Concurrent Wird Baselines) -->
+    <div class="routine-modal-body">
+
+        <!-- Grid for 4 Wirds -->
+        <div class="routine-cards-grid">
+
+            <!-- 1. حفظ جديد (Memorization) -->
+            <div class="routine-wird-card type-memorization" id="rcard-memorization">
+                <div class="routine-card-header">
+                    <div class="routine-card-title">
+                        <i class='bx bx-book-open'></i>
+                        <span>حفظ جديد (الورد اليومي)</span>
+                    </div>
+                    <div class="routine-card-toggle">
+                        <span class="routine-toggle-label" id="rstatus-memorization">مفعل</span>
+                        <label class="routine-switch">
+                            <input type="checkbox" id="rtoggle-memorization" checked onchange="toggleRoutineWirdCard('memorization', this.checked)">
+                            <span class="routine-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="routine-card-inputs">
+                    <div class="routine-amount-box">
+                        <label class="routine-input-label" for="planMemAmount">المقدار المعتاد:</label>
+                        <input type="number" step="any" min="0.1" id="planMemAmount" class="routine-amount-input" value="" placeholder="المقدار">
+                    </div>
+                    <div>
+                        <label class="routine-input-label">الوحدة:</label>
+                        <div class="routine-unit-group" id="runit-memorization">
+                            <label class="routine-unit-option is-selected">
+                                <input type="radio" name="runit-opt-memorization" value="0" checked onchange="setRoutineUnitOption('memorization', 0)">
+                                <span>صفحات</span>
+                            </label>
+                            <label class="routine-unit-option">
+                                <input type="radio" name="runit-opt-memorization" value="1" onchange="setRoutineUnitOption('memorization', 1)">
+                                <span>آيات</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Equivalent pages (shows only when Ayahs unit is chosen) -->
+                <div class="routine-equiv-box" id="routineEquivBox" style="display: none;">
+                    <span class="routine-equiv-label">ما يعادله بالصفحات تقريباً:</span>
+                    <div class="routine-equiv-chips">
+                        <button type="button" class="routine-equiv-chip" data-val="0.2" onclick="setRoutineEquivChip(0.2)">0.2</button>
+                        <button type="button" class="routine-equiv-chip" data-val="0.25" onclick="setRoutineEquivChip(0.25)">¼</button>
+                        <button type="button" class="routine-equiv-chip is-active" data-val="0.5" onclick="setRoutineEquivChip(0.5)">½</button>
+                        <button type="button" class="routine-equiv-chip" data-val="0.75" onclick="setRoutineEquivChip(0.75)">¾</button>
+                        <button type="button" class="routine-equiv-chip" data-val="1" onclick="setRoutineEquivChip(1)">1</button>
+                        <button type="button" class="routine-equiv-chip" data-val="1.5" onclick="setRoutineEquivChip(1.5)">1.5</button>
+                        <button type="button" class="routine-equiv-chip" data-val="2" onclick="setRoutineEquivChip(2)">2</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. مراجعة صغرى (Recent Revision - الورد القريب) -->
+            <div class="routine-wird-card type-recentRevision" id="rcard-recentRevision">
+                <div class="routine-card-header">
+                    <div class="routine-card-title">
+                        <i class='bx bx-check-circle'></i>
+                        <span>مراجعة صغرى (ورد قريب)</span>
+                    </div>
+                    <div class="routine-card-toggle">
+                        <span class="routine-toggle-label" id="rstatus-recentRevision">مفعل</span>
+                        <label class="routine-switch">
+                            <input type="checkbox" id="rtoggle-recentRevision" checked onchange="toggleRoutineWirdCard('recentRevision', this.checked)">
+                            <span class="routine-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="routine-card-inputs">
+                    <div class="routine-amount-box">
+                        <label class="routine-input-label" for="planRecentRevAmount">المقدار المعتاد:</label>
+                        <input type="number" step="any" min="0.1" id="planRecentRevAmount" class="routine-amount-input" value="" placeholder="المقدار">
+                    </div>
+                    <div>
+                        <label class="routine-input-label">الوحدة:</label>
+                        <div class="routine-unit-group" id="runit-recentRevision">
+                            <label class="routine-unit-option is-selected">
+                                <input type="radio" name="runit-opt-recentRevision" value="0" checked onchange="setRoutineUnitOption('recentRevision', 0)">
+                                <span>صفحات</span>
+                            </label>
+                            <label class="routine-unit-option">
+                                <input type="radio" name="runit-opt-recentRevision" value="2" onchange="setRoutineUnitOption('recentRevision', 2)">
+                                <span>أجزاء</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. مراجعة كبرى (Old Revision - الورد البعيد) -->
+            <div class="routine-wird-card type-oldRevision" id="rcard-oldRevision">
+                <div class="routine-card-header">
+                    <div class="routine-card-title">
+                        <i class='bx bx-history'></i>
+                        <span>مراجعة كبرى (ورد بعيد)</span>
+                    </div>
+                    <div class="routine-card-toggle">
+                        <span class="routine-toggle-label" id="rstatus-oldRevision">مفعل</span>
+                        <label class="routine-switch">
+                            <input type="checkbox" id="rtoggle-oldRevision" checked onchange="toggleRoutineWirdCard('oldRevision', this.checked)">
+                            <span class="routine-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="routine-card-inputs">
+                    <div class="routine-amount-box">
+                        <label class="routine-input-label" for="planOldRevAmount">المقدار المعتاد:</label>
+                        <input type="number" step="any" min="0.1" id="planOldRevAmount" class="routine-amount-input" value="" placeholder="المقدار">
+                    </div>
+                    <div>
+                        <label class="routine-input-label">الوحدة:</label>
+                        <div class="routine-unit-group" id="runit-oldRevision">
+                            <label class="routine-unit-option">
+                                <input type="radio" name="runit-opt-oldRevision" value="0" onchange="setRoutineUnitOption('oldRevision', 0)">
+                                <span>صفحات</span>
+                            </label>
+                            <label class="routine-unit-option is-selected">
+                                <input type="radio" name="runit-opt-oldRevision" value="2" checked onchange="setRoutineUnitOption('oldRevision', 2)">
+                                <span>أجزاء</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. تلاوة وتجويد (Recitation & Tajwid) -->
+            <div class="routine-wird-card type-recitation" id="rcard-recitation">
+                <div class="routine-card-header">
+                    <div class="routine-card-title">
+                        <i class='bx bx-microphone'></i>
+                        <span>تلاوة وإتقان / استماع</span>
+                    </div>
+                    <div class="routine-card-toggle">
+                        <span class="routine-toggle-label" id="rstatus-recitation">مفعل</span>
+                        <label class="routine-switch">
+                            <input type="checkbox" id="rtoggle-recitation" checked onchange="toggleRoutineWirdCard('recitation', this.checked)">
+                            <span class="routine-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="routine-card-inputs">
+                    <div class="routine-amount-box">
+                        <label class="routine-input-label" for="planRecitationAmount">المقدار المعتاد:</label>
+                        <input type="number" step="any" min="0.1" id="planRecitationAmount" class="routine-amount-input" value="" placeholder="المقدار">
+                    </div>
+                    <div>
+                        <label class="routine-input-label">الوحدة:</label>
+                        <div class="routine-unit-group" id="runit-recitation">
+                            <label class="routine-unit-option is-selected">
+                                <input type="radio" name="runit-opt-recitation" value="0" checked onchange="setRoutineUnitOption('recitation', 0)">
+                                <span>صفحات</span>
+                            </label>
+                            <label class="routine-unit-option">
+                                <input type="radio" name="runit-opt-recitation" value="2" onchange="setRoutineUnitOption('recitation', 2)">
+                                <span>أجزاء</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Default Permanent Note -->
+        <div class="routine-note-box">
+            <label for="planDefaultNote">
+                <i class='bx bx-message-square-detail'></i>
+                <span>توجيه دائم أو ملاحظة معتمدة للطالب (اختياري):</span>
+            </label>
+            <input type="text" id="planDefaultNote" class="routine-note-input"
+                   placeholder="مثال: التركيز على أحكام التجويد والمدود وقصار السور...">
+        </div>
+
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="routine-modal-footer">
+        <button type="button" class="btn-routine-reset" onclick="resetStudentPlanToDefault()" title="إلغاء الخطة المخصصة والرجوع إلى الوتيرة العامة">
+            <i class='bx bx-undo'></i> استعادة الافتراضي
+        </button>
+
+        <div class="routine-footer-actions">
+            <button type="button" class="btn-routine-cancel" onclick="closeStudentPlanModal()">إلغاء</button>
+            <button type="button" class="btn-routine-save" id="btnSaveStudentPlan" onclick="saveStudentPlan()">
+                <i class='bx bx-save'></i> <span>حفظ واعتماد الخطة</span>
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<!-- Load Modular Routine Modal Logic -->
+<script src="~/js/teacher_portal/modals/routine_plan/routinePlanService.js" asp-append-version="true"></script>
+<script src="~/js/teacher_portal/modals/routine_plan/routinePlanForm.js" asp-append-version="true"></script>
+<script src="~/js/teacher_portal/modals/routine_plan/routinePlanModal.js" asp-append-version="true"></script>

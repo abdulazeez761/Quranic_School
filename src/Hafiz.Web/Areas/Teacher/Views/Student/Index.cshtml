@@ -191,6 +191,10 @@
                         <i class='bx bx-show'></i>
                         <span>@Localizer["ViewDetails"]</span>
                     </a>
+                    <button type="button" class="btn btn-routine-plan" onclick="openStudentPlanModal('@student.UserId', '@studentFullName', '@student.TajwidLevel')" title="إعداد الخطة المعتادة للطالب">
+                        <i class='bx bx-calendar-star'></i>
+                        <span>خطة الطالب</span>
+                    </button>
                     <button class="btn btn-primary" onclick="openWirdModal('@student.UserId', '@studentFullName')">
                         <span class="plus-icon">+</span>
                         <span>@Localizer["AddWird"]</span>
@@ -274,6 +278,11 @@
                                    title="@Localizer["ViewDetails"]">
                                     <i class='bx bx-show'></i>
                                 </a>
+                                <button type="button" class="row-icon-btn routine-plan"
+                                        aria-label="خطة الطالب المعتادة" title="خطة الطالب المعتادة"
+                                        onclick="openStudentPlanModal('@student.UserId', '@rFullName', '@student.TajwidLevel')">
+                                    <i class='bx bx-calendar-star'></i>
+                                </button>
                                 <button type="button" class="row-icon-btn primary"
                                         aria-label="@Localizer["AddWird"]" title="@Localizer["AddWird"]"
                                         onclick="openWirdModal('@student.UserId', '@rFullName')">
@@ -372,5 +381,6 @@
     })();
 </script>
 
-<!-- Include the modal partial view -->
+<!-- Include Wird and Routine Plan Modals -->
 @await Html.PartialAsync("_AssignWirdModal", new WirdAssignment())
+@await Html.PartialAsync("_StudentRoutinePlanModal")

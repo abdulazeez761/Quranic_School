@@ -117,16 +117,24 @@ setTimeout(function () {
 }, 5000);
 //fetching assignment
 function fetchWirdAssignmentById(id) {
+  if (typeof window.fetchWirdAssignmentById === 'function' && window.fetchWirdAssignmentById !== fetchWirdAssignmentById) {
+    return window.fetchWirdAssignmentById(id);
+  }
+
   fetch(`/Teacher/Wird/GetWirdAssignmentById?id=${id}`)
-    .then((response) => response.json())
+    .then((response) => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.json();
+    })
     .then((data) => {
-      // 1. تعبئة الـ ID الخاص بالواجب (لغايات التعديل)
-      document.getElementById('AssignmentId').value = data.id;
+      const setVal = (elementId, val) => {
+        const el = document.getElementById(elementId);
+        if (el) el.value = (val !== null && val !== undefined) ? val : '';
+      };
 
-      // 2. تعبئة نوع الواجب
-      document.getElementById('Type').value = data.type;
+      setVal('AssignmentId', data.id);
+      setVal('Type', data.type);
 
-      // 2.1 تعبئة المقدار والوحدة
       const amountEl = document.getElementById('Amount');
       const amountUnitEl = document.getElementById('AmountUnit');
       const equivalentEl = document.getElementById('EquivalentPages');
@@ -134,34 +142,34 @@ function fetchWirdAssignmentById(id) {
       if (equivalentEl) equivalentEl.value = data.equivalentPages ?? '';
       if (amountUnitEl) {
         amountUnitEl.value = data.amountUnit ?? '';
-        // Re-apply the min/step rules for the loaded unit (whole vs. fractional).
         amountUnitEl.dispatchEvent(new Event('change'));
       }
 
-      // 3. تعبئة قسم "من" (From)
-      document.getElementById('FromJuz').value = data.fromJuz;
-      document.getElementById('FromPage').value = data.fromPage;
-      document.getElementById('FromSurah').value = data.fromSurah;
-      document.getElementById('FromAyah').value = data.fromAyah;
+      setVal('FromJuz', data.fromJuz);
+      setVal('FromPage', data.fromPage);
+      setVal('FromSurah', (data.fromSurah && data.fromSurah !== 0) ? data.fromSurah : '');
+      setVal('FromAyah', data.fromAyah);
 
-      // 4. تعبئة قسم "إلى" (To)
-      document.getElementById('ToJuz').value = data.toJuz;
-      document.getElementById('ToPage').value = data.toPage;
-      document.getElementById('ToSurah').value = data.toSurah;
-      document.getElementById('ToAyah').value = data.toAyah;
+      setVal('ToJuz', data.toJuz);
+      setVal('ToPage', data.toPage);
+      setVal('ToSurah', (data.toSurah && data.toSurah !== 0) ? data.toSurah : '');
+      setVal('ToAyah', data.toAyah);
 
-      // 5. تعبئة التقييم (الـ ID في كودك هو Grade)
-      document.getElementById('Grade').value = data.status;
+      setVal('Grade', data.status ?? 0);
+      setVal('Note', data.note || '');
 
-      // 6. تعبئة الملاحظات (نضع نصاً فارغاً إذا كانت الملاحظة غير موجودة لتجنب طباعة 'null')
-      document.getElementById('Note').value = data.note || '';
-
-      // 7. تعبئة خانة "ورد قادم"
       const upcomingEl = document.getElementById('IsUpcoming');
       if (upcomingEl) upcomingEl.checked = data.isUpcoming === true;
     })
     .catch((error) => {
       console.error('Error fetching assignment:', error);
-      // يفضل هنا إضافة Alert تخبر المستخدم بوجود خطأ في جلب البيانات
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          icon: 'error',
+          title: 'خطأ',
+          text: 'تعذر تحميل بيانات الورد. يرجى المحاولة مرة أخرى.',
+          confirmButtonText: 'حسناً'
+        });
+      }
     });
 }

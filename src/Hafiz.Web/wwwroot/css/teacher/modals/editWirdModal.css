@@ -1,0 +1,435 @@
+/* ==========================================================================
+   Hafiz Platform - Edit Wird Modal Styles (Dedicated)
+   ========================================================================== */
+@import url('../shared.css');
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  padding: 1rem;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-container {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  transform: scale(0.96) translateY(12px);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  margin: auto;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.modal-overlay.active .modal-container {
+  transform: scale(1) translateY(0);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.15rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+  flex-shrink: 0;
+}
+
+.modal-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.modal-title span {
+  color: var(--primary-green);
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.modal-close:hover {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+/* Form layout - ensures flex container allows body scroll and keeps footer fixed */
+#wirdAssignmentForm {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  margin: 0;
+}
+
+.modal-body {
+  padding: 1.25rem 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  scroll-behavior: smooth;
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e2e8f0;
+  background: #f8fafc;
+  flex-shrink: 0;
+}
+
+/* Section Headers */
+.section-header {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--primary-green);
+  margin: 1.25rem 0 0.85rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 2px solid rgba(111, 161, 90, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.section-header:first-of-type {
+  margin-top: 0.5rem;
+}
+
+/* Form Controls */
+.form-group {
+  margin-bottom: 1.1rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #334155;
+  margin-bottom: 0.4rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1e293b;
+  font-size: 0.92rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  font-family: inherit;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 3px rgba(111, 161, 90, 0.15);
+}
+
+select.form-control {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 0.75rem center;
+  background-size: 12px;
+  padding-left: 2.25rem;
+}
+
+[dir='ltr'] select.form-control {
+  background-position: right 0.75rem center;
+  padding-right: 2.25rem;
+  padding-left: 0.85rem;
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 70px;
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.form-group.half-width {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Equivalent Pages Chips */
+.equivalent-pages-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 0.5rem;
+}
+
+.equivalent-pages-chips .chip {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  min-width: 42px;
+  text-align: center;
+}
+
+.equivalent-pages-chips .chip:hover {
+  background: rgba(111, 161, 90, 0.15);
+  border-color: var(--primary-green);
+  color: var(--dark-green);
+}
+
+.equivalent-pages-chips .chip.is-active {
+  background: var(--primary-green);
+  color: #ffffff;
+  border-color: var(--primary-green);
+  box-shadow: 0 2px 4px rgba(111, 161, 90, 0.3);
+}
+
+.form-hint {
+  display: block;
+  color: #64748b;
+  font-size: 0.78rem;
+  margin-top: 0.35rem;
+  line-height: 1.4;
+}
+
+/* Upcoming Toggle */
+.upcoming-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 10px 14px;
+  border: 1.5px solid #ddd6fe;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.upcoming-toggle:hover {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+}
+
+.upcoming-toggle-text {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  margin: 0;
+  cursor: pointer;
+}
+
+.upcoming-toggle-icon {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #ede9fe;
+  color: #7c3aed;
+  font-size: 1.2rem;
+}
+
+.upcoming-toggle-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.upcoming-toggle-title {
+  font-weight: 700;
+  color: #5b21b6;
+  font-size: 0.88rem;
+}
+
+.upcoming-toggle-hint {
+  color: #7c3aed;
+  font-size: 0.78rem;
+  opacity: 0.85;
+  line-height: 1.3;
+}
+
+/* Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 26px;
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #cbd5e1;
+  transition: background-color 0.25s;
+  border-radius: 26px;
+}
+
+.switch-slider::before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: transform 0.25s;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.switch input:checked + .switch-slider {
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+}
+
+.switch input:checked + .switch-slider::before {
+  transform: translateX(20px);
+}
+
+[dir='rtl'] .switch-slider::before {
+  left: auto;
+  right: 3px;
+}
+
+[dir='rtl'] .switch input:checked + .switch-slider::before {
+  transform: translateX(-20px);
+}
+
+/* Action Buttons */
+.btn {
+  padding: 0.6rem 1.25rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: inherit;
+}
+
+.btn-outline {
+  background: #ffffff;
+  color: #334155;
+  border: 1.5px solid #cbd5e1;
+}
+
+.btn-outline:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.btn-primary {
+  background: var(--primary-green);
+  color: #ffffff;
+  border: 1.5px solid var(--primary-green);
+}
+
+.btn-primary:hover {
+  background: var(--dark-green);
+  border-color: var(--dark-green);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Validation styling */
+.text-danger,
+.field-validation-error {
+  color: #ef4444;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.input-validation-error {
+  border-color: #ef4444 !important;
+}
+
+@media (max-width: 640px) {
+  .modal-overlay {
+    padding: 0.5rem;
+  }
+  .modal-container {
+    max-height: 96vh;
+    border-radius: 12px;
+  }
+  .modal-body {
+    padding: 1rem;
+  }
+  .modal-footer {
+    padding: 0.75rem 1rem;
+  }
+  .form-row {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}

@@ -620,7 +620,7 @@
           </div>
         </div>
         <div style="display: flex; align-items: center; gap: 10px;">
-          <span class="step-status-chip chip-done" id="chip-phase-1">مكتمل بنجاح ✔️</span>
+          <span class="step-status-chip chip-progress" id="chip-phase-1">قيد التنفيذ</span>
           <button class="step-toggle-btn"><i class='bx bx-chevron-up'></i></button>
         </div>
       </div>
@@ -631,8 +631,8 @@
         </p>
 
         <div class="task-list">
-          <div class="task-item is-completed">
-            <input type="checkbox" class="task-checkbox" id="t1_1" checked onchange="updateTaskProgress()">
+          <div class="task-item">
+            <input type="checkbox" class="task-checkbox" id="t1_1" onchange="updateTaskProgress()">
             <label class="task-label" for="t1_1">
               إعادة بناء واجهة المودال `_AssignWirdModal.cshtml` إلى بنية `drawer-panel` و `drawer-backdrop`
               <div class="task-desc">
@@ -642,8 +642,8 @@
             <span class="task-badge">Razor / UI</span>
           </div>
 
-          <div class="task-item is-completed">
-            <input type="checkbox" class="task-checkbox" id="t1_2" checked onchange="updateTaskProgress()">
+          <div class="task-item">
+            <input type="checkbox" class="task-checkbox" id="t1_2" onchange="updateTaskProgress()">
             <label class="task-label" for="t1_2">
               دمج بطاقات الأوراد الأربعة المتزامنة (حفظ جديد، مراجعة قريبة، مراجعة بعيدة، تلاوة وإتقان)
               <div class="task-desc">
@@ -653,8 +653,8 @@
             <span class="task-badge">Wird Cards</span>
           </div>
 
-          <div class="task-item is-completed">
-            <input type="checkbox" class="task-checkbox" id="t1_3" checked onchange="updateTaskProgress()">
+          <div class="task-item">
+            <input type="checkbox" class="task-checkbox" id="t1_3" onchange="updateTaskProgress()">
             <label class="task-label" for="t1_3">
               إضافة شريط تقييم التسميع الفوري المدمج (Touch Rating Bar) داخل كرت كل ورد
               <div class="task-desc">
@@ -664,8 +664,8 @@
             <span class="task-badge">Evaluation</span>
           </div>
 
-          <div class="task-item is-completed">
-            <input type="checkbox" class="task-checkbox" id="t1_4" checked onchange="updateTaskProgress()">
+          <div class="task-item">
+            <input type="checkbox" class="task-checkbox" id="t1_4" onchange="updateTaskProgress()">
             <label class="task-label" for="t1_4">
               نقل وتوحيد ملفات التنسيق `drawer.css` و `shared.css` إلى مجلد `wwwroot/css/teacher/`
               <div class="task-desc">
@@ -675,8 +675,8 @@
             <span class="task-badge">CSS</span>
           </div>
 
-          <div class="task-item is-completed">
-            <input type="checkbox" class="task-checkbox" id="t1_5" checked onchange="updateTaskProgress()">
+          <div class="task-item">
+            <input type="checkbox" class="task-checkbox" id="t1_5" onchange="updateTaskProgress()">
             <label class="task-label" for="t1_5">
               تطوير محرك الجافاسكربت `assignWirdModal.js` ليدمج وظائف `version2.js` و `quranData.js`
               <div class="task-desc">
@@ -735,149 +735,6 @@
               </tr>
             </tbody>
           </table>
-        </div>
-
-        <!-- Comprehensive Developer Guide for Models & Backend (Phase 1) -->
-        <div class="spec-box" style="border: 2px solid #059669; background: #f0fdf4; border-radius: var(--radius-lg); padding: 22px; margin-top: 24px; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.08);">
-          <div class="spec-title" style="color: #065f46; font-size: 1.12rem; margin-bottom: 14px; border-bottom: 2px solid #a7f3d0; padding-bottom: 8px;">
-            <i class='bx bx-data' style="font-size: 1.4rem;"></i> 🛠️ التعديلات المطلوبة على الـ Models والباك إند للمرحلة الأولى (دليل المطور عبد العزيز):
-          </div>
-          <p style="color: #1e293b; font-size: 0.92rem; margin-bottom: 16px; line-height: 1.7;">
-            تم إنجاز كامل الواجهة الرسومية (UI) بنظام الـ Drawer والشاشة المنقسمة والـ Bottom Sheet للجوال مع الأوراد الأربعة وشريط التقييم اللمسي. 
-            فيما يلي <strong>كافة التعديلات المحددة والدقيقة</strong> التي يلزمك تطبيقها على طبقة الـ Models والـ Backend لاستكمال هذه المرحلة:
-          </p>
-
-          <!-- Section 1: Enums -->
-          <div style="background: #ffffff; border: 1px solid #bbf7d0; border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px;">
-            <h4 style="color: #047857; font-size: 0.98rem; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
-              <span>1️⃣</span> مراجعة وتحديث التعدادات (Enums)
-            </h4>
-            
-            <p style="font-size: 0.88rem; color: #334155; margin-bottom: 8px;">
-              <strong>أ. تقييمات التسميع <code>AssignmentStatus.cs</code>:</strong><br>
-              الملف: <code>src/Hafiz.Domain/Enums/AssignmentStatus.cs</code><br>
-              القيم الحالية في النظام متوافقة تماماً 100% مع أزرار التقييم الخمسة في الواجهة ولا تتطلب أي تعديل إلزامي:
-            </p>
-            <pre class="code-preview" style="background: #0f172a; margin-bottom: 10px;">public enum AssignmentStatus
-{
-    notSet = 0,    // لم يُسمّع بعد / غير مقيم
-    poor = 1,      // ضعيف ❌ (يحتاج إعادة)
-    fair = 2,      // مقبول ⚠️ (تنبيهات)
-    good = 3,      // جيد ✔️ (يحتاج ضبط)
-    veryGood = 4,  // جيد جداً 👍 (أخطاء يسيرة)
-    excellent = 5  // ممتاز ⭐ (إتقان تام)
-}</pre>
-
-            <p style="font-size: 0.88rem; color: #334155; margin-bottom: 8px;">
-              <strong>ب. أنواع الأوراد <code>AssignmentType.cs</code>:</strong><br>
-              الملف: <code>src/Hafiz.Domain/Enums/AssignmentType.cs</code><br>
-              حالياً يدعم <code>Memorization = 1</code> و <code>Revision = 2</code> و <code>Tajwid = 3</code>. 
-              للتمييز المستقل بين <strong>الورد القريب</strong> (مراجعة صغرى) و <strong>الورد البعيد</strong> (مراجعة كبرى)، يُنصح بإضافة الخيارين التاليين:
-            </p>
-            <pre class="code-preview" style="background: #0f172a;">public enum AssignmentType
-{
-    Wird = 0,
-    Memorization = 1,      // حفظ جديد
-    Revision = 2,          // مراجعة صغرى (ورد قريب)
-    Tajwid = 3,            // تجويد وتلاوة
-    Tafsir = 4,
-    Other = 5,
-    OldRevision = 6,       // مراجعة كبرى (ورد بعيد وتراكمي) [جديد]
-    Recitation = 7         // تلاوة وإتقان / استماع [جديد]
-}</pre>
-          </div>
-
-          <!-- Section 2: Entity WirdAssignment -->
-          <div style="background: #ffffff; border: 1px solid #bbf7d0; border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px;">
-            <h4 style="color: #047857; font-size: 0.98rem; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
-              <span>2️⃣</span> تحديث الكيان <code>WirdAssignment.cs</code>
-            </h4>
-            <p style="font-size: 0.88rem; color: #334155; margin-bottom: 8px;">
-              الملف: <code>src/Hafiz.Domain/Entities/WirdAssignment.cs</code><br>
-              أضف خاصية <code>Rating</code> النصية الاختيارية لتسهيل الفلترة والتقارير:
-            </p>
-            <pre class="code-preview" style="background: #0f172a;">// التقييم اللفظي للورد (excellent, very_good, good, acceptable, weak)
-[StringLength(50)]
-public string? Rating { get; set; }
-
-// في حال عدم الرغبة بتعديل AssignmentType، يمكن إضافة هذا الحقل للتمييز:
-public string? RevisionScope { get; set; } // "Near" أو "Far"</pre>
-          </div>
-
-          <!-- Section 3: Batch DTO -->
-          <div style="background: #ffffff; border: 1px solid #bbf7d0; border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px;">
-            <h4 style="color: #047857; font-size: 0.98rem; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
-              <span>3️⃣</span> إنشاء نموذج استلام الأوراد المتعددة (Batch DTO)
-            </h4>
-            <p style="font-size: 0.88rem; color: #334155; margin-bottom: 8px;">
-              المسار المقترح: <code>src/Hafiz.Application/DTO/Wird/BatchAssignWirdsDto.cs</code><br>
-              بما أن واجهة اللوحة المنزلقة تجمع الأوراد النشطة الأربعة دفعة واحدة، ينبغي استقبالها في DTO موحد:
-            </p>
-            <pre class="code-preview" style="background: #0f172a;">namespace Hafiz.Application.DTO.Wird;
-
-public class BatchAssignWirdsDto
-{
-    public Guid StudentId { get; set; }
-    public Guid? ClassId { get; set; }
-    public List&lt;WirdAssignmentItemDto&gt; Wirds { get; set; } = new();
-}
-
-public class WirdAssignmentItemDto
-{
-    public AssignmentType Type { get; set; }
-    public decimal Amount { get; set; }
-    public WirdUnit AmountUnit { get; set; }
-    public decimal? EquivalentPages { get; set; }
-    public int? FromSurah { get; set; }
-    public string? FromAyah { get; set; }
-    public int? ToSurah { get; set; }
-    public int? ToAyah { get; set; }
-    public AssignmentStatus Status { get; set; } // 1..5
-    public string? Rating { get; set; }
-    public string? Note { get; set; }
-    public bool IsUpcoming { get; set; }
-}</pre>
-          </div>
-
-          <!-- Section 4: Controller Action -->
-          <div style="background: #ffffff; border: 1px solid #bbf7d0; border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px;">
-            <h4 style="color: #047857; font-size: 0.98rem; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
-              <span>4️⃣</span> إضافة دالة الحفظ الجماعي في <code>StudentController.cs</code>
-            </h4>
-            <p style="font-size: 0.88rem; color: #334155; margin-bottom: 8px;">
-              الملف: <code>src/Hafiz.Web/Areas/Teacher/Controllers/StudentController.cs</code><br>
-              تقوم الدالة بحفظ الأوراد النشطة وتحديث إحصائيات صفحات الحفظ والمراجعة للطالب:
-            </p>
-            <pre class="code-preview" style="background: #0f172a;">[HttpPost]
-public async Task&lt;IActionResult&gt; BatchAssignWirds([FromBody] BatchAssignWirdsDto dto)
-{
-    if (dto == null || dto.Wirds == null || !dto.Wirds.Any())
-        return BadRequest(new { success = false, message = "لا توجد أوراد نشطة للحفظ" });
-
-    // استخراج معرف الحلقة من الكوكيز للأمان
-    if (Guid.TryParse(Request.Cookies["selectedClassId"], out var classId))
-        dto.ClassId = classId;
-
-    var (isSuccess, message) = await _wirdService.BatchAssignWirdsAsync(dto);
-    if (!isSuccess)
-        return BadRequest(new { success = false, message });
-
-    return Ok(new { success = true, message = "تم حفظ وتقييم الأوراد بنجاح" });
-}</pre>
-          </div>
-
-          <!-- Section 5: Migrations -->
-          <div style="background: #ffffff; border: 1px solid #bbf7d0; border-radius: var(--radius-md); padding: 16px;">
-            <h4 style="color: #047857; font-size: 0.98rem; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
-              <span>5️⃣</span> أوامر المايجريشن (EF Core Migration Commands)
-            </h4>
-            <pre class="code-preview" style="background: #0f172a;"># 1. إضافة الـ Migration
-dotnet ef migrations add UpdateWirdModelsPhase1 --project src/Hafiz.Infrastructure --startup-project src/Hafiz.Web
-
-# 2. تحديث قاعدة البيانات
-dotnet ef database update --project src/Hafiz.Infrastructure --startup-project src/Hafiz.Web</pre>
-          </div>
-
         </div>
       </div>
     </div>

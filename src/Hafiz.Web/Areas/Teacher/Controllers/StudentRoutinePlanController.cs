@@ -27,7 +27,7 @@ namespace Hafiz.Web.Areas.Teacher.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "Student");
         }
 
         /// <summary>

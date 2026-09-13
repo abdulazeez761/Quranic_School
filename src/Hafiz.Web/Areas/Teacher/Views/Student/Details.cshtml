@@ -16,11 +16,19 @@
 <link rel="stylesheet" href="~/css/teacher/student-details.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/variables.css" asp-append-version="true" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" asp-append-version="true">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
 
-<a href="@Url.Action("Index", "Student")" class="back-button">
-    <i class="bi bi-arrow-left"></i>
-    @Localizer["BackToStudents"]
-</a>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+    <a href="@Url.Action("Index", "Student")" class="back-button" style="margin-bottom: 0;">
+        <i class="bi bi-arrow-left"></i>
+        @Localizer["BackToStudents"]
+    </a>
+    <button type="button" class="btn btn-routine-plan" style="padding: 8px 16px; font-size: 0.9rem;"
+            onclick="openStudentPlanModal('@Model.Student.UserId', '@studentFullName', '@Model.Student.TajwidLevel')">
+        <i class='bx bx-calendar-star' style="font-size: 1.15rem;"></i>
+        <span>خطة الطالب المعتادة</span>
+    </button>
+</div>
 
 @{
     var totalMemorizedPages = WirdPageCalculator.TotalMemorizedPages(Model.Student);
@@ -413,3 +421,6 @@
         </div>
     }
 </div>
+
+<!-- Include Student Routine Plan Modal -->
+@await Html.PartialAsync("_StudentRoutinePlanModal")
