@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Hafiz.Application.Common;
+using Hafiz.Application.DTO.Wird;
 using Hafiz.Application.Extensions;
 using Hafiz.DTOs.Student;
 using Hafiz.Models;
@@ -63,7 +64,10 @@ namespace Hafiz.Areas.Teacher.Controllers
             var totalStudents = studentList.Count;
             var boysCount = studentList.Count(s => s.sex == Hafiz.Models.enums.Sex.male);
             var girlsCount = studentList.Count(s => s.sex == Hafiz.Models.enums.Sex.female);
-            var className = studentList.FirstOrDefault()?.Classes.FirstOrDefault(c => c.Id == selectedClass)?.Name;
+            var className = studentList
+                .FirstOrDefault()
+                ?.Classes.FirstOrDefault(c => c.Id == selectedClass)
+                ?.Name;
 
             ViewBag.TotalStudents = totalStudents;
             ViewBag.BoysCount = boysCount;
@@ -77,15 +81,36 @@ namespace Hafiz.Areas.Teacher.Controllers
             {
                 var term = search.Trim();
                 filtered = filtered.Where(s =>
-                    (s.StudentInfo.FirstName != null && s.StudentInfo.FirstName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
-                    (s.StudentInfo.SecondName != null && s.StudentInfo.SecondName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
-                    (s.StudentInfo.Username != null && s.StudentInfo.Username.Contains(term, StringComparison.OrdinalIgnoreCase))
+                    (
+                        s.StudentInfo.FirstName != null
+                        && s.StudentInfo.FirstName.Contains(
+                            term,
+                            StringComparison.OrdinalIgnoreCase
+                        )
+                    )
+                    || (
+                        s.StudentInfo.SecondName != null
+                        && s.StudentInfo.SecondName.Contains(
+                            term,
+                            StringComparison.OrdinalIgnoreCase
+                        )
+                    )
+                    || (
+                        s.StudentInfo.Username != null
+                        && s.StudentInfo.Username.Contains(term, StringComparison.OrdinalIgnoreCase)
+                    )
                 );
             }
 
             if (!string.IsNullOrWhiteSpace(level) && level != "all")
             {
-                filtered = filtered.Where(s => string.Equals(s.TajwidLevel.ToString(), level, StringComparison.OrdinalIgnoreCase));
+                filtered = filtered.Where(s =>
+                    string.Equals(
+                        s.TajwidLevel.ToString(),
+                        level,
+                        StringComparison.OrdinalIgnoreCase
+                    )
+                );
             }
 
             var pagedStudents = filtered.ToPagedResult(page, pageSize);
@@ -150,8 +175,10 @@ namespace Hafiz.Areas.Teacher.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AssignWird(WirdAssignment model)
+        public async Task<IActionResult> AssignWirdsBatch([FromBody] AssignWirdsBatchDto model)
         {
+            if (model == null || model.Wirds == null || !model.Wirds.Any())
+                return BadRequest(new { success = false, message = "لا توجد أوراد لحفظها." });
             // Bind the wird to the teacher's currently selected class. We trust the
             // cookie over the form field so a tampered ClassId can't pin the wird to
             // a class the teacher isn't scoped to.
@@ -159,8 +186,6 @@ namespace Hafiz.Areas.Teacher.Controllers
                 model.ClassId = classId;
             else
                 model.ClassId = null;
-
-            // Set the correct local assigned date for the user
             model.AssignedDate = TimeZoneHelper.GetUserNow(HttpContext);
 
             (bool isAdded, string message) = await _wirdService.AddWirdAsync(model);

@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Hafiz.Application.DTO.Wird;
 using Hafiz.Common.Helper;
 using Hafiz.DTOs.Reports;
 using Hafiz.Models;
 using Hafiz.Repositories.Interfaces;
 using Hafiz.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace Hafiz.Services
 {
@@ -21,41 +23,75 @@ namespace Hafiz.Services
             _studentRepository = studentRepository;
         }
 
-        public async Task<(bool IsSuccess, string Message)> AddWirdAsync(WirdAssignment wird)
+        public async Task<(bool IsSuccess, string Message)> AddWirdAsync(AssignWirdsBatchDto dto)
         {
-            if (wird.Type == AssignmentType.Memorization)
+            if (dto == null || dto.Wirds == null || !dto.Wirds.Any())
+                return (false, "لا توجد أوراد مدخلة لحفظها.");
+
+            var student = await _studentRepository.GetByIdAsync(dto.StudentId);
+            if (student == null)
+                return (false, "تعذر العثور على بيانات الطالب.");
+
+            // 1. فحص إتمام الحفظ إذا كان ضمن الأوراد ورد "حفظ جديد"
+            var memorizationWird = dto.Wirds.FirstOrDefault(w =>
+                w.Type == AssignmentType.Memorization
+            );
+            if (memorizationWird != null && WirdPageCalculator.IsHafiz(student))
             {
-                var student = await _studentRepository.GetByIdAsync(wird.StudentId);
-                if (student != null && WirdPageCalculator.IsHafiz(student))
+                return (
+                    false,
+                    "تنبيه: الطالب قد أتم حفظ القرآن الكريم كاملاً. لا يمكن إضافة وِرد حفظ جديد."
+                );
+            }
+
+            decimal totalMemDelta = 0;
+            decimal totalRevDelta = 0;
+            int savedCount = 0;
+
+            DateTime assignedDate = dto.AssignedDate ?? DateTime.Now;
+
+            // 2. المرور على كل ورد من الأوراد الأربعة وحفظه
+            foreach (var wird in dto.Wirds)
+            {
+                wird.StudentId = dto.StudentId;
+                wird.ClassId = dto.ClassId;
+                wird.AssignedDate = assignedDate;
+
+                // إذا تم تقييم الورد (ليست حالته notSet) يصبح مكتملاً
+                if (wird.Status != AssignmentStatus.notSet)
                 {
-                    return (
-                        false,
-                        "تنبيه: الطالب قد أتم حفظ القرآن الكريم كاملاً. لا يمكن إضافة وِرد حفظ جديد."
-                    );
+                    wird.IsCompleted = true;
+                    wird.IsUpcoming = false;
+                }
+
+                // إضافة الورد لقاعدة البيانات
+                bool isAdded = await _wirdRepository.AddWirdAsync(wird);
+                if (isAdded)
+                {
+                    savedCount++;
+
+                    // حساب مساهمة هذا الورد في صفحات الحفظ أو المراجعة
+                    var (memDelta, revDelta) = ProgressContribution(wird);
+                    totalMemDelta += memDelta;
+                    totalRevDelta += revDelta;
                 }
             }
 
-            if (wird.Status.ToString() != "notSet")
+            // 3. تحديث صفحات الطالب التراكمية (الحفظ والمراجعة) دفعة واحدة بالناتج الكلي
+            if (totalMemDelta != 0 || totalRevDelta != 0)
             {
-                wird.IsCompleted = true;
-                wird.IsUpcoming = false;
-            }
-
-            bool isAdded = await _wirdRepository.AddWirdAsync(wird);
-            if (isAdded)
-            {
-                var (memDelta, revDelta) = ProgressContribution(wird);
                 await _studentRepository.ApplyProgressDeltaAsync(
-                    wird.StudentId,
-                    memDelta,
-                    revDelta
+                    dto.StudentId,
+                    totalMemDelta,
+                    totalRevDelta
                 );
             }
+
             return (
-                isAdded,
-                isAdded
-                    ? "Wird has been successfully assigned!"
-                    : "Failed to assign wird. No changes were made."
+                savedCount > 0,
+                savedCount > 0
+                    ? $"تم حفظ {savedCount} أوراد للطالب بنجاح!"
+                    : "فشل حفظ الأوراد. لم تطرأ أي تغييرات."
             );
         }
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Hafiz.Application.DTO.Wird;
 using Hafiz.DTOs.Reports;
 using Hafiz.Models;
 
@@ -20,7 +21,7 @@ namespace Hafiz.Services.Interfaces
         /// </summary>
         Task<WirdReportViewModel> GetWirdReportForExportAsync(WirdReportFilterDto filter);
 
-        Task<(bool IsSuccess, string Message)> AddWirdAsync(WirdAssignment wird);
+        Task<(bool IsSuccess, string Message)> AddWirdAsync(AssignWirdsBatchDto wird);
         Task<(bool IsSuccess, string Message)> UpdateWirdAsync(WirdAssignment wird);
         Task<List<WirdAssignment>?> GetWirdAssignmentsByClassIdAsync(
             Guid classID,

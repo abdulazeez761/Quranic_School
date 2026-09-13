@@ -59,6 +59,25 @@ namespace Hafiz.Common.Helper
             wird.Type == AssignmentType.Revision && wird.Status != AssignmentStatus.notSet;
 
         /// <summary>
+        /// True when this wird counts toward the student's tajwid progress.
+        /// </summary>
+        public static bool IsCompletedTajwid(WirdAssignment wird) =>
+            wird.Type == AssignmentType.Tajwid && wird.Status != AssignmentStatus.notSet;
+
+        /// <summary>
+        /// Total tajwid pages completed by the student.
+        /// </summary>
+        public static decimal TotalTajwidPages(Student student)
+        {
+            if (student.wirds == null || !student.wirds.Any())
+                return 0m;
+
+            return student.wirds
+                .Where(IsCompletedTajwid)
+                .Sum(ToPages);
+        }
+
+        /// <summary>
         /// Total memorized pages including the baseline juz the student joined with.
         /// </summary>
         public static decimal TotalMemorizedPages(Student student) =>

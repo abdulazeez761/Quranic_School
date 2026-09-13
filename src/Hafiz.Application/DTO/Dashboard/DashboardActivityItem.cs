@@ -10,6 +10,7 @@ namespace Hafiz.DTOs.Dashboard
         WirdRevision = 1,
         StudentAttendance = 2,
         TeacherAttendance = 3,
+        WirdTajwid = 4,
     }
 
     /// <summary>فئة النشاط المعروض في قسم/تبويب مستقل على لوحة الإدارة.</summary>

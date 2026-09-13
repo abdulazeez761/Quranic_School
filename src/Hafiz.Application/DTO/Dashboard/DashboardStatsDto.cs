@@ -43,6 +43,17 @@ namespace Hafiz.DTOs.Dashboard
         /// <summary>عدد آيات المراجعة المُسجَّلة بوحدة "آيات".</summary>
         public int RevisionAyahs { get; set; }
 
+        // ── التجويد ────────────────────────────────────────────────────────────
+
+        /// <summary>إجمالي صفحات التجويد (الأوراد المُسجَّلة بوحدة "صفحات" أو ما يعادلها).</summary>
+        public double TajwidPages { get; set; }
+
+        /// <summary>عدد أجزاء التجويد المُسجَّلة بوحدة "أجزاء".</summary>
+        public double TajwidJuz { get; set; }
+
+        /// <summary>عدد آيات التجويد المُسجَّلة بوحدة "آيات".</summary>
+        public int TajwidAyahs { get; set; }
+
         // ── الإجماليات المحسوبة (توحيد إلى أجزاء) ───────────────────────────────
 
         /// <summary>
@@ -56,6 +67,12 @@ namespace Hafiz.DTOs.Dashboard
         /// </summary>
         public double RevisionParts =>
             Math.Round(RevisionPages / PagesPerJuz + RevisionJuzParts, 2);
+
+        /// <summary>
+        /// إجمالي أجزاء التجويد = (صفحات التجويد ÷ 20) + الأجزاء المُسجَّلة بوحدة أجزاء.
+        /// </summary>
+        public double TajwidParts =>
+            Math.Round(TajwidPages / PagesPerJuz + TajwidJuz, 2);
 
         /// <summary>الفترة الزمنية المُطبَّقة على إحصائيات الأوراد (لإبراز الزر المختار في الواجهة).</summary>
         public DashboardPeriod SelectedPeriod { get; set; } = DashboardPeriod.AllTime;
