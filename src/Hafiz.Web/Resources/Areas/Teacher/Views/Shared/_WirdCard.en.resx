@@ -293,4 +293,8 @@
     <value>Juz</value>
     <comment/>
   </data>
+  <data name="Tajwid" xml:space="preserve">
+    <value>Tajwid</value>
+    <comment/>
+  </data>
 </root>

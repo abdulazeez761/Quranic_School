@@ -78,4 +78,22 @@
             <div class="dashboard-stat-hint">أجزاء الصفحات + الأجزاء المستقلة</div>
         </div>
     </div>
+
+    <div class="dashboard-stat --violet">
+        <div class="dashboard-stat-icon"><i class='bx bx-microphone'></i></div>
+        <div class="dashboard-stat-content">
+            <div class="dashboard-stat-label">صفحات التجويد</div>
+            <div class="dashboard-stat-value">@Model.TajwidPages.ToString("0.##")</div>
+            <div class="dashboard-stat-hint">صفحة تجويد وإتقان التلاوة</div>
+        </div>
+    </div>
+
+    <div class="dashboard-stat --indigo">
+        <div class="dashboard-stat-icon"><i class='bx bx-collection'></i></div>
+        <div class="dashboard-stat-content">
+            <div class="dashboard-stat-label">أجزاء التجويد</div>
+            <div class="dashboard-stat-value">@Model.TajwidParts.ToString("0.##")</div>
+            <div class="dashboard-stat-hint">إجمالي أجزاء التجويد (صفحات + أجزاء مستقلة)</div>
+        </div>
+    </div>
 </div>

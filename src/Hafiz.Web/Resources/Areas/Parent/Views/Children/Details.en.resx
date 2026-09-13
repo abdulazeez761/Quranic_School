@@ -601,4 +601,5 @@
   <data name="UnitPages" xml:space="preserve"><value>pages</value></data>
   <data name="Hafiz" xml:space="preserve"><value>Hafiz</value></data>
   <data name="HafizTitle" xml:space="preserve"><value>Student has completed memorizing the entire Quran</value></data>
+  <data name="TajwidPages" xml:space="preserve"><value>Tajwid Pages</value></data>
 </root>

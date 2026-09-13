@@ -93,12 +93,20 @@ namespace Hafiz.Infrastructure.Services.Dashboard
 
             return rows.Select(r => new DashboardActivityItem
                 {
-                    Kind =
-                        r.Type == AssignmentType.Memorization
-                            ? DashboardActivityKind.WirdMemorization
-                            : DashboardActivityKind.WirdRevision,
-                    Title =
-                        r.Type == AssignmentType.Memorization ? "ورد حفظ جديد" : "ورد مراجعة جديد",
+                    Kind = r.Type switch
+                    {
+                        AssignmentType.Memorization => DashboardActivityKind.WirdMemorization,
+                        AssignmentType.Revision => DashboardActivityKind.WirdRevision,
+                        AssignmentType.Tajwid => DashboardActivityKind.WirdTajwid,
+                        _ => DashboardActivityKind.WirdRevision,
+                    },
+                    Title = r.Type switch
+                    {
+                        AssignmentType.Memorization => "ورد حفظ جديد",
+                        AssignmentType.Revision => "ورد مراجعة جديد",
+                        AssignmentType.Tajwid => "ورد تجويد جديد",
+                        _ => "ورد جديد",
+                    },
                     Subtitle = DashboardActivityFormatter.BuildWirdSubtitle(
                         r.First,
                         r.Second,

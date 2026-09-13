@@ -329,4 +329,16 @@
   <data name="UnreadNotes" xml:space="preserve">
     <value>unread notes</value>
   </data>
+  <data name="AverageTajwid" xml:space="preserve">
+    <value>Average Tajwid (pages)</value>
+  </data>
+  <data name="SortTajwid" xml:space="preserve">
+    <value>Tajwid</value>
+  </data>
+  <data name="TajwidPages" xml:space="preserve">
+    <value>Tajwid Pages</value>
+  </data>
+  <data name="TajwidPagesShort" xml:space="preserve">
+    <value>tajwid</value>
+  </data>
 </root>

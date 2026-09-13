@@ -943,6 +943,10 @@
   background: #8b5cf6;
 }
 
+.progress-stat-card.stat-tajwid .progress-stat-icon {
+  background: #7c3aed;
+}
+
 .progress-stat-label {
   font-size: 0.85rem;
   color: var(--text-secondary, #666);

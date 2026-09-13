@@ -64,6 +64,11 @@
             <span>@((Model.ReviewedPages / WirdPageCalculator.PagesPerJuz).ToString("0.##"))</span>
             <small>@Localizer["JuzShort"] @Localizer["ReviewedPagesShort"]</small>
         </span>
+        <span class="page-summary-item" title="@Localizer["TajwidPages"]">
+            <i class='bx bx-microphone'></i>
+            <span>@Model.TajwidPages.ToString("0.##")</span>
+            <small>@Localizer["TajwidPagesShort"]</small>
+        </span>
     </div>
 
     <div class="report-metrics">

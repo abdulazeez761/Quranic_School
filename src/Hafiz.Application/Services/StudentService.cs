@@ -183,6 +183,7 @@ namespace Hafiz.Services
 
                 var totalMemorizedPages = WirdPageCalculator.TotalMemorizedPages(student);
                 var (juz, _) = WirdPageCalculator.SplitJuzAndPages(totalMemorizedPages);
+                var totalTajwidPages = WirdPageCalculator.TotalTajwidPages(student);
 
                 var age = DateTime.Today.Year - student.DateOfBirth.Year;
                 if (student.DateOfBirth.Date > DateTime.Today.AddYears(-age))
@@ -209,6 +210,7 @@ namespace Hafiz.Services
                         TotalMemorizedPages = totalMemorizedPages,
                         MemorizedJuz = juz,
                         ReviewedPages = student.ReviewedPages,
+                        TajwidPages = totalTajwidPages,
                         TotalWirds = wirdsList.Count,
                         CompletedWirds = wirdsList.Count(w => w.Status != AssignmentStatus.notSet),
                         AttendanceRate =
@@ -235,6 +237,8 @@ namespace Hafiz.Services
                 ("memorization", _) => reportRows
                     .OrderByDescending(r => r.TotalMemorizedPages)
                     .ToList(),
+                ("tajwid", "asc") => reportRows.OrderBy(r => r.TajwidPages).ToList(),
+                ("tajwid", _) => reportRows.OrderByDescending(r => r.TajwidPages).ToList(),
                 ("attendance", "asc") => reportRows.OrderBy(r => r.AttendanceRate).ToList(),
                 ("attendance", _) => reportRows.OrderByDescending(r => r.AttendanceRate).ToList(),
                 ("name", "desc") => reportRows.OrderByDescending(r => r.FullName).ToList(),

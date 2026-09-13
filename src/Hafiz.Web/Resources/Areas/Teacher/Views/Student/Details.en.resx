@@ -189,4 +189,10 @@
   <data name="HafizTitle" xml:space="preserve">
     <value>Student has completed memorizing the entire Quran</value>
   </data>
+  <data name="TajwidPages" xml:space="preserve">
+    <value>Tajwid Pages</value>
+  </data>
+  <data name="CompletedTajwidWirds" xml:space="preserve">
+    <value>Completed Tajwid wirds</value>
+  </data>
 </root>

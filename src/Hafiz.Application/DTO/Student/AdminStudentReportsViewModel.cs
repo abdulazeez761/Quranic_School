@@ -24,6 +24,7 @@ namespace Hafiz.DTOs.Student
         public decimal TotalMemorizedPages { get; set; }
         public int MemorizedJuz { get; set; }
         public decimal ReviewedPages { get; set; }
+        public decimal TajwidPages { get; set; }
         public int TotalWirds { get; set; }
         public int CompletedWirds { get; set; }
         public double AttendanceRate { get; set; }

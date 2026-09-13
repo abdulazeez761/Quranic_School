@@ -32,7 +32,7 @@ namespace Hafiz.Infrastructure.Services
         )
         {
             var counts = await LoadCountsAsync(instituteId, today);
-            var (memPages, memJuz, memAyahs, revPages, revJuz, revAyahs) =
+            var (memPages, memJuz, memAyahs, revPages, revJuz, revAyahs, tajPages, tajJuz, tajAyahs) =
                 await AggregateWirdUnitsAsync(instituteId, period);
             var wirdsPage = await _activityQuery.GetTodaysPageAsync(
                 instituteId,
@@ -58,6 +58,9 @@ namespace Hafiz.Infrastructure.Services
                 RevisionPages = Math.Round(revPages, 2),
                 RevisionJuzParts = Math.Round(revJuz, 2),
                 RevisionAyahs = revAyahs,
+                TajwidPages = Math.Round(tajPages, 2),
+                TajwidJuz = Math.Round(tajJuz, 2),
+                TajwidAyahs = tajAyahs,
                 SelectedPeriod = period,
                 WirdsActivity = wirdsPage,
                 AttendanceActivity = attendancePage,
@@ -158,7 +161,10 @@ namespace Hafiz.Infrastructure.Services
             int memAyahs,
             double revPages,
             double revJuz,
-            int revAyahs
+            int revAyahs,
+            double tajPages,
+            double tajJuz,
+            int tajAyahs
         )> AggregateWirdUnitsAsync(Guid? instituteId, DashboardPeriod period)
         {
             var wirdsQuery = _context.WirdAssignments.IgnoreQueryFilters().AsNoTracking();
@@ -175,7 +181,7 @@ namespace Hafiz.Infrastructure.Services
 
             var assignments = await wirdsQuery
                 .Where(w =>
-                    w.Type == AssignmentType.Memorization || w.Type == AssignmentType.Revision
+                    w.Type == AssignmentType.Memorization || w.Type == AssignmentType.Revision || w.Type == AssignmentType.Tajwid
                 )
                 .Select(w => new WirdUnitsProjection
                 {
@@ -195,19 +201,24 @@ namespace Hafiz.Infrastructure.Services
             double memPages = 0,
                 memJuz = 0,
                 revPages = 0,
-                revJuz = 0;
+                revJuz = 0,
+                tajPages = 0,
+                tajJuz = 0;
             int memAyahs = 0,
-                revAyahs = 0;
+                revAyahs = 0,
+                tajAyahs = 0;
 
             foreach (var w in assignments)
             {
                 if (w.Type == AssignmentType.Memorization)
                     DashboardStatsCalculator.Accumulate(w, ref memPages, ref memJuz, ref memAyahs);
-                else
+                else if (w.Type == AssignmentType.Revision)
                     DashboardStatsCalculator.Accumulate(w, ref revPages, ref revJuz, ref revAyahs);
+                else if (w.Type == AssignmentType.Tajwid)
+                    DashboardStatsCalculator.Accumulate(w, ref tajPages, ref tajJuz, ref tajAyahs);
             }
 
-            return (memPages, memJuz, memAyahs, revPages, revJuz, revAyahs);
+            return (memPages, memJuz, memAyahs, revPages, revJuz, revAyahs, tajPages, tajJuz, tajAyahs);
         }
     }
 }

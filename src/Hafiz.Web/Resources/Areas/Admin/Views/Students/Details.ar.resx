@@ -945,4 +945,7 @@
     <value>عدد الاوراد</value>
     <comment/>
   </data>
+  <data name="TajwidPages" xml:space="preserve">
+    <value>صفحات تجويد</value>
+  </data>
 </root>

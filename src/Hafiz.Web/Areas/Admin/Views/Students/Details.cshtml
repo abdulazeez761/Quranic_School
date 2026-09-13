@@ -14,6 +14,7 @@
     var (memorizedJuzDisplay, memorizedPagesRemainder) = WirdPageCalculator.SplitJuzAndPages(totalMemorizedPages);
     var reviewedPages = student.ReviewedPages;
     var (reviewedJuzDisplay, reviewedPagesRemainder) = WirdPageCalculator.SplitJuzAndPages(reviewedPages);
+    var totalTajwidPages = WirdPageCalculator.TotalTajwidPages(student);
     var isHafiz = WirdPageCalculator.IsHafiz(student);
     var activeTab = Model.ActiveTab;
 
@@ -301,6 +302,10 @@
                             <div class="progress-detail-item">
                                 <i class='bx bx-collection'></i>
                                 <span>@reviewedJuzDisplay @Localizer["JuzReviewed"]</span>
+                            </div>
+                            <div class="progress-detail-item">
+                                <i class='bx bx-microphone'></i>
+                                <span>@totalTajwidPages.ToString("0.##") @Localizer["TajwidPages"]</span>
                             </div>
                             <div class="progress-detail-item">
                                 <i class='bx bx-star'></i>

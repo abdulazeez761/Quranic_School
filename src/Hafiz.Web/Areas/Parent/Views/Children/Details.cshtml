@@ -20,6 +20,7 @@
     var (memorizedJuzDisplay, memorizedPagesRemainder) = WirdPageCalculator.SplitJuzAndPages(totalMemorizedPages);
     var reviewedPages = Model.ReviewedPages;
     var (reviewedJuzDisplay, reviewedPagesRemainder) = WirdPageCalculator.SplitJuzAndPages(reviewedPages);
+    var totalTajwidPages = WirdPageCalculator.TotalTajwidPages(Model);
     var isHafiz = WirdPageCalculator.IsHafiz(Model);
 }
 
@@ -169,6 +170,15 @@
                     <div class="card-content">
                         <h3>@reviewedJuzDisplay</h3>
                         <p>@Localizer["ReviewedJuz"]</p>
+                    </div>
+                </div>
+                <div class="overview-card">
+                    <div class="card-icon" style="background: rgba(124,58,237,0.15); color: #7c3aed;">
+                        <i class='bx bx-microphone'></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>@totalTajwidPages.ToString("0.##")</h3>
+                        <p>@Localizer["TajwidPages"]</p>
                     </div>
                 </div>
             </div>

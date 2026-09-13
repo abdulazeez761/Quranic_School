@@ -265,4 +265,8 @@
     <value>اختيار سريع للمعادل بالصفحات</value>
     <comment/>
   </data>
+  <data name="Tajwid" xml:space="preserve">
+    <value>تجويد</value>
+    <comment/>
+  </data>
 </root>

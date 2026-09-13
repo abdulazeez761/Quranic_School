@@ -38,6 +38,7 @@
     var isHafiz = WirdPageCalculator.IsHafiz(Model.Student);
     var reviewedPages = Model.Student.ReviewedPages;
     var (reviewedJuzDisplay, reviewedPagesRemainder) = WirdPageCalculator.SplitJuzAndPages(reviewedPages);
+    var totalTajwidPages = WirdPageCalculator.TotalTajwidPages(Model.Student);
 }
 
 <!-- Student Details Header -->
@@ -128,6 +129,14 @@
             <div class="progress-stat-label">@Localizer["ReviewedJuz"]</div>
             <div class="progress-stat-value">@reviewedJuzDisplay</div>
             <div class="progress-stat-sub">@Localizer["CompletedJuzReviews"]</div>
+        </div>
+    </div>
+    <div class="progress-stat-card stat-tajwid">
+        <div class="progress-stat-icon"><i class="bi bi-mic-fill"></i></div>
+        <div class="progress-stat-body">
+            <div class="progress-stat-label">@Localizer["TajwidPages"]</div>
+            <div class="progress-stat-value">@totalTajwidPages.ToString("0.##")</div>
+            <div class="progress-stat-sub">@Localizer["CompletedTajwidWirds"]</div>
         </div>
     </div>
 </div>

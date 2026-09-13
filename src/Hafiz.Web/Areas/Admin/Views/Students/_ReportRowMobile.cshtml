@@ -97,6 +97,10 @@
                     <span class="stat-value">@Model.TotalMemorizedPages.ToString("0.##")</span>
                     <span class="stat-label">@Localizer["MemorizedPagesShort"]</span>
                 </div>
+                <div class="mobile-stat-item tajwid" style="color: #7c3aed;">
+                    <span class="stat-value">@Model.TajwidPages.ToString("0.##")</span>
+                    <span class="stat-label">@Localizer["TajwidPagesShort"]</span>
+                </div>
                 <div class="mobile-stat-item attendance att-@attClass">
                     <span class="stat-value">@Model.AttendanceRate%</span>
                     <span class="stat-label">@Localizer["AttendanceShort"]</span>

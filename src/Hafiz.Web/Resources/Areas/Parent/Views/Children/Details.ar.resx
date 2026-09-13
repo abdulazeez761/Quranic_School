@@ -601,4 +601,5 @@
   <data name="UnitPages" xml:space="preserve"><value>صفحة</value></data>
   <data name="Hafiz" xml:space="preserve"><value>حافظ</value></data>
   <data name="HafizTitle" xml:space="preserve"><value>أتم الطالب حفظ القرآن الكريم كاملاً</value></data>
+  <data name="TajwidPages" xml:space="preserve"><value>صفحات التجويد</value></data>
 </root>

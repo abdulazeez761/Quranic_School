@@ -945,4 +945,7 @@
     <value> total wirds</value>
     <comment/>
   </data>
+  <data name="TajwidPages" xml:space="preserve">
+    <value>Tajwid pages</value>
+  </data>
 </root>

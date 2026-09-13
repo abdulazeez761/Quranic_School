@@ -40,7 +40,7 @@ window.WIRD_TYPE_CONFIG = {
     },
     recitation: {
         id: 'recitation',
-        title: 'تلاوة وإتقان / استماع',
+        title: 'تجويد وإتقان التلاوة',
         typeCode: 3, // AssignmentType.Tajwid / Recitation
         color: '#7c3aed',
         defaultAmount: 2.0,

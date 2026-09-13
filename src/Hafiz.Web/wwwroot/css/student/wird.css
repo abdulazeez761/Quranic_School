@@ -736,6 +736,11 @@
   color: #8b5cf6;
 }
 
+.progress-summary-card.progress-tajwid i {
+  background: rgba(124, 58, 237, 0.12);
+  color: #7c3aed;
+}
+
 .progress-summary-label {
   font-size: 0.85rem;
   color: var(--text-secondary, #666);

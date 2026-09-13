@@ -23,6 +23,7 @@
     decimal reviewedPages = 0m;
     int reviewedJuzDisplay = 0;
     decimal reviewedPagesRemainder = 0m;
+    decimal totalTajwidPages = 0m;
     bool isHafiz = false;
     if (student != null)
     {
@@ -30,6 +31,7 @@
         (memorizedJuzDisplay, memorizedPagesRemainder) = WirdPageCalculator.SplitJuzAndPages(totalMemorizedPages);
         reviewedPages = student.ReviewedPages;
         (reviewedJuzDisplay, reviewedPagesRemainder) = WirdPageCalculator.SplitJuzAndPages(reviewedPages);
+        totalTajwidPages = WirdPageCalculator.TotalTajwidPages(student);
         isHafiz = WirdPageCalculator.IsHafiz(student);
     }
 }
@@ -87,6 +89,14 @@
                     <div class="progress-summary-label">@Localizer["ReviewedJuz"]</div>
                     <div class="progress-summary-value">@reviewedJuzDisplay</div>
                     <div class="progress-summary-sub">@Localizer["CompletedJuzReviews"]</div>
+                </div>
+            </div>
+            <div class="progress-summary-card progress-tajwid">
+                <i class='bx bx-microphone'></i>
+                <div class="progress-summary-body">
+                    <div class="progress-summary-label">@Localizer["TajwidPages"]</div>
+                    <div class="progress-summary-value">@totalTajwidPages.ToString("0.##")</div>
+                    <div class="progress-summary-sub">@Localizer["CompletedTajwidWirds"]</div>
                 </div>
             </div>
         </div>

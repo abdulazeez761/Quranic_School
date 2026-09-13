@@ -4,6 +4,7 @@
     var totalHafiz = Model.Count(s => s.IsHafiz);
     var avgAttendance = Model.Any() ? Math.Round(Model.Average(s => s.AttendanceRate), 1) : 0;
     var avgMemorization = Model.Any() ? Math.Round((double)Model.Average(s => s.TotalMemorizedPages), 1) : 0;
+    var avgTajwid = Model.Any() ? Math.Round((double)Model.Average(s => s.TajwidPages), 1) : 0;
 }
 
 <div class="stats-grid mb-lg">
@@ -41,6 +42,15 @@
         <div class="stat-content">
             <h3>@avgMemorization</h3>
             <p>@Localizer["AverageMemorization"]</p>
+        </div>
+    </div>
+    <div class="card-stat">
+        <div class="stat-icon" style="background: rgba(124,58,237,0.15); color: #7c3aed;">
+            <i class='bx bx-microphone'></i>
+        </div>
+        <div class="stat-content">
+            <h3>@avgTajwid</h3>
+            <p>@Localizer["AverageTajwid"]</p>
         </div>
     </div>
 </div>

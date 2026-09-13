@@ -141,6 +141,7 @@
 .dashboard-stat.--brown  { --stat-accent: #7a4e22; } .dashboard-stat.--brown  .dashboard-stat-icon { background: linear-gradient(135deg, #9b6b3a, #7a4e22); box-shadow: 0 6px 14px rgba(122, 78, 34, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.18); }
 .dashboard-stat.--indigo { --stat-accent: #43296b; } .dashboard-stat.--indigo .dashboard-stat-icon { background: linear-gradient(135deg, #5e3b8a, #43296b); box-shadow: 0 6px 14px rgba(67, 41, 107, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.18); }
 .dashboard-stat.--cyan   { --stat-accent: #0b5e6e; } .dashboard-stat.--cyan   .dashboard-stat-icon { background: linear-gradient(135deg, #0f7a8a, #0b5e6e); box-shadow: 0 6px 14px rgba(15, 122, 138, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.18); }
+.dashboard-stat.--violet { --stat-accent: #6d28d9; } .dashboard-stat.--violet .dashboard-stat-icon { background: linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: 0 6px 14px rgba(109, 40, 217, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.18); }
 
 .dashboard-secondary-grid {
   display: grid;

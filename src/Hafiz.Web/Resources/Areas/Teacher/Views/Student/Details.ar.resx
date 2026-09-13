@@ -189,4 +189,10 @@
   <data name="HafizTitle" xml:space="preserve">
     <value>أتم الطالب حفظ القرآن الكريم كاملاً</value>
   </data>
+  <data name="TajwidPages" xml:space="preserve">
+    <value>صفحات التجويد</value>
+  </data>
+  <data name="CompletedTajwidWirds" xml:space="preserve">
+    <value>أوراد التجويد المكتملة</value>
+  </data>
 </root>
