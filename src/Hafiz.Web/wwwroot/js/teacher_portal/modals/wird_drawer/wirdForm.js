@@ -24,8 +24,9 @@ function toggleWirdCard(typeKey, isActive) {
 function onAmountChanged(typeKey, val) {
     const student = window.classStudents[window.selectedStudentIndex];
     if (student && student.wirds[typeKey]) {
-        student.wirds[typeKey].amount = parseFloat(val) || 0;
-        if (!student.wirds[typeKey].active && parseFloat(val) > 0) {
+        const rawNum = parseFloat(val);
+        student.wirds[typeKey].amount = !isNaN(rawNum) && rawNum > 0 ? rawNum : null;
+        if (!student.wirds[typeKey].active && !isNaN(rawNum) && rawNum > 0) {
             toggleWirdCard(typeKey, true);
             const toggle = document.getElementById(`wtoggle-${typeKey}`);
             if (toggle) toggle.checked = true;

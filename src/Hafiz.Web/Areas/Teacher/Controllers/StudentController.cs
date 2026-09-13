@@ -177,8 +177,24 @@ namespace Hafiz.Areas.Teacher.Controllers
         [HttpPost]
         public async Task<IActionResult> AssignWirdsBatch([FromBody] AssignWirdsBatchDto model)
         {
+            // Navigation properties are EF relations not supplied in batch DTO
+            foreach (var key in ModelState.Keys.Where(k => k.EndsWith(".Student") || k.EndsWith(".Class") || k == "Student" || k == "Class").ToList())
+            {
+                ModelState.Remove(key);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                var errors = string.Join(" | ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => !string.IsNullOrEmpty(e.ErrorMessage) ? e.ErrorMessage : e.Exception?.Message));
+                _logger.LogWarning("AssignWirdsBatch invalid ModelState: {Errors}", errors);
+                return BadRequest(new { success = false, message = $"بيانات الورد غير صالحة: {errors}" });
+            }
+
             if (model == null || model.Wirds == null || !model.Wirds.Any())
                 return BadRequest(new { success = false, message = "لا توجد أوراد لحفظها." });
+
             // Bind the wird to the teacher's currently selected class. We trust the
             // cookie over the form field so a tampered ClassId can't pin the wird to
             // a class the teacher isn't scoped to.
@@ -191,11 +207,15 @@ namespace Hafiz.Areas.Teacher.Controllers
             (bool isAdded, string message) = await _wirdService.AddWirdAsync(model);
 
             if (isAdded)
+            {
                 TempData["SuccessMessage"] = message;
+                return Json(new { success = true, message });
+            }
             else
+            {
                 TempData["ErrorMessage"] = message;
-
-            return RedirectToAction("Index", "Student", new { area = "Teacher" });
+                return BadRequest(new { success = false, message });
+            }
         }
 
         [HttpPost]
