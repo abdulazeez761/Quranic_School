@@ -7,54 +7,58 @@
  * ============================================================================
  */
 
-async function openWirdDrawer() {
+function openWirdDrawer() {
   const drawer = document.getElementById('drawerPanel');
   const backdrop = document.getElementById('drawerBackdrop');
-  if (drawer && backdrop) {
-    if (
-      window.selectedStudentIndex === undefined ||
-      window.selectedStudentIndex === null ||
-      window.selectedStudentIndex < 0
-    ) {
-      window.selectedStudentIndex = 0;
-    }
-    if (
-      window.classStudents &&
-      window.classStudents.length > 0 &&
-      typeof loadStudentIntoDrawer === 'function'
-    ) {
-      await loadStudentIntoDrawer(window.selectedStudentIndex);
-    }
-    drawer.classList.add('active');
-    drawer.classList.add('mobile-open');
-    backdrop.classList.add('active');
-    document.body.style.overflow = 'hidden';
+  if (!drawer || !backdrop) return;
+
+  if (
+    window.selectedStudentIndex === undefined ||
+    window.selectedStudentIndex === null ||
+    window.selectedStudentIndex < 0
+  ) {
+    window.selectedStudentIndex = 0;
   }
+
+  // Populate drawer synchronously with current student data
+  if (
+    window.classStudents &&
+    window.classStudents.length > 0 &&
+    typeof loadStudentIntoDrawer === 'function'
+  ) {
+    loadStudentIntoDrawer(window.selectedStudentIndex);
+  }
+
+  // Make visible and trigger animation cleanly via requestAnimationFrame
+  document.body.style.overflow = 'hidden';
+  requestAnimationFrame(() => {
+    drawer.classList.add('active', 'mobile-open');
+    backdrop.classList.add('active');
+  });
 }
 
 function closeWirdDrawer() {
   const drawer = document.getElementById('drawerPanel');
   const backdrop = document.getElementById('drawerBackdrop');
-  if (!drawer || !drawer.classList.contains('active')) return; // إذا كان مغلقاً أصلاً، اخرج مباشرة بدون فعل أي شيء
+  if (!drawer || !drawer.classList.contains('active')) return;
 
-  if (drawer && backdrop) {
-    drawer.classList.remove('active');
-    drawer.classList.remove('mobile-open');
-    backdrop.classList.remove('active');
-    document.body.style.overflow = '';
-  }
+  drawer.classList.remove('active');
+  drawer.classList.remove('mobile-open');
+  if (backdrop) backdrop.classList.remove('active');
+  document.body.style.overflow = '';
 }
 
 function closeWirdModal() {
   closeWirdDrawer();
 }
 
-async function openWirdModal(studentId, studentName) {
-  let index = window.classStudents.findIndex((s) => s.id === studentId);
+function openWirdModal(studentId, studentName) {
+  let index = window.classStudents ? window.classStudents.findIndex((s) => s.id === studentId) : -1;
 
   if (index === -1) {
     if (typeof createStudentState === 'function') {
       const newStudent = createStudentState(studentId, studentName);
+      window.classStudents = window.classStudents || [];
       window.classStudents.push(newStudent);
       index = window.classStudents.length - 1;
     } else {
@@ -63,21 +67,12 @@ async function openWirdModal(studentId, studentName) {
   }
 
   window.selectedStudentIndex = index;
-  await loadStudentIntoDrawer(window.selectedStudentIndex);
   openWirdDrawer();
 }
 
-async function loadStudentIntoDrawer(index) {
-  if (index < 0 || index >= window.classStudents.length) return;
+function loadStudentIntoDrawer(index) {
+  if (!window.classStudents || index < 0 || index >= window.classStudents.length) return;
   const student = window.classStudents[index];
-
-  // Auto-apply student routine plan if found and not yet loaded
-  if (
-    typeof ensureStudentBaselineLoaded === 'function' &&
-    !student.isPlanLoaded
-  ) {
-    await ensureStudentBaselineLoaded(student);
-  }
 
   const studentIdInput = document.getElementById('StudentId');
   if (studentIdInput) studentIdInput.value = student.id;
@@ -101,6 +96,44 @@ async function loadStudentIntoDrawer(index) {
   if (levelTag) {
     levelTag.textContent = student.level ? `• ${student.level}` : '';
   }
+
+  // Populate cards state into DOM synchronously (instant 0ms render!)
+  renderStudentWirdsFields(student);
+
+  const prevBtn = document.getElementById('drawerPrevBtn');
+  if (prevBtn) {
+    const isFirst = index === 0;
+    prevBtn.disabled = isFirst;
+    prevBtn.classList.toggle('is-disabled', isFirst);
+  }
+
+  const nextBtnText = document.getElementById('drawerNextBtnText');
+  if (nextBtnText) {
+    if (index === window.classStudents.length - 1) {
+      nextBtnText.textContent = '🎉 حفظ وإنهاء الحلقة';
+    } else {
+      nextBtnText.textContent = 'حفظ والتالي';
+    }
+  }
+
+  // Auto-fetch student baseline routine plan in the background (NON-BLOCKING)
+  if (
+    typeof ensureStudentBaselineLoaded === 'function' &&
+    !student.isPlanLoaded
+  ) {
+    ensureStudentBaselineLoaded(student)
+      .then(() => {
+        // Only update fields if this student is still the currently selected one
+        if (window.classStudents[window.selectedStudentIndex]?.id === student.id) {
+          renderStudentWirdsFields(student);
+        }
+      })
+      .catch((err) => console.warn('Background plan load error:', err));
+  }
+}
+
+function renderStudentWirdsFields(student) {
+  if (!student || !student.wirds) return;
 
   Object.keys(window.WIRD_TYPE_CONFIG).forEach((typeKey) => {
     const wird = student.wirds[typeKey];
@@ -157,44 +190,28 @@ async function loadStudentIntoDrawer(index) {
       syncUpcomingRatingState(typeKey, !!wird.isUpcoming);
     }
   });
-
-  const prevBtn = document.getElementById('drawerPrevBtn');
-  if (prevBtn) {
-    const isFirst = index === 0;
-    prevBtn.disabled = isFirst;
-    prevBtn.classList.toggle('is-disabled', isFirst);
-  }
-
-  const nextBtnText = document.getElementById('drawerNextBtnText');
-  if (nextBtnText) {
-    if (index === window.classStudents.length - 1) {
-      nextBtnText.textContent = '🎉 حفظ وإنهاء الحلقة';
-    } else {
-      nextBtnText.textContent = 'حفظ والتالي';
-    }
-  }
 }
 
-async function prevStudent() {
+function prevStudent() {
   if (window.selectedStudentIndex > 0) {
     if (typeof saveDrawerWirds === 'function') {
       saveDrawerWirds(false);
     }
     window.selectedStudentIndex--;
-    await loadStudentIntoDrawer(window.selectedStudentIndex);
+    loadStudentIntoDrawer(window.selectedStudentIndex);
   } else if (typeof showDrawerToast === 'function') {
     showDrawerToast('أنت في بداية قائمة طلاب الحلقة', 'info');
   }
 }
 
-async function saveAndNextStudent() {
+function saveAndNextStudent() {
   if (typeof saveDrawerWirds === 'function') {
     saveDrawerWirds(false);
   }
 
   if (window.selectedStudentIndex < window.classStudents.length - 1) {
     window.selectedStudentIndex++;
-    await loadStudentIntoDrawer(window.selectedStudentIndex);
+    loadStudentIntoDrawer(window.selectedStudentIndex);
     const body = document.getElementById('drawerWirdsList');
     if (body) body.scrollTop = 0;
   } else {

@@ -2,8 +2,6 @@
    Hafiz Web - Shared Design Tokens & Styles for Wird Prototypes (RTL Arabic)
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Amiri:wght@400;700&display=swap');
-
 :root {
   /* Colors - Primary Palette (matches Hafiz.Web) */
   --primary-green: #6fa15a;
@@ -495,6 +493,7 @@ input:checked + .slider:before {
   position: relative;
   white-space: nowrap;
   font-family: inherit;
+  touch-action: manipulation;
 }
 
 .unit-radio-option input[type="radio"] {
@@ -994,6 +993,7 @@ select.form-control {
   position: relative;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
   outline: none;
 }
 

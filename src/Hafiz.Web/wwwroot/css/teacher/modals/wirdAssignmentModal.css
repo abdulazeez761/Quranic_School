@@ -1,9 +1,109 @@
 /* ==========================================================================
    Wird Assignment Modal & Drawer Styles (Hafiz Platform)
+   Optimized for high-performance mobile drawer opening
    ========================================================================== */
 @import url('../shared.css');
 @import url('../drawer.css');
-@import url('../AssignWirdModal.css');
+
+/* iOS-style switch for Wird activation */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 26px;
+  flex-shrink: 0;
+  touch-action: manipulation;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: #cbd5e1;
+  border-radius: 999px;
+  transition: background 0.22s ease;
+  touch-action: manipulation;
+}
+
+.switch-slider::before {
+  content: "";
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.switch input:checked + .switch-slider {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+}
+
+.switch input:checked + .switch-slider::before {
+  transform: translateX(20px);
+}
+
+.switch input:focus-visible + .switch-slider {
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.3);
+}
+
+[dir='rtl'] .switch-slider::before {
+  left: auto;
+  right: 3px;
+}
+
+[dir='rtl'] .switch input:checked + .switch-slider::before {
+  transform: translateX(-20px);
+}
+
+/* Upcoming specific switch color */
+.upcoming-badge-toggle .switch input:checked + .switch-slider {
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+}
+
+/* Equivalent Pages Chips */
+.equivalent-pages-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.equivalent-pages-chips .chip {
+  background: var(--white);
+  color: var(--text-dark);
+  border: 1px solid var(--border-color);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  font-family: inherit;
+  min-width: 44px;
+  touch-action: manipulation;
+}
+
+.equivalent-pages-chips .chip:hover {
+  background: rgba(111, 161, 90, 0.12);
+  border-color: var(--primary-green);
+  color: var(--dark-green);
+}
+
+.equivalent-pages-chips .chip.is-active {
+  background: var(--primary-green);
+  color: var(--white);
+  border-color: var(--primary-green);
+}
 
 #mobileOpenPillBtn,
 .mobile-open-pill-btn {
