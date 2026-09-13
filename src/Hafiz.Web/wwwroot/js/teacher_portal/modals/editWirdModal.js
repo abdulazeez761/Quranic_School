@@ -102,6 +102,7 @@ function populateEditModal(data) {
   const upcomingEl = document.getElementById('IsUpcoming');
   if (upcomingEl) {
     upcomingEl.checked = data.isUpcoming === true;
+    syncEditModalUpcomingState(upcomingEl.checked);
   }
 
   // Trigger FromSurah change to filter ToSurah options
@@ -180,6 +181,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
       try {
         const formData = new FormData(form);
+        const isUpcomingChecked = document.getElementById('IsUpcoming')?.checked === true;
+        if (isUpcomingChecked) {
+          formData.set('Status', '0');
+          formData.set('IsUpcoming', 'true');
+        }
         const actionUrl = form.getAttribute('action') || '/Teacher/Student/EditWird';
 
         const response = await fetch(actionUrl, {
@@ -319,7 +325,56 @@ function setupEditFormValidation() {
         option.value && fromNum && parseInt(option.value, 10) < fromNum ? 'none' : '';
     }
   });
+
+  // 4. Upcoming wird toggle & Grade mutual exclusivity
+  const upcomingToggle = document.getElementById('IsUpcoming');
+  const gradeSelect = document.getElementById('Grade');
+
+  if (upcomingToggle) {
+    upcomingToggle.addEventListener('change', function () {
+      syncEditModalUpcomingState(this.checked);
+    });
+  }
+
+  if (gradeSelect) {
+    gradeSelect.addEventListener('change', function () {
+      if (this.value !== '0' && upcomingToggle && upcomingToggle.checked) {
+        upcomingToggle.checked = false;
+        syncEditModalUpcomingState(false);
+      }
+    });
+  }
 }
+
+/**
+ * Synchronize Grade select state with IsUpcoming toggle
+ */
+function syncEditModalUpcomingState(isUpcoming) {
+  const gradeSelect = document.getElementById('Grade');
+  const notice = document.getElementById('gradeUpcomingNotice');
+
+  if (gradeSelect) {
+    if (isUpcoming) {
+      if (gradeSelect.value !== '0') {
+        gradeSelect.dataset.savedGrade = gradeSelect.value;
+      }
+      gradeSelect.value = '0';
+      gradeSelect.disabled = true;
+      gradeSelect.style.opacity = '0.55';
+      gradeSelect.style.cursor = 'not-allowed';
+      if (notice) notice.style.display = 'block';
+    } else {
+      gradeSelect.disabled = false;
+      gradeSelect.style.opacity = '1';
+      gradeSelect.style.cursor = 'default';
+      if (gradeSelect.dataset.savedGrade) {
+        gradeSelect.value = gradeSelect.dataset.savedGrade;
+      }
+      if (notice) notice.style.display = 'none';
+    }
+  }
+}
+window.syncEditModalUpcomingState = syncEditModalUpcomingState;
 
 /**
  * Validate that "To" fields are not strictly less than "From" fields

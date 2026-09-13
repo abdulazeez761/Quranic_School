@@ -57,6 +57,11 @@ namespace Hafiz.Services
                 wird.ClassId = dto.ClassId;
                 wird.AssignedDate = assignedDate;
 
+                if (wird.IsUpcoming)
+                {
+                    wird.Status = AssignmentStatus.notSet;
+                    wird.IsCompleted = false;
+                }
                 // إذا تم تقييم الورد (ليست حالته notSet) يصبح مكتملاً
                 if (wird.Status != AssignmentStatus.notSet)
                 {

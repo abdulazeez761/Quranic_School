@@ -48,10 +48,10 @@ function saveDrawerWirds(shouldClose = false) {
         FromAyah: w.fromAyah,
         ToSurah: w.toSurah,
         ToAyah: w.toAyah,
-        Status: w.status,
-        Rating: w.rating,
+        Status: w.isUpcoming ? 0 : (w.status || 0),
+        Rating: w.isUpcoming ? null : w.rating,
         Note: w.note,
-        IsUpcoming: w.isUpcoming,
+        IsUpcoming: !!w.isUpcoming,
       });
     }
   });

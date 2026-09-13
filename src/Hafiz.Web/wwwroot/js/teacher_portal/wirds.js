@@ -159,7 +159,12 @@ function fetchWirdAssignmentById(id) {
       setVal('Note', data.note || '');
 
       const upcomingEl = document.getElementById('IsUpcoming');
-      if (upcomingEl) upcomingEl.checked = data.isUpcoming === true;
+      if (upcomingEl) {
+        upcomingEl.checked = data.isUpcoming === true;
+        if (typeof window.syncEditModalUpcomingState === 'function') {
+          window.syncEditModalUpcomingState(upcomingEl.checked);
+        }
+      }
     })
     .catch((error) => {
       console.error('Error fetching assignment:', error);

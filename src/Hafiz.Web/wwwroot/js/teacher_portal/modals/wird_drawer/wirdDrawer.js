@@ -131,6 +131,10 @@ async function loadStudentIntoDrawer(index) {
 
         const upcomingToggle = document.getElementById(`isUpcoming-${typeKey}`);
         if (upcomingToggle) upcomingToggle.checked = !!wird.isUpcoming;
+
+        if (typeof syncUpcomingRatingState === 'function') {
+            syncUpcomingRatingState(typeKey, !!wird.isUpcoming);
+        }
     });
 
     const prevBtn = document.getElementById('drawerPrevBtn');

@@ -66,3 +66,25 @@
   gap: 8px;
   flex-wrap: wrap;
 }
+
+/* Drawer & Modal upcoming styling */
+.drawer-wird-box.is-upcoming-box {
+  border-color: #c4b5fd !important;
+  box-shadow: 0 0 0 1px #ddd6fe, 0 4px 12px rgba(124, 58, 237, 0.08) !important;
+}
+
+.wird-rating-group.is-upcoming-mode .wird-rating-options-grid {
+  opacity: 0.45;
+  pointer-events: none;
+  filter: grayscale(0.4);
+}
+
+.wird-rating-badge.rate-upcoming {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #ede9fe !important;
+  color: #6b21a8 !important;
+  border: 1px solid #c4b5fd !important;
+  font-weight: 700 !important;
+}

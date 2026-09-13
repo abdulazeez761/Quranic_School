@@ -77,6 +77,14 @@ function setRatingGrade(typeKey, gradeKey, statusNumber) {
     const student = window.classStudents[window.selectedStudentIndex];
     if (!student || !student.wirds[typeKey]) return;
 
+    // If card was in upcoming mode, selecting a grade means it is now evaluated and no longer upcoming
+    if (student.wirds[typeKey].isUpcoming) {
+        student.wirds[typeKey].isUpcoming = false;
+        const upcomingToggle = document.getElementById(`isUpcoming-${typeKey}`);
+        if (upcomingToggle) upcomingToggle.checked = false;
+        syncUpcomingRatingState(typeKey, false);
+    }
+
     const currentGrade = student.wirds[typeKey].rating;
     const newGrade = (currentGrade === gradeKey) ? null : gradeKey;
     const newStatus = newGrade ? statusNumber : 0;
@@ -104,6 +112,70 @@ function clearWirdRating(typeKey) {
         student.wirds[typeKey].rating = null;
         student.wirds[typeKey].status = 0;
         updateRatingUI(typeKey, null);
+    }
+}
+
+function toggleUpcomingWird(typeKey, isUpcoming) {
+    const student = window.classStudents[window.selectedStudentIndex];
+    if (!student || !student.wirds[typeKey]) return;
+
+    student.wirds[typeKey].isUpcoming = isUpcoming;
+
+    if (isUpcoming) {
+        // Upcoming wird cannot have a completion grade - reset rating
+        student.wirds[typeKey].rating = null;
+        student.wirds[typeKey].status = 0;
+        updateRatingUI(typeKey, null);
+
+        // Ensure card is active so it gets saved
+        if (!student.wirds[typeKey].active) {
+            toggleWirdCard(typeKey, true);
+            const toggle = document.getElementById(`wtoggle-${typeKey}`);
+            if (toggle) toggle.checked = true;
+        }
+
+        if (typeof showDrawerToast === 'function') {
+            showDrawerToast(`📅 تم تفعيل (${window.WIRD_TYPE_CONFIG[typeKey].title}) كوِرد قادم للجلسة القادمة`, 'info');
+        }
+    }
+
+    syncUpcomingRatingState(typeKey, isUpcoming);
+}
+
+function syncUpcomingRatingState(typeKey, isUpcoming) {
+    const group = document.getElementById(`ratingGroup-${typeKey}`);
+    const badge = document.getElementById(`ratingBadge-${typeKey}`);
+    const cardBox = document.getElementById(`wbox-${typeKey}`);
+
+    if (cardBox) {
+        cardBox.classList.toggle('is-upcoming-box', isUpcoming);
+    }
+
+    if (group) {
+        group.classList.toggle('is-upcoming-mode', isUpcoming);
+        const buttons = group.querySelectorAll('.rating-pill-btn');
+        buttons.forEach(btn => {
+            btn.disabled = isUpcoming;
+            btn.style.opacity = isUpcoming ? '0.4' : '1';
+            btn.style.cursor = isUpcoming ? 'not-allowed' : 'pointer';
+            if (isUpcoming) btn.classList.remove('is-selected');
+        });
+    }
+
+    if (badge) {
+        if (isUpcoming) {
+            badge.className = 'wird-rating-badge rate-upcoming';
+            badge.innerHTML = "<i class='bx bx-calendar-star'></i> ورد قادم (مجدول ولم يُسمّع بعد)";
+            badge.style.background = '#ede9fe';
+            badge.style.color = '#6b21a8';
+            badge.style.border = '1px solid #c4b5fd';
+            badge.style.fontWeight = '700';
+        } else {
+            badge.style.background = '';
+            badge.style.color = '';
+            badge.style.border = '';
+            badge.style.fontWeight = '';
+        }
     }
 }
 
