@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Hafiz.Application.Common;
+using Hafiz.Application.DTO.StudentWird;
 using Hafiz.Application.DTO.Wird;
 using Hafiz.Application.Extensions;
 using Hafiz.DTOs.Student;
@@ -24,18 +25,21 @@ namespace Hafiz.Areas.Teacher.Controllers
         private readonly IStudentService _studentService;
         private readonly IWirdService _wirdService;
         private readonly IParentNoteService _parentNoteService;
+        private readonly IStudentWirdService _studentWirdService;
 
         public StudentController(
             ILogger<StudentController> logger,
             IStudentService studentService,
             IWirdService wirdService,
-            IParentNoteService parentNoteService
+            IParentNoteService parentNoteService,
+            IStudentWirdService studentWirdService
         )
         {
             _logger = logger;
             _studentService = studentService;
             _wirdService = wirdService;
             _parentNoteService = parentNoteService;
+            _studentWirdService = studentWirdService;
         }
 
         public async Task<IActionResult> Index(
@@ -75,6 +79,25 @@ namespace Hafiz.Areas.Teacher.Controllers
             ViewBag.ClassName = className;
             ViewBag.Search = search;
             ViewBag.Level = level;
+            ViewBag.AllClassStudents = studentList
+                .Select(s =>
+                {
+                    var fn = s.StudentInfo?.FirstName ?? "";
+                    var sn = s.StudentInfo?.SecondName ?? "";
+                    var fullName = $"{fn} {sn}".Trim();
+                    var initials = (
+                        (fn.Length > 0 ? fn[0].ToString() : "")
+                        + (sn.Length > 0 ? sn[0].ToString() : "")
+                    ).ToUpper();
+                    return new
+                    {
+                        id = s.UserId.ToString(),
+                        name = fullName,
+                        initials = initials,
+                        level = s.TajwidLevel.ToString(),
+                    };
+                })
+                .ToList();
 
             var filtered = studentList.AsEnumerable();
             if (!string.IsNullOrWhiteSpace(search))
@@ -178,18 +201,36 @@ namespace Hafiz.Areas.Teacher.Controllers
         public async Task<IActionResult> AssignWirdsBatch([FromBody] AssignWirdsBatchDto model)
         {
             // Navigation properties are EF relations not supplied in batch DTO
-            foreach (var key in ModelState.Keys.Where(k => k.EndsWith(".Student") || k.EndsWith(".Class") || k == "Student" || k == "Class").ToList())
+            foreach (
+                var key in ModelState
+                    .Keys.Where(k =>
+                        k.EndsWith(".Student")
+                        || k.EndsWith(".Class")
+                        || k == "Student"
+                        || k == "Class"
+                    )
+                    .ToList()
+            )
             {
                 ModelState.Remove(key);
             }
 
             if (!ModelState.IsValid)
             {
-                var errors = string.Join(" | ", ModelState.Values
-                    .SelectMany(v => v.Errors)
-                    .Select(e => !string.IsNullOrEmpty(e.ErrorMessage) ? e.ErrorMessage : e.Exception?.Message));
+                var errors = string.Join(
+                    " | ",
+                    ModelState
+                        .Values.SelectMany(v => v.Errors)
+                        .Select(e =>
+                            !string.IsNullOrEmpty(e.ErrorMessage)
+                                ? e.ErrorMessage
+                                : e.Exception?.Message
+                        )
+                );
                 _logger.LogWarning("AssignWirdsBatch invalid ModelState: {Errors}", errors);
-                return BadRequest(new { success = false, message = $"بيانات الورد غير صالحة: {errors}" });
+                return BadRequest(
+                    new { success = false, message = $"بيانات الورد غير صالحة: {errors}" }
+                );
             }
 
             if (model == null || model.Wirds == null || !model.Wirds.Any())
@@ -216,6 +257,82 @@ namespace Hafiz.Areas.Teacher.Controllers
                 TempData["ErrorMessage"] = message;
                 return BadRequest(new { success = false, message });
             }
+        }
+
+        /// <summary>
+        /// استرجاع سياق أوراد الطالب مباشرة من قاعدة البيانات:
+        /// بيانات الطالب، الخطة المعتمدة، أحدث أوراد أنجزها الطالب، وأوراد اليوم إن وجدت
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetStudentWirdContext(Guid studentId)
+        {
+            if (studentId == Guid.Empty)
+            {
+                return BadRequest(new { success = false, message = "معرف الطالب غير صالح." });
+            }
+
+            try
+            {
+                var result = await _studentWirdService.GetStudentWirdContextAsync(studentId);
+
+                if (result == null)
+                {
+                    return NotFound(
+                        new { success = false, message = "تعذر العثور على بيانات الطالب." }
+                    );
+                }
+
+                return Json(StudentWirdContextResponseDto.Ok(result));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error getting wird context for student {StudentId}",
+                    studentId
+                );
+                return Json(
+                    new { success = false, message = "حدث خطأ أثناء جلب بيانات الورد للطالب." }
+                );
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetClassStudentsForDrawer(Guid? classId)
+        {
+            if (
+                !classId.HasValue
+                && Guid.TryParse(Request.Cookies["selectedClassId"], out var parsedClassId)
+            )
+            {
+                classId = parsedClassId;
+            }
+
+            if (!classId.HasValue)
+                return BadRequest(new { success = false, message = "لم يتم تحديد حلقة." });
+
+            var students = await _studentService.GetStudentsByClassID(classId.Value);
+            var list = students
+                .Select(s =>
+                {
+                    var fn = s.StudentInfo?.FirstName ?? "";
+                    var sn = s.StudentInfo?.SecondName ?? "";
+                    var fullName = $"{fn} {sn}".Trim();
+                    var initials = (
+                        (fn.Length > 0 ? fn[0].ToString() : "")
+                        + (sn.Length > 0 ? sn[0].ToString() : "")
+                    ).ToUpper();
+                    return new
+                    {
+                        id = s.UserId,
+                        name = fullName,
+                        initials = initials,
+                        level = s.TajwidLevel.ToString(),
+                    };
+                })
+                .ToList();
+
+            return Json(new { success = true, data = list });
         }
 
         [HttpPost]

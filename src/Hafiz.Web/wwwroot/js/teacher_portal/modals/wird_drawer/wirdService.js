@@ -108,12 +108,12 @@ async function saveDrawerWirds(shouldClose = false) {
   const batchInput = document.getElementById('BatchPayloadJson');
   if (batchInput) batchInput.value = JSON.stringify(payload);
 
-  if (typeof saveDraftsToCache === 'function') {
-    saveDraftsToCache();
-  }
-
   const success = await sendWirdsPayloadToBackend(payload);
   if (success) {
+    // Invalidate student context cache so fresh data from DB is retrieved if needed
+    if (window.studentContextCache && window.studentContextCache[student.id]) {
+      delete window.studentContextCache[student.id];
+    }
     showDrawerToast(`✔️ تم حفظ أوراد الطالب (${student.name}) بنجاح!`, 'success');
     if (shouldClose && typeof closeWirdDrawer === 'function') {
       closeWirdDrawer();

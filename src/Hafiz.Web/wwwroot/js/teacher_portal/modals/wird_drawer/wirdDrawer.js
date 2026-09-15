@@ -52,7 +52,13 @@ function closeWirdModal() {
   closeWirdDrawer();
 }
 
-function openWirdModal(studentId, studentName) {
+async function openWirdModal(studentId, studentName) {
+  if (!window.classStudents || window.classStudents.length === 0) {
+    if (typeof initializeClassStudents === 'function') {
+      await initializeClassStudents();
+    }
+  }
+
   let index = window.classStudents ? window.classStudents.findIndex((s) => s.id === studentId) : -1;
 
   if (index === -1) {
@@ -116,19 +122,16 @@ function loadStudentIntoDrawer(index) {
     }
   }
 
-  // Auto-fetch student baseline routine plan in the background (NON-BLOCKING)
-  if (
-    typeof ensureStudentBaselineLoaded === 'function' &&
-    !student.isPlanLoaded
-  ) {
-    ensureStudentBaselineLoaded(student)
+  // Auto-fetch student complete database context (plan, last wirds, today wirds)
+  if (typeof ensureStudentContextLoaded === 'function' && !student.isContextLoaded) {
+    ensureStudentContextLoaded(student)
       .then(() => {
         // Only update fields if this student is still the currently selected one
         if (window.classStudents[window.selectedStudentIndex]?.id === student.id) {
           renderStudentWirdsFields(student);
         }
       })
-      .catch((err) => console.warn('Background plan load error:', err));
+      .catch((err) => console.warn('Background context load error:', err));
   }
 }
 
@@ -269,8 +272,8 @@ function setupDrawerKeyboardEvents() {
 
 // Initialize on DOM Ready
 document.addEventListener('DOMContentLoaded', () => {
-  if (typeof discoverStudentsFromPage === 'function') {
-    discoverStudentsFromPage();
+  if (typeof initializeClassStudents === 'function') {
+    initializeClassStudents();
   }
   setupDrawerKeyboardEvents();
 });

@@ -3,69 +3,119 @@
  * Wird Drawer - Quick Actions & Auto-Calculation Helpers
  * ============================================================================
  * Handles applying approved student baseline routine plans, automatically
- * continuing Quran Ayahs from previous wirds, and opening the plan modal.
+ * continuing Quran Ayahs from previous wirds in the database, and opening plan modal.
  * ============================================================================
  */
 
 /**
- * Quick Action: 📋 استكمال من الأمس
+ * Computes and updates the Quran range for a single wird type
+ * @param {object} student - Selected student object
+ * @param {string} typeKey - Wird type key ('memorization', 'recentRevision', 'oldRevision', 'recitation')
+ * @param {Array} surahsList - List of Quran surahs from QURAN_SURAHS
+ * @returns {Promise<boolean>} True if calculated successfully
  */
-function autoComputeNextWirds() {
+async function autoComputeSingleWird(student, typeKey, surahsList) {
+  const wird = student?.wirds?.[typeKey];
+  if (!wird || !wird.active) return false;
+
+  const inputToAyah = parseInt(
+    document.getElementById(`toAyah-${typeKey}`)?.value,
+    10,
+  );
+  const inputToSurah = parseInt(
+    document.getElementById(`toSurah-${typeKey}`)?.value,
+    10,
+  );
+
+  let lastSurah = 1;
+  let lastAyah = 0;
+
+  // 1. Check if input was already populated by the user (clicked auto-compute again)
+  if (!isNaN(inputToAyah) && inputToAyah > 0 && !isNaN(inputToSurah) && inputToSurah > 0) {
+    lastSurah = inputToSurah;
+    lastAyah = inputToAyah;
+  } else if (student.lastWirds?.[typeKey]?.toSurah) {
+    // 2. Otherwise, use the last completed wird recorded in the database
+    lastSurah = student.lastWirds[typeKey].toSurah;
+    lastAyah = student.lastWirds[typeKey].toAyah || 0;
+  } else if (wird.fromSurah && wird.fromAyah) {
+    // 3. Fallback: use existing start position if already set
+    lastSurah = wird.fromSurah;
+    lastAyah = Math.max(0, parseInt(wird.fromAyah, 10) - 1);
+  }
+
+  // Next starting position (advance by 1 ayah)
+  let nextSurahId = lastSurah;
+  let nextAyah = lastAyah + 1;
+
+  // Check if ayah advances past the end of the current surah
+  const surahData = surahsList.find((s) => s.id === nextSurahId);
+  if (surahData && nextAyah > surahData.ayahs) {
+    if (nextSurahId < 114) {
+      nextSurahId++;
+      nextAyah = 1;
+    } else {
+      nextAyah = surahData.ayahs;
+    }
+  }
+
+  // Resolve amount and amountUnit
+  const inputAmount = parseFloat(document.getElementById(`amount-${typeKey}`)?.value);
+  const fallbackAmount = wird.amount || (typeKey === 'recentRevision' ? 5.0 : 1.0);
+  const amount = !isNaN(inputAmount) && inputAmount > 0 ? inputAmount : fallbackAmount;
+
+  const defaultConfigUnit = window.WIRD_TYPE_CONFIG?.[typeKey]?.defaultUnit ?? 0;
+  const amountUnit = wird.amountUnit !== undefined ? wird.amountUnit : defaultConfigUnit;
+
+  // Compute target destination range
+  const target = await computeTargetRange(
+    nextSurahId,
+    nextAyah,
+    amount,
+    amountUnit,
+  );
+
+  if (!target) return false;
+
+  wird.fromSurah = nextSurahId;
+  wird.fromAyah = nextAyah.toString();
+  wird.toSurah = target.toSurah;
+  wird.toAyah = target.toAyah;
+
+  return true;
+}
+
+/**
+ * Quick Action: 📋 استكمال من الأمس
+ * Automatically computes next ranges for all active wirds based on previous database records
+ */
+async function autoComputeNextWirds() {
   const student = window.classStudents[window.selectedStudentIndex];
-  if (!student) return;
+  if (!student || !student.wirds) return;
 
   const surahsList = typeof QURAN_SURAHS !== 'undefined' ? QURAN_SURAHS : [];
+  const wirdKeys = Object.keys(student.wirds);
 
-  // Memorization auto-continue
-  const mem = student.wirds.memorization;
-  if (mem && mem.active) {
-    let currentSurahId =
-      parseInt(document.getElementById('toSurah-memorization')?.value, 10) ||
-      mem.toSurah ||
-      1;
-    let currentAyah =
-      parseInt(document.getElementById('toAyah-memorization')?.value, 10) ||
-      mem.toAyah ||
-      1;
+  let anyComputed = false;
 
-    const surahData = surahsList.find((s) => s.id === currentSurahId);
-    let nextSurahId = currentSurahId;
-    let nextAyah = currentAyah + 1;
-
-    if (surahData && nextAyah > surahData.ayahs) {
-      nextSurahId = Math.min(114, currentSurahId + 1);
-      nextAyah = 1;
+  for (const typeKey of wirdKeys) {
+    const success = await autoComputeSingleWird(student, typeKey, surahsList);
+    if (success) {
+      anyComputed = true;
     }
-
-    const nextSurahData = surahsList.find((s) => s.id === nextSurahId);
-    const amount = mem.amount || 1.0;
-    const toAyah = Math.min(
-      nextSurahData?.ayahs || 50,
-      nextAyah + Math.round(amount * 15),
-    );
-
-    mem.fromSurah = nextSurahId;
-    mem.fromAyah = nextAyah.toString();
-    mem.toSurah = nextSurahId;
-    mem.toAyah = toAyah;
   }
 
-  // Recent revision auto-continue
-  const rev = student.wirds.recentRevision;
-  if (rev && rev.active) {
-    let curToAyah =
-      parseInt(document.getElementById('toAyah-recentRevision')?.value, 10) ||
-      rev.toAyah ||
-      1;
-    rev.fromAyah = (curToAyah + 1).toString();
-    rev.toAyah = curToAyah + Math.round((rev.amount || 5) * 15);
+  if (typeof renderStudentWirdsFields === 'function') {
+    renderStudentWirdsFields(student);
   }
 
-  if (typeof loadStudentIntoDrawer === 'function') {
-    loadStudentIntoDrawer(window.selectedStudentIndex);
-  }
   if (typeof showDrawerToast === 'function') {
-    showDrawerToast('📋 تم استكمال نطاق الآيات تلقائياً بنجاح', 'info');
+    showDrawerToast(
+      anyComputed
+        ? '📋 تم استكمال نطاق الآيات من قاعدة البيانات بنجاح'
+        : '⚠️ لا توجد أوراد مفعلة أو بيانات سابقة للاستكمال',
+      anyComputed ? 'info' : 'warning',
+    );
   }
 }
 
@@ -78,7 +128,6 @@ function showBaselinePresetInfo() {
   if (!student) return;
   if (typeof openStudentPlanModal === 'function') {
     openStudentPlanModal(student.id, student.name, student.level);
-
     closeWirdDrawer();
   } else if (typeof showDrawerToast === 'function') {
     showDrawerToast('جاري تجهيز نافذة الخطة...', 'info');

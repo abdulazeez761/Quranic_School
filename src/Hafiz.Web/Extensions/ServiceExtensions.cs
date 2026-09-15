@@ -5,6 +5,8 @@ using System.Security.Claims;
 using System.Threading.RateLimiting;
 using System.Threading.Tasks;
 using Hafiz.Application;
+using Hafiz.Application.Interfaces;
+using Hafiz.Web.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -21,6 +23,9 @@ namespace Hafiz.Web.Extensions
             string environmentName
         )
         {
+            services.AddHttpContextAccessor();
+            services.AddScoped<IUserTimeProvider, UserTimeProvider>();
+
             services
                 .AddControllersWithViews(options =>
                 {

@@ -20,573 +20,652 @@
                 <i class='bx bx-user'></i>
             </div>
             <div class="drawer-student-meta">
-                <h3 id="drawerStudentName">@(System.Threading.Thread.CurrentThread.CurrentCulture.Name.StartsWith("ar") ? "اسم الطالب" : "Student Name")</h3>
-                <span class="drawer-student-subtitle" id="drawerStudentIndex">
-                    <span id="drawerStudentCounter">طالب 1 من 1</span>
-                    <span id="drawerStudentLevelTag" style="margin-right: 6px;"></span>
-                </span>
-            </div>
-        </div>
-
-        <button type="button" class="drawer-close-btn" onclick="closeWirdDrawer()" title="@Localizer["Cancel"]">
-            <i class='bx bx-x'></i>
-        </button>
-    </div>
-
-    <!-- Quick 1-Click Action Buttons -->
-    <div class="drawer-quick-actions">
-        <button type="button" class="btn btn-outline" onclick="autoComputeNextWirds()"
-                title="استكمال نطاق الآيات تلقائياً من حيث انتهى الطالب">
-            <i class='bx bx-sync' style="color: #0284c7;"></i> 📋 استكمال من الأمس
-        </button>
-        <button type="button" class="btn btn-outline" onclick="showBaselinePresetInfo()"
-                style="color: var(--text-medium);" title="معلومات وتخصيص الخطة">
-            <i class='bx bx-slider-alt'></i> ضبط الخطة ⚙️
-        </button>
-    </div>
-
-    <!-- Segmented Navigation for Wird Types -->
-    <div class="segmented-nav" role="tablist" aria-label="أقسام الأوراد">
-        <button type="button" class="segmented-btn active" data-tab="all" onclick="setWirdFilterTab('all', this)">الأوراد الأربعة</button>
-        <button type="button" class="segmented-btn" data-tab="memorization" onclick="setWirdFilterTab('memorization', this)">حفظ</button>
-        <button type="button" class="segmented-btn" data-tab="recentRevision" onclick="setWirdFilterTab('recentRevision', this)">قريب</button>
-        <button type="button" class="segmented-btn" data-tab="oldRevision" onclick="setWirdFilterTab('oldRevision', this)">بعيد</button>
-        <button type="button" class="segmented-btn" data-tab="recitation" onclick="setWirdFilterTab('recitation', this)">تجويد</button>
-    </div>
-
-    <!-- Form container -->
-    <form id="wirdAssignmentForm" asp-action="AssignWird" asp-controller="Student" method="post" style="display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden;">
-        <input type="hidden" id="StudentId" asp-for="StudentId" />
-        <input type="hidden" id="ClassId" asp-for="ClassId" value="@Context.Request.Cookies["selectedClassId"]" />
-        <input type="hidden" id="BatchPayloadJson" name="BatchPayloadJson" />
-
-        <!-- Drawer Body with the 4 Concurrent Wird Cards -->
-        <div class="drawer-body" id="drawerWirdsList">
-
-            <!-- Card 1: حفظ جديد (Memorization) -->
-            <div class="drawer-wird-box type-memorization" id="wbox-memorization" data-type="memorization">
-                <div class="drawer-wird-header">
-                    <div class="drawer-wird-title" style="color: #2563eb;">
-                        <i class='bx bx-book-open' style="font-size: 1.25rem;"></i>
-                        <span>حفظ جديد (الورد اليومي)</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span class="wird-status-label" id="wstatus-memorization" style="font-size: 0.74rem; font-weight: 700; color: #16a34a;">مفعل</span>
-                        <label class="switch" style="transform: scale(0.8); transform-origin: left center;">
-                            <input type="checkbox" id="wtoggle-memorization" checked onchange="toggleWirdCard('memorization', this.checked)">
-                            <span class="switch-slider"></span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="drawer-fields-grid">
-                    <div class="field-item">
-                        <label class="compact-label" for="amount-memorization">المقدار المحدد:</label>
-                        <input type="number" step="any" min="0.1" class="form-control form-control-prominent"
-                               id="amount-memorization" value="" placeholder="المقدار"
-                               oninput="onAmountChanged('memorization', this.value)">
-                    </div>
-                    <div class="field-item">
-                        <label class="compact-label">الوحدة:</label>
-                        <div class="unit-radio-group" id="unitGroup-memorization" role="radiogroup">
-                            <label class="unit-radio-option is-selected" id="opt-memorization-0">
-                                <input type="radio" name="unit-memorization" value="0" checked onchange="onUnitChanged('memorization', 0)">
-                                <span class="unit-radio-circle"></span>
-                                <span>صفحات</span>
-                            </label>
-                            <label class="unit-radio-option" id="opt-memorization-1">
-                                <input type="radio" name="unit-memorization" value="1" onchange="onUnitChanged('memorization', 1)">
-                                <span class="unit-radio-circle"></span>
-                                <span>آيات</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Equivalent Pages (visible only when unit == 1 / Ayahs) -->
-                <div class="equivalent-pages-box" id="equivGroup-memorization" style="display: none; margin: 8px 0; padding: 8px 12px; background: #eff6ff; border: 1px dashed #bfdbfe; border-radius: var(--radius-md);">
-                    <label class="compact-label" style="margin-bottom: 4px; color: #1d4ed8;">ما يعادله بالصفحات تقريباً:</label>
-                    <div class="equivalent-pages-chips" style="margin-top: 4px;">
-                        <button type="button" class="chip" data-val="0.2" onclick="setEquivalentPageChip('memorization', 0.2)">0.2</button>
-                        <button type="button" class="chip" data-val="0.25" onclick="setEquivalentPageChip('memorization', 0.25)">¼</button>
-                        <button type="button" class="chip is-active" data-val="0.5" onclick="setEquivalentPageChip('memorization', 0.5)">½</button>
-                        <button type="button" class="chip" data-val="0.75" onclick="setEquivalentPageChip('memorization', 0.75)">¾</button>
-                        <button type="button" class="chip" data-val="1" onclick="setEquivalentPageChip('memorization', 1)">1</button>
-                        <button type="button" class="chip" data-val="1.5" onclick="setEquivalentPageChip('memorization', 1.5)">1.5</button>
-                        <button type="button" class="chip" data-val="2" onclick="setEquivalentPageChip('memorization', 2)">2</button>
-                    </div>
-                </div>
-
-                <!-- Quran Range -->
-                <div class="drawer-range-grid">
-                    <div class="range-box">
-                        <label class="compact-label">من سورة وآية:</label>
-                        <div style="display: flex; gap: 6px;">
-                            <select class="form-control surah-select" id="fromSurah-memorization">
-                                @await Html.PartialAsync("_SurahOptions")
-                            </select>
-                            <input type="text" class="form-control ayah-input" id="fromAyah-memorization" placeholder="الآية" value="">
-                        </div>
-                    </div>
-                    <div class="range-box">
-                        <label class="compact-label">إلى سورة وآية:</label>
-                        <div style="display: flex; gap: 6px;">
-                            <select class="form-control surah-select" id="toSurah-memorization">
-                                @await Html.PartialAsync("_SurahOptions")
-                            </select>
-                            <input type="number" class="form-control ayah-input" id="toAyah-memorization" placeholder="الآية" value="">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Touch Rating Bar -->
-                <div class="wird-rating-group" id="ratingGroup-memorization">
-                    <div class="wird-rating-header">
-                        <div class="wird-rating-title">
-                            <i class='bx bxs-award'></i>
-                            <span>تقييم تسميع الورد وإتقانه:</span>
-                        </div>
-                        <div class="wird-rating-header-actions">
-                            <span class="wird-rating-badge rate-none" id="ratingBadge-memorization">لم يُسمّع / لم يُقيّم بعد</span>
-                            <button type="button" class="btn-rating-clear" id="ratingClear-memorization" style="display: none;" onclick="clearWirdRating('memorization')" title="إلغاء التقييم">
-                                <i class='bx bx-x'></i> مسح
-                            </button>
-                        </div>
-                    </div>
-                    <div class="wird-rating-options-grid" role="radiogroup">
-                        <button type="button" class="rating-pill-btn rate-excellent" data-grade="excellent" data-status="5" onclick="setRatingGrade('memorization', 'excellent', 5)">
-                            <span class="rating-icon"><i class='bx bxs-star'></i></span>
-                            <span class="rating-text">ممتاز</span>
-                            <span class="rating-hint">إتقان تام</span>
-                        </button>
-                        <button type="button" class="rating-pill-btn rate-very_good" data-grade="very_good" data-status="4" onclick="setRatingGrade('memorization', 'very_good', 4)">
-                            <span class="rating-icon"><i class='bx bxs-like'></i></span>
-                            <span class="rating-text">جيد جداً</span>
-                            <span class="rating-hint">أخطاء يسيرة</span>
-                        </button>
-                        <button type="button" class="rating-pill-btn rate-good" data-grade="good" data-status="3" onclick="setRatingGrade('memorization', 'good', 3)">
-                            <span class="rating-icon"><i class='bx bx-check-circle'></i></span>
-                            <span class="rating-text">جيد</span>
-                            <span class="rating-hint">يحتاج ضبطاً</span>
-                        </button>
-                        <button type="button" class="rating-pill-btn rate-acceptable" data-grade="acceptable" data-status="2" onclick="setRatingGrade('memorization', 'acceptable', 2)">
-                            <span class="rating-icon"><i class='bx bx-minus-circle'></i></span>
-                            <span class="rating-text">مقبول</span>
-                            <span class="rating-hint">تنبيهات</span>
-                        </button>
-                        <button type="button" class="rating-pill-btn rate-weak" data-grade="weak" data-status="1" onclick="setRatingGrade('memorization', 'weak', 1)">
-                            <span class="rating-icon"><i class='bx bx-error-circle'></i></span>
-                            <span class="rating-text">ضعيف</span>
-                            <span class="rating-hint">إعادة</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Note & Upcoming -->
-                <div class="drawer-bottom-row">
-                    <div style="flex: 1;">
-                        <input type="text" class="form-control" id="note-memorization" placeholder="ملاحظة أو توجيه للطالب (اختياري)..." style="font-size: 0.8rem;">
-                    </div>
-                    <div class="upcoming-badge-toggle">
-                        <span style="font-size: 0.72rem; color: #6b21a8; font-weight: 700; white-space: nowrap;">
-                            <i class='bx bx-calendar-star'></i> ورد قادم
-                        </span>
-                        <label class="switch" style="transform: scale(0.65); transform-origin: left center;">
-                            <input type="checkbox" id="isUpcoming-memorization" onchange="toggleUpcomingWird('memorization', this.checked)">
-                            <span class="switch-slider"></span>
-                        </label>
-                    </div>
+                <h3 id="drawerStudentName">@(System.Threading.Thread.CurrentThread.CurrentCulture.Name.StartsWith("ar")
+                                                            ? "اسم الطالب" : "Student Name")</h3>
+                    <span class="drawer-student-subtitle" id="drawerStudentIndex">
+                        <span id="drawerStudentCounter">طالب 1 من 1</span>
+                        <span id="drawerStudentLevelTag" style="margin-right: 6px;"></span>
+                    </span>
                 </div>
             </div>
 
-            <!-- Card 2: مراجعة صغرى - ورد قريب (Recent Revision) -->
-            <div class="drawer-wird-box type-recentRevision" id="wbox-recentRevision" data-type="recentRevision">
-                <div class="drawer-wird-header">
-                    <div class="drawer-wird-title" style="color: #059669;">
-                        <i class='bx bx-check-double' style="font-size: 1.25rem;"></i>
-                        <span>مراجعة صغرى (ورد قريب)</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span class="wird-status-label" id="wstatus-recentRevision" style="font-size: 0.74rem; font-weight: 700; color: #16a34a;">مفعل</span>
-                        <label class="switch" style="transform: scale(0.8); transform-origin: left center;">
-                            <input type="checkbox" id="wtoggle-recentRevision" checked onchange="toggleWirdCard('recentRevision', this.checked)">
-                            <span class="switch-slider"></span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="drawer-fields-grid">
-                    <div class="field-item">
-                        <label class="compact-label" for="amount-recentRevision">المقدار المحدد:</label>
-                        <input type="number" step="any" min="0.1" class="form-control form-control-prominent"
-                               id="amount-recentRevision" value="" placeholder="المقدار"
-                               oninput="onAmountChanged('recentRevision', this.value)">
-                    </div>
-                    <div class="field-item">
-                        <label class="compact-label">الوحدة:</label>
-                        <div class="unit-radio-group" id="unitGroup-recentRevision" role="radiogroup">
-                            <label class="unit-radio-option is-selected" id="opt-recentRevision-0">
-                                <input type="radio" name="unit-recentRevision" value="0" checked onchange="onUnitChanged('recentRevision', 0)">
-                                <span class="unit-radio-circle"></span>
-                                <span>صفحات</span>
-                            </label>
-                            <label class="unit-radio-option" id="opt-recentRevision-2">
-                                <input type="radio" name="unit-recentRevision" value="2" onchange="onUnitChanged('recentRevision', 2)">
-                                <span class="unit-radio-circle"></span>
-                                <span>أجزاء</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="drawer-range-grid">
-                    <div class="range-box">
-                        <label class="compact-label">من سورة وآية:</label>
-                        <div style="display: flex; gap: 6px;">
-                            <select class="form-control surah-select" id="fromSurah-recentRevision">
-                                @await Html.PartialAsync("_SurahOptions")
-                            </select>
-                            <input type="text" class="form-control ayah-input" id="fromAyah-recentRevision" placeholder="الآية" value="">
-                        </div>
-                    </div>
-                    <div class="range-box">
-                        <label class="compact-label">إلى سورة وآية:</label>
-                        <div style="display: flex; gap: 6px;">
-                            <select class="form-control surah-select" id="toSurah-recentRevision">
-                                @await Html.PartialAsync("_SurahOptions")
-                            </select>
-                            <input type="number" class="form-control ayah-input" id="toAyah-recentRevision" placeholder="الآية" value="">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Touch Rating Bar -->
-                <div class="wird-rating-group" id="ratingGroup-recentRevision">
-                    <div class="wird-rating-header">
-                        <div class="wird-rating-title">
-                            <i class='bx bxs-award'></i>
-                            <span>تقييم تسميع الورد وإتقانه:</span>
-                        </div>
-                        <div class="wird-rating-header-actions">
-                            <span class="wird-rating-badge rate-none" id="ratingBadge-recentRevision">لم يُسمّع / لم يُقيّم بعد</span>
-                            <button type="button" class="btn-rating-clear" id="ratingClear-recentRevision" style="display: none;" onclick="clearWirdRating('recentRevision')" title="إلغاء التقييم">
-                                <i class='bx bx-x'></i> مسح
-                            </button>
-                        </div>
-                    </div>
-                    <div class="wird-rating-options-grid" role="radiogroup">
-                        <button type="button" class="rating-pill-btn rate-excellent" data-grade="excellent" data-status="5" onclick="setRatingGrade('recentRevision', 'excellent', 5)">
-                            <span class="rating-icon"><i class='bx bxs-star'></i></span>
-                            <span class="rating-text">ممتاز</span>
-                            <span class="rating-hint">إتقان تام</span>
-                        </button>
-                        <button type="button" class="rating-pill-btn rate-very_good" data-grade="very_good" data-status="4" onclick="setRatingGrade('recentRevision', 'very_good', 4)">
-                            <span class="rating-icon"><i class='bx bxs-like'></i></span>
-                            <span class="rating-text">جيد جداً</span>
-                            <span class="rating-hint">أخطاء يسيرة</span>
-                        </button>
-                        <button type="button" class="rating-pill-btn rate-good" data-grade="good" data-status="3" onclick="setRatingGrade('recentRevision', 'good', 3)">
-                            <span class="rating-icon"><i class='bx bx-check-circle'></i></span>
-                            <span class="rating-text">جيد</span>
-                            <span class="rating-hint">يحتاج ضبطاً</span>
-                        </button>
-                        <button type="button" class="rating-pill-btn rate-acceptable" data-grade="acceptable" data-status="2" onclick="setRatingGrade('recentRevision', 'acceptable', 2)">
-                            <span class="rating-icon"><i class='bx bx-minus-circle'></i></span>
-                            <span class="rating-text">مقبول</span>
-                            <span class="rating-hint">تنبيهات</span>
-                        </button>
-                        <button type="button" class="rating-pill-btn rate-weak" data-grade="weak" data-status="1" onclick="setRatingGrade('recentRevision', 'weak', 1)">
-                            <span class="rating-icon"><i class='bx bx-error-circle'></i></span>
-                            <span class="rating-text">ضعيف</span>
-                            <span class="rating-hint">إعادة</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="drawer-bottom-row">
-                    <div style="flex: 1;">
-                        <input type="text" class="form-control" id="note-recentRevision" placeholder="ملاحظة أو توجيه للطالب (اختياري)..." style="font-size: 0.8rem;">
-                    </div>
-                    <div class="upcoming-badge-toggle">
-                        <span style="font-size: 0.72rem; color: #6b21a8; font-weight: 700; white-space: nowrap;">
-                            <i class='bx bx-calendar-star'></i> ورد قادم
-                        </span>
-                        <label class="switch" style="transform: scale(0.65); transform-origin: left center;">
-                            <input type="checkbox" id="isUpcoming-recentRevision" onchange="toggleUpcomingWird('recentRevision', this.checked)">
-                            <span class="switch-slider"></span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 3: مراجعة كبرى - ورد بعيد (Old Revision) -->
-            <div class="drawer-wird-box type-oldRevision" id="wbox-oldRevision" data-type="oldRevision">
-                <div class="drawer-wird-header">
-                    <div class="drawer-wird-title" style="color: #d97706;">
-                        <i class='bx bx-archive' style="font-size: 1.25rem;"></i>
-                        <span>مراجعة كبرى (ورد بعيد وتراكمي)</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span class="wird-status-label" id="wstatus-oldRevision" style="font-size: 0.74rem; font-weight: 700; color: #16a34a;">مفعل</span>
-                        <label class="switch" style="transform: scale(0.8); transform-origin: left center;">
-                            <input type="checkbox" id="wtoggle-oldRevision" checked onchange="toggleWirdCard('oldRevision', this.checked)">
-                            <span class="switch-slider"></span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="drawer-fields-grid">
-                    <div class="field-item">
-                        <label class="compact-label" for="amount-oldRevision">المقدار المحدد:</label>
-                        <input type="number" step="any" min="0.1" class="form-control form-control-prominent"
-                               id="amount-oldRevision" value="" placeholder="المقدار"
-                               oninput="onAmountChanged('oldRevision', this.value)">
-                    </div>
-                    <div class="field-item">
-                        <label class="compact-label">الوحدة:</label>
-                        <div class="unit-radio-group" id="unitGroup-oldRevision" role="radiogroup">
-                            <label class="unit-radio-option" id="opt-oldRevision-0">
-                                <input type="radio" name="unit-oldRevision" value="0" onchange="onUnitChanged('oldRevision', 0)">
-                                <span class="unit-radio-circle"></span>
-                                <span>صفحات</span>
-                            </label>
-                            <label class="unit-radio-option is-selected" id="opt-oldRevision-2">
-                                <input type="radio" name="unit-oldRevision" value="2" checked onchange="onUnitChanged('oldRevision', 2)">
-                                <span class="unit-radio-circle"></span>
-                                <span>أجزاء</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="drawer-range-grid">
-                    <div class="range-box">
-                        <label class="compact-label">من سورة وآية:</label>
-                        <div style="display: flex; gap: 6px;">
-                            <select class="form-control surah-select" id="fromSurah-oldRevision">
-                                @await Html.PartialAsync("_SurahOptions")
-                            </select>
-                            <input type="text" class="form-control ayah-input" id="fromAyah-oldRevision" placeholder="الآية" value="">
-                        </div>
-                    </div>
-                    <div class="range-box">
-                        <label class="compact-label">إلى سورة وآية:</label>
-                        <div style="display: flex; gap: 6px;">
-                            <select class="form-control surah-select" id="toSurah-oldRevision">
-                                @await Html.PartialAsync("_SurahOptions")
-                            </select>
-                            <input type="number" class="form-control ayah-input" id="toAyah-oldRevision" placeholder="الآية" value="">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Touch Rating Bar -->
-                <div class="wird-rating-group" id="ratingGroup-oldRevision">
-                    <div class="wird-rating-header">
-                        <div class="wird-rating-title">
-                            <i class='bx bxs-award'></i>
-                            <span>تقييم تسميع الورد وإتقانه:</span>
-                        </div>
-                        <div class="wird-rating-header-actions">
-                            <span class="wird-rating-badge rate-none" id="ratingBadge-oldRevision">لم يُسمّع / لم يُقيّم بعد</span>
-                            <button type="button" class="btn-rating-clear" id="ratingClear-oldRevision" style="display: none;" onclick="clearWirdRating('oldRevision')" title="إلغاء التقييم">
-                                <i class='bx bx-x'></i> مسح
-                            </button>
-                        </div>
-                    </div>
-                    <div class="wird-rating-options-grid" role="radiogroup">
-                        <button type="button" class="rating-pill-btn rate-excellent" data-grade="excellent" data-status="5" onclick="setRatingGrade('oldRevision', 'excellent', 5)">
-                            <span class="rating-icon"><i class='bx bxs-star'></i></span>
-                            <span class="rating-text">ممتاز</span>
-                            <span class="rating-hint">إتقان تام</span>
-                        </button>
-                        <button type="button" class="rating-pill-btn rate-very_good" data-grade="very_good" data-status="4" onclick="setRatingGrade('oldRevision', 'very_good', 4)">
-                            <span class="rating-icon"><i class='bx bxs-like'></i></span>
-                            <span class="rating-text">جيد جداً</span>
-                            <span class="rating-hint">أخطاء يسيرة</span>
-                        </button>
-                        <button type="button" class="rating-pill-btn rate-good" data-grade="good" data-status="3" onclick="setRatingGrade('oldRevision', 'good', 3)">
-                            <span class="rating-icon"><i class='bx bx-check-circle'></i></span>
-                            <span class="rating-text">جيد</span>
-                            <span class="rating-hint">يحتاج ضبطاً</span>
-                        </button>
-                        <button type="button" class="rating-pill-btn rate-acceptable" data-grade="acceptable" data-status="2" onclick="setRatingGrade('oldRevision', 'acceptable', 2)">
-                            <span class="rating-icon"><i class='bx bx-minus-circle'></i></span>
-                            <span class="rating-text">مقبول</span>
-                            <span class="rating-hint">تنبيهات</span>
-                        </button>
-                        <button type="button" class="rating-pill-btn rate-weak" data-grade="weak" data-status="1" onclick="setRatingGrade('oldRevision', 'weak', 1)">
-                            <span class="rating-icon"><i class='bx bx-error-circle'></i></span>
-                            <span class="rating-text">ضعيف</span>
-                            <span class="rating-hint">إعادة</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="drawer-bottom-row">
-                    <div style="flex: 1;">
-                        <input type="text" class="form-control" id="note-oldRevision" placeholder="ملاحظة أو توجيه للطالب (اختياري)..." style="font-size: 0.8rem;">
-                    </div>
-                    <div class="upcoming-badge-toggle">
-                        <span style="font-size: 0.72rem; color: #6b21a8; font-weight: 700; white-space: nowrap;">
-                            <i class='bx bx-calendar-star'></i> ورد قادم
-                        </span>
-                        <label class="switch" style="transform: scale(0.65); transform-origin: left center;">
-                            <input type="checkbox" id="isUpcoming-oldRevision" onchange="toggleUpcomingWird('oldRevision', this.checked)">
-                            <span class="switch-slider"></span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 4: تجويد وإتقان التلاوة (Tajwid) -->
-            <div class="drawer-wird-box type-recitation" id="wbox-recitation" data-type="recitation">
-                <div class="drawer-wird-header">
-                    <div class="drawer-wird-title" style="color: #7c3aed;">
-                        <i class='bx bx-microphone' style="font-size: 1.25rem;"></i>
-                        <span>تجويد وإتقان التلاوة</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span class="wird-status-label" id="wstatus-recitation" style="font-size: 0.74rem; font-weight: 700; color: #16a34a;">مفعل</span>
-                        <label class="switch" style="transform: scale(0.8); transform-origin: left center;">
-                            <input type="checkbox" id="wtoggle-recitation" checked onchange="toggleWirdCard('recitation', this.checked)">
-                            <span class="switch-slider"></span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="drawer-fields-grid">
-                    <div class="field-item">
-                        <label class="compact-label" for="amount-recitation">المقدار المحدد:</label>
-                        <input type="number" step="any" min="0.1" class="form-control form-control-prominent"
-                               id="amount-recitation" value="" placeholder="المقدار"
-                               oninput="onAmountChanged('recitation', this.value)">
-                    </div>
-                    <div class="field-item">
-                        <label class="compact-label">الوحدة:</label>
-                        <div class="unit-radio-group" id="unitGroup-recitation" role="radiogroup">
-                            <label class="unit-radio-option is-selected" id="opt-recitation-0">
-                                <input type="radio" name="unit-recitation" value="0" checked onchange="onUnitChanged('recitation', 0)">
-                                <span class="unit-radio-circle"></span>
-                                <span>صفحات</span>
-                            </label>
-                            <label class="unit-radio-option" id="opt-recitation-2">
-                                <input type="radio" name="unit-recitation" value="2" onchange="onUnitChanged('recitation', 2)">
-                                <span class="unit-radio-circle"></span>
-                                <span>أجزاء</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="drawer-range-grid">
-                    <div class="range-box">
-                        <label class="compact-label">من سورة وآية:</label>
-                        <div style="display: flex; gap: 6px;">
-                            <select class="form-control surah-select" id="fromSurah-recitation">
-                                @await Html.PartialAsync("_SurahOptions")
-                            </select>
-                            <input type="text" class="form-control ayah-input" id="fromAyah-recitation" placeholder="الآية" value="">
-                        </div>
-                    </div>
-                    <div class="range-box">
-                        <label class="compact-label">إلى سورة وآية:</label>
-                        <div style="display: flex; gap: 6px;">
-                            <select class="form-control surah-select" id="toSurah-recitation">
-                                @await Html.PartialAsync("_SurahOptions")
-                            </select>
-                            <input type="number" class="form-control ayah-input" id="toAyah-recitation" placeholder="الآية" value="">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Touch Rating Bar -->
-                <div class="wird-rating-group" id="ratingGroup-recitation">
-                    <div class="wird-rating-header">
-                        <div class="wird-rating-title">
-                            <i class='bx bxs-award'></i>
-                            <span>تقييم تسميع الورد وإتقانه:</span>
-                        </div>
-                        <div class="wird-rating-header-actions">
-                            <span class="wird-rating-badge rate-none" id="ratingBadge-recitation">لم يُسمّع / لم يُقيّم بعد</span>
-                            <button type="button" class="btn-rating-clear" id="ratingClear-recitation" style="display: none;" onclick="clearWirdRating('recitation')" title="إلغاء التقييم">
-                                <i class='bx bx-x'></i> مسح
-                            </button>
-                        </div>
-                    </div>
-                    <div class="wird-rating-options-grid" role="radiogroup">
-                        <button type="button" class="rating-pill-btn rate-excellent" data-grade="excellent" data-status="5" onclick="setRatingGrade('recitation', 'excellent', 5)">
-                            <span class="rating-icon"><i class='bx bxs-star'></i></span>
-                            <span class="rating-text">ممتاز</span>
-                            <span class="rating-hint">إتقان تام</span>
-                        </button>
-                        <button type="button" class="rating-pill-btn rate-very_good" data-grade="very_good" data-status="4" onclick="setRatingGrade('recitation', 'very_good', 4)">
-                            <span class="rating-icon"><i class='bx bxs-like'></i></span>
-                            <span class="rating-text">جيد جداً</span>
-                            <span class="rating-hint">أخطاء يسيرة</span>
-                        </button>
-                        <button type="button" class="rating-pill-btn rate-good" data-grade="good" data-status="3" onclick="setRatingGrade('recitation', 'good', 3)">
-                            <span class="rating-icon"><i class='bx bx-check-circle'></i></span>
-                            <span class="rating-text">جيد</span>
-                            <span class="rating-hint">يحتاج ضبطاً</span>
-                        </button>
-                        <button type="button" class="rating-pill-btn rate-acceptable" data-grade="acceptable" data-status="2" onclick="setRatingGrade('recitation', 'acceptable', 2)">
-                            <span class="rating-icon"><i class='bx bx-minus-circle'></i></span>
-                            <span class="rating-text">مقبول</span>
-                            <span class="rating-hint">تنبيهات</span>
-                        </button>
-                        <button type="button" class="rating-pill-btn rate-weak" data-grade="weak" data-status="1" onclick="setRatingGrade('recitation', 'weak', 1)">
-                            <span class="rating-icon"><i class='bx bx-error-circle'></i></span>
-                            <span class="rating-text">ضعيف</span>
-                            <span class="rating-hint">إعادة</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="drawer-bottom-row">
-                    <div style="flex: 1;">
-                        <input type="text" class="form-control" id="note-recitation" placeholder="ملاحظة أو توجيه للطالب (اختياري)..." style="font-size: 0.8rem;">
-                    </div>
-                    <div class="upcoming-badge-toggle">
-                        <span style="font-size: 0.72rem; color: #6b21a8; font-weight: 700; white-space: nowrap;">
-                            <i class='bx bx-calendar-star'></i> ورد قادم
-                        </span>
-                        <label class="switch" style="transform: scale(0.65); transform-origin: left center;">
-                            <input type="checkbox" id="isUpcoming-recitation" onchange="toggleUpcomingWird('recitation', this.checked)">
-                            <span class="switch-slider"></span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Sticky Drawer Footer Stepper -->
-        <div class="drawer-footer">
-            <button type="button" class="btn btn-outline drawer-prev-btn" id="drawerPrevBtn" onclick="prevStudent()"
-                    title="الانتقال للطالب السابق مع حفظ مسودة الطالب الحالي">
-                <i class='bx bx-chevron-right'></i> السابق
-            </button>
-            <button type="button" class="btn btn-outline drawer-save-btn" id="drawerSaveBtn"
-                    onclick="saveDrawerWirds(true)" title="حفظ أوراد هذا الطالب فقط">
-                <i class='bx bx-check'></i> حفظ فقط
-            </button>
-            <button type="button" class="btn btn-primary drawer-save-next-btn" id="drawerSaveNextBtn"
-                    onclick="saveAndNextStudent()" title="حفظ والانتقال الفوري للطالب التالي">
-                <span id="drawerNextBtnText">حفظ والتالي</span> <i class='bx bx-chevron-left'></i>
+            <button type="button" class="drawer-close-btn" onclick="closeWirdDrawer()" title="@Localizer["Cancel"]">
+                <i class='bx bx-x'></i>
             </button>
         </div>
-    </form>
-</div>
 
-<!-- Toast Container for instant notifications -->
-<div class="toast-container" id="drawerToastContainer"></div>
+        <!-- Quick 1-Click Action Buttons -->
+        <div class="drawer-quick-actions">
+            <button type="button" class="btn btn-outline" onclick="autoComputeNextWirds()"
+                    title="استكمال نطاق الآيات تلقائياً من حيث انتهى الطالب">
+                <i class='bx bx-sync' style="color: #0284c7;"></i> 📋 استكمال من الأمس
+            </button>
+            <button type="button" class="btn btn-outline" onclick="showBaselinePresetInfo()"
+                    style="color: var(--text-medium);" title="معلومات وتخصيص الخطة">
+                <i class='bx bx-slider-alt'></i> ضبط الخطة ⚙️
+            </button>
+        </div>
 
-<!-- SweetAlert & Modular Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="~/js/teacher_portal/quranData.js" asp-append-version="true"></script>
-<script src="~/js/teacher_portal/modals/wird_drawer/wirdState.js" asp-append-version="true"></script>
-<script src="~/js/teacher_portal/modals/wird_drawer/wirdForm.js" asp-append-version="true"></script>
-<script src="~/js/teacher_portal/modals/wird_drawer/wirdActions.js" asp-append-version="true"></script>
-<script src="~/js/teacher_portal/modals/wird_drawer/wirdService.js" asp-append-version="true"></script>
-<script src="~/js/teacher_portal/modals/wird_drawer/wirdDrawer.js" asp-append-version="true"></script>
+        <!-- Segmented Navigation for Wird Types -->
+        <div class="segmented-nav" role="tablist" aria-label="أقسام الأوراد">
+            <button type="button" class="segmented-btn active" data-tab="all"
+                    onclick="setWirdFilterTab('all', this)">الأوراد الأربعة</button>
+            <button type="button" class="segmented-btn" data-tab="memorization"
+                    onclick="setWirdFilterTab('memorization', this)">حفظ</button>
+            <button type="button" class="segmented-btn" data-tab="recentRevision"
+                    onclick="setWirdFilterTab('recentRevision', this)">قريب</button>
+            <button type="button" class="segmented-btn" data-tab="oldRevision"
+                    onclick="setWirdFilterTab('oldRevision', this)">بعيد</button>
+            <button type="button" class="segmented-btn" data-tab="recitation"
+                    onclick="setWirdFilterTab('recitation', this)">تجويد</button>
+        </div>
+
+        <!-- Form container -->
+        <form id="wirdAssignmentForm" asp-action="AssignWird" asp-controller="Student" method="post"
+              style="display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden;">
+            <input type="hidden" id="StudentId" asp-for="StudentId" />
+            <input type="hidden" id="ClassId" asp-for="ClassId" value="@Context.Request.Cookies["selectedClassId"]" />
+            <input type="hidden" id="BatchPayloadJson" name="BatchPayloadJson" />
+
+            <!-- Drawer Body with the 4 Concurrent Wird Cards -->
+            <div class="drawer-body" id="drawerWirdsList">
+
+                <!-- Card 1: حفظ جديد (Memorization) -->
+                <div class="drawer-wird-box type-memorization" id="wbox-memorization" data-type="memorization">
+                    <div class="drawer-wird-header">
+                        <div class="drawer-wird-title" style="color: #2563eb;">
+                            <i class='bx bx-book-open' style="font-size: 1.25rem;"></i>
+                            <span>حفظ جديد (الورد اليومي)</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span class="wird-status-label" id="wstatus-memorization"
+                                  style="font-size: 0.74rem; font-weight: 700; color: #16a34a;">مفعل</span>
+                            <label class="switch" style="transform: scale(0.8); transform-origin: left center;">
+                                <input type="checkbox" id="wtoggle-memorization" checked
+                                       onchange="toggleWirdCard('memorization', this.checked)">
+                                <span class="switch-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="drawer-fields-grid">
+                        <div class="field-item">
+                            <label class="compact-label" for="amount-memorization">المقدار المحدد:</label>
+                            <input type="number" step="any" min="0.1" class="form-control form-control-prominent"
+                                   id="amount-memorization" value="" placeholder="المقدار"
+                                   oninput="onAmountChanged('memorization', this.value)">
+                        </div>
+                        <div class="field-item">
+                            <label class="compact-label">الوحدة:</label>
+                            <div class="unit-radio-group" id="unitGroup-memorization" role="radiogroup">
+                                <label class="unit-radio-option is-selected" id="opt-memorization-0">
+                                    <input type="radio" name="unit-memorization" value="0" checked
+                                           onchange="onUnitChanged('memorization', 0)">
+                                    <span class="unit-radio-circle"></span>
+                                    <span>صفحات</span>
+                                </label>
+                                <label class="unit-radio-option" id="opt-memorization-1">
+                                    <input type="radio" name="unit-memorization" value="1"
+                                           onchange="onUnitChanged('memorization', 1)">
+                                    <span class="unit-radio-circle"></span>
+                                    <span>آيات</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Equivalent Pages (visible only when unit == 1 / Ayahs) -->
+                    <div class="equivalent-pages-box" id="equivGroup-memorization"
+                         style="display: none; margin: 8px 0; padding: 8px 12px; background: #eff6ff; border: 1px dashed #bfdbfe; border-radius: var(--radius-md);">
+                        <label class="compact-label" style="margin-bottom: 4px; color: #1d4ed8;">ما يعادله بالصفحات
+                            تقريباً:</label>
+                            <div class="equivalent-pages-chips" style="margin-top: 4px;">
+                                <button type="button" class="chip" data-val="0.2"
+                                        onclick="setEquivalentPageChip('memorization', 0.2)">0.2</button>
+                                <button type="button" class="chip" data-val="0.25"
+                                        onclick="setEquivalentPageChip('memorization', 0.25)">¼</button>
+                                <button type="button" class="chip is-active" data-val="0.5"
+                                        onclick="setEquivalentPageChip('memorization', 0.5)">½</button>
+                                <button type="button" class="chip" data-val="0.75"
+                                        onclick="setEquivalentPageChip('memorization', 0.75)">¾</button>
+                                <button type="button" class="chip" data-val="1"
+                                        onclick="setEquivalentPageChip('memorization', 1)">1</button>
+                                <button type="button" class="chip" data-val="1.5"
+                                        onclick="setEquivalentPageChip('memorization', 1.5)">1.5</button>
+                                <button type="button" class="chip" data-val="2"
+                                        onclick="setEquivalentPageChip('memorization', 2)">2</button>
+                            </div>
+                        </div>
+
+                        <!-- Quran Range -->
+                        <div class="drawer-range-grid">
+                            <div class="range-box">
+                                <label class="compact-label">من سورة وآية:</label>
+                                <div style="display: flex; gap: 6px;">
+                                    <select class="form-control surah-select" id="fromSurah-memorization">
+                                        @await Html.PartialAsync("_SurahOptions")
+                                    </select>
+                                    <input type="text" class="form-control ayah-input" id="fromAyah-memorization"
+                                           placeholder="الآية" value="">
+                                </div>
+                            </div>
+                            <div class="range-box">
+                                <label class="compact-label">إلى سورة وآية:</label>
+                                <div style="display: flex; gap: 6px;">
+                                    <select class="form-control surah-select" id="toSurah-memorization">
+                                        @await Html.PartialAsync("_SurahOptions")
+                                    </select>
+                                    <input type="number" class="form-control ayah-input" id="toAyah-memorization"
+                                           placeholder="الآية" value="">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Touch Rating Bar -->
+                        <div class="wird-rating-group" id="ratingGroup-memorization">
+                            <div class="wird-rating-header">
+                                <div class="wird-rating-title">
+                                    <i class='bx bxs-award'></i>
+                                    <span>تقييم تسميع الورد وإتقانه:</span>
+                                </div>
+                                <div class="wird-rating-header-actions">
+                                    <span class="wird-rating-badge rate-none" id="ratingBadge-memorization">لم يُسمّع / لم
+                                        يُقيّم بعد</span>
+                                        <button type="button" class="btn-rating-clear" id="ratingClear-memorization"
+                                                style="display: none;" onclick="clearWirdRating('memorization')" title="إلغاء التقييم">
+                                            <i class='bx bx-x'></i> مسح
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="wird-rating-options-grid" role="radiogroup">
+                                    <button type="button" class="rating-pill-btn rate-excellent" data-grade="excellent"
+                                            data-status="5" onclick="setRatingGrade('memorization', 'excellent', 5)">
+                                        <span class="rating-icon"><i class='bx bxs-star'></i></span>
+                                        <span class="rating-text">ممتاز</span>
+                                        <span class="rating-hint">إتقان تام</span>
+                                    </button>
+                                    <button type="button" class="rating-pill-btn rate-very_good" data-grade="very_good"
+                                            data-status="4" onclick="setRatingGrade('memorization', 'very_good', 4)">
+                                        <span class="rating-icon"><i class='bx bxs-like'></i></span>
+                                        <span class="rating-text">جيد جداً</span>
+                                        <span class="rating-hint">أخطاء يسيرة</span>
+                                    </button>
+                                    <button type="button" class="rating-pill-btn rate-good" data-grade="good" data-status="3"
+                                            onclick="setRatingGrade('memorization', 'good', 3)">
+                                        <span class="rating-icon"><i class='bx bx-check-circle'></i></span>
+                                        <span class="rating-text">جيد</span>
+                                        <span class="rating-hint">يحتاج ضبطاً</span>
+                                    </button>
+                                    <button type="button" class="rating-pill-btn rate-acceptable" data-grade="acceptable"
+                                            data-status="2" onclick="setRatingGrade('memorization', 'acceptable', 2)">
+                                        <span class="rating-icon"><i class='bx bx-minus-circle'></i></span>
+                                        <span class="rating-text">مقبول</span>
+                                        <span class="rating-hint">تنبيهات</span>
+                                    </button>
+                                    <button type="button" class="rating-pill-btn rate-weak" data-grade="weak" data-status="1"
+                                            onclick="setRatingGrade('memorization', 'weak', 1)">
+                                        <span class="rating-icon"><i class='bx bx-error-circle'></i></span>
+                                        <span class="rating-text">ضعيف</span>
+                                        <span class="rating-hint">إعادة</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Note & Upcoming -->
+                            <div class="drawer-bottom-row">
+                                <div style="flex: 1;">
+                                    <input type="text" class="form-control" id="note-memorization"
+                                           placeholder="ملاحظة أو توجيه للطالب (اختياري)..." style="font-size: 0.8rem;">
+                                </div>
+                                <div class="upcoming-badge-toggle">
+                                    <span style="font-size: 0.72rem; color: #6b21a8; font-weight: 700; white-space: nowrap;">
+                                        <i class='bx bx-calendar-star'></i> ورد قادم
+                                    </span>
+                                    <label class="switch" style="transform: scale(0.65); transform-origin: left center;">
+                                        <input type="checkbox" id="isUpcoming-memorization"
+                                               onchange="toggleUpcomingWird('memorization', this.checked)">
+                                        <span class="switch-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: مراجعة صغرى - ورد قريب (Recent Revision) -->
+                        <div class="drawer-wird-box type-recentRevision" id="wbox-recentRevision" data-type="recentRevision">
+                            <div class="drawer-wird-header">
+                                <div class="drawer-wird-title" style="color: #059669;">
+                                    <i class='bx bx-check-double' style="font-size: 1.25rem;"></i>
+                                    <span>مراجعة صغرى (ورد قريب)</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span class="wird-status-label" id="wstatus-recentRevision"
+                                          style="font-size: 0.74rem; font-weight: 700; color: #16a34a;">مفعل</span>
+                                    <label class="switch" style="transform: scale(0.8); transform-origin: left center;">
+                                        <input type="checkbox" id="wtoggle-recentRevision" checked
+                                               onchange="toggleWirdCard('recentRevision', this.checked)">
+                                        <span class="switch-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="drawer-fields-grid">
+                                <div class="field-item">
+                                    <label class="compact-label" for="amount-recentRevision">المقدار المحدد:</label>
+                                    <input type="number" step="any" min="0.1" class="form-control form-control-prominent"
+                                           id="amount-recentRevision" value="" placeholder="المقدار"
+                                           oninput="onAmountChanged('recentRevision', this.value)">
+                                </div>
+                                <div class="field-item">
+                                    <label class="compact-label">الوحدة:</label>
+                                    <div class="unit-radio-group" id="unitGroup-recentRevision" role="radiogroup">
+                                        <label class="unit-radio-option is-selected" id="opt-recentRevision-0">
+                                            <input type="radio" name="unit-recentRevision" value="0" checked
+                                                   onchange="onUnitChanged('recentRevision', 0)">
+                                            <span class="unit-radio-circle"></span>
+                                            <span>صفحات</span>
+                                        </label>
+                                        <label class="unit-radio-option" id="opt-recentRevision-2">
+                                            <input type="radio" name="unit-recentRevision" value="2"
+                                                   onchange="onUnitChanged('recentRevision', 2)">
+                                            <span class="unit-radio-circle"></span>
+                                            <span>أجزاء</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="drawer-range-grid">
+                                <div class="range-box">
+                                    <label class="compact-label">من سورة وآية:</label>
+                                    <div style="display: flex; gap: 6px;">
+                                        <select class="form-control surah-select" id="fromSurah-recentRevision">
+                                            @await Html.PartialAsync("_SurahOptions")
+                                        </select>
+                                        <input type="text" class="form-control ayah-input" id="fromAyah-recentRevision"
+                                               placeholder="الآية" value="">
+                                    </div>
+                                </div>
+                                <div class="range-box">
+                                    <label class="compact-label">إلى سورة وآية:</label>
+                                    <div style="display: flex; gap: 6px;">
+                                        <select class="form-control surah-select" id="toSurah-recentRevision">
+                                            @await Html.PartialAsync("_SurahOptions")
+                                        </select>
+                                        <input type="number" class="form-control ayah-input" id="toAyah-recentRevision"
+                                               placeholder="الآية" value="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Touch Rating Bar -->
+                            <div class="wird-rating-group" id="ratingGroup-recentRevision">
+                                <div class="wird-rating-header">
+                                    <div class="wird-rating-title">
+                                        <i class='bx bxs-award'></i>
+                                        <span>تقييم تسميع الورد وإتقانه:</span>
+                                    </div>
+                                    <div class="wird-rating-header-actions">
+                                        <span class="wird-rating-badge rate-none" id="ratingBadge-recentRevision">لم يُسمّع / لم
+                                            يُقيّم بعد</span>
+                                            <button type="button" class="btn-rating-clear" id="ratingClear-recentRevision"
+                                                    style="display: none;" onclick="clearWirdRating('recentRevision')"
+                                                    title="إلغاء التقييم">
+                                                <i class='bx bx-x'></i> مسح
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="wird-rating-options-grid" role="radiogroup">
+                                        <button type="button" class="rating-pill-btn rate-excellent" data-grade="excellent"
+                                                data-status="5" onclick="setRatingGrade('recentRevision', 'excellent', 5)">
+                                            <span class="rating-icon"><i class='bx bxs-star'></i></span>
+                                            <span class="rating-text">ممتاز</span>
+                                            <span class="rating-hint">إتقان تام</span>
+                                        </button>
+                                        <button type="button" class="rating-pill-btn rate-very_good" data-grade="very_good"
+                                                data-status="4" onclick="setRatingGrade('recentRevision', 'very_good', 4)">
+                                            <span class="rating-icon"><i class='bx bxs-like'></i></span>
+                                            <span class="rating-text">جيد جداً</span>
+                                            <span class="rating-hint">أخطاء يسيرة</span>
+                                        </button>
+                                        <button type="button" class="rating-pill-btn rate-good" data-grade="good" data-status="3"
+                                                onclick="setRatingGrade('recentRevision', 'good', 3)">
+                                            <span class="rating-icon"><i class='bx bx-check-circle'></i></span>
+                                            <span class="rating-text">جيد</span>
+                                            <span class="rating-hint">يحتاج ضبطاً</span>
+                                        </button>
+                                        <button type="button" class="rating-pill-btn rate-acceptable" data-grade="acceptable"
+                                                data-status="2" onclick="setRatingGrade('recentRevision', 'acceptable', 2)">
+                                            <span class="rating-icon"><i class='bx bx-minus-circle'></i></span>
+                                            <span class="rating-text">مقبول</span>
+                                            <span class="rating-hint">تنبيهات</span>
+                                        </button>
+                                        <button type="button" class="rating-pill-btn rate-weak" data-grade="weak" data-status="1"
+                                                onclick="setRatingGrade('recentRevision', 'weak', 1)">
+                                            <span class="rating-icon"><i class='bx bx-error-circle'></i></span>
+                                            <span class="rating-text">ضعيف</span>
+                                            <span class="rating-hint">إعادة</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="drawer-bottom-row">
+                                    <div style="flex: 1;">
+                                        <input type="text" class="form-control" id="note-recentRevision"
+                                               placeholder="ملاحظة أو توجيه للطالب (اختياري)..." style="font-size: 0.8rem;">
+                                    </div>
+                                    <div class="upcoming-badge-toggle">
+                                        <span style="font-size: 0.72rem; color: #6b21a8; font-weight: 700; white-space: nowrap;">
+                                            <i class='bx bx-calendar-star'></i> ورد قادم
+                                        </span>
+                                        <label class="switch" style="transform: scale(0.65); transform-origin: left center;">
+                                            <input type="checkbox" id="isUpcoming-recentRevision"
+                                                   onchange="toggleUpcomingWird('recentRevision', this.checked)">
+                                            <span class="switch-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card 3: مراجعة كبرى - ورد بعيد (Old Revision) -->
+                            <div class="drawer-wird-box type-oldRevision" id="wbox-oldRevision" data-type="oldRevision">
+                                <div class="drawer-wird-header">
+                                    <div class="drawer-wird-title" style="color: #d97706;">
+                                        <i class='bx bx-archive' style="font-size: 1.25rem;"></i>
+                                        <span>مراجعة كبرى (ورد بعيد وتراكمي)</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <span class="wird-status-label" id="wstatus-oldRevision"
+                                              style="font-size: 0.74rem; font-weight: 700; color: #16a34a;">مفعل</span>
+                                        <label class="switch" style="transform: scale(0.8); transform-origin: left center;">
+                                            <input type="checkbox" id="wtoggle-oldRevision" checked
+                                                   onchange="toggleWirdCard('oldRevision', this.checked)">
+                                            <span class="switch-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="drawer-fields-grid">
+                                    <div class="field-item">
+                                        <label class="compact-label" for="amount-oldRevision">المقدار المحدد:</label>
+                                        <input type="number" step="any" min="0.1" class="form-control form-control-prominent"
+                                               id="amount-oldRevision" value="" placeholder="المقدار"
+                                               oninput="onAmountChanged('oldRevision', this.value)">
+                                    </div>
+                                    <div class="field-item">
+                                        <label class="compact-label">الوحدة:</label>
+                                        <div class="unit-radio-group" id="unitGroup-oldRevision" role="radiogroup">
+                                            <label class="unit-radio-option" id="opt-oldRevision-0">
+                                                <input type="radio" name="unit-oldRevision" value="0"
+                                                       onchange="onUnitChanged('oldRevision', 0)">
+                                                <span class="unit-radio-circle"></span>
+                                                <span>صفحات</span>
+                                            </label>
+                                            <label class="unit-radio-option is-selected" id="opt-oldRevision-2">
+                                                <input type="radio" name="unit-oldRevision" value="2" checked
+                                                       onchange="onUnitChanged('oldRevision', 2)">
+                                                <span class="unit-radio-circle"></span>
+                                                <span>أجزاء</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="drawer-range-grid">
+                                    <div class="range-box">
+                                        <label class="compact-label">من سورة وآية:</label>
+                                        <div style="display: flex; gap: 6px;">
+                                            <select class="form-control surah-select" id="fromSurah-oldRevision">
+                                                @await Html.PartialAsync("_SurahOptions")
+                                            </select>
+                                            <input type="text" class="form-control ayah-input" id="fromAyah-oldRevision"
+                                                   placeholder="الآية" value="">
+                                        </div>
+                                    </div>
+                                    <div class="range-box">
+                                        <label class="compact-label">إلى سورة وآية:</label>
+                                        <div style="display: flex; gap: 6px;">
+                                            <select class="form-control surah-select" id="toSurah-oldRevision">
+                                                @await Html.PartialAsync("_SurahOptions")
+                                            </select>
+                                            <input type="number" class="form-control ayah-input" id="toAyah-oldRevision"
+                                                   placeholder="الآية" value="">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Touch Rating Bar -->
+                                <div class="wird-rating-group" id="ratingGroup-oldRevision">
+                                    <div class="wird-rating-header">
+                                        <div class="wird-rating-title">
+                                            <i class='bx bxs-award'></i>
+                                            <span>تقييم تسميع الورد وإتقانه:</span>
+                                        </div>
+                                        <div class="wird-rating-header-actions">
+                                            <span class="wird-rating-badge rate-none" id="ratingBadge-oldRevision">لم يُسمّع / لم يُقيّم
+                                                بعد</span>
+                                                <button type="button" class="btn-rating-clear" id="ratingClear-oldRevision"
+                                                        style="display: none;" onclick="clearWirdRating('oldRevision')" title="إلغاء التقييم">
+                                                    <i class='bx bx-x'></i> مسح
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="wird-rating-options-grid" role="radiogroup">
+                                            <button type="button" class="rating-pill-btn rate-excellent" data-grade="excellent"
+                                                    data-status="5" onclick="setRatingGrade('oldRevision', 'excellent', 5)">
+                                                <span class="rating-icon"><i class='bx bxs-star'></i></span>
+                                                <span class="rating-text">ممتاز</span>
+                                                <span class="rating-hint">إتقان تام</span>
+                                            </button>
+                                            <button type="button" class="rating-pill-btn rate-very_good" data-grade="very_good"
+                                                    data-status="4" onclick="setRatingGrade('oldRevision', 'very_good', 4)">
+                                                <span class="rating-icon"><i class='bx bxs-like'></i></span>
+                                                <span class="rating-text">جيد جداً</span>
+                                                <span class="rating-hint">أخطاء يسيرة</span>
+                                            </button>
+                                            <button type="button" class="rating-pill-btn rate-good" data-grade="good" data-status="3"
+                                                    onclick="setRatingGrade('oldRevision', 'good', 3)">
+                                                <span class="rating-icon"><i class='bx bx-check-circle'></i></span>
+                                                <span class="rating-text">جيد</span>
+                                                <span class="rating-hint">يحتاج ضبطاً</span>
+                                            </button>
+                                            <button type="button" class="rating-pill-btn rate-acceptable" data-grade="acceptable"
+                                                    data-status="2" onclick="setRatingGrade('oldRevision', 'acceptable', 2)">
+                                                <span class="rating-icon"><i class='bx bx-minus-circle'></i></span>
+                                                <span class="rating-text">مقبول</span>
+                                                <span class="rating-hint">تنبيهات</span>
+                                            </button>
+                                            <button type="button" class="rating-pill-btn rate-weak" data-grade="weak" data-status="1"
+                                                    onclick="setRatingGrade('oldRevision', 'weak', 1)">
+                                                <span class="rating-icon"><i class='bx bx-error-circle'></i></span>
+                                                <span class="rating-text">ضعيف</span>
+                                                <span class="rating-hint">إعادة</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="drawer-bottom-row">
+                                        <div style="flex: 1;">
+                                            <input type="text" class="form-control" id="note-oldRevision"
+                                                   placeholder="ملاحظة أو توجيه للطالب (اختياري)..." style="font-size: 0.8rem;">
+                                        </div>
+                                        <div class="upcoming-badge-toggle">
+                                            <span style="font-size: 0.72rem; color: #6b21a8; font-weight: 700; white-space: nowrap;">
+                                                <i class='bx bx-calendar-star'></i> ورد قادم
+                                            </span>
+                                            <label class="switch" style="transform: scale(0.65); transform-origin: left center;">
+                                                <input type="checkbox" id="isUpcoming-oldRevision"
+                                                       onchange="toggleUpcomingWird('oldRevision', this.checked)">
+                                                <span class="switch-slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Card 4: تجويد وإتقان التلاوة (Tajwid) -->
+                                <div class="drawer-wird-box type-recitation" id="wbox-recitation" data-type="recitation">
+                                    <div class="drawer-wird-header">
+                                        <div class="drawer-wird-title" style="color: #7c3aed;">
+                                            <i class='bx bx-microphone' style="font-size: 1.25rem;"></i>
+                                            <span>تجويد وإتقان التلاوة</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <span class="wird-status-label" id="wstatus-recitation"
+                                                  style="font-size: 0.74rem; font-weight: 700; color: #16a34a;">مفعل</span>
+                                            <label class="switch" style="transform: scale(0.8); transform-origin: left center;">
+                                                <input type="checkbox" id="wtoggle-recitation" checked
+                                                       onchange="toggleWirdCard('recitation', this.checked)">
+                                                <span class="switch-slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="drawer-fields-grid">
+                                        <div class="field-item">
+                                            <label class="compact-label" for="amount-recitation">المقدار المحدد:</label>
+                                            <input type="number" step="any" min="0.1" class="form-control form-control-prominent"
+                                                   id="amount-recitation" value="" placeholder="المقدار"
+                                                   oninput="onAmountChanged('recitation', this.value)">
+                                        </div>
+                                        <div class="field-item">
+                                            <label class="compact-label">الوحدة:</label>
+                                            <div class="unit-radio-group" id="unitGroup-recitation" role="radiogroup">
+                                                <label class="unit-radio-option is-selected" id="opt-recitation-0">
+                                                    <input type="radio" name="unit-recitation" value="0" checked
+                                                           onchange="onUnitChanged('recitation', 0)">
+                                                    <span class="unit-radio-circle"></span>
+                                                    <span>صفحات</span>
+                                                </label>
+                                                <label class="unit-radio-option" id="opt-recitation-2">
+                                                    <input type="radio" name="unit-recitation" value="2"
+                                                           onchange="onUnitChanged('recitation', 2)">
+                                                    <span class="unit-radio-circle"></span>
+                                                    <span>أجزاء</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="drawer-range-grid">
+                                        <div class="range-box">
+                                            <label class="compact-label">من سورة وآية:</label>
+                                            <div style="display: flex; gap: 6px;">
+                                                <select class="form-control surah-select" id="fromSurah-recitation">
+                                                    @await Html.PartialAsync("_SurahOptions")
+                                                </select>
+                                                <input type="text" class="form-control ayah-input" id="fromAyah-recitation"
+                                                       placeholder="الآية" value="">
+                                            </div>
+                                        </div>
+                                        <div class="range-box">
+                                            <label class="compact-label">إلى سورة وآية:</label>
+                                            <div style="display: flex; gap: 6px;">
+                                                <select class="form-control surah-select" id="toSurah-recitation">
+                                                    @await Html.PartialAsync("_SurahOptions")
+                                                </select>
+                                                <input type="number" class="form-control ayah-input" id="toAyah-recitation"
+                                                       placeholder="الآية" value="">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Touch Rating Bar -->
+                                    <div class="wird-rating-group" id="ratingGroup-recitation">
+                                        <div class="wird-rating-header">
+                                            <div class="wird-rating-title">
+                                                <i class='bx bxs-award'></i>
+                                                <span>تقييم تسميع الورد وإتقانه:</span>
+                                            </div>
+                                            <div class="wird-rating-header-actions">
+                                                <span class="wird-rating-badge rate-none" id="ratingBadge-recitation">لم يُسمّع / لم يُقيّم
+                                                    بعد</span>
+                                                    <button type="button" class="btn-rating-clear" id="ratingClear-recitation"
+                                                            style="display: none;" onclick="clearWirdRating('recitation')" title="إلغاء التقييم">
+                                                        <i class='bx bx-x'></i> مسح
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="wird-rating-options-grid" role="radiogroup">
+                                                <button type="button" class="rating-pill-btn rate-excellent" data-grade="excellent"
+                                                        data-status="5" onclick="setRatingGrade('recitation', 'excellent', 5)">
+                                                    <span class="rating-icon"><i class='bx bxs-star'></i></span>
+                                                    <span class="rating-text">ممتاز</span>
+                                                    <span class="rating-hint">إتقان تام</span>
+                                                </button>
+                                                <button type="button" class="rating-pill-btn rate-very_good" data-grade="very_good"
+                                                        data-status="4" onclick="setRatingGrade('recitation', 'very_good', 4)">
+                                                    <span class="rating-icon"><i class='bx bxs-like'></i></span>
+                                                    <span class="rating-text">جيد جداً</span>
+                                                    <span class="rating-hint">أخطاء يسيرة</span>
+                                                </button>
+                                                <button type="button" class="rating-pill-btn rate-good" data-grade="good" data-status="3"
+                                                        onclick="setRatingGrade('recitation', 'good', 3)">
+                                                    <span class="rating-icon"><i class='bx bx-check-circle'></i></span>
+                                                    <span class="rating-text">جيد</span>
+                                                    <span class="rating-hint">يحتاج ضبطاً</span>
+                                                </button>
+                                                <button type="button" class="rating-pill-btn rate-acceptable" data-grade="acceptable"
+                                                        data-status="2" onclick="setRatingGrade('recitation', 'acceptable', 2)">
+                                                    <span class="rating-icon"><i class='bx bx-minus-circle'></i></span>
+                                                    <span class="rating-text">مقبول</span>
+                                                    <span class="rating-hint">تنبيهات</span>
+                                                </button>
+                                                <button type="button" class="rating-pill-btn rate-weak" data-grade="weak" data-status="1"
+                                                        onclick="setRatingGrade('recitation', 'weak', 1)">
+                                                    <span class="rating-icon"><i class='bx bx-error-circle'></i></span>
+                                                    <span class="rating-text">ضعيف</span>
+                                                    <span class="rating-hint">إعادة</span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="drawer-bottom-row">
+                                            <div style="flex: 1;">
+                                                <input type="text" class="form-control" id="note-recitation"
+                                                       placeholder="ملاحظة أو توجيه للطالب (اختياري)..." style="font-size: 0.8rem;">
+                                            </div>
+                                            <div class="upcoming-badge-toggle">
+                                                <span style="font-size: 0.72rem; color: #6b21a8; font-weight: 700; white-space: nowrap;">
+                                                    <i class='bx bx-calendar-star'></i> ورد قادم
+                                                </span>
+                                                <label class="switch" style="transform: scale(0.65); transform-origin: left center;">
+                                                    <input type="checkbox" id="isUpcoming-recitation"
+                                                           onchange="toggleUpcomingWird('recitation', this.checked)">
+                                                    <span class="switch-slider"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <!-- Sticky Drawer Footer Stepper -->
+                                <div class="drawer-footer">
+                                    <button type="button" class="btn btn-outline drawer-prev-btn" id="drawerPrevBtn" onclick="prevStudent()"
+                                            title="الانتقال للطالب السابق مع حفظ مسودة الطالب الحالي">
+                                        <i class='bx bx-chevron-right'></i> السابق
+                                    </button>
+                                    <button type="button" class="btn btn-outline drawer-save-btn" id="drawerSaveBtn"
+                                            onclick="saveDrawerWirds(true)" title="حفظ أوراد هذا الطالب فقط">
+                                        <i class='bx bx-check'></i> حفظ فقط
+                                    </button>
+                                    <button type="button" class="btn btn-primary drawer-save-next-btn" id="drawerSaveNextBtn"
+                                            onclick="saveAndNextStudent()" title="حفظ والانتقال الفوري للطالب التالي">
+                                        <span id="drawerNextBtnText">حفظ والتالي</span> <i class='bx bx-chevron-left'></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Toast Container for instant notifications -->
+                        <div class="toast-container" id="drawerToastContainer"></div>
+
+                        <!-- SweetAlert & Modular Scripts -->
+                        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                        <script src="~/js/teacher_portal/quranData.js" asp-append-version="true"></script>
+                        <script src="~/js/teacher_portal/modals/wird_drawer/wirdState.js" asp-append-version="true"></script>
+                        <script src="~/js/teacher_portal/modals/wird_drawer/wirdForm.js" asp-append-version="true"></script>
+                        <script src="~/js/teacher_portal/modals/wird_drawer/autoComputeNextWirds.js" asp-append-version="true"></script>
+                        <script src="~/js/teacher_portal/modals/wird_drawer/wirdActions.js" asp-append-version="true"></script>
+                        <script src="~/js/teacher_portal/modals/wird_drawer/wirdService.js" asp-append-version="true"></script>
+
+                        <script src="~/js/teacher_portal/modals/wird_drawer/wirdDrawer.js" asp-append-version="true"></script>

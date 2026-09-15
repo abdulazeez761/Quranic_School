@@ -367,6 +367,10 @@
     })();
 </script>
 
+<script>
+    window.allClassStudents = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.AllClassStudents ?? new List<object>()));
+</script>
+
 <!-- Include Wird and Routine Plan Modals -->
 @await Html.PartialAsync("_AssignWirdModal", new WirdAssignment())
 @await Html.PartialAsync("_StudentRoutinePlanModal")

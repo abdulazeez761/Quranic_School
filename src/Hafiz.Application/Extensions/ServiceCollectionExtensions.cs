@@ -20,6 +20,7 @@ namespace Hafiz.Application.Extensions
             services.AddScoped<IParentNoteService, ParentNoteService>();
             services.AddScoped<IInstituteService, InstituteService>();
             services.AddScoped<IStudentRoutinePlanService, StudentRoutinePlanService>();
+            services.AddScoped<IStudentWirdService, StudentWirdService>();
             return services;
         }
     }
