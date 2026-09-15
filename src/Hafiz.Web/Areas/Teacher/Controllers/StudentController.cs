@@ -42,6 +42,23 @@ namespace Hafiz.Areas.Teacher.Controllers
             _studentWirdService = studentWirdService;
         }
 
+        private Guid? GetInstituteId()
+        {
+            var claim = User.FindFirstValue("InstituteId");
+            if (Guid.TryParse(claim, out var id))
+                return id;
+
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (Guid.TryParse(userIdStr, out var userId))
+            {
+                var userRepo = HttpContext.RequestServices.GetService<Hafiz.Repositories.Interfaces.IUserRepository>();
+                var user = userRepo?.GetByIdAsync(userId).GetAwaiter().GetResult();
+                return user?.InstituteId;
+            }
+
+            return null;
+        }
+
         public async Task<IActionResult> Index(
             int page = 1,
             int pageSize = 12,
@@ -49,14 +66,18 @@ namespace Hafiz.Areas.Teacher.Controllers
             string? level = null
         )
         {
+            var instituteId = GetInstituteId();
+            if (!instituteId.HasValue)
+                return Forbid();
+
             string? selectedClassFromCookies = Request.Cookies["selectedClassId"];
             ViewBag.ClassId = selectedClassFromCookies;
             Guid? selectedClass;
-            if (selectedClassFromCookies is not null)
-                selectedClass = Guid.Parse(selectedClassFromCookies);
+            if (selectedClassFromCookies is not null && Guid.TryParse(selectedClassFromCookies, out var parsedClass))
+                selectedClass = parsedClass;
             else
             {
-                ModelState.AddModelError(string.Empty, "");
+                ModelState.AddModelError(string.Empty, "يجب تحديد الشعبة أولاً");
                 return View(new PagedResult<StudentModel>());
             }
 
@@ -64,7 +85,7 @@ namespace Hafiz.Areas.Teacher.Controllers
                 selectedClass
             );
 
-            var studentList = students.ToList();
+            var studentList = students.Where(s => s.StudentInfo.InstituteId == instituteId.Value).ToList();
             var totalStudents = studentList.Count;
             var boysCount = studentList.Count(s => s.sex == Hafiz.Models.enums.Sex.male);
             var girlsCount = studentList.Count(s => s.sex == Hafiz.Models.enums.Sex.female);
@@ -147,10 +168,23 @@ namespace Hafiz.Areas.Teacher.Controllers
 
             try
             {
-                StudentModel? student = await _studentService.GetStudentByIdAsync(id);
+                var instituteId = GetInstituteId();
+                if (!instituteId.HasValue)
+                    return Forbid();
+
+                StudentModel? student = await _studentService.GetStudentByIdAsync(id, instituteId.Value);
                 if (student == null)
                 {
-                    TempData["ErrorMessage"] = "تعذر العثور على بيانات الطالب المطلوب.";
+                    TempData["ErrorMessage"] = "تعذر العثور على بيانات الطالب المطلوب أو غير مصرح لك بعرضه.";
+                    return RedirectToAction("Index");
+                }
+
+                // Verify teacher has access to this student's class
+                var teacherUserId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                bool hasAccess = student.Classes.Any(c => c.Teachers.Any(t => t.UserId == teacherUserId));
+                if (!hasAccess && !User.IsInRole("Admin") && !User.IsInRole("SuperAdmin"))
+                {
+                    TempData["ErrorMessage"] = "غير مصرح لك بعرض بيانات طالب خارج شعبك المخصصة.";
                     return RedirectToAction("Index");
                 }
 
@@ -200,6 +234,10 @@ namespace Hafiz.Areas.Teacher.Controllers
         [HttpPost]
         public async Task<IActionResult> AssignWirdsBatch([FromBody] AssignWirdsBatchDto model)
         {
+            var instituteId = GetInstituteId();
+            if (!instituteId.HasValue)
+                return BadRequest(new { success = false, message = "غير مصرح لك: تعذر تحديد المركز التابع له." });
+
             // Navigation properties are EF relations not supplied in batch DTO
             foreach (
                 var key in ModelState
@@ -236,13 +274,31 @@ namespace Hafiz.Areas.Teacher.Controllers
             if (model == null || model.Wirds == null || !model.Wirds.Any())
                 return BadRequest(new { success = false, message = "لا توجد أوراد لحفظها." });
 
-            // Bind the wird to the teacher's currently selected class. We trust the
-            // cookie over the form field so a tampered ClassId can't pin the wird to
-            // a class the teacher isn't scoped to.
+            // Verify student belongs to this institute
+            var student = await _studentService.GetStudentByIdAsync(model.StudentId, instituteId.Value);
+            if (student == null)
+            {
+                return BadRequest(new { success = false, message = "الطالب غير موجود في هذا المركز أو غير مصرح لك بتسجيل أوراد له." });
+            }
+
+            // Verify teacher has access to this student
+            var teacherUserId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            bool hasAccess = student.Classes.Any(c => c.Teachers.Any(t => t.UserId == teacherUserId));
+            if (!hasAccess && !User.IsInRole("Admin") && !User.IsInRole("SuperAdmin"))
+            {
+                return BadRequest(new { success = false, message = "غير مصرح لك بتسجيل أوراد لطالب خارج شعبك المخصصة." });
+            }
+
+            // Bind the wird to the teacher's currently selected class.
             if (Guid.TryParse(Request.Cookies["selectedClassId"], out var classId))
                 model.ClassId = classId;
-            else
-                model.ClassId = null;
+            else if (!model.ClassId.HasValue || model.ClassId == Guid.Empty)
+            {
+                var teacherClass = student.Classes.FirstOrDefault(c => c.Teachers.Any(t => t.UserId == teacherUserId));
+                if (teacherClass != null)
+                    model.ClassId = teacherClass.Id;
+            }
+
             model.AssignedDate = TimeZoneHelper.GetUserNow(HttpContext);
 
             (bool isAdded, string message) = await _wirdService.AddWirdAsync(model);
@@ -269,6 +325,23 @@ namespace Hafiz.Areas.Teacher.Controllers
             if (studentId == Guid.Empty)
             {
                 return BadRequest(new { success = false, message = "معرف الطالب غير صالح." });
+            }
+
+            var instituteId = GetInstituteId();
+            if (!instituteId.HasValue)
+                return BadRequest(new { success = false, message = "تعذر تحديد المركز التابع له." });
+
+            var student = await _studentService.GetStudentByIdAsync(studentId, instituteId.Value);
+            if (student == null)
+            {
+                return NotFound(new { success = false, message = "تعذر العثور على بيانات الطالب في هذا المركز." });
+            }
+
+            var teacherUserId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            bool hasAccess = student.Classes.Any(c => c.Teachers.Any(t => t.UserId == teacherUserId));
+            if (!hasAccess && !User.IsInRole("Admin") && !User.IsInRole("SuperAdmin"))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { success = false, message = "غير مصرح لك بعرض بيانات طالب خارج شعبك المخصصة." });
             }
 
             try

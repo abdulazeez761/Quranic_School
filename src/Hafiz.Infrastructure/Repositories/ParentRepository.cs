@@ -36,7 +36,7 @@ namespace Hafiz.Repositories
         public async Task<Parent?> GetByIdAsync(Guid id, Guid? instituteId = null)
         {
             var query = _context
-                .Parents.IgnoreQueryFilters()
+                .Parents
                 .Include(p => p.ParentInfo)
                 .Include(p => p.Students)
                 .AsQueryable();

@@ -23,7 +23,13 @@ namespace Hafiz.Infrastructure.Extensions
         {
             // DbContext
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
+                options.UseSqlServer(
+                    configuration.GetConnectionString("DefaultConnection"),
+                    sqlOptions =>
+                    {
+                        sqlOptions.EnableRetryOnFailure();
+                    }
+                )
             );
 
             // Repositories

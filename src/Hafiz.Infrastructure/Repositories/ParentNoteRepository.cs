@@ -33,6 +33,7 @@ namespace Hafiz.Repositories
             return await _context.ParentNotes
                 .Include(pn => pn.CreatedByUser)
                 .Include(pn => pn.Student)
+                .ThenInclude(s => s.StudentInfo)
                 .FirstOrDefaultAsync(pn => pn.Id == id);
         }
 

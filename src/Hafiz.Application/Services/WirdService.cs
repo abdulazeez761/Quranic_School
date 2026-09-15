@@ -82,17 +82,26 @@ namespace Hafiz.Services
             );
         }
 
-        public async Task<(bool IsSuccess, string Message)> UpdateWirdAsync(WirdAssignment wird)
+        public async Task<(bool IsSuccess, string Message)> UpdateWirdAsync(
+            WirdAssignment wird,
+            Guid? instituteId = null
+        )
         {
-            var existing = await _wirdRepository.GetWirdByID(wird.Id);
-            var (oldMem, oldRev) = existing is null ? (0m, 0m) : ProgressContribution(existing);
+            var existing = await _wirdRepository.GetWirdByID(wird.Id, instituteId);
+            if (existing == null)
+                return (false, "تعذر العثور على بيانات الورد المطلوب.");
+
+            var (oldMem, oldRev) = ProgressContribution(existing);
 
             // Block memorization edits that would exceed the Quran for an already-hafiz student.
             // Compare against the student's total minus this wird's old memorization contribution
             // so editing a wird that's already counted doesn't falsely trip the limit.
             if (wird.Type == AssignmentType.Memorization)
             {
-                var student = await _studentRepository.GetStudentBasicByIdAsync(wird.StudentId);
+                var student = await _studentRepository.GetStudentBasicByIdAsync(
+                    wird.StudentId,
+                    instituteId
+                );
                 if (student != null)
                 {
                     decimal totalExcludingThis =
@@ -107,19 +116,14 @@ namespace Hafiz.Services
                 }
             }
 
-            // The edit modal carries an explicit "Upcoming" toggle, so honor whatever the
-            // teacher set here (don't force-clear it from the grade). The quick-grade
-            // buttons handle clearing it on their own path.
-            bool isUpdated = await _wirdRepository.UpdateWirdAsync(wird);
-            if (isUpdated)
-            {
-                var (newMem, newRev) = ProgressContribution(wird);
-                await _studentRepository.ApplyProgressDeltaAsync(
-                    wird.StudentId,
-                    newMem - oldMem,
-                    newRev - oldRev
-                );
-            }
+            var (newMem, newRev) = ProgressContribution(wird);
+            bool isUpdated = await _wirdRepository.UpdateWirdWithProgressDeltaAsync(
+                wird,
+                newMem - oldMem,
+                newRev - oldRev,
+                instituteId
+            );
+
             return (
                 isUpdated,
                 isUpdated
@@ -128,27 +132,27 @@ namespace Hafiz.Services
             );
         }
 
-        public async Task<bool> DeleteWirdAssignment(Guid id)
+        public async Task<bool> DeleteWirdAssignment(Guid id, Guid? instituteId = null)
         {
-            var wird = await _wirdRepository.GetWirdByID(id);
+            var wird = await _wirdRepository.GetWirdByID(id, instituteId);
             if (wird == null)
                 return false;
+
             var (memDelta, revDelta) = ProgressContribution(wird);
-            bool isWirdDeleted = await _wirdRepository.DeleteWirdAssignment(id);
-            if (isWirdDeleted && (memDelta != 0 || revDelta != 0))
-            {
-                await _studentRepository.ApplyProgressDeltaAsync(
-                    wird.StudentId,
-                    -memDelta,
-                    -revDelta
-                );
-            }
-            return isWirdDeleted;
+            return await _wirdRepository.DeleteWirdWithProgressDeltaAsync(
+                id,
+                -memDelta,
+                -revDelta,
+                instituteId
+            );
         }
 
-        public async Task<WirdAssignment?> GetWirdAssignmentByIdAsync(Guid id)
+        public async Task<WirdAssignment?> GetWirdAssignmentByIdAsync(
+            Guid id,
+            Guid? instituteId = null
+        )
         {
-            return await _wirdRepository.GetWirdByID(id);
+            return await _wirdRepository.GetWirdByID(id, instituteId);
         }
 
         public async Task<List<WirdAssignment>?> GetWirdAssignmentsByClassIdAsync(
@@ -168,35 +172,46 @@ namespace Hafiz.Services
             return await _wirdRepository.GetWirdAssignmentsByClassIdAsync(classID, from, to);
         }
 
-        public async Task<bool> UpdateStatus(Guid Id, AssignmentStatus status)
+        public async Task<bool> UpdateStatus(
+            Guid Id,
+            AssignmentStatus status,
+            Guid? instituteId = null
+        )
         {
-            var wird = await _wirdRepository.GetWirdByID(Id);
+            var wird = await _wirdRepository.GetWirdByID(Id, instituteId);
             if (wird == null)
                 return false;
-            wird.IsUpcoming = status == AssignmentStatus.notSet;
-            wird.IsCompleted = status != AssignmentStatus.notSet;
+
             var (oldMem, oldRev) = ProgressContribution(wird);
-            bool ok = await _wirdRepository.UpdateStatus(Id, status);
-            if (ok)
+
+            var updatedWird = new WirdAssignment
             {
-                wird.Status = status;
-                var (newMem, newRev) = ProgressContribution(wird);
-                await _studentRepository.ApplyProgressDeltaAsync(
-                    wird.StudentId,
-                    newMem - oldMem,
-                    newRev - oldRev
-                );
-            }
-            return ok;
+                Type = wird.Type,
+                Amount = wird.Amount,
+                AmountUnit = wird.AmountUnit,
+                EquivalentPages = wird.EquivalentPages,
+                Status = status,
+                IsCompleted = status != AssignmentStatus.notSet,
+                IsUpcoming = status == AssignmentStatus.notSet,
+            };
+            var (newMem, newRev) = ProgressContribution(updatedWird);
+
+            return await _wirdRepository.UpdateStatusWithProgressDeltaAsync(
+                Id,
+                status,
+                newMem - oldMem,
+                newRev - oldRev,
+                instituteId
+            );
         }
 
-        public async Task<bool> UpdateWirdNote(Guid Id, string Note)
+        public async Task<bool> UpdateWirdNote(Guid Id, string Note, Guid? instituteId = null)
         {
-            var Wird = await _wirdRepository.GetWirdByID(Id);
-            if (Wird == null)
+            var wird = await _wirdRepository.GetWirdByID(Id, instituteId);
+            if (wird == null)
                 return false;
 
-            return await _wirdRepository.UpdateNote(Id, Note);
+            return await _wirdRepository.UpdateNote(Id, Note, instituteId);
         }
 
         // تقرير صفحة العرض: الإحصائيات والترتيب تُحسب على كامل النتائج، أمّا التفاصيل
@@ -270,9 +285,14 @@ namespace Hafiz.Services
                             : string.Empty,
                         TotalWirds = g.Count(),
                         CompletedWirds = g.Count(r => r.IsCompleted),
-                        TotalPages = g.Where(r => r.IsCompleted).Sum(r =>
-                            WirdPageCalculator.ToPages(r.Amount, r.AmountUnit, r.EquivalentPages)
-                        ),
+                        TotalPages = g.Where(r => r.IsCompleted)
+                            .Sum(r =>
+                                WirdPageCalculator.ToPages(
+                                    r.Amount,
+                                    r.AmountUnit,
+                                    r.EquivalentPages
+                                )
+                            ),
                     };
                 })
                 .OrderByDescending(r => r.CompletionRate)

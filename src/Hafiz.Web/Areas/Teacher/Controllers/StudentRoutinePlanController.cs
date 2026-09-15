@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Hafiz.DTOs.StudentPlan;
 using Hafiz.Services.Interfaces;
@@ -15,14 +16,34 @@ namespace Hafiz.Web.Areas.Teacher.Controllers
     public class StudentRoutinePlanController : Controller
     {
         private readonly IStudentRoutinePlanService _planService;
+        private readonly IStudentService _studentService;
         private readonly ILogger<StudentRoutinePlanController> _logger;
 
         public StudentRoutinePlanController(
             IStudentRoutinePlanService planService,
+            IStudentService studentService,
             ILogger<StudentRoutinePlanController> logger)
         {
             _planService = planService;
+            _studentService = studentService;
             _logger = logger;
+        }
+
+        private Guid? GetInstituteId()
+        {
+            var claim = User.FindFirstValue("InstituteId");
+            if (Guid.TryParse(claim, out var id))
+                return id;
+
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (Guid.TryParse(userIdStr, out var userId))
+            {
+                var userRepo = HttpContext.RequestServices.GetService<Hafiz.Repositories.Interfaces.IUserRepository>();
+                var user = userRepo?.GetByIdAsync(userId).GetAwaiter().GetResult();
+                return user?.InstituteId;
+            }
+
+            return null;
         }
 
         public IActionResult Index()
@@ -36,6 +57,14 @@ namespace Hafiz.Web.Areas.Teacher.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPlanByStudentId(Guid studentId)
         {
+            var instituteId = GetInstituteId();
+            if (!instituteId.HasValue)
+                return Forbid();
+
+            var student = await _studentService.GetStudentByIdAsync(studentId, instituteId.Value);
+            if (student == null)
+                return NotFound(new { success = false, message = "الطالب غير موجود في هذا المركز." });
+
             try
             {
                 var plan = await _planService.GetPlanByStudentIdAsync(studentId);
@@ -54,6 +83,10 @@ namespace Hafiz.Web.Areas.Teacher.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPlansByClassId(Guid classId)
         {
+            var instituteId = GetInstituteId();
+            if (!instituteId.HasValue)
+                return Forbid();
+
             try
             {
                 var plans = await _planService.GetPlansByClassIdAsync(classId);
@@ -82,6 +115,14 @@ namespace Hafiz.Web.Areas.Teacher.Controllers
                 return Json(new { success = false, message = string.Join(" | ", errors) });
             }
 
+            var instituteId = GetInstituteId();
+            if (!instituteId.HasValue)
+                return Forbid();
+
+            var student = await _studentService.GetStudentByIdAsync(model.StudentId, instituteId.Value);
+            if (student == null)
+                return NotFound(new { success = false, message = "الطالب غير موجود في هذا المركز." });
+
             try
             {
                 var (success, message) = await _planService.SetPlanAsync(model);
@@ -100,6 +141,14 @@ namespace Hafiz.Web.Areas.Teacher.Controllers
         [HttpPost]
         public async Task<IActionResult> DeletePlan(Guid studentId)
         {
+            var instituteId = GetInstituteId();
+            if (!instituteId.HasValue)
+                return Forbid();
+
+            var student = await _studentService.GetStudentByIdAsync(studentId, instituteId.Value);
+            if (student == null)
+                return NotFound(new { success = false, message = "الطالب غير موجود في هذا المركز أو غير مصرح لك بحذف خطته." });
+
             try
             {
                 var (success, message) = await _planService.DeletePlanAsync(studentId);

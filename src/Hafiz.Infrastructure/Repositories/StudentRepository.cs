@@ -22,26 +22,9 @@ namespace Hafiz.Repositories
 
         public async Task AddAsync(User user, Student ReceivedStudent)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
-            try
-            {
-                await _context.Users.AddAsync(user);
-                await _context.SaveChangesAsync(); //save user to get the generated Id
-
-                ReceivedStudent.UserId = user.Id;
-
-                await _context.Students.AddAsync(ReceivedStudent);
-                await _context.SaveChangesAsync();
-
-                await transaction.CommitAsync(); // ✅ Both succeeded, commit
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync(); // ✅ Either failed, rollback everything
-                throw new Exception(
-                    ex.InnerException?.Message ?? "An error occurred while adding the student."
-                );
-            }
+            ReceivedStudent.StudentInfo = user;
+            await _context.Students.AddAsync(ReceivedStudent);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> DeleteAsync(Guid id, Guid? instituteId = null)
@@ -87,10 +70,10 @@ namespace Hafiz.Repositories
         public async Task<Student?> GetByIdAsync(Guid id, Guid? instituteId = null)
         {
             var query = _context
-                .Students.IgnoreQueryFilters()
-                .Include(t => t.StudentInfo)
+                .Students.Include(t => t.StudentInfo)
                 .Include(s => s.wirds)
                 .Include(s => s.Classes)
+                .ThenInclude(c => c.Teachers)
                 .Include(s => s.Attendances)
                 .ThenInclude(a => a.Class)
                 .AsQueryable();
@@ -103,13 +86,16 @@ namespace Hafiz.Repositories
             return await query.FirstOrDefaultAsync(t => t.UserId == id);
         }
 
-        public async Task<Student?> GetStudentBasicByIdAsync(Guid id)
+        public async Task<Student?> GetStudentBasicByIdAsync(Guid id, Guid? instituteId = null)
         {
-            return await _context
-                .Students.IgnoreQueryFilters()
-                .Include(s => s.StudentInfo)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(s => s.UserId == id);
+            var query = _context.Students.Include(s => s.StudentInfo).AsNoTracking().AsQueryable();
+
+            if (instituteId.HasValue)
+            {
+                query = query.Where(s => s.StudentInfo.InstituteId == instituteId.Value);
+            }
+
+            return await query.FirstOrDefaultAsync(s => s.UserId == id);
         }
 
         public async Task UpdateAsync(EditStudentDto student)
@@ -134,15 +120,30 @@ namespace Hafiz.Repositories
             if (student.DateOfBirth == null)
                 existingStudent.DateOfBirth = student.DateOfBirth;
 
-            existingStudent.ClassId =
-                student.ClassId == Guid.Empty ? existingStudent.ClassId : student.ClassId;
+            var studentInstituteId = existingStudent.StudentInfo.InstituteId;
 
-            existingStudent.ParentId =
-                student.ParentId == Guid.Empty ? existingStudent.ParentId : student.ParentId;
+            if (student.ClassId.HasValue && student.ClassId != Guid.Empty)
+            {
+                var legacyClass = await _context.Classes.FindAsync(student.ClassId.Value);
+                if (legacyClass != null && (!studentInstituteId.HasValue || legacyClass.InstituteId == studentInstituteId.Value))
+                {
+                    existingStudent.ClassId = student.ClassId;
+                }
+            }
+
+            if (student.ParentId.HasValue && student.ParentId != Guid.Empty)
+            {
+                var parent = await _context.Parents.Include(p => p.ParentInfo)
+                    .FirstOrDefaultAsync(p => p.UserId == student.ParentId.Value);
+                if (parent != null && (!studentInstituteId.HasValue || parent.ParentInfo?.InstituteId == studentInstituteId.Value))
+                {
+                    existingStudent.ParentId = student.ParentId;
+                }
+            }
+
             if (student.MemorizedJuz != null)
                 existingStudent.MemorizedJuz = student.MemorizedJuz;
-            else
-                existingStudent.MemorizedJuz = existingStudent.MemorizedJuz;
+
             existingStudent.TajwidLevel = student.TajwidLevel ?? existingStudent.TajwidLevel;
 
             if (student.sex != null)
@@ -154,7 +155,7 @@ namespace Hafiz.Repositories
                 foreach (var classId in student.ClassesIds)
                 {
                     var classEntity = await _context.Classes.FindAsync(classId);
-                    if (classEntity != null)
+                    if (classEntity != null && (!studentInstituteId.HasValue || classEntity.InstituteId == studentInstituteId.Value))
                     {
                         existingStudent.Classes.Add(classEntity);
                     }
@@ -311,8 +312,8 @@ namespace Hafiz.Repositories
 
         public async Task<IEnumerable<Student>> GetArchivedByInstituteAsync(Guid instituteId)
         {
-            return await _context.Students
-                .IgnoreQueryFilters()
+            return await _context
+                .Students.IgnoreQueryFilters()
                 .Include(t => t.StudentInfo)
                 .Include(s => s.Classes)
                 .Where(s => s.IsDeleted && s.StudentInfo.InstituteId == instituteId)
@@ -323,8 +324,8 @@ namespace Hafiz.Repositories
 
         public async Task<IEnumerable<Student>> GetArchivedAsync()
         {
-            return await _context.Students
-                .IgnoreQueryFilters()
+            return await _context
+                .Students.IgnoreQueryFilters()
                 .Include(t => t.StudentInfo)
                 .Include(s => s.Classes)
                 .Where(s => s.IsDeleted)
@@ -333,11 +334,11 @@ namespace Hafiz.Repositories
                 .ToListAsync();
         }
 
-        public async Task<(int activeCount, int archivedCount)> GetCountsAsync(Guid? instituteId = null)
+        public async Task<(int activeCount, int archivedCount)> GetCountsAsync(
+            Guid? instituteId = null
+        )
         {
-            var query = _context.Students
-                .IgnoreQueryFilters()
-                .AsQueryable();
+            var query = _context.Students.IgnoreQueryFilters().AsQueryable();
 
             if (instituteId.HasValue)
             {

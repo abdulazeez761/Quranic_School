@@ -18,10 +18,29 @@ namespace Hafiz.Areas.Teacher.Controllers
     public class WirdController : Controller
     {
         private readonly IWirdService _wirdService;
+        private readonly IClassService _classService;
 
-        public WirdController(IWirdService wirdService)
+        public WirdController(IWirdService wirdService, IClassService classService)
         {
             _wirdService = wirdService;
+            _classService = classService;
+        }
+
+        private Guid? GetInstituteId()
+        {
+            var claim = User.FindFirstValue("InstituteId");
+            if (Guid.TryParse(claim, out var id))
+                return id;
+
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (Guid.TryParse(userIdStr, out var userId))
+            {
+                var userRepo = HttpContext.RequestServices.GetService<Hafiz.Repositories.Interfaces.IUserRepository>();
+                var user = userRepo?.GetByIdAsync(userId).GetAwaiter().GetResult();
+                return user?.InstituteId;
+            }
+
+            return null;
         }
 
         [HttpGet]
@@ -32,13 +51,24 @@ namespace Hafiz.Areas.Teacher.Controllers
             int pageSize = 12
         )
         {
+            var instituteId = GetInstituteId();
+            if (!instituteId.HasValue)
+                return Forbid();
+
             string? selectedClassFromCookies = Request.Cookies["selectedClassId"];
             Guid selectedClass;
-            if (selectedClassFromCookies is not null)
-                selectedClass = Guid.Parse(selectedClassFromCookies);
+            if (selectedClassFromCookies is not null && Guid.TryParse(selectedClassFromCookies, out var parsedClass))
+                selectedClass = parsedClass;
             else
             {
                 ModelState.AddModelError("NoClass", "you did not select a class");
+                return View(new PagedResult<WirdAssignment>());
+            }
+
+            var classDto = await _classService.GetClassById(selectedClass, instituteId.Value);
+            if (classDto == null)
+            {
+                ModelState.AddModelError("InvalidClass", "الشعبة المحددة غير موجودة في هذا المركز.");
                 return View(new PagedResult<WirdAssignment>());
             }
 
@@ -62,7 +92,11 @@ namespace Hafiz.Areas.Teacher.Controllers
         [HttpGet]
         public async Task<IActionResult> GetWirdAssignmentById(Guid id)
         {
-            var assignment = await _wirdService.GetWirdAssignmentByIdAsync(id);
+            var instituteId = GetInstituteId();
+            if (!instituteId.HasValue)
+                return Forbid();
+
+            var assignment = await _wirdService.GetWirdAssignmentByIdAsync(id, instituteId.Value);
             if (assignment == null)
                 return NotFound();
 
@@ -92,10 +126,14 @@ namespace Hafiz.Areas.Teacher.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateStatus([FromBody] UpdateStatusRequest receivedData)
         {
-            AssignmentStatus status = (AssignmentStatus) // this because the enum.parse returns an object so we tell the variable I will return the AssignmentStatus so it matches the declaration
+            var instituteId = GetInstituteId();
+            if (!instituteId.HasValue)
+                return Forbid();
+
+            AssignmentStatus status = (AssignmentStatus)
                 Enum.Parse(typeof(AssignmentStatus), receivedData.Status, true);
 
-            bool isWIrdUpdated = await _wirdService.UpdateStatus(receivedData.Id, status);
+            bool isWIrdUpdated = await _wirdService.UpdateStatus(receivedData.Id, status, instituteId.Value);
             return Json(new { success = isWIrdUpdated });
         }
 
@@ -104,9 +142,14 @@ namespace Hafiz.Areas.Teacher.Controllers
             [FromBody] UpdateNoteRequest updateNoteRequest
         )
         {
+            var instituteId = GetInstituteId();
+            if (!instituteId.HasValue)
+                return Forbid();
+
             bool isWIrdUpdated = await _wirdService.UpdateWirdNote(
                 updateNoteRequest.Id,
-                updateNoteRequest.Note
+                updateNoteRequest.Note,
+                instituteId.Value
             );
 
             return Json(new { success = isWIrdUpdated });
@@ -115,7 +158,11 @@ namespace Hafiz.Areas.Teacher.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
-            bool isWirdDeleted = await _wirdService.DeleteWirdAssignment(id);
+            var instituteId = GetInstituteId();
+            if (!instituteId.HasValue)
+                return Forbid();
+
+            bool isWirdDeleted = await _wirdService.DeleteWirdAssignment(id, instituteId.Value);
             if (isWirdDeleted)
             {
                 TempData["SuccessMessage"] = "Wird assignment deleted successfully.";
@@ -124,7 +171,7 @@ namespace Hafiz.Areas.Teacher.Controllers
             else
             {
                 TempData["ErrorMessage"] = "Failed to delete wird assignment.";
-                return Json(new { success = false, message = "حدث خطأ أثناء محاولة حذف السجل" });
+                return Json(new { success = false, message = "حدث خطأ أثناء محاولة حذف السجل أو غير مصرح لك بذلك" });
             }
         }
     }

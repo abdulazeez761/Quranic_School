@@ -22,15 +22,18 @@ namespace Hafiz.Services.Interfaces
         Task<WirdReportViewModel> GetWirdReportForExportAsync(WirdReportFilterDto filter);
 
         Task<(bool IsSuccess, string Message)> AddWirdAsync(AssignWirdsBatchDto wird);
-        Task<(bool IsSuccess, string Message)> UpdateWirdAsync(WirdAssignment wird);
+        Task<(bool IsSuccess, string Message)> UpdateWirdAsync(
+            WirdAssignment wird,
+            Guid? instituteId = null
+        );
         Task<List<WirdAssignment>?> GetWirdAssignmentsByClassIdAsync(
             Guid classID,
             string? fromDate,
             string? toDate
         );
-        Task<bool> UpdateStatus(Guid id, AssignmentStatus status);
-        Task<bool> UpdateWirdNote(Guid Id, string Note);
-        Task<bool> DeleteWirdAssignment(Guid id);
-        Task<WirdAssignment?> GetWirdAssignmentByIdAsync(Guid id);
+        Task<bool> UpdateStatus(Guid id, AssignmentStatus status, Guid? instituteId = null);
+        Task<bool> UpdateWirdNote(Guid Id, string Note, Guid? instituteId = null);
+        Task<bool> DeleteWirdAssignment(Guid id, Guid? instituteId = null);
+        Task<WirdAssignment?> GetWirdAssignmentByIdAsync(Guid id, Guid? instituteId = null);
     }
 }

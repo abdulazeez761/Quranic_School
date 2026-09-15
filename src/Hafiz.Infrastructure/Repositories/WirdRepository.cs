@@ -41,35 +41,47 @@ namespace Hafiz.Repositories
                 return (false, "لا توجد أوراد لحفظها.");
 
             var strategy = _context.Database.CreateExecutionStrategy();
-            return await strategy.ExecuteAsync(async () =>
+            try
             {
-                await using var transaction = await _context.Database.BeginTransactionAsync();
-                try
+                return await strategy.ExecuteAsync(async () =>
                 {
+                    _context.ChangeTracker.Clear();
+                    await using var transaction = await _context.Database.BeginTransactionAsync();
+
                     await _context.WirdAssignments.AddRangeAsync(wirds);
+                    await _context.SaveChangesAsync();
 
                     if (totalMemDelta != 0 || totalRevDelta != 0)
                     {
-                        var student = await _context.Students.FirstOrDefaultAsync(s => s.UserId == studentId);
-                        if (student != null)
-                        {
-                            student.MemorizedPages += totalMemDelta;
-                            student.ReviewedPages += totalRevDelta;
-                        }
+                        await _context
+                            .Students.Where(s => s.UserId == studentId)
+                            .ExecuteUpdateAsync(setters =>
+                                setters
+                                    .SetProperty(
+                                        s => s.MemorizedPages,
+                                        s => s.MemorizedPages + totalMemDelta
+                                    )
+                                    .SetProperty(
+                                        s => s.ReviewedPages,
+                                        s => s.ReviewedPages + totalRevDelta
+                                    )
+                            );
                     }
 
-                    await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
 
                     return (true, $"تم حفظ {wirds.Count} أوراد للطالب بنجاح!");
-                }
-                catch (Exception ex)
-                {
-                    await transaction.RollbackAsync();
-                    _logger.LogError(ex, "فشل حفظ أوراد الطالب {StudentId} دفعة واحدة داخل Transaction", studentId);
-                    return (false, "حدث خطأ غير متوقع أثناء حفظ الأوراد.");
-                }
-            });
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "فشل حفظ أوراد الطالب {StudentId} دفعة واحدة بعد استنفاد المحاولات",
+                    studentId
+                );
+                return (false, "حدث خطأ غير متوقع أثناء حفظ الأوراد. يرجى إعادة المحاولة.");
+            }
         }
 
         public async Task<(
@@ -79,8 +91,8 @@ namespace Hafiz.Repositories
             WirdAssignment? recitation
         )> GetLatestWirdsForContextAsync(Guid studentId, DateTime todayDate)
         {
-            var baseQuery = _context.WirdAssignments
-                .IgnoreQueryFilters()
+            var baseQuery = _context
+                .WirdAssignments.IgnoreQueryFilters()
                 .AsNoTracking()
                 .Where(w => w.StudentId == studentId);
 
@@ -88,83 +100,143 @@ namespace Hafiz.Repositories
 
             // Memorization
             var memQuery = baseQuery.Where(w => w.Type == AssignmentType.Memorization);
-            var lastMem = await memQuery
-                .Where(w => w.AssignedDate < todayStart)
-                .OrderByDescending(w => w.AssignedDate)
-                .FirstOrDefaultAsync()
-                ?? await memQuery
-                .OrderByDescending(w => w.AssignedDate)
-                .FirstOrDefaultAsync();
+            var lastMem =
+                await memQuery
+                    .Where(w => w.AssignedDate < todayStart)
+                    .OrderByDescending(w => w.AssignedDate)
+                    .FirstOrDefaultAsync()
+                ?? await memQuery.OrderByDescending(w => w.AssignedDate).FirstOrDefaultAsync();
 
             // Recent Revision (AmountUnit != Juz)
-            var recentRevQuery = baseQuery.Where(w => w.Type == AssignmentType.Revision && w.AmountUnit != WirdUnit.Juz);
-            var lastRecentRev = await recentRevQuery
-                .Where(w => w.AssignedDate < todayStart)
-                .OrderByDescending(w => w.AssignedDate)
-                .FirstOrDefaultAsync()
+            var recentRevQuery = baseQuery.Where(w =>
+                w.Type == AssignmentType.Revision && w.AmountUnit != WirdUnit.Juz
+            );
+            var lastRecentRev =
+                await recentRevQuery
+                    .Where(w => w.AssignedDate < todayStart)
+                    .OrderByDescending(w => w.AssignedDate)
+                    .FirstOrDefaultAsync()
                 ?? await recentRevQuery
-                .OrderByDescending(w => w.AssignedDate)
-                .FirstOrDefaultAsync();
+                    .OrderByDescending(w => w.AssignedDate)
+                    .FirstOrDefaultAsync();
 
             // Old Revision (AmountUnit == Juz)
-            var oldRevQuery = baseQuery.Where(w => w.Type == AssignmentType.Revision && w.AmountUnit == WirdUnit.Juz);
-            var lastOldRev = await oldRevQuery
-                .Where(w => w.AssignedDate < todayStart)
-                .OrderByDescending(w => w.AssignedDate)
-                .FirstOrDefaultAsync()
-                ?? await oldRevQuery
-                .OrderByDescending(w => w.AssignedDate)
-                .FirstOrDefaultAsync();
+            var oldRevQuery = baseQuery.Where(w =>
+                w.Type == AssignmentType.Revision && w.AmountUnit == WirdUnit.Juz
+            );
+            var lastOldRev =
+                await oldRevQuery
+                    .Where(w => w.AssignedDate < todayStart)
+                    .OrderByDescending(w => w.AssignedDate)
+                    .FirstOrDefaultAsync()
+                ?? await oldRevQuery.OrderByDescending(w => w.AssignedDate).FirstOrDefaultAsync();
 
             // Recitation (Tajwid)
             var tajwidQuery = baseQuery.Where(w => w.Type == AssignmentType.Tajwid);
-            var lastRecitation = await tajwidQuery
-                .Where(w => w.AssignedDate < todayStart)
-                .OrderByDescending(w => w.AssignedDate)
-                .FirstOrDefaultAsync()
-                ?? await tajwidQuery
-                .OrderByDescending(w => w.AssignedDate)
-                .FirstOrDefaultAsync();
+            var lastRecitation =
+                await tajwidQuery
+                    .Where(w => w.AssignedDate < todayStart)
+                    .OrderByDescending(w => w.AssignedDate)
+                    .FirstOrDefaultAsync()
+                ?? await tajwidQuery.OrderByDescending(w => w.AssignedDate).FirstOrDefaultAsync();
 
             return (lastMem, lastRecentRev, lastOldRev, lastRecitation);
         }
 
-        public async Task<List<WirdAssignment>> GetTodayWirdsAsync(Guid studentId, DateTime todayDate)
+        public async Task<List<WirdAssignment>> GetTodayWirdsAsync(
+            Guid studentId,
+            DateTime todayDate
+        )
         {
             var todayStartDate = todayDate.Date;
             var tomorrowDate = todayStartDate.AddDays(1);
 
-            return await _context.WirdAssignments
-                .IgnoreQueryFilters()
+            return await _context
+                .WirdAssignments.IgnoreQueryFilters()
                 .AsNoTracking()
-                .Where(w => w.StudentId == studentId && w.AssignedDate >= todayStartDate && w.AssignedDate < tomorrowDate)
+                .Where(w =>
+                    w.StudentId == studentId
+                    && w.AssignedDate >= todayStartDate
+                    && w.AssignedDate < tomorrowDate
+                )
                 .ToListAsync();
         }
 
-        public async Task<bool> UpdateWirdAsync(WirdAssignment wird)
+        public async Task<bool> UpdateWirdAsync(WirdAssignment wird, Guid? instituteId = null)
         {
-            var updatedRowsCount = await _context
-                .WirdAssignments.Where(w => w.Id == wird.Id)
-                .ExecuteUpdateAsync(setters =>
-                    setters
-                        .SetProperty(w => w.Type, wird.Type)
-                        .SetProperty(w => w.Amount, wird.Amount)
-                        .SetProperty(w => w.AmountUnit, wird.AmountUnit)
-                        .SetProperty(w => w.EquivalentPages, wird.EquivalentPages)
-                        .SetProperty(w => w.FromJuz, wird.FromJuz)
-                        .SetProperty(w => w.FromPage, wird.FromPage)
-                        .SetProperty(w => w.FromSurah, wird.FromSurah)
-                        .SetProperty(w => w.FromAyah, wird.FromAyah)
-                        .SetProperty(w => w.ToJuz, wird.ToJuz)
-                        .SetProperty(w => w.ToPage, wird.ToPage)
-                        .SetProperty(w => w.ToSurah, wird.ToSurah)
-                        .SetProperty(w => w.ToAyah, wird.ToAyah)
-                        .SetProperty(w => w.Status, wird.Status)
-                        .SetProperty(w => w.IsUpcoming, wird.IsUpcoming)
-                        .SetProperty(w => w.Note, wird.Note)
-                );
+            var query = _context.WirdAssignments.Where(w => w.Id == wird.Id);
+            if (instituteId.HasValue)
+            {
+                query = query.Where(w => w.Student.StudentInfo.InstituteId == instituteId.Value);
+            }
+
+            var updatedRowsCount = await query.ExecuteUpdateAsync(setters =>
+                setters
+                    .SetProperty(w => w.Type, wird.Type)
+                    .SetProperty(w => w.Amount, wird.Amount)
+                    .SetProperty(w => w.AmountUnit, wird.AmountUnit)
+                    .SetProperty(w => w.EquivalentPages, wird.EquivalentPages)
+                    .SetProperty(w => w.FromJuz, wird.FromJuz)
+                    .SetProperty(w => w.FromPage, wird.FromPage)
+                    .SetProperty(w => w.FromSurah, wird.FromSurah)
+                    .SetProperty(w => w.FromAyah, wird.FromAyah)
+                    .SetProperty(w => w.ToJuz, wird.ToJuz)
+                    .SetProperty(w => w.ToPage, wird.ToPage)
+                    .SetProperty(w => w.ToSurah, wird.ToSurah)
+                    .SetProperty(w => w.ToAyah, wird.ToAyah)
+                    .SetProperty(w => w.Status, wird.Status)
+                    .SetProperty(w => w.IsUpcoming, wird.IsUpcoming)
+                    .SetProperty(w => w.Note, wird.Note)
+            );
 
             return updatedRowsCount > 0;
+        }
+
+        public async Task<bool> UpdateWirdWithProgressDeltaAsync(
+            WirdAssignment wird,
+            decimal memDelta,
+            decimal revDelta,
+            Guid? instituteId = null
+        )
+        {
+            var strategy = _context.Database.CreateExecutionStrategy();
+            try
+            {
+                return await strategy.ExecuteAsync(async () =>
+                {
+                    _context.ChangeTracker.Clear();
+                    await using var transaction = await _context.Database.BeginTransactionAsync();
+
+                    bool updated = await UpdateWirdAsync(wird, instituteId);
+                    if (!updated)
+                        return false;
+
+                    if (memDelta != 0 || revDelta != 0)
+                    {
+                        await _context
+                            .Students.Where(s => s.UserId == wird.StudentId)
+                            .ExecuteUpdateAsync(setters =>
+                                setters
+                                    .SetProperty(
+                                        s => s.MemorizedPages,
+                                        s => s.MemorizedPages + memDelta
+                                    )
+                                    .SetProperty(
+                                        s => s.ReviewedPages,
+                                        s => s.ReviewedPages + revDelta
+                                    )
+                            );
+                    }
+
+                    await transaction.CommitAsync();
+                    return true;
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "فشل تحديث الورد {WirdId} مع صفحات الطالب ذرّياً", wird.Id);
+                return false;
+            }
         }
 
         public async Task<List<WirdAssignment>> GetWirdAssignmentsByClassIdAsync(
@@ -331,47 +403,201 @@ namespace Hafiz.Repositories
                 .Include(w => w.Student)
                 .ThenInclude(s => s.Classes);
 
-        public async Task<WirdAssignment?> GetWirdByID(Guid Id)
+        public async Task<WirdAssignment?> GetWirdByID(Guid Id, Guid? instituteId = null)
         {
-            // No tracking: callers read this for display or recompute then persist via a
-            // separate ExecuteUpdate/own query. Tracking here would make a re-fetch after
-            // ExecuteUpdateAsync return the stale cached entity instead of fresh DB values.
-            return await _context
+            var query = _context
                 .WirdAssignments.AsNoTracking()
                 .Include(w => w.Student)
                 .ThenInclude(s => s.StudentInfo)
-                .Where(c => c.Id == Id)
-                .FirstOrDefaultAsync();
+                .Where(c => c.Id == Id);
+
+            if (instituteId.HasValue)
+            {
+                query = query.Where(c => c.Student.StudentInfo.InstituteId == instituteId.Value);
+            }
+
+            return await query.FirstOrDefaultAsync();
         }
 
-        public async Task<bool> UpdateStatus(Guid Id, AssignmentStatus status)
+        public async Task<bool> UpdateStatus(
+            Guid Id,
+            AssignmentStatus status,
+            Guid? instituteId = null
+        )
         {
-            var assignment = _context.WirdAssignments.Where(c => c.Id == Id).FirstOrDefault();
-            assignment!.Status = status;
+            var query = _context.WirdAssignments.Where(c => c.Id == Id);
+            if (instituteId.HasValue)
+            {
+                query = query.Where(c => c.Student.StudentInfo.InstituteId == instituteId.Value);
+            }
+
+            var assignment = await query.FirstOrDefaultAsync();
+            if (assignment == null)
+                return false;
+
+            assignment.Status = status;
             assignment.IsCompleted = status != AssignmentStatus.notSet;
-            // Grading a wird means it's no longer an upcoming (future) assignment.
             if (status != AssignmentStatus.notSet)
                 assignment.IsUpcoming = false;
-            var result = await _context.SaveChangesAsync();
 
+            var result = await _context.SaveChangesAsync();
             return result > 0;
         }
 
-        public async Task<bool> UpdateNote(Guid Id, string note)
+        public async Task<bool> UpdateStatusWithProgressDeltaAsync(
+            Guid id,
+            AssignmentStatus status,
+            decimal memDelta,
+            decimal revDelta,
+            Guid? instituteId = null
+        )
         {
-            var assignment = _context.WirdAssignments.Where(c => c.Id == Id).FirstOrDefault();
-            assignment!.Note = note;
-            var result = await _context.SaveChangesAsync();
+            var strategy = _context.Database.CreateExecutionStrategy();
+            try
+            {
+                return await strategy.ExecuteAsync(async () =>
+                {
+                    _context.ChangeTracker.Clear();
+                    await using var transaction = await _context.Database.BeginTransactionAsync();
 
+                    var query = _context.WirdAssignments.Where(c => c.Id == id);
+                    if (instituteId.HasValue)
+                    {
+                        query = query.Where(c =>
+                            c.Student.StudentInfo.InstituteId == instituteId.Value
+                        );
+                    }
+
+                    var assignment = await query.FirstOrDefaultAsync();
+                    if (assignment == null)
+                        return false;
+
+                    assignment.Status = status;
+                    assignment.IsCompleted = status != AssignmentStatus.notSet;
+                    if (status != AssignmentStatus.notSet)
+                        assignment.IsUpcoming = false;
+
+                    await _context.SaveChangesAsync();
+
+                    if (memDelta != 0 || revDelta != 0)
+                    {
+                        await _context
+                            .Students.Where(s => s.UserId == assignment.StudentId)
+                            .ExecuteUpdateAsync(setters =>
+                                setters
+                                    .SetProperty(
+                                        s => s.MemorizedPages,
+                                        s => s.MemorizedPages + memDelta
+                                    )
+                                    .SetProperty(
+                                        s => s.ReviewedPages,
+                                        s => s.ReviewedPages + revDelta
+                                    )
+                            );
+                    }
+
+                    await transaction.CommitAsync();
+                    return true;
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "فشل تحديث حالة الورد {WirdId} مع صفحات الطالب ذرّياً", id);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateNote(Guid Id, string note, Guid? instituteId = null)
+        {
+            var query = _context.WirdAssignments.Where(c => c.Id == Id);
+            if (instituteId.HasValue)
+            {
+                query = query.Where(c => c.Student.StudentInfo.InstituteId == instituteId.Value);
+            }
+
+            var assignment = await query.FirstOrDefaultAsync();
+            if (assignment == null)
+                return false;
+
+            assignment.Note = note;
+            var result = await _context.SaveChangesAsync();
             return result > 0;
         }
 
-        public async Task<bool> DeleteWirdAssignment(Guid id)
+        public async Task<bool> DeleteWirdAssignment(Guid id, Guid? instituteId = null)
         {
-            WirdAssignment? wirdToDelete = _context.WirdAssignments.FirstOrDefault(w => w.Id == id);
-            _context.WirdAssignments.Remove(wirdToDelete!);
+            var query = _context.WirdAssignments.Where(w => w.Id == id);
+            if (instituteId.HasValue)
+            {
+                query = query.Where(w => w.Student.StudentInfo.InstituteId == instituteId.Value);
+            }
+
+            var wirdToDelete = await query.FirstOrDefaultAsync();
+            if (wirdToDelete == null)
+                return false;
+
+            _context.WirdAssignments.Remove(wirdToDelete);
             var result = await _context.SaveChangesAsync();
             return result > 0;
+        }
+
+        public async Task<bool> DeleteWirdWithProgressDeltaAsync(
+            Guid id,
+            decimal memDelta,
+            decimal revDelta,
+            Guid? instituteId = null
+        )
+        {
+            var strategy = _context.Database.CreateExecutionStrategy();
+            try
+            {
+                return await strategy.ExecuteAsync(async () =>
+                {
+                    _context.ChangeTracker.Clear();
+                    await using var transaction = await _context.Database.BeginTransactionAsync();
+
+                    var query = _context.WirdAssignments.Where(w => w.Id == id);
+                    if (instituteId.HasValue)
+                    {
+                        query = query.Where(w =>
+                            w.Student.StudentInfo.InstituteId == instituteId.Value
+                        );
+                    }
+
+                    var wirdToDelete = await query.FirstOrDefaultAsync();
+                    if (wirdToDelete == null)
+                        return false;
+
+                    var studentId = wirdToDelete.StudentId;
+                    _context.WirdAssignments.Remove(wirdToDelete);
+                    await _context.SaveChangesAsync();
+
+                    if (memDelta != 0 || revDelta != 0)
+                    {
+                        await _context
+                            .Students.Where(s => s.UserId == studentId)
+                            .ExecuteUpdateAsync(setters =>
+                                setters
+                                    .SetProperty(
+                                        s => s.MemorizedPages,
+                                        s => s.MemorizedPages + memDelta
+                                    )
+                                    .SetProperty(
+                                        s => s.ReviewedPages,
+                                        s => s.ReviewedPages + revDelta
+                                    )
+                            );
+                    }
+
+                    await transaction.CommitAsync();
+                    return true;
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "فشل حذف الورد {WirdId} مع صفحات الطالب ذرّياً", id);
+                return false;
+            }
         }
 
         public async Task<(

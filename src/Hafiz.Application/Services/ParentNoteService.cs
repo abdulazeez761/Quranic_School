@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Hafiz.Application.Interfaces.Repositories;
 using Hafiz.Models;
 using Hafiz.Repositories.Interfaces;
 using Hafiz.Services.Interfaces;
@@ -11,14 +12,17 @@ namespace Hafiz.Services
     {
         private readonly IParentNoteRepository _parentNoteRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IStudentRepository _studentRepository;
 
         public ParentNoteService(
             IParentNoteRepository parentNoteRepository,
-            IUserRepository userRepository
+            IUserRepository userRepository,
+            IStudentRepository studentRepository
         )
         {
             _parentNoteRepository = parentNoteRepository;
             _userRepository = userRepository;
+            _studentRepository = studentRepository;
         }
 
         public async Task<IEnumerable<ParentNote>> GetNotesByStudentIdAsync(Guid studentId)
@@ -37,6 +41,12 @@ namespace Hafiz.Services
             if (user == null || (user.Role != UserRole.Admin && user.Role != UserRole.Teacher))
             {
                 throw new UnauthorizedAccessException("Only admins and teachers can create parent notes.");
+            }
+
+            var student = await _studentRepository.GetStudentBasicByIdAsync(studentId, user.InstituteId);
+            if (student == null)
+            {
+                throw new KeyNotFoundException("Student not found or access denied.");
             }
 
             var note = new ParentNote
@@ -58,7 +68,18 @@ namespace Hafiz.Services
             }
 
             var user = await _userRepository.GetByIdAsync(userId);
-            if (user == null || (user.Role != UserRole.Admin && note.CreatedBy != userId))
+            if (user == null)
+            {
+                throw new UnauthorizedAccessException("User not found.");
+            }
+
+            if (user.InstituteId.HasValue && note.Student?.StudentInfo?.InstituteId.HasValue == true &&
+                note.Student.StudentInfo.InstituteId != user.InstituteId)
+            {
+                throw new UnauthorizedAccessException("Cross-tenant access forbidden.");
+            }
+
+            if (user.Role != UserRole.Admin && note.CreatedBy != userId)
             {
                 throw new UnauthorizedAccessException("You don't have permission to update this note.");
             }
@@ -76,7 +97,18 @@ namespace Hafiz.Services
             }
 
             var user = await _userRepository.GetByIdAsync(userId);
-            if (user == null || (user.Role != UserRole.Admin && note.CreatedBy != userId))
+            if (user == null)
+            {
+                throw new UnauthorizedAccessException("User not found.");
+            }
+
+            if (user.InstituteId.HasValue && note.Student?.StudentInfo?.InstituteId.HasValue == true &&
+                note.Student.StudentInfo.InstituteId != user.InstituteId)
+            {
+                throw new UnauthorizedAccessException("Cross-tenant access forbidden.");
+            }
+
+            if (user.Role != UserRole.Admin && note.CreatedBy != userId)
             {
                 throw new UnauthorizedAccessException("You don't have permission to delete this note.");
             }
@@ -86,10 +118,22 @@ namespace Hafiz.Services
 
         public async Task<bool> MarkNoteAsReadAsync(Guid noteId, Guid userId)
         {
+            var note = await _parentNoteRepository.GetNoteByIdAsync(noteId);
+            if (note == null)
+            {
+                return false;
+            }
+
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null || (user.Role != UserRole.Admin && user.Role != UserRole.Teacher))
             {
                 throw new UnauthorizedAccessException("Only admins and teachers can mark notes as read.");
+            }
+
+            if (user.InstituteId.HasValue && note.Student?.StudentInfo?.InstituteId.HasValue == true &&
+                note.Student.StudentInfo.InstituteId != user.InstituteId)
+            {
+                throw new UnauthorizedAccessException("Cross-tenant access forbidden.");
             }
 
             return await _parentNoteRepository.MarkAsReadAsync(noteId);
@@ -105,6 +149,12 @@ namespace Hafiz.Services
 
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
+            {
+                return false;
+            }
+
+            if (user.InstituteId.HasValue && note.Student?.StudentInfo?.InstituteId.HasValue == true &&
+                note.Student.StudentInfo.InstituteId != user.InstituteId)
             {
                 return false;
             }

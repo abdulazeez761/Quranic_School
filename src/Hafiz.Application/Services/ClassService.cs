@@ -130,30 +130,41 @@ namespace Hafiz.Services
 
         public async Task<bool> UpdateAsync(ClassDto classDto)
         {
-            var IsClassExist = await GetClassById(classDto.Id.Value);
-            if (IsClassExist == null)
+            if (!classDto.Id.HasValue)
                 return false;
 
+            var existingClass = await GetClassById(classDto.Id.Value);
+            if (existingClass == null)
+                return false;
+
+            var instituteId = existingClass.InstituteId;
+
             var students = new List<Student>();
-            foreach (var studentId in classDto.StudentsIds)
+            if (classDto.StudentsIds != null)
             {
-                var student = await _studentRepo.GetByIdAsync(studentId);
-
-                if (student != null)
+                foreach (var studentId in classDto.StudentsIds)
                 {
-                    students.Add(student);
+                    var student = await _studentRepo.GetByIdAsync(studentId, instituteId);
+                    if (student != null)
+                    {
+                        students.Add(student);
+                    }
                 }
             }
+
             var teachers = new List<Teacher>();
-            foreach (var teacherId in classDto.TeacherIds)
+            if (classDto.TeacherIds != null)
             {
-                var teacher = await _teacherRepository.GetTeacherByIDAsync(teacherId); // it return teacher class(wrong approach)
-
-                if (teacher != null)
+                foreach (var teacherId in classDto.TeacherIds)
                 {
-                    teachers.Add(teacher);
+                    var teacher = await _teacherRepository.GetTeacherByIDAsync(teacherId, instituteId);
+                    if (teacher != null)
+                    {
+                        teachers.Add(teacher);
+                    }
                 }
             }
+
             Class newClass = new Class()
             {
                 Id = classDto.Id.Value,
@@ -163,6 +174,7 @@ namespace Hafiz.Services
                 Students = students,
                 Teachers = teachers,
                 ClassDays = classDto.ClassDays,
+                InstituteId = existingClass.InstituteId,
             };
             var isUpdated = await _classRepository.UpdateAsync(newClass);
             return isUpdated;
