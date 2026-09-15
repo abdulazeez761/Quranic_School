@@ -39,6 +39,19 @@ namespace Hafiz.Repositories.Interfaces
         );
 
         Task<bool> AddWirdAsync(WirdAssignment wird);
+        Task<(bool IsSuccess, string Message)> AddWirdsBatchAtomicAsync(
+            List<WirdAssignment> wirds,
+            Guid studentId,
+            decimal totalMemDelta,
+            decimal totalRevDelta
+        );
+        Task<(
+            WirdAssignment? memorization,
+            WirdAssignment? recentRevision,
+            WirdAssignment? oldRevision,
+            WirdAssignment? recitation
+        )> GetLatestWirdsForContextAsync(Guid studentId, DateTime todayDate);
+        Task<List<WirdAssignment>> GetTodayWirdsAsync(Guid studentId, DateTime todayDate);
         Task<bool> UpdateWirdAsync(WirdAssignment wird);
         Task<List<WirdAssignment>> GetWirdAssignmentsByClassIdAsync(
             Guid classID,

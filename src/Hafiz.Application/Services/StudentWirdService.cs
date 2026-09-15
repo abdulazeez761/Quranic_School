@@ -7,6 +7,7 @@ using Hafiz.Application.Interfaces;
 using Hafiz.Application.Mappers;
 using Hafiz.Models;
 using Hafiz.Models.enums;
+using Hafiz.Repositories.Interfaces;
 using Hafiz.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -14,19 +15,22 @@ namespace Hafiz.Application.Services
 {
     public class StudentWirdService : IStudentWirdService
     {
-        private readonly IStudentService _studentService;
+        private readonly IStudentRepository _studentRepository;
+        private readonly IWirdRepository _wirdRepository;
         private readonly IStudentRoutinePlanService _planService;
         private readonly IUserTimeProvider _timeProvider;
         private readonly ILogger<StudentWirdService> _logger;
 
         public StudentWirdService(
-            IStudentService studentService,
+            IStudentRepository studentRepository,
+            IWirdRepository wirdRepository,
             IStudentRoutinePlanService planService,
             IUserTimeProvider timeProvider,
             ILogger<StudentWirdService> logger
         )
         {
-            _studentService = studentService;
+            _studentRepository = studentRepository;
+            _wirdRepository = wirdRepository;
             _planService = planService;
             _timeProvider = timeProvider;
             _logger = logger;
@@ -34,7 +38,8 @@ namespace Hafiz.Application.Services
 
         public async Task<StudentWirdContextDto?> GetStudentWirdContextAsync(Guid studentId)
         {
-            var student = await _studentService.GetStudentByIdAsync(studentId);
+            // 1. Lightweight student info lookup without tracking or historical collections
+            var student = await _studentRepository.GetStudentBasicByIdAsync(studentId);
             if (student == null)
             {
                 _logger.LogWarning(
@@ -45,37 +50,14 @@ namespace Hafiz.Application.Services
             }
 
             var plan = await _planService.GetPlanByStudentIdAsync(studentId);
-
-            var allWirds = student.wirds ?? new List<WirdAssignment>();
             var todayDate = _timeProvider.GetUserToday();
 
-            // 1. Calculate the latest recorded wird for each category
-            var lastMemorization = GetLatestWird(
-                allWirds,
-                todayDate,
-                w => w.Type == AssignmentType.Memorization
-            );
+            // 2. Fast database-level projection for latest wirds per category using composite index
+            var (lastMemorization, lastRecentRev, lastOldRev, lastRecitation) =
+                await _wirdRepository.GetLatestWirdsForContextAsync(studentId, todayDate);
 
-            var lastRecentRev = GetLatestWird(
-                allWirds,
-                todayDate,
-                w => w.Type == AssignmentType.Revision && w.AmountUnit != WirdUnit.Juz
-            );
-
-            var lastOldRev = GetLatestWird(
-                allWirds,
-                todayDate,
-                w => w.Type == AssignmentType.Revision && w.AmountUnit == WirdUnit.Juz
-            );
-
-            var lastRecitation = GetLatestWird(
-                allWirds,
-                todayDate,
-                w => w.Type == AssignmentType.Tajwid
-            );
-
-            // 2. Filter today's wirds
-            var todayWirds = allWirds.Where(w => w.AssignedDate.Date == todayDate).ToList();
+            // 3. Fast query for today's active wirds only
+            var todayWirds = await _wirdRepository.GetTodayWirdsAsync(studentId, todayDate);
 
             var todayMem = todayWirds.FirstOrDefault(w => w.Type == AssignmentType.Memorization);
             var todayRecentRev = todayWirds.FirstOrDefault(w =>
@@ -86,7 +68,7 @@ namespace Hafiz.Application.Services
             );
             var todayRecitation = todayWirds.FirstOrDefault(w => w.Type == AssignmentType.Tajwid);
 
-            // 3. Assemble strongly-typed DTO
+            // 4. Assemble strongly-typed DTO
             return new StudentWirdContextDto
             {
                 Student = StudentWirdMapper.MapStudentSummary(student),
@@ -106,26 +88,6 @@ namespace Hafiz.Application.Services
                     Recitation = StudentWirdMapper.MapTodayWirdItem(todayRecitation),
                 },
             };
-        }
-
-        /// <summary>
-        /// Finds the most recent assignment for the specified category.
-        /// Prefers assignments before today; falls back to the latest assignment overall if none exist prior to today.
-        /// </summary>
-        private static WirdAssignment? GetLatestWird(
-            IEnumerable<WirdAssignment> wirds,
-            DateTime todayDate,
-            Func<WirdAssignment, bool> categoryPredicate
-        )
-        {
-            return wirds
-                    .Where(w => categoryPredicate(w) && w.AssignedDate.Date < todayDate)
-                    .OrderByDescending(w => w.AssignedDate)
-                    .FirstOrDefault()
-                ?? wirds
-                    .Where(categoryPredicate)
-                    .OrderByDescending(w => w.AssignedDate)
-                    .FirstOrDefault();
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Hafiz.Services
             if (dto == null || dto.Wirds == null || !dto.Wirds.Any())
                 return (false, "لا توجد أوراد مدخلة لحفظها.");
 
-            var student = await _studentRepository.GetByIdAsync(dto.StudentId);
+            var student = await _studentRepository.GetStudentBasicByIdAsync(dto.StudentId);
             if (student == null)
                 return (false, "تعذر العثور على بيانات الطالب.");
 
@@ -46,11 +46,9 @@ namespace Hafiz.Services
 
             decimal totalMemDelta = 0;
             decimal totalRevDelta = 0;
-            int savedCount = 0;
-
             DateTime assignedDate = dto.AssignedDate ?? DateTime.Now;
 
-            // 2. المرور على كل ورد من الأوراد الأربعة وحفظه
+            // 2. تجهيز الأوراد وحساب إجمالي الـ Delta لصفحات الحفظ والمراجعة
             foreach (var wird in dto.Wirds)
             {
                 wird.StudentId = dto.StudentId;
@@ -69,34 +67,18 @@ namespace Hafiz.Services
                     wird.IsUpcoming = false;
                 }
 
-                // إضافة الورد لقاعدة البيانات
-                bool isAdded = await _wirdRepository.AddWirdAsync(wird);
-                if (isAdded)
-                {
-                    savedCount++;
-
-                    // حساب مساهمة هذا الورد في صفحات الحفظ أو المراجعة
-                    var (memDelta, revDelta) = ProgressContribution(wird);
-                    totalMemDelta += memDelta;
-                    totalRevDelta += revDelta;
-                }
+                // حساب مساهمة هذا الورد في صفحات الحفظ أو المراجعة
+                var (memDelta, revDelta) = ProgressContribution(wird);
+                totalMemDelta += memDelta;
+                totalRevDelta += revDelta;
             }
 
-            // 3. تحديث صفحات الطالب التراكمية (الحفظ والمراجعة) دفعة واحدة بالناتج الكلي
-            if (totalMemDelta != 0 || totalRevDelta != 0)
-            {
-                await _studentRepository.ApplyProgressDeltaAsync(
-                    dto.StudentId,
-                    totalMemDelta,
-                    totalRevDelta
-                );
-            }
-
-            return (
-                savedCount > 0,
-                savedCount > 0
-                    ? $"تم حفظ {savedCount} أوراد للطالب بنجاح!"
-                    : "فشل حفظ الأوراد. لم تطرأ أي تغييرات."
+            // 3. تنفيذ الحفظ وتحديث صفحات الطالب دفعة واحدة داخل معاملة ذرية موحدة
+            return await _wirdRepository.AddWirdsBatchAtomicAsync(
+                dto.Wirds,
+                dto.StudentId,
+                totalMemDelta,
+                totalRevDelta
             );
         }
 
@@ -110,7 +92,7 @@ namespace Hafiz.Services
             // so editing a wird that's already counted doesn't falsely trip the limit.
             if (wird.Type == AssignmentType.Memorization)
             {
-                var student = await _studentRepository.GetByIdAsync(wird.StudentId);
+                var student = await _studentRepository.GetStudentBasicByIdAsync(wird.StudentId);
                 if (student != null)
                 {
                     decimal totalExcludingThis =

@@ -9,27 +9,32 @@
 
     bool isArabic = System.Globalization.CultureInfo.CurrentUICulture.Name.StartsWith("ar");
 
-    var query = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+    var baseQuery = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
     foreach (var item in Context.Request.Query)
     {
         if (!string.IsNullOrEmpty(item.Value) && !string.Equals(item.Key, "page", StringComparison.OrdinalIgnoreCase))
         {
-            query[item.Key] = item.Value.ToString();
+            baseQuery[item.Key] = item.Value.ToString();
         }
     }
 
+    // Keep current PageSize in base query
+    baseQuery["pageSize"] = Model.PageSize.ToString();
+
     string GetPageUrl(int pageNum)
     {
-        query["page"] = pageNum.ToString();
-        var qs = string.Join("&", query.Select(kvp => $"{System.Net.WebUtility.UrlEncode(kvp.Key)}={System.Net.WebUtility.UrlEncode(kvp.Value)}"));
+        var q = new Dictionary<string, string>(baseQuery, StringComparer.OrdinalIgnoreCase);
+        q["page"] = pageNum.ToString();
+        var qs = string.Join("&", q.Select(kvp => $"{System.Net.WebUtility.UrlEncode(kvp.Key)}={System.Net.WebUtility.UrlEncode(kvp.Value)}"));
         return $"{Context.Request.Path}?{qs}";
     }
 
     string GetPageSizeUrl(int newSize)
     {
-        query["page"] = "1";
-        query["pageSize"] = newSize.ToString();
-        var qs = string.Join("&", query.Select(kvp => $"{System.Net.WebUtility.UrlEncode(kvp.Key)}={System.Net.WebUtility.UrlEncode(kvp.Value)}"));
+        var q = new Dictionary<string, string>(baseQuery, StringComparer.OrdinalIgnoreCase);
+        q["page"] = "1";
+        q["pageSize"] = newSize.ToString();
+        var qs = string.Join("&", q.Select(kvp => $"{System.Net.WebUtility.UrlEncode(kvp.Key)}={System.Net.WebUtility.UrlEncode(kvp.Value)}"));
         return $"{Context.Request.Path}?{qs}";
     }
 
@@ -43,7 +48,7 @@
         <span class="pagination-count-text">
             @if (isArabic)
             {
-                <text>عرض <strong>@Model.StartRecord - @Model.EndRecord</strong> من أصل <strong>@Model.TotalCount</strong></text>
+                <text>عرض <strong><bdi>@Model.StartRecord - @Model.EndRecord</bdi></strong> من أصل <strong>@Model.TotalCount</strong></text>
             }
             else
             {

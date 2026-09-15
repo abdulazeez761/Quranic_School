@@ -13,12 +13,24 @@ namespace Hafiz.Application.Extensions
             int pageSize
         )
         {
-            pageNumber = pageNumber < 1 ? 1 : pageNumber;
             pageSize = pageSize < 1 ? 10 : pageSize;
 
             var list = source as IList<T> ?? source?.ToList() ?? new List<T>();
             var totalCount = list.Count;
-            var items = list.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            int totalPages = totalCount > 0 ? (int)Math.Ceiling(totalCount / (double)pageSize) : 0;
+
+            if (pageNumber < 1)
+            {
+                pageNumber = 1;
+            }
+            else if (totalPages > 0 && pageNumber > totalPages)
+            {
+                pageNumber = totalPages;
+            }
+
+            var items = totalCount > 0
+                ? list.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList()
+                : new List<T>();
 
             return new PagedResult<T>(items, totalCount, pageNumber, pageSize);
         }
@@ -30,8 +42,18 @@ namespace Hafiz.Application.Extensions
             int pageSize
         )
         {
-            pageNumber = pageNumber < 1 ? 1 : pageNumber;
+            totalCount = Math.Max(0, totalCount);
             pageSize = pageSize < 1 ? 10 : pageSize;
+            int totalPages = totalCount > 0 ? (int)Math.Ceiling(totalCount / (double)pageSize) : 0;
+
+            if (pageNumber < 1)
+            {
+                pageNumber = 1;
+            }
+            else if (totalPages > 0 && pageNumber > totalPages)
+            {
+                pageNumber = totalPages;
+            }
 
             var items = pagedItems as List<T> ?? pagedItems?.ToList() ?? new List<T>();
             return new PagedResult<T>(items, totalCount, pageNumber, pageSize);

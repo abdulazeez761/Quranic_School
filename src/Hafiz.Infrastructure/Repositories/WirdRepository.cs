@@ -8,16 +8,19 @@ using Hafiz.DTOs.Reports;
 using Hafiz.Models;
 using Hafiz.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Hafiz.Repositories
 {
     public class WirdRepository : IWirdRepository
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<WirdRepository> _logger;
 
-        public WirdRepository(ApplicationDbContext context)
+        public WirdRepository(ApplicationDbContext context, ILogger<WirdRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<bool> AddWirdAsync(WirdAssignment wird)
@@ -25,6 +28,117 @@ namespace Hafiz.Repositories
             _context.WirdAssignments.Add(wird);
             var result = await _context.SaveChangesAsync();
             return result > 0;
+        }
+
+        public async Task<(bool IsSuccess, string Message)> AddWirdsBatchAtomicAsync(
+            List<WirdAssignment> wirds,
+            Guid studentId,
+            decimal totalMemDelta,
+            decimal totalRevDelta
+        )
+        {
+            if (wirds == null || !wirds.Any())
+                return (false, "لا توجد أوراد لحفظها.");
+
+            var strategy = _context.Database.CreateExecutionStrategy();
+            return await strategy.ExecuteAsync(async () =>
+            {
+                await using var transaction = await _context.Database.BeginTransactionAsync();
+                try
+                {
+                    await _context.WirdAssignments.AddRangeAsync(wirds);
+
+                    if (totalMemDelta != 0 || totalRevDelta != 0)
+                    {
+                        var student = await _context.Students.FirstOrDefaultAsync(s => s.UserId == studentId);
+                        if (student != null)
+                        {
+                            student.MemorizedPages += totalMemDelta;
+                            student.ReviewedPages += totalRevDelta;
+                        }
+                    }
+
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    return (true, $"تم حفظ {wirds.Count} أوراد للطالب بنجاح!");
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    _logger.LogError(ex, "فشل حفظ أوراد الطالب {StudentId} دفعة واحدة داخل Transaction", studentId);
+                    return (false, "حدث خطأ غير متوقع أثناء حفظ الأوراد.");
+                }
+            });
+        }
+
+        public async Task<(
+            WirdAssignment? memorization,
+            WirdAssignment? recentRevision,
+            WirdAssignment? oldRevision,
+            WirdAssignment? recitation
+        )> GetLatestWirdsForContextAsync(Guid studentId, DateTime todayDate)
+        {
+            var baseQuery = _context.WirdAssignments
+                .IgnoreQueryFilters()
+                .AsNoTracking()
+                .Where(w => w.StudentId == studentId);
+
+            var todayStart = todayDate.Date;
+
+            // Memorization
+            var memQuery = baseQuery.Where(w => w.Type == AssignmentType.Memorization);
+            var lastMem = await memQuery
+                .Where(w => w.AssignedDate < todayStart)
+                .OrderByDescending(w => w.AssignedDate)
+                .FirstOrDefaultAsync()
+                ?? await memQuery
+                .OrderByDescending(w => w.AssignedDate)
+                .FirstOrDefaultAsync();
+
+            // Recent Revision (AmountUnit != Juz)
+            var recentRevQuery = baseQuery.Where(w => w.Type == AssignmentType.Revision && w.AmountUnit != WirdUnit.Juz);
+            var lastRecentRev = await recentRevQuery
+                .Where(w => w.AssignedDate < todayStart)
+                .OrderByDescending(w => w.AssignedDate)
+                .FirstOrDefaultAsync()
+                ?? await recentRevQuery
+                .OrderByDescending(w => w.AssignedDate)
+                .FirstOrDefaultAsync();
+
+            // Old Revision (AmountUnit == Juz)
+            var oldRevQuery = baseQuery.Where(w => w.Type == AssignmentType.Revision && w.AmountUnit == WirdUnit.Juz);
+            var lastOldRev = await oldRevQuery
+                .Where(w => w.AssignedDate < todayStart)
+                .OrderByDescending(w => w.AssignedDate)
+                .FirstOrDefaultAsync()
+                ?? await oldRevQuery
+                .OrderByDescending(w => w.AssignedDate)
+                .FirstOrDefaultAsync();
+
+            // Recitation (Tajwid)
+            var tajwidQuery = baseQuery.Where(w => w.Type == AssignmentType.Tajwid);
+            var lastRecitation = await tajwidQuery
+                .Where(w => w.AssignedDate < todayStart)
+                .OrderByDescending(w => w.AssignedDate)
+                .FirstOrDefaultAsync()
+                ?? await tajwidQuery
+                .OrderByDescending(w => w.AssignedDate)
+                .FirstOrDefaultAsync();
+
+            return (lastMem, lastRecentRev, lastOldRev, lastRecitation);
+        }
+
+        public async Task<List<WirdAssignment>> GetTodayWirdsAsync(Guid studentId, DateTime todayDate)
+        {
+            var todayStartDate = todayDate.Date;
+            var tomorrowDate = todayStartDate.AddDays(1);
+
+            return await _context.WirdAssignments
+                .IgnoreQueryFilters()
+                .AsNoTracking()
+                .Where(w => w.StudentId == studentId && w.AssignedDate >= todayStartDate && w.AssignedDate < tomorrowDate)
+                .ToListAsync();
         }
 
         public async Task<bool> UpdateWirdAsync(WirdAssignment wird)

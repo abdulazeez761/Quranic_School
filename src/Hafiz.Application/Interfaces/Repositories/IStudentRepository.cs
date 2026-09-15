@@ -13,6 +13,7 @@ namespace Hafiz.Repositories.Interfaces
         Task<IEnumerable<Student>> GetAllAsync();
         Task AddAsync(User user, Student ReceivedStudent);
         Task<Student?> GetByIdAsync(Guid id, Guid? instituteId = null);
+        Task<Student?> GetStudentBasicByIdAsync(Guid id);
         Task<Student?> GetByEmailAsync(string email);
         Task<bool> DeleteAsync(Guid id, Guid? instituteId = null);
         Task UpdateAsync(EditStudentDto student);

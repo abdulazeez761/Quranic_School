@@ -1,6 +1,6 @@
 async function saveDrawerWirds(shouldClose = false) {
   const student = window.classStudents[window.selectedStudentIndex];
-  if (!student) return;
+  if (!student) return false;
 
   // Collect DOM input values into student state before saving
   Object.keys(window.WIRD_TYPE_CONFIG).forEach((typeKey) => {
@@ -94,7 +94,7 @@ async function saveDrawerWirds(shouldClose = false) {
 
   if (wirdsList.length === 0) {
     showDrawerToast('يرجى تحديد مقدار الورد أو نطاق الآيات قبل الحفظ.', 'warning');
-    return;
+    return false;
   }
 
   // Construct payload matching AssignWirdsBatchDto exactly
@@ -108,17 +108,36 @@ async function saveDrawerWirds(shouldClose = false) {
   const batchInput = document.getElementById('BatchPayloadJson');
   if (batchInput) batchInput.value = JSON.stringify(payload);
 
-  const success = await sendWirdsPayloadToBackend(payload);
-  if (success) {
-    // Invalidate student context cache so fresh data from DB is retrieved if needed
-    if (window.studentContextCache && window.studentContextCache[student.id]) {
-      delete window.studentContextCache[student.id];
+  const saveBtn = document.getElementById('drawerSaveBtn');
+  let originalSaveBtnHtml = '';
+  if (shouldClose && saveBtn) {
+    if (saveBtn.disabled) return false;
+    saveBtn.disabled = true;
+    originalSaveBtnHtml = saveBtn.innerHTML;
+    saveBtn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> جاري الحفظ...";
+  }
+
+  let success = false;
+  try {
+    success = await sendWirdsPayloadToBackend(payload);
+    if (success) {
+      // Invalidate student context cache so fresh data from DB is retrieved if needed
+      if (window.studentContextCache && window.studentContextCache[student.id]) {
+        delete window.studentContextCache[student.id];
+      }
+      showDrawerToast(`✔️ تم حفظ أوراد الطالب (${student.name}) بنجاح!`, 'success');
+      if (shouldClose && typeof closeWirdDrawer === 'function') {
+        closeWirdDrawer();
+      }
     }
-    showDrawerToast(`✔️ تم حفظ أوراد الطالب (${student.name}) بنجاح!`, 'success');
-    if (shouldClose && typeof closeWirdDrawer === 'function') {
-      closeWirdDrawer();
+  } finally {
+    if (shouldClose && saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = originalSaveBtnHtml || "<i class='bx bx-check'></i> حفظ فقط";
     }
   }
+
+  return success;
 }
 
 async function sendWirdsPayloadToBackend(payload) {

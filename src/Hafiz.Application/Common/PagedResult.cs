@@ -11,9 +11,17 @@ namespace Hafiz.Application.Common
         public int TotalCount { get; set; } = 0;
 
         public int TotalPages => PageSize > 0 ? (int)Math.Ceiling(TotalCount / (double)PageSize) : 0;
-        public bool HasPreviousPage => PageNumber > 1;
+        public bool HasPreviousPage => PageNumber > 1 && TotalPages > 0;
         public bool HasNextPage => PageNumber < TotalPages;
-        public int StartRecord => TotalCount == 0 ? 0 : ((PageNumber - 1) * PageSize) + 1;
+        public int StartRecord
+        {
+            get
+            {
+                if (TotalCount == 0) return 0;
+                int start = ((PageNumber - 1) * PageSize) + 1;
+                return Math.Min(start, TotalCount);
+            }
+        }
         public int EndRecord => Math.Min(PageNumber * PageSize, TotalCount);
 
         public PagedResult() { }
@@ -21,9 +29,22 @@ namespace Hafiz.Application.Common
         public PagedResult(List<T> items, int totalCount, int pageNumber, int pageSize)
         {
             Items = items ?? new List<T>();
-            TotalCount = totalCount;
-            PageNumber = pageNumber < 1 ? 1 : pageNumber;
+            TotalCount = Math.Max(0, totalCount);
             PageSize = pageSize < 1 ? 10 : pageSize;
+
+            int totalPages = PageSize > 0 ? (int)Math.Ceiling(TotalCount / (double)PageSize) : 0;
+            if (pageNumber < 1)
+            {
+                PageNumber = 1;
+            }
+            else if (totalPages > 0 && pageNumber > totalPages)
+            {
+                PageNumber = totalPages;
+            }
+            else
+            {
+                PageNumber = pageNumber;
+            }
         }
     }
 }

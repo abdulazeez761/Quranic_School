@@ -138,6 +138,12 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(w => w.ClassId)
             .OnDelete(DeleteBehavior.SetNull);
 
+        // High-performance composite index for latest-wird and historical queries
+        modelBuilder
+            .Entity<WirdAssignment>()
+            .HasIndex(w => new { w.StudentId, w.Type, w.AssignedDate })
+            .HasDatabaseName("IX_WirdAssignments_Student_Type_Date");
+
         //parent --> student
         modelBuilder
             .Entity<Parent>()

@@ -103,6 +103,15 @@ namespace Hafiz.Repositories
             return await query.FirstOrDefaultAsync(t => t.UserId == id);
         }
 
+        public async Task<Student?> GetStudentBasicByIdAsync(Guid id)
+        {
+            return await _context
+                .Students.IgnoreQueryFilters()
+                .Include(s => s.StudentInfo)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.UserId == id);
+        }
+
         public async Task UpdateAsync(EditStudentDto student)
         {
             var existingStudent = await _context
