@@ -38,20 +38,22 @@
 
         <!-- Quick 1-Click Action Buttons -->
         <div class="drawer-quick-actions">
-            <button type="button" class="btn btn-outline" onclick="autoComputeNextWirds()"
+            <button type="button" class="btn btn-quick-action" id="btnAutoComputeWirds" onclick="autoComputeNextWirds(this)"
                     title="استكمال نطاق الآيات تلقائياً من حيث انتهى الطالب">
-                <i class='bx bx-sync' style="color: #0284c7;"></i> 📋 استكمال من الأمس
+                <i class='bx bx-sync' style="color: #0284c7;"></i>
+                <span>استكمال من الأمس</span>
             </button>
-            <button type="button" class="btn btn-outline" onclick="showBaselinePresetInfo()"
-                    style="color: var(--text-medium);" title="معلومات وتخصيص الخطة">
-                <i class='bx bx-slider-alt'></i> ضبط الخطة ⚙️
+            <button type="button" class="btn btn-quick-action" onclick="showBaselinePresetInfo()"
+                    title="معلومات وتخصيص الخطة">
+                <i class='bx bx-slider-alt' style="color: #64748b;"></i>
+                <span>ضبط الخطة</span>
             </button>
         </div>
 
         <!-- Segmented Navigation for Wird Types -->
         <div class="segmented-nav" role="tablist" aria-label="أقسام الأوراد">
             <button type="button" class="segmented-btn active" data-tab="all"
-                    onclick="setWirdFilterTab('all', this)">الأوراد الأربعة</button>
+                    onclick="setWirdFilterTab('all', this)">الكل</button>
             <button type="button" class="segmented-btn" data-tab="memorization"
                     onclick="setWirdFilterTab('memorization', this)">حفظ</button>
             <button type="button" class="segmented-btn" data-tab="recentRevision"

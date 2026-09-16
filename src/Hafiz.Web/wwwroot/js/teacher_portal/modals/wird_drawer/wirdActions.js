@@ -16,32 +16,46 @@
  */
 async function autoComputeSingleWird(student, typeKey, surahsList) {
   const wird = student?.wirds?.[typeKey];
-  if (!wird || !wird.active) return false;
+  if (!wird) return false;
 
-  const inputToAyah = parseInt(
-    document.getElementById(`toAyah-${typeKey}`)?.value,
-    10,
-  );
-  const inputToSurah = parseInt(
-    document.getElementById(`toSurah-${typeKey}`)?.value,
-    10,
-  );
+  // If the wird is not currently active, but the student has a previous record from yesterday, activate it!
+  if (!wird.active) {
+    if (student.lastWirds?.[typeKey]?.toSurah) {
+      wird.active = true;
+    } else {
+      return false;
+    }
+  }
 
   let lastSurah = 1;
   let lastAyah = 0;
 
-  // 1. Check if input was already populated by the user (clicked auto-compute again)
-  if (!isNaN(inputToAyah) && inputToAyah > 0 && !isNaN(inputToSurah) && inputToSurah > 0) {
-    lastSurah = inputToSurah;
-    lastAyah = inputToAyah;
-  } else if (student.lastWirds?.[typeKey]?.toSurah) {
-    // 2. Otherwise, use the last completed wird recorded in the database
+  // 1. Prioritize continuation from yesterday's recorded completion in the database on first run
+  if (student.lastWirds?.[typeKey]?.toSurah && !wird._alreadyAdvanced) {
     lastSurah = student.lastWirds[typeKey].toSurah;
     lastAyah = student.lastWirds[typeKey].toAyah || 0;
-  } else if (wird.fromSurah && wird.fromAyah) {
-    // 3. Fallback: use existing start position if already set
-    lastSurah = wird.fromSurah;
-    lastAyah = Math.max(0, parseInt(wird.fromAyah, 10) - 1);
+    wird._alreadyAdvanced = true;
+  } else {
+    // 2. If already advanced once or no database record, advance from current input/state
+    const inputToAyah = parseInt(
+      document.getElementById(`toAyah-${typeKey}`)?.value,
+      10,
+    );
+    const inputToSurah = parseInt(
+      document.getElementById(`toSurah-${typeKey}`)?.value,
+      10,
+    );
+
+    if (!isNaN(inputToAyah) && inputToAyah > 0 && !isNaN(inputToSurah) && inputToSurah > 0) {
+      lastSurah = inputToSurah;
+      lastAyah = inputToAyah;
+    } else if (wird.toSurah && wird.toAyah) {
+      lastSurah = wird.toSurah;
+      lastAyah = parseInt(wird.toAyah, 10) || 0;
+    } else if (wird.fromSurah && wird.fromAyah) {
+      lastSurah = wird.fromSurah;
+      lastAyah = Math.max(0, parseInt(wird.fromAyah, 10) - 1);
+    }
   }
 
   // Next starting position (advance by 1 ayah)
@@ -63,6 +77,7 @@ async function autoComputeSingleWird(student, typeKey, surahsList) {
   const inputAmount = parseFloat(document.getElementById(`amount-${typeKey}`)?.value);
   const fallbackAmount = wird.amount || (typeKey === 'recentRevision' ? 5.0 : 1.0);
   const amount = !isNaN(inputAmount) && inputAmount > 0 ? inputAmount : fallbackAmount;
+  wird.amount = amount;
 
   const defaultConfigUnit = window.WIRD_TYPE_CONFIG?.[typeKey]?.defaultUnit ?? 0;
   const amountUnit = wird.amountUnit !== undefined ? wird.amountUnit : defaultConfigUnit;
@@ -87,35 +102,80 @@ async function autoComputeSingleWird(student, typeKey, surahsList) {
 
 /**
  * Quick Action: 📋 استكمال من الأمس
- * Automatically computes next ranges for all active wirds based on previous database records
+ * Automatically computes next ranges for all active wirds based on previous database records.
+ * Provides real-time disabled state and rotating spinner indicator while calculating.
  */
-async function autoComputeNextWirds() {
-  const student = window.classStudents[window.selectedStudentIndex];
-  if (!student || !student.wirds) return;
+async function autoComputeNextWirds(triggerBtn) {
+  const btn =
+    triggerBtn ||
+    document.getElementById('btnAutoComputeWirds') ||
+    document.querySelector('.drawer-quick-actions button[onclick*="autoComputeNextWirds"]');
 
-  const surahsList = typeof QURAN_SURAHS !== 'undefined' ? QURAN_SURAHS : [];
-  const wirdKeys = Object.keys(student.wirds);
-
-  let anyComputed = false;
-
-  for (const typeKey of wirdKeys) {
-    const success = await autoComputeSingleWird(student, typeKey, surahsList);
-    if (success) {
-      anyComputed = true;
+  if (btn) {
+    if (btn.disabled || btn.classList.contains('is-loading')) return;
+    btn.disabled = true;
+    btn.classList.add('is-loading');
+    if (!btn.dataset.originalHtml) {
+      btn.dataset.originalHtml = btn.innerHTML;
     }
+    btn.innerHTML =
+      "<i class='bx bx-loader-alt bx-spin' style='color: #0284c7; font-size: 1.2rem;'></i> <span>جاري الحساب...</span>";
   }
 
-  if (typeof renderStudentWirdsFields === 'function') {
-    renderStudentWirdsFields(student);
-  }
+  const startTime = Date.now();
 
-  if (typeof showDrawerToast === 'function') {
-    showDrawerToast(
-      anyComputed
-        ? '📋 تم استكمال نطاق الآيات من قاعدة البيانات بنجاح'
-        : '⚠️ لا توجد أوراد مفعلة أو بيانات سابقة للاستكمال',
-      anyComputed ? 'info' : 'warning',
-    );
+  try {
+    const student = window.classStudents[window.selectedStudentIndex];
+    if (!student || !student.wirds) return;
+
+    // Ensure student database context is loaded before computing
+    if (typeof ensureStudentContextLoaded === 'function' && !student.isContextLoaded) {
+      await ensureStudentContextLoaded(student);
+    }
+
+    const surahsList = typeof QURAN_SURAHS !== 'undefined' ? QURAN_SURAHS : [];
+    const wirdKeys = Object.keys(student.wirds);
+
+    let anyComputed = false;
+
+    for (const typeKey of wirdKeys) {
+      const success = await autoComputeSingleWird(student, typeKey, surahsList);
+      if (success) {
+        anyComputed = true;
+      }
+    }
+
+    if (typeof renderStudentWirdsFields === 'function') {
+      renderStudentWirdsFields(student);
+    }
+
+    // Ensure smooth perceivable UI indicator (at least 350ms display)
+    const elapsed = Date.now() - startTime;
+    if (elapsed < 350) {
+      await new Promise((resolve) => setTimeout(resolve, 350 - elapsed));
+    }
+
+    if (typeof showDrawerToast === 'function') {
+      showDrawerToast(
+        anyComputed
+          ? '📋 تم استكمال نطاق الآيات من قاعدة البيانات بنجاح'
+          : '⚠️ لا توجد أوراد سابقة أو بيانات للاستكمال',
+        anyComputed ? 'info' : 'warning',
+      );
+    }
+  } catch (err) {
+    console.error('Error auto-computing next wirds:', err);
+    if (typeof showDrawerToast === 'function') {
+      showDrawerToast('⚠️ حدث خطأ أثناء محاولة استكمال الورد', 'error');
+    }
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.classList.remove('is-loading');
+      btn.innerHTML =
+        btn.dataset.originalHtml ||
+        "<i class='bx bx-sync' style='color: #0284c7;'></i> <span>استكمال من الأمس</span>";
+    }
   }
 }
 

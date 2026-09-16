@@ -53,12 +53,17 @@ function updateUnitRadioUI(typeKey, unitVal) {
     if (!unitGroup) return;
 
     const unit = parseInt(unitVal, 10);
-    unitGroup.querySelectorAll('.unit-radio-option').forEach(opt => {
-        const radio = opt.querySelector('input[type="radio"]');
-        const isMatched = radio && parseInt(radio.value, 10) === unit;
-        opt.classList.toggle('is-selected', isMatched);
-        if (radio) radio.checked = isMatched;
-    });
+    const targetRadio = unitGroup.querySelector(`input[type="radio"][value="${unit}"]`);
+    const targetOpt = targetRadio ? targetRadio.closest('.unit-radio-option') : null;
+    const prevOpt = unitGroup.querySelector('.unit-radio-option.is-selected');
+
+    if (prevOpt !== targetOpt) {
+        if (prevOpt) prevOpt.classList.remove('is-selected');
+        if (targetOpt) targetOpt.classList.add('is-selected');
+    }
+    if (targetRadio && !targetRadio.checked) {
+        targetRadio.checked = true;
+    }
 }
 
 function setEquivalentPageChip(typeKey, val) {
@@ -154,29 +159,15 @@ function syncUpcomingRatingState(typeKey, isUpcoming) {
 
     if (group) {
         group.classList.toggle('is-upcoming-mode', isUpcoming);
-        const buttons = group.querySelectorAll('.rating-pill-btn');
-        buttons.forEach(btn => {
-            btn.disabled = isUpcoming;
-            btn.style.opacity = isUpcoming ? '0.4' : '1';
-            btn.style.cursor = isUpcoming ? 'not-allowed' : 'pointer';
-            if (isUpcoming) btn.classList.remove('is-selected');
-        });
+        if (isUpcoming) {
+            const selectedBtn = group.querySelector('.rating-pill-btn.is-selected');
+            if (selectedBtn) selectedBtn.classList.remove('is-selected');
+        }
     }
 
-    if (badge) {
-        if (isUpcoming) {
-            badge.className = 'wird-rating-badge rate-upcoming';
-            badge.innerHTML = "<i class='bx bx-calendar-star'></i> ورد قادم (مجدول ولم يُسمّع بعد)";
-            badge.style.background = '#ede9fe';
-            badge.style.color = '#6b21a8';
-            badge.style.border = '1px solid #c4b5fd';
-            badge.style.fontWeight = '700';
-        } else {
-            badge.style.background = '';
-            badge.style.color = '';
-            badge.style.border = '';
-            badge.style.fontWeight = '';
-        }
+    if (badge && isUpcoming) {
+        badge.className = 'wird-rating-badge rate-upcoming';
+        badge.innerHTML = "<i class='bx bx-calendar-star'></i> ورد قادم (مجدول ولم يُسمّع بعد)";
     }
 }
 
@@ -197,8 +188,11 @@ function updateRatingUI(typeKey, ratingKey) {
         clearBtn.style.display = meta ? 'inline-flex' : 'none';
     }
 
-    group.querySelectorAll('.rating-pill-btn').forEach(btn => {
-        const grade = btn.dataset.grade;
-        btn.classList.toggle('is-selected', !!(meta && meta.grade === grade));
-    });
+    const prevSelected = group.querySelector('.rating-pill-btn.is-selected');
+    const targetBtn = meta ? group.querySelector(`.rating-pill-btn[data-grade="${meta.grade}"]`) : null;
+
+    if (prevSelected !== targetBtn) {
+        if (prevSelected) prevSelected.classList.remove('is-selected');
+        if (targetBtn) targetBtn.classList.add('is-selected');
+    }
 }

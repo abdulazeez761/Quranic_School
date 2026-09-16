@@ -20,7 +20,7 @@ function openWirdDrawer() {
     window.selectedStudentIndex = 0;
   }
 
-  // Populate drawer synchronously with current student data
+  // Populate drawer synchronously with current student data (0ms latency)
   if (
     window.classStudents &&
     window.classStudents.length > 0 &&
@@ -29,7 +29,7 @@ function openWirdDrawer() {
     loadStudentIntoDrawer(window.selectedStudentIndex);
   }
 
-  // Open modal synchronously on the exact same frame (identical to routinePlanModal)
+  // Open modal synchronously on the exact same frame (instant click response)
   drawer.classList.add('is-open', 'active', 'mobile-open');
   backdrop.classList.add('is-open', 'active');
   document.body.style.overflow = 'hidden';
@@ -42,7 +42,14 @@ function closeWirdDrawer() {
 
   drawer.classList.remove('is-open', 'active', 'mobile-open');
   if (backdrop) backdrop.classList.remove('is-open', 'active');
-  document.body.style.overflow = '';
+
+  // Defer restoring body scroll until closing animation finishes (280ms)
+  // This completely eliminates the page scrollbar reflow that interrupts the closing animation
+  setTimeout(() => {
+    if (!drawer.classList.contains('active') && !drawer.classList.contains('is-open')) {
+      document.body.style.overflow = '';
+    }
+  }, 280);
 }
 
 function closeWirdModal() {
@@ -161,11 +168,12 @@ function renderStudentWirdsFields(student) {
     const equivGroup = document.getElementById(`equivGroup-${typeKey}`);
     if (equivGroup) {
       equivGroup.style.display = wird.amountUnit === 1 ? 'block' : 'none';
-      const chips = equivGroup.querySelectorAll('.chip');
-      chips.forEach((c) => {
-        const cVal = parseFloat(c.dataset.val);
-        c.classList.toggle('is-active', cVal === wird.equivalentPages);
-      });
+      const prevActiveChip = equivGroup.querySelector('.chip.is-active');
+      const targetChip = equivGroup.querySelector(`.chip[data-val="${wird.equivalentPages}"]`);
+      if (prevActiveChip !== targetChip) {
+        if (prevActiveChip) prevActiveChip.classList.remove('is-active');
+        if (targetChip) targetChip.classList.add('is-active');
+      }
     }
 
     const fromSurah = document.getElementById(`fromSurah-${typeKey}`);
@@ -289,7 +297,8 @@ function setupDrawerKeyboardEvents() {
     const isOpen =
       drawer &&
       (drawer.classList.contains('active') ||
-        drawer.classList.contains('mobile-open'));
+        drawer.classList.contains('mobile-open') ||
+        drawer.classList.contains('is-open'));
 
     if (!isOpen) return;
 
