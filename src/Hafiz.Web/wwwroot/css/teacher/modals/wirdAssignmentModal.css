@@ -27,7 +27,6 @@
   inset: 0;
   background: #cbd5e1;
   border-radius: 999px;
-  transition: background 0.22s ease;
   touch-action: manipulation;
 }
 
@@ -87,7 +86,6 @@
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
   font-family: inherit;
   min-width: 44px;
   touch-action: manipulation;

@@ -487,7 +487,6 @@ input:checked + .slider:before {
   font-size: 0.86rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all var(--transition-fast);
   user-select: none;
   padding: 0 6px;
   position: relative;
@@ -513,7 +512,6 @@ input:checked + .slider:before {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all var(--transition-fast);
   background: #ffffff;
   flex-shrink: 0;
 }
@@ -862,7 +860,6 @@ select.form-control {
   border-radius: var(--radius-md);
   padding: 10px 12px;
   margin: 10px 0;
-  transition: all var(--transition-fast);
 }
 
 .wird-rating-group:focus-within {
@@ -907,7 +904,6 @@ select.form-control {
   border-radius: 9999px;
   font-size: 0.72rem;
   font-weight: 700;
-  transition: all var(--transition-fast);
 }
 
 .wird-rating-badge.rate-none {
@@ -954,7 +950,6 @@ select.form-control {
   cursor: pointer;
   padding: 2px 4px;
   border-radius: 4px;
-  transition: all var(--transition-fast);
   display: inline-flex;
   align-items: center;
   gap: 2px;
@@ -985,7 +980,7 @@ select.form-control {
   background: #ffffff;
   color: var(--text-dark);
   cursor: pointer;
-  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.1s ease-out;
   font-family: inherit;
   font-size: 0.78rem;
   font-weight: 700;

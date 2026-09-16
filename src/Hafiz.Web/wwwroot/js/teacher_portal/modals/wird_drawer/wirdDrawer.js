@@ -29,22 +29,19 @@ function openWirdDrawer() {
     loadStudentIntoDrawer(window.selectedStudentIndex);
   }
 
-  // Make visible and trigger animation cleanly via requestAnimationFrame
+  // Open modal synchronously on the exact same frame (identical to routinePlanModal)
+  drawer.classList.add('is-open', 'active', 'mobile-open');
+  backdrop.classList.add('is-open', 'active');
   document.body.style.overflow = 'hidden';
-  requestAnimationFrame(() => {
-    drawer.classList.add('active', 'mobile-open');
-    backdrop.classList.add('active');
-  });
 }
 
 function closeWirdDrawer() {
   const drawer = document.getElementById('drawerPanel');
   const backdrop = document.getElementById('drawerBackdrop');
-  if (!drawer || !drawer.classList.contains('active')) return;
+  if (!drawer) return;
 
-  drawer.classList.remove('active');
-  drawer.classList.remove('mobile-open');
-  if (backdrop) backdrop.classList.remove('active');
+  drawer.classList.remove('is-open', 'active', 'mobile-open');
+  if (backdrop) backdrop.classList.remove('is-open', 'active');
   document.body.style.overflow = '';
 }
 
@@ -52,10 +49,14 @@ function closeWirdModal() {
   closeWirdDrawer();
 }
 
-async function openWirdModal(studentId, studentName) {
+function openWirdModal(studentId, studentName) {
+  if (!studentId) return;
+
   if (!window.classStudents || window.classStudents.length === 0) {
-    if (typeof initializeClassStudents === 'function') {
-      await initializeClassStudents();
+    if (Array.isArray(window.allClassStudents) && window.allClassStudents.length > 0) {
+      window.classStudents = window.allClassStudents.map(s =>
+        createStudentState(s.id, s.name, s.initials, s.level)
+      );
     }
   }
 
@@ -67,12 +68,10 @@ async function openWirdModal(studentId, studentName) {
       window.classStudents = window.classStudents || [];
       window.classStudents.push(newStudent);
       index = window.classStudents.length - 1;
-    } else {
-      return;
     }
   }
 
-  window.selectedStudentIndex = index;
+  window.selectedStudentIndex = index >= 0 ? index : 0;
   openWirdDrawer();
 }
 

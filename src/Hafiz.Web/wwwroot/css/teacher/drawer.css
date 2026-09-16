@@ -55,7 +55,6 @@
   border-radius: var(--radius-md);
   border: 1.5px solid var(--border-color);
   cursor: pointer;
-  transition: all var(--transition-fast);
   background: #ffffff;
   position: relative;
   gap: 12px;
@@ -149,146 +148,128 @@
    DRAWER CONTAINER & RESPONSIVE BEHAVIOR
    ========================================================================== */
 
-/* Backdrop overlay (active on mobile) */
+/* ==========================================================================
+   MODAL & DRAWER RESPONSIVE ARCHITECTURE
+   - Desktop PC (> 1100px): Elegant Offcanvas Side Drawer (Sliding from side)
+   - Mobile & Tablet (<= 1100px): Smooth Centered Dialog Modal (Identical to StudentRoutinePlanModal)
+   ========================================================================== */
+
+/* Backdrop overlay (Unified on all screens) */
 .drawer-backdrop {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  z-index: 1999;
+  z-index: 2000;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.25s ease, visibility 0.25s ease;
-  will-change: opacity, visibility;
+  pointer-events: none;
+  touch-action: manipulation;
 }
 
-.drawer-backdrop.active {
+.drawer-backdrop.active,
+.drawer-backdrop.is-open {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 
-/* The Drawer Panel */
+/* Base Drawer Panel Structure */
 .drawer-panel {
-  background: var(--white);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  will-change: transform;
+  background: var(--white) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  direction: rtl;
+  pointer-events: none;
+  box-sizing: border-box !important;
+  will-change: transform, opacity;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  transform: translate3d(0, 0, 0);
-  contain: layout paint style;
-  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s step-end;
+  z-index: 2005 !important;
 }
 
-/* Desktop: Offcanvas Side Drawer (Screen > 1100px) */
+/* 1. Desktop PC: Elegant Side Drawer (Screen > 1100px) */
 @media (min-width: 1101px) {
   .drawer-panel {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
     bottom: 0 !important;
+    right: auto !important;
     width: 520px !important;
     max-width: 90vw !important;
     height: 100vh !important;
     max-height: 100vh !important;
     border-radius: 20px 0 0 20px !important;
-    z-index: 2100 !important;
     box-shadow: -8px 0 30px rgba(0, 0, 0, 0.18) !important;
-    transform: translate3d(-105%, 0, 0) !important;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s step-end !important;
+    border: 1px solid var(--border-color) !important;
     border-left: none !important;
-    visibility: hidden;
-    pointer-events: none;
-    will-change: transform;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
+    transform: translate3d(-105%, 0, 0) !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, visibility 0.25s ease !important;
+    margin: 0 !important;
   }
+
   .drawer-panel.active,
+  .drawer-panel.is-open,
   .drawer-panel.mobile-open {
     transform: translate3d(0, 0, 0) !important;
+    opacity: 1 !important;
     visibility: visible !important;
     pointer-events: auto !important;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s !important;
-  }
-  .drawer-mobile-handle {
-    display: none;
-  }
-  .drawer-close-btn {
-    display: flex !important;
   }
 }
 
-/* Mobile & Tablet: Native Bottom Sheet / Slide-Over Drawer! (Screen <= 1100px) */
+/* 2. Mobile & Tablet: Centered Dialog Modal (Screen <= 1100px) - 60fps & Smooth */
 @media (max-width: 1100px) {
-  .split-layout {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  /* Disable heavy GPU Gaussian blur on mobile backdrop for 60/120 FPS buttery smoothness */
-  .drawer-backdrop {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    background: rgba(15, 23, 42, 0.55);
-    transition: opacity 0.25s ease, visibility 0.25s ease;
-  }
-
   .drawer-panel {
     position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    top: auto !important;
-    width: 100% !important;
-    max-width: 100% !important;
+    top: 50% !important;
+    left: 50% !important;
+    bottom: auto !important;
+    right: auto !important;
+    transform: translate(-50%, -48%) scale(0.96) !important;
+    width: 92% !important;
+    max-width: 760px !important;
+    max-height: 90vh !important;
+    border-radius: 20px !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05) !important;
+    border: 1px solid var(--border-color) !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, visibility 0.25s ease !important;
     margin: 0 !important;
-    height: 92vh !important;
-    max-height: 92vh !important;
-    border-radius: 22px 22px 0 0 !important;
-    z-index: 2100 !important;
-    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.16) !important;
-    border: 1.5px solid var(--border-color) !important;
-    border-bottom: none !important;
-    transform: translate3d(0, 102%, 0) !important;
-    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s step-end !important;
-    box-sizing: border-box !important;
-    visibility: hidden;
-    pointer-events: none;
-    will-change: transform;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    contain: layout paint style;
   }
 
   .drawer-panel.active,
+  .drawer-panel.is-open,
   .drawer-panel.mobile-open {
-    transform: translate3d(0, 0, 0) !important;
+    transform: translate(-50%, -50%) scale(1) !important;
+    opacity: 1 !important;
     visibility: visible !important;
     pointer-events: auto !important;
-    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s !important;
-  }
-
-  .drawer-mobile-handle {
-    display: block;
-    width: 48px;
-    height: 5px;
-    background: #cbd5e1;
-    border-radius: 99px;
-    margin: 10px auto 4px;
-    cursor: grab;
-    touch-action: manipulation;
-  }
-
-  .drawer-close-btn {
-    display: flex;
-    touch-action: manipulation;
   }
 }
+
+.drawer-mobile-handle {
+  display: none !important;
+}
+
+.drawer-close-btn {
+  display: flex !important;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.drawer-close-btn i {
+  pointer-events: none;
+}
+
 
 /* Drawer Header with Clean Student Identity Profile */
 .drawer-header {
@@ -366,7 +347,7 @@
   justify-content: center;
   font-size: 1.25rem;
   flex-shrink: 0;
-  transition: all var(--transition-fast);
+  transition: transform 0.18s ease, opacity 0.18s ease;
 }
 
 .drawer-close-btn:hover {
@@ -409,7 +390,6 @@
   font-weight: 700;
   color: var(--text-medium);
   cursor: pointer;
-  transition: all var(--transition-fast);
   font-family: inherit;
   white-space: nowrap;
 }
@@ -437,7 +417,6 @@
   border: 1.5px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 14px 16px;
-  transition: all var(--transition-fast);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
@@ -449,6 +428,7 @@
   border-inline-start: 4.5px solid var(--wird-memorize);
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.04);
 }
+
 .drawer-wird-box.type-memorization .drawer-wird-header {
   border-bottom: 1px solid rgba(37, 99, 235, 0.12);
 }
@@ -461,6 +441,7 @@
   border-inline-start: 4.5px solid var(--wird-recent);
   box-shadow: 0 2px 8px rgba(5, 150, 105, 0.04);
 }
+
 .drawer-wird-box.type-recentRevision .drawer-wird-header {
   border-bottom: 1px solid rgba(5, 150, 105, 0.12);
 }
@@ -473,6 +454,7 @@
   border-inline-start: 4.5px solid var(--wird-old);
   box-shadow: 0 2px 8px rgba(217, 119, 6, 0.04);
 }
+
 .drawer-wird-box.type-oldRevision .drawer-wird-header {
   border-bottom: 1px solid rgba(217, 119, 6, 0.12);
 }
@@ -485,6 +467,7 @@
   border-inline-start: 4.5px solid var(--wird-recite);
   box-shadow: 0 2px 8px rgba(124, 58, 237, 0.04);
 }
+
 .drawer-wird-box.type-recitation .drawer-wird-header {
   border-bottom: 1px solid rgba(124, 58, 237, 0.12);
 }
@@ -501,8 +484,17 @@
 
 /* Inner elements styling inside cards */
 .drawer-wird-box .wird-rating-group {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* 60 FPS Mobile GPU Performance Guard:
+   Strictly restrict any child transition to transform and opacity,
+   instantly eliminating main-thread background/border/box-shadow/color recalculation */
+.drawer-panel *,
+.drawer-panel *::before,
+.drawer-panel *::after {
+  transition-property: transform, opacity !important;
 }
 
 .drawer-wird-header {
@@ -965,4 +957,3 @@
   left: -9999px !important;
   overflow: hidden !important;
 }
-

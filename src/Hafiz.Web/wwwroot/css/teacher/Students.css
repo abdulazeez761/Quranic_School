@@ -347,12 +347,15 @@
   cursor: pointer;
   text-decoration: none;
   padding: 0;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition: transform 0.15s ease, background 0.15s ease;
 }
 
 .row-icon-btn i {
   font-size: 15px;
   line-height: 1;
+  pointer-events: none;
 }
 
 .row-icon-btn.primary {
@@ -572,6 +575,8 @@
   color: var(--text-dark);
   cursor: pointer;
   text-decoration: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition:
     transform 0.15s ease,
     background 0.15s ease,
@@ -582,6 +587,7 @@
 .row-icon-btn i {
   font-size: 18px;
   line-height: 1;
+  pointer-events: none;
 }
 
 .row-icon-btn.primary {
