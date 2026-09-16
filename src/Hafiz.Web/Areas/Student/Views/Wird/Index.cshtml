@@ -1,4 +1,6 @@
 @using Hafiz.Common.Helper
+@using Hafiz.DTOs.Matn
+@using Hafiz.Domain.Enums
 @using Hafiz.Models
 @using StudentModel = Hafiz.Models.Student
 @model Hafiz.DTOs.Wird.PaginatedWirdsResponse
@@ -17,6 +19,8 @@
     var currentType = ViewBag.Type as string;
     int pageSize = ViewBag.PageSize is int size ? size : 10;
     var student = ViewBag.Student as StudentModel;
+    var studentMatns = ViewBag.MatnAssignments as List<MatnAssignmentDto> ?? new List<MatnAssignmentDto>();
+    var activeStudentTab = ViewBag.ActiveTab as string ?? (Model.TotalCount == 0 && studentMatns.Any() ? "matn" : "quran");
     decimal totalMemorizedPages = 0m;
     int memorizedJuzDisplay = 0;
     decimal memorizedPagesRemainder = 0m;
@@ -101,6 +105,27 @@
             </div>
         </div>
     }
+
+    @if (studentMatns.Any())
+    {
+        <div class="wird-tabs-segmented mb-4 mt-3" style="display: inline-flex; background: #f1f5f9; padding: 4px; border-radius: 14px; border: 1px solid #e2e8f0; gap: 4px;">
+            <button type="button" class="tab-btn wird-tab-pill tab-quran @(activeStudentTab == "quran" ? "active" : "")" id="studentQuranTabBtn" onclick="toggleStudentTab('quran')"
+                    style="border-radius: 10px; padding: 8px 20px; font-weight: 700; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 0.88rem; transition: all 0.2s ease;">
+                <i class='bx bx-book-open'></i>
+                <span>أوراد القرآن الكريم</span>
+                <span class="wird-tab-count" style="background: rgba(16, 185, 129, 0.12); color: #059669; padding: 2px 8px; border-radius: 9999px; font-size: 0.75rem;">@Model.TotalCount</span>
+            </button>
+            <button type="button" class="tab-btn wird-tab-pill tab-matn @(activeStudentTab == "matn" ? "active" : "")" id="studentMatnTabBtn" onclick="toggleStudentTab('matn')"
+                    style="border-radius: 10px; padding: 8px 20px; font-weight: 700; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 0.88rem; transition: all 0.2s ease;">
+                <i class='bx bx-bookmarks'></i>
+                <span>تسميع المتون العلمية</span>
+                <span class="wird-tab-count" style="background: rgba(37, 99, 235, 0.12); color: #2563eb; padding: 2px 8px; border-radius: 9999px; font-size: 0.75rem;">@studentMatns.Count</span>
+            </button>
+        </div>
+    }
+
+    <!-- QURAN WIRDS CONTAINER -->
+    <div id="studentQuranContainer" style="display: @(activeStudentTab == "quran" ? "block" : "none");">
 
     <!-- Filter Section -->
     <div class="filter-section">
@@ -411,4 +436,136 @@
             </div>
         </div>
     }
+
+    </div> <!-- End studentQuranContainer -->
+
+    <!-- MATN RECITATIONS CONTAINER -->
+    <div id="studentMatnContainer" style="display: @(activeStudentTab == "matn" ? "block" : "none");">
+        @if (studentMatns.Any())
+        {
+            <div class="wirds-list" style="display: flex; flex-direction: column; gap: 14px;">
+                @foreach (var matn in studentMatns)
+                {
+                    var isCompleted = matn.IsCompleted;
+                    var statusClass = isCompleted ? "completed" : "pending";
+                    var stripeGrad = matn.PerformanceType switch
+                    {
+                        MatnPerformanceType.Memorization => "linear-gradient(90deg, #10b981, #059669)",
+                        MatnPerformanceType.Revision => "linear-gradient(90deg, #3b82f6, #1d4ed8)",
+                        _ => "linear-gradient(90deg, #8b5cf6, #6d28d9)"
+                    };
+                    var perfBadgeStyle = matn.PerformanceType switch
+                    {
+                        MatnPerformanceType.Memorization => "background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2);",
+                        MatnPerformanceType.Revision => "background: rgba(37, 99, 235, 0.1); color: #2563eb; border: 1px solid rgba(37, 99, 235, 0.2);",
+                        _ => "background: rgba(139, 92, 246, 0.1); color: #7c3aed; border: 1px solid rgba(139, 92, 246, 0.2);"
+                    };
+
+                    <div class="wird-card @statusClass @(matn.IsUpcoming ? "is-upcoming" : "")" style="border: 1px solid #e2e8f0; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); overflow: hidden; background: #ffffff;">
+                        <div class="wird-card-top-stripe" style="background: @stripeGrad; height: 5px;"></div>
+
+                        <div class="wird-card-header" style="padding: 14px 16px 6px;">
+                            <div class="wird-header-title d-flex align-items-center justify-content-between w-100 flex-wrap gap-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge" style="@perfBadgeStyle font-size: 0.78rem; padding: 4px 10px; border-radius: 6px; font-weight: 700;">
+                                        @matn.PerformanceTypeName
+                                    </span>
+                                    <h3 class="wird-title-text mb-0" style="font-size: 1rem; font-weight: 800; color: #0f172a;">
+                                        @(string.IsNullOrEmpty(matn.ChapterName) ? matn.ClassName : matn.ChapterName)
+                                    </h3>
+                                </div>
+                                <div class="d-flex align-items-center gap-1">
+                                    @if (matn.IsUpcoming)
+                                    {
+                                        @await Html.PartialAsync("_UpcomingBadge")
+                                    }
+                                    <span class="wird-status-badge status-@statusClass" style="font-weight: 700; font-size: 0.76rem;">
+                                        @Localizer[matn.Status.ToString()]
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="wird-meta d-flex align-items-center gap-3 mt-2" style="font-size: 0.8rem; color: #64748b;">
+                                @if (matn.Amount.HasValue)
+                                {
+                                    <span class="badge bg-light text-dark border" style="font-size: 0.78rem;">
+                                        <i class='bx bx-layer me-1'></i>
+                                        @matn.Amount.Value.ToString("0.##") @matn.UnitName
+                                    </span>
+                                }
+                                <span class="wird-date-badge">
+                                    <i class='bx bx-calendar me-1'></i>
+                                    @matn.AssignedDate.ToString("MMM dd, yyyy")
+                                </span>
+                            </div>
+                        </div>
+
+                        @if (matn.FromNumber.HasValue || matn.ToNumber.HasValue)
+                        {
+                            <div class="wird-range-compact" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 8px; padding: 8px 14px; margin: 8px 16px 0; border: 1px solid #e2e8f0; font-size: 0.84rem; color: #334155; font-weight: 600;">
+                                <i class='bx bx-book-bookmark text-primary me-1'></i>
+                                <span>الموضع: من @matn.UnitName <strong>@matn.FromNumber</strong> إلى <strong>@matn.ToNumber</strong></span>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(matn.Note))
+                        {
+                            <div class="wird-note" style="margin: 8px 16px 14px; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; color: #92400e;">
+                                <div class="d-flex align-items-start gap-2">
+                                    <i class='bx bx-comment-detail text-warning mt-1'></i>
+                                    <p class="mb-0"><strong>ملاحظات المعلم:</strong> @matn.Note</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5" style="background: #ffffff; border-radius: 16px; border: 1px dashed #cbd5e1; margin-top: 15px; padding: 40px 20px;">
+                <div style="width: 70px; height: 70px; border-radius: 50%; background: rgba(37, 99, 235, 0.08); color: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin: 0 auto 14px;">
+                    <i class='bx bx-bookmarks'></i>
+                </div>
+                <h4 class="fw-bold" style="color: #0f172a;">لا توجد تسميعات متون مسجلة</h4>
+                <p class="text-muted small mb-0" style="max-width: 380px; margin: 0 auto;">لم يتم رصد أي تسميع متون علمية لحسابك حتى الآن.</p>
+            </div>
+        }
+    </div>
+
+    <script>
+        function toggleStudentTab(tab) {
+            const quranCont = document.getElementById('studentQuranContainer');
+            const matnCont = document.getElementById('studentMatnContainer');
+            const quranBtn = document.getElementById('studentQuranTabBtn');
+            const matnBtn = document.getElementById('studentMatnTabBtn');
+
+            if (tab === 'matn') {
+                if (quranCont) quranCont.style.display = 'none';
+                if (matnCont) matnCont.style.display = 'block';
+                if (matnBtn) {
+                    matnBtn.style.background = '#ffffff';
+                    matnBtn.style.color = '#2563eb';
+                    matnBtn.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+                }
+                if (quranBtn) {
+                    quranBtn.style.background = 'transparent';
+                    quranBtn.style.color = '#64748b';
+                    quranBtn.style.boxShadow = 'none';
+                }
+            } else {
+                if (quranCont) quranCont.style.display = 'block';
+                if (matnCont) matnCont.style.display = 'none';
+                if (quranBtn) {
+                    quranBtn.style.background = '#ffffff';
+                    quranBtn.style.color = '#059669';
+                    quranBtn.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+                }
+                if (matnBtn) {
+                    matnBtn.style.background = 'transparent';
+                    matnBtn.style.color = '#64748b';
+                    matnBtn.style.boxShadow = 'none';
+                }
+            }
+        }
+    </script>
 </div>

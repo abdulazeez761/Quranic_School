@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Hafiz.DTOs.Matn;
 using Hafiz.Models;
 using StudentModel = Hafiz.Models.Student;
 
@@ -9,6 +10,8 @@ namespace Hafiz.DTOs.Student
     {
         public StudentModel Student { get; set; } = new();
         public List<WirdAssignment> PaginatedWirds { get; set; } = new();
+        public List<MatnAssignmentDto> MatnAssignments { get; set; } = new();
+        public int TotalMatnAssignments => MatnAssignments?.Count ?? 0;
         public int CurrentPage { get; set; } = 1;
         public int TotalPages { get; set; } = 1;
         public int TotalWirds { get; set; }

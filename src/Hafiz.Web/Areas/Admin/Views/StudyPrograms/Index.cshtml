@@ -1,0 +1,120 @@
+@model IEnumerable<Hafiz.DTOs.StudyProgram.StudyProgramDto>
+@using Hafiz.Domain.Enums
+@{
+    ViewData["Title"] = "البرامج التعليمية";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var selectedType = ViewBag.SelectedType as ProgramType?;
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h2 class="h4 font-weight-bold mb-1">البرامج التعليمية</h2>
+            <p class="text-muted small mb-0">إدارة المسارات والمناهج الدراسية للمركز (قرآن كريم، متون، سند، إجازة)</p>
+        </div>
+        <div>
+            <a asp-action="Create" class="btn btn-primary d-inline-flex align-items-center gap-1">
+                <i class='bx bx-plus-circle'></i>
+                <span>إضافة برنامج تعليمي</span>
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class='bx bx-check-circle me-1'></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class='bx bx-error-circle me-1'></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- فلاتر نوع البرنامج -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-3">
+            <div class="d-flex gap-2 flex-wrap">
+                <a asp-action="Index" class="btn btn-sm @(selectedType == null ? "btn-dark" : "btn-outline-secondary")">الكل</a>
+                <a asp-action="Index" asp-route-type="@ProgramType.Quran" class="btn btn-sm @(selectedType == ProgramType.Quran ? "btn-success" : "btn-outline-success")">
+                    <i class='bx bx-book-bookmark me-1'></i> القرآن الكريم
+                </a>
+                <a asp-action="Index" asp-route-type="@ProgramType.Matn" class="btn btn-sm @(selectedType == ProgramType.Matn ? "btn-primary" : "btn-outline-primary")">
+                    <i class='bx bx-book me-1'></i> المتون العلمية
+                </a>
+                <a asp-action="Index" asp-route-type="@ProgramType.Sanad" class="btn btn-sm @(selectedType == ProgramType.Sanad ? "btn-info" : "btn-outline-info")">
+                    <i class='bx bx-award me-1'></i> السند الغيبي
+                </a>
+                <a asp-action="Index" asp-route-type="@ProgramType.Ijaza" class="btn btn-sm @(selectedType == ProgramType.Ijaza ? "btn-warning" : "btn-outline-warning")">
+                    <i class='bx bx-certification me-1'></i> الإجازة
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- بطاقات البرامج -->
+    <div class="row g-3">
+        @if (!Model.Any())
+        {
+            <div class="col-12 text-center py-5">
+                <div class="text-muted">
+                    <i class='bx bx-folder-open display-4 d-block mb-3'></i>
+                    <h5>لا توجد برامج مسجلة حتى الآن</h5>
+                    <p class="small">يمكنك البدء بإنشاء برنامج تعليمي جديد لتنظيم الحلقات تحته.</p>
+                </div>
+            </div>
+        }
+        else
+        {
+            @foreach (var prog in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge @(prog.Type == ProgramType.Quran ? "bg-success" : prog.Type == ProgramType.Matn ? "bg-primary" : "bg-info")">
+                                    @prog.TypeName
+                                </span>
+                                <span class="badge @(prog.IsActive ? "bg-light text-success border border-success" : "bg-light text-danger border border-danger")">
+                                    @(prog.IsActive ? "نشط" : "معطل")
+                                </span>
+                            </div>
+
+                            <h5 class="card-title font-weight-bold mb-1">@prog.Name</h5>
+                            @if (!string.IsNullOrEmpty(prog.MatnTitle))
+                            {
+                                <div class="small text-primary mb-2">
+                                    <i class='bx bx-bookmark me-1'></i> المتن: @prog.MatnTitle
+                                </div>
+                            }
+                            <p class="card-text text-muted small flex-grow-1">
+                                @(string.IsNullOrEmpty(prog.Description) ? "لا يوجد وصف محدد لهذا البرنامج." : prog.Description)
+                            </p>
+
+                            <div class="border-top pt-3 mt-3 d-flex justify-content-between align-items-center">
+                                <span class="small text-muted">
+                                    <i class='bx bx-group me-1'></i> @prog.ClassesCount شعب/حلقات
+                                </span>
+                                <div class="d-flex gap-1">
+                                    <a asp-action="Edit" asp-route-id="@prog.Id" class="btn btn-sm btn-outline-secondary" title="تعديل">
+                                        <i class='bx bx-edit'></i>
+                                    </a>
+                                    <form asp-action="Delete" asp-route-id="@prog.Id" method="post" class="d-inline" onsubmit="return confirm('هل أنت متأكد من رغبتك في حذف هذا البرنامج؟');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="حذف">
+                                            <i class='bx bx-trash'></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

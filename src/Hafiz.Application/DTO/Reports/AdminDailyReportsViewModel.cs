@@ -21,12 +21,15 @@ namespace Hafiz.DTOs.Reports
         public int TotalExcused => Classes.Sum(c => c.ExcusedCount);
         public int TotalPending => Classes.Sum(c => c.PendingCount);
         public int TotalWirds => Classes.Sum(c => c.Students.Sum(s => s.Wirds.Count));
+        public int TotalMatnAssignments => Classes.Sum(c => c.Students.Sum(s => s.MatnAssignments.Count));
     }
 
     public class ClassDailyReport
     {
         public Guid ClassId { get; set; }
         public string ClassName { get; set; } = string.Empty;
+        public string? ProgramName { get; set; }
+        public Hafiz.Domain.Enums.ProgramType ProgramType { get; set; } = Hafiz.Domain.Enums.ProgramType.Quran;
         public List<StudentDailyRow> Students { get; set; } = new();
 
         public int TotalStudents => Students.Count;
@@ -55,5 +58,8 @@ namespace Hafiz.DTOs.Reports
 
         // الأوراد المسندة لهذا الطالب في هذا اليوم
         public List<WirdAssignment> Wirds { get; set; } = new();
+
+        // إنجازات المتون المسندة لهذا الطالب في هذا اليوم
+        public List<Hafiz.Domain.Entities.MatnAssignment> MatnAssignments { get; set; } = new();
     }
 }

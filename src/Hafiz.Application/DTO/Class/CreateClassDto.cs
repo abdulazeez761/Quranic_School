@@ -19,6 +19,9 @@ namespace Hafiz.DTOs
         [Required(ErrorMessage = "ClassDaysRequired")]
         public List<ClassDaysEnum> ClassDays { get; set; } = new List<ClassDaysEnum>();
 
+        // اختياري، في حال عدم التحديد يتم الإسناد تلقائياً لبرنامج القرآن الكريم
+        public Guid? StudyProgramId { get; set; }
+
         public List<Guid>? TeacherIds { get; set; } = new(); //we get the ids then we fetch them in the repo after that we assign them to the class entity
         public List<Guid>? StudentsIds { get; set; } = new(); //we get the ids then we fetch them in the repo after that we assign them to the class entity
 

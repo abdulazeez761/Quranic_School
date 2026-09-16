@@ -54,7 +54,8 @@ namespace Hafiz.Repositories
         public async Task<IEnumerable<Class>> GetAllAsync()
         {
             return await _context
-                .Classes.Include(c => c.Teachers)
+                .Classes.Include(c => c.StudyProgram)
+                .Include(c => c.Teachers)
                 .ThenInclude(t => t.TeacherInfo)
                 .Include(c => c.Students)
                 .ToListAsync();
@@ -64,6 +65,7 @@ namespace Hafiz.Repositories
         {
             var query = _context
                 .Classes.IgnoreQueryFilters()
+                .Include(c => c.StudyProgram)
                 .Include(c => c.Teachers)
                 .ThenInclude(t => t.TeacherInfo)
                 .Include(c => c.Students)
@@ -94,6 +96,10 @@ namespace Hafiz.Repositories
             existingClass.Gender = newClass.Gender;
             existingClass.ClassTime = newClass.ClassTime;
             existingClass.ClassDays = newClass.ClassDays;
+            if (newClass.StudyProgramId.HasValue)
+            {
+                existingClass.StudyProgramId = newClass.StudyProgramId;
+            }
 
             //clearing the ids of students before updating
             foreach (var student in existingClass.Students)
@@ -132,7 +138,8 @@ namespace Hafiz.Repositories
         public async Task<IEnumerable<Class>> GetAllByInstituteAsync(Guid instituteId)
         {
             return await _context
-                .Classes.Include(c => c.Teachers)
+                .Classes.Include(c => c.StudyProgram)
+                .Include(c => c.Teachers)
                 .ThenInclude(t => t.TeacherInfo)
                 .Include(c => c.Students)
                 .Where(c => c.InstituteId == instituteId)
@@ -145,7 +152,8 @@ namespace Hafiz.Repositories
         )
         {
             return await _context
-                .Classes.Include(c => c.Teachers)
+                .Classes.Include(c => c.StudyProgram)
+                .Include(c => c.Teachers)
                 .ThenInclude(t => t.TeacherInfo)
                 .Include(c => c.Students)
                 .Where(c =>
@@ -176,6 +184,7 @@ namespace Hafiz.Repositories
         {
             return await _context.Classes
                 .IgnoreQueryFilters()
+                .Include(c => c.StudyProgram)
                 .Include(c => c.Teachers)
                 .ThenInclude(t => t.TeacherInfo)
                 .Include(c => c.Students)

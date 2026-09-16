@@ -104,6 +104,161 @@ namespace Hafiz.Migrations
                     b.ToTable("Institutes");
                 });
 
+            modelBuilder.Entity("Hafiz.Domain.Entities.Matn", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Author")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DefaultUnit")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("InstituteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int?>("TotalChapters")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TotalVerses")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InstituteId");
+
+                    b.ToTable("Matns");
+                });
+
+            modelBuilder.Entity("Hafiz.Domain.Entities.MatnAssignment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("Amount")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<DateTime>("AssignedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ChapterName")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<Guid>("ClassId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("FromNumber")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsUpcoming")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("PerformanceType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("ToNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Unit")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassId");
+
+                    b.HasIndex("StudentId", "ClassId", "AssignedDate")
+                        .HasDatabaseName("IX_MatnAssignments_Student_Class_Date");
+
+                    b.ToTable("MatnAssignments");
+                });
+
+            modelBuilder.Entity("Hafiz.Domain.Entities.StudyProgram", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid>("InstituteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("MatnId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MatnId");
+
+                    b.HasIndex("InstituteId", "Type")
+                        .HasDatabaseName("IX_StudyPrograms_InstituteId_Type");
+
+                    b.ToTable("StudyPrograms");
+                });
+
             modelBuilder.Entity("Hafiz.Models.Class", b =>
                 {
                     b.Property<Guid>("Id")
@@ -143,9 +298,15 @@ namespace Hafiz.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<Guid?>("StudyProgramId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("InstituteId");
+                    b.HasIndex("StudyProgramId");
+
+                    b.HasIndex("InstituteId", "StudyProgramId")
+                        .HasDatabaseName("IX_Classes_InstituteId_StudyProgramId");
 
                     b.ToTable("Classes");
                 });
@@ -607,6 +768,52 @@ namespace Hafiz.Migrations
                     b.Navigation("Manager");
                 });
 
+            modelBuilder.Entity("Hafiz.Domain.Entities.Matn", b =>
+                {
+                    b.HasOne("Hafiz.Domain.Entities.Institute", "Institute")
+                        .WithMany()
+                        .HasForeignKey("InstituteId");
+
+                    b.Navigation("Institute");
+                });
+
+            modelBuilder.Entity("Hafiz.Domain.Entities.MatnAssignment", b =>
+                {
+                    b.HasOne("Hafiz.Models.Class", "Class")
+                        .WithMany()
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Hafiz.Models.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Class");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("Hafiz.Domain.Entities.StudyProgram", b =>
+                {
+                    b.HasOne("Hafiz.Domain.Entities.Institute", "Institute")
+                        .WithMany()
+                        .HasForeignKey("InstituteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Hafiz.Domain.Entities.Matn", "Matn")
+                        .WithMany()
+                        .HasForeignKey("MatnId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Institute");
+
+                    b.Navigation("Matn");
+                });
+
             modelBuilder.Entity("Hafiz.Models.Class", b =>
                 {
                     b.HasOne("Hafiz.Domain.Entities.Institute", "Institute")
@@ -614,7 +821,14 @@ namespace Hafiz.Migrations
                         .HasForeignKey("InstituteId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Hafiz.Domain.Entities.StudyProgram", "StudyProgram")
+                        .WithMany("Classes")
+                        .HasForeignKey("StudyProgramId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Institute");
+
+                    b.Navigation("StudyProgram");
                 });
 
             modelBuilder.Entity("Hafiz.Models.Parent", b =>
@@ -758,6 +972,11 @@ namespace Hafiz.Migrations
                     b.Navigation("Classes");
 
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Hafiz.Domain.Entities.StudyProgram", b =>
+                {
+                    b.Navigation("Classes");
                 });
 
             modelBuilder.Entity("Hafiz.Models.Class", b =>

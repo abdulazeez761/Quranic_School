@@ -22,18 +22,21 @@ namespace Hafiz.Areas.Admin.Controllers
         private readonly IClassService _classService;
         private readonly IWirdService _wirdService;
         private readonly IInstituteService _instituteService;
+        private readonly Hafiz.Repositories.Interfaces.IMatnAssignmentRepository _matnAssignmentRepo;
 
         public ReportsController(
             IStudentService studentService,
             IClassService classService,
             IWirdService wirdService,
-            IInstituteService instituteService
+            IInstituteService instituteService,
+            Hafiz.Repositories.Interfaces.IMatnAssignmentRepository matnAssignmentRepo
         )
         {
             _studentService = studentService;
             _classService = classService;
             _wirdService = wirdService;
             _instituteService = instituteService;
+            _matnAssignmentRepo = matnAssignmentRepo;
         }
 
         private Guid? GetInstituteId()
@@ -72,13 +75,18 @@ namespace Hafiz.Areas.Admin.Controllers
             }
 
             var studentList = students.ToList();
+            var classList = classes.ToList();
+            var classIds = classList.Select(c => c.Id).ToList();
+            var matnAssignments = (await _matnAssignmentRepo.GetByClassIdsAndDateAsync(classIds, selectedDate)).ToList();
 
-            var classReports = classes
+            var classReports = classList
                 .OrderBy(c => c.Name)
                 .Select(c => new ClassDailyReport
                 {
                     ClassId = c.Id,
                     ClassName = c.Name,
+                    ProgramName = c.StudyProgram?.Name,
+                    ProgramType = c.StudyProgram?.Type ?? Hafiz.Domain.Enums.ProgramType.Quran,
                     Students = studentList
                         .Where(s => s.Classes.Any(sc => sc.Id == c.Id))
                         .OrderBy(s => s.StudentInfo.FirstName)
@@ -104,6 +112,10 @@ namespace Hafiz.Areas.Admin.Controllers
                                     )
                                 )
                                 .OrderBy(w => w.Type)
+                                .ToList(),
+                            MatnAssignments = matnAssignments
+                                .Where(m => m.ClassId == c.Id && m.StudentId == s.UserId)
+                                .OrderBy(m => m.PerformanceType)
                                 .ToList(),
                         })
                         .ToList(),

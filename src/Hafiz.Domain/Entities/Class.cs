@@ -33,6 +33,12 @@ public class Class : ISoftDeletable
 
     [ForeignKey(nameof(InstituteId))]
     public Institute? Institute { get; set; }
+
+    // الربط بالبرنامج التعليمي
+    public Guid? StudyProgramId { get; set; }
+
+    [ForeignKey(nameof(StudyProgramId))]
+    public StudyProgram? StudyProgram { get; set; }
     public ICollection<StudentAttendance> StudentAttendances { get; set; } =
         new List<StudentAttendance>();
     public ICollection<TeacherAttendance> TeacherAttendance { get; set; } =

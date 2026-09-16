@@ -104,7 +104,15 @@
                                         <div class="class-avatar">
                                             @cls.Name.Substring(0, 1).ToUpper()
                                         </div>
-                                        <div class="class-name">@cls.Name</div>
+                                        <div class="class-name">
+                                            @cls.Name
+                                            @if (cls.StudyProgram != null)
+                                            {
+                                                <span class="badge @(cls.StudyProgram.Type == Hafiz.Domain.Enums.ProgramType.Quran ? "bg-success" : "bg-primary") ms-1" style="font-size: 0.7rem;">
+                                                    @cls.StudyProgram.Name
+                                                </span>
+                                            }
+                                        </div>
                                     </div>
                                 </td>
 

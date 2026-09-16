@@ -7,6 +7,7 @@ using Hafiz.Application.Common;
 using Hafiz.Application.DTO.StudentWird;
 using Hafiz.Application.DTO.Wird;
 using Hafiz.Application.Extensions;
+using Hafiz.DTOs.Matn;
 using Hafiz.DTOs.Student;
 using Hafiz.Models;
 using Hafiz.Services.Interfaces;
@@ -26,13 +27,17 @@ namespace Hafiz.Areas.Teacher.Controllers
         private readonly IWirdService _wirdService;
         private readonly IParentNoteService _parentNoteService;
         private readonly IStudentWirdService _studentWirdService;
+        private readonly IClassService _classService;
+        private readonly IMatnAssignmentService _matnAssignmentService;
 
         public StudentController(
             ILogger<StudentController> logger,
             IStudentService studentService,
             IWirdService wirdService,
             IParentNoteService parentNoteService,
-            IStudentWirdService studentWirdService
+            IStudentWirdService studentWirdService,
+            IClassService classService,
+            IMatnAssignmentService matnAssignmentService
         )
         {
             _logger = logger;
@@ -40,6 +45,8 @@ namespace Hafiz.Areas.Teacher.Controllers
             _wirdService = wirdService;
             _parentNoteService = parentNoteService;
             _studentWirdService = studentWirdService;
+            _classService = classService;
+            _matnAssignmentService = matnAssignmentService;
         }
 
         private Guid? GetInstituteId()
@@ -89,15 +96,36 @@ namespace Hafiz.Areas.Teacher.Controllers
             var totalStudents = studentList.Count;
             var boysCount = studentList.Count(s => s.sex == Hafiz.Models.enums.Sex.male);
             var girlsCount = studentList.Count(s => s.sex == Hafiz.Models.enums.Sex.female);
-            var className = studentList
-                .FirstOrDefault()
-                ?.Classes.FirstOrDefault(c => c.Id == selectedClass)
-                ?.Name;
+            var classDto = await _classService.GetClassById(selectedClass.Value, instituteId.Value);
+            var className = classDto?.Name
+                ?? studentList.FirstOrDefault()?.Classes.FirstOrDefault(c => c.Id == selectedClass)?.Name
+                ?? Request.Cookies["selectedClassName"]
+                ?? "الشعبة";
+
+            var isMatnClass = (classDto?.ProgramType == Hafiz.Domain.Enums.ProgramType.Matn);
+            Dictionary<Guid, (int active, int completed)> matnCountsByStudent = new();
+            if (isMatnClass)
+            {
+                var classMatnAssignments = await _matnAssignmentService.GetByClassIdAsync(selectedClass.Value);
+                matnCountsByStudent = classMatnAssignments
+                    .GroupBy(m => m.StudentId)
+                    .ToDictionary(
+                        g => g.Key,
+                        g => (
+                            active: g.Count(m => m.Status == AssignmentStatus.notSet),
+                            completed: g.Count(m => m.IsCompleted)
+                        )
+                    );
+            }
 
             ViewBag.TotalStudents = totalStudents;
             ViewBag.BoysCount = boysCount;
             ViewBag.GirlsCount = girlsCount;
             ViewBag.ClassName = className;
+            ViewBag.IsMatnClass = isMatnClass;
+            ViewBag.MatnCountsByStudent = matnCountsByStudent;
+            ViewBag.StudyProgramName = classDto?.StudyProgramName;
+            ViewBag.ClassDto = classDto;
             ViewBag.Search = search;
             ViewBag.Level = level;
             ViewBag.AllClassStudents = studentList
@@ -210,11 +238,15 @@ namespace Hafiz.Areas.Teacher.Controllers
                         .Take(pageSize)
                         .ToList() ?? new();
 
+                // Get student's Matn assignments
+                var matnAssignments = (await _matnAssignmentService.GetByStudentIdAsync(id)).ToList();
+
                 // Create view model
                 var viewModel = new StudentDetailsViewModel
                 {
                     Student = student,
                     PaginatedWirds = paginatedWirds,
+                    MatnAssignments = matnAssignments,
                     CurrentPage = page,
                     TotalPages = totalPages,
                     TotalWirds = totalWirds,
@@ -419,6 +451,23 @@ namespace Hafiz.Areas.Teacher.Controllers
                 TempData["ErrorMessage"] = message;
             var updatedWird = await _wirdService.GetWirdAssignmentByIdAsync(model.Id);
             return PartialView("_WirdCard", updatedWird);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AssignMatn([FromBody] AssignMatnDto dto)
+        {
+            var teacherId = Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var tid) ? tid : Guid.Empty;
+            if (teacherId == Guid.Empty)
+                return BadRequest(new { success = false, message = "غير مصرح لك: تعذر تحديد هوية المعلم." });
+
+            if (!ModelState.IsValid)
+            {
+                var errors = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                return BadRequest(new { success = false, message = string.IsNullOrEmpty(errors) ? "بيانات غير صالحة." : errors });
+            }
+
+            var (success, message, id) = await _matnAssignmentService.AssignAsync(dto, teacherId);
+            return Json(new { success, message, id });
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -27,7 +27,15 @@
                 <span class="status-badge" style="display:none">@Localizer["Active"]</span>
 
                 <div class="class-card-content">
-                    <h3 class="class-name">@classItem.Name</h3>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h3 class="class-name mb-0">@classItem.Name</h3>
+                        @if (classItem.StudyProgram != null)
+                        {
+                            <span class="badge @(classItem.StudyProgram.Type == Hafiz.Domain.Enums.ProgramType.Quran ? "bg-success" : "bg-primary")" style="font-size: 0.75rem; padding: 4px 8px; border-radius: 6px;">
+                                @classItem.StudyProgram.Name
+                            </span>
+                        }
+                    </div>
 
                     <div class="class-info-list">
                         <div class="class-info-item">
@@ -61,10 +69,13 @@
                         </div>
                     </div>
 
-                    <div class="class-footer">
+                    <div class="class-footer d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
                         <span class="gender-badge gender-@genderClass">
                             @classItem.Gender
                         </span>
+                        <a asp-area="Teacher" asp-controller="Student" asp-action="Index" class="btn btn-sm @(classItem.StudyProgram?.Type == Hafiz.Domain.Enums.ProgramType.Matn ? "btn-outline-primary" : "btn-outline-success")" onclick="event.stopPropagation(); document.cookie='selectedClassId=@classItem.Id; path=/; max-age=2592000'; document.cookie='selectedClassName=@classItem.Name; path=/; max-age=2592000';">
+                            <i class='bx @(classItem.StudyProgram?.Type == Hafiz.Domain.Enums.ProgramType.Matn ? "bx-bookmarks" : "bx-book-open") me-1'></i> @(classItem.StudyProgram?.Type == Hafiz.Domain.Enums.ProgramType.Matn ? "الطلاب وتسميع المتن" : "الطلاب والورد")
+                        </a>
                     </div>
                 </div>
             </div>

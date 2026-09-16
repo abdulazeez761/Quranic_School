@@ -352,6 +352,113 @@
     }
 </div>
 
+<!-- Matn Assignments Section -->
+<div class="wirds-section matn-section" style="margin-top: 28px; border-top: 3px solid #2563eb; background: #ffffff; border-radius: 14px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); border: 1px solid #e2e8f0;">
+    <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+        <h3 class="d-flex align-items-center gap-2 mb-0" style="font-size: 1.15rem; font-weight: 800; color: #0f172a;">
+            <span class="section-icon section-icon-wirds" style="background: rgba(37, 99, 235, 0.1); color: #2563eb; width: 36px; height: 36px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;">
+                <i class="bi bi-bookmarks-fill"></i>
+            </span>
+            سجل تسميع المتون العلمية
+            <span class="section-count-pill" style="background: #2563eb; color: #fff; border-radius: 9999px; padding: 2px 10px; font-size: 0.78rem; font-weight: 700;">
+                @(Model.TotalMatnAssignments)
+            </span>
+        </h3>
+        <button type="button" class="btn btn-sm btn-primary" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); border: none; border-radius: 8px; font-weight: 600; padding: 6px 14px;"
+                onclick="openAssignMatnModal('@Model.Student.UserId', '@Model.Student.StudentInfo?.FirstName @Model.Student.StudentInfo?.SecondName')">
+            <i class="bi bi-plus-lg me-1"></i> رصد تسميع متن
+        </button>
+    </div>
+
+    @if (Model.MatnAssignments != null && Model.MatnAssignments.Any())
+    {
+        <div class="wirds-list" style="display: flex; flex-direction: column; gap: 12px;">
+            @foreach (var matn in Model.MatnAssignments)
+            {
+                var perfBadgeStyle = matn.PerformanceType switch
+                {
+                    Hafiz.Domain.Enums.MatnPerformanceType.Memorization => "background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2);",
+                    Hafiz.Domain.Enums.MatnPerformanceType.Revision => "background: rgba(37, 99, 235, 0.1); color: #2563eb; border: 1px solid rgba(37, 99, 235, 0.2);",
+                    _ => "background: rgba(139, 92, 246, 0.1); color: #7c3aed; border: 1px solid rgba(139, 92, 246, 0.2);"
+                };
+
+                <div class="wird-item @(matn.IsUpcoming ? "is-upcoming" : "")" style="border-right: 4px solid #2563eb; border-radius: 10px; border: 1px solid #e2e8f0; border-right: 4px solid #2563eb; padding: 14px; background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+                    <div class="wird-header d-flex align-items-center justify-content-between mb-2">
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <span class="badge" style="@perfBadgeStyle font-size: 0.78rem; padding: 4px 10px; border-radius: 6px; font-weight: 700;">
+                                @matn.PerformanceTypeName
+                            </span>
+                            @if (!string.IsNullOrEmpty(matn.ClassName))
+                            {
+                                <span class="badge bg-light text-secondary border" style="font-size: 0.75rem;">
+                                    <i class="bi bi-people me-1"></i>@matn.ClassName
+                                </span>
+                            }
+                        </div>
+                        <div class="d-flex align-items-center gap-1">
+                            @if (matn.IsUpcoming)
+                            {
+                                @await Html.PartialAsync("_UpcomingBadge")
+                            }
+                            <span class="wird-status-badge @(matn.IsCompleted ? "status-completed" : "")" style="font-size: 0.78rem;">
+                                @Localizer[matn.Status.ToString()]
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="wird-meta-row text-muted small d-flex align-items-center gap-3 mb-2" style="font-size: 0.8rem;">
+                        <span><i class="bi bi-calendar3 me-1"></i> @matn.AssignedDate.ToString("yyyy-MM-dd")</span>
+                        @if (matn.Amount.HasValue)
+                        {
+                            <span class="badge bg-light text-dark border"><i class="bi bi-layers me-1"></i> @matn.Amount.Value.ToString("0.##") @matn.UnitName</span>
+                        }
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(matn.ChapterName) || matn.FromNumber.HasValue || matn.ToNumber.HasValue)
+                    {
+                        <div class="wird-range-compact" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 8px; padding: 8px 12px; margin-top: 6px; border: 1px solid #e2e8f0;">
+                            @if (!string.IsNullOrEmpty(matn.ChapterName))
+                            {
+                                <div class="fw-bold mb-1" style="font-size: 0.85rem; color: #1e293b;">
+                                    <i class="bi bi-book me-1 text-primary"></i> @matn.ChapterName
+                                </div>
+                            }
+                            @if (matn.FromNumber.HasValue && matn.ToNumber.HasValue)
+                            {
+                                <div style="font-size: 0.82rem; color: #475569;">
+                                    <strong>الموضع:</strong> من @matn.UnitName @matn.FromNumber إلى @matn.ToNumber
+                                </div>
+                            }
+                            else if (matn.FromNumber.HasValue)
+                            {
+                                <div style="font-size: 0.82rem; color: #475569;">
+                                    <strong>الموضع:</strong> من @matn.UnitName @matn.FromNumber
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(matn.Note))
+                    {
+                        <div class="wird-note-compact mt-2" style="background: #fffbeb; border: 1px solid #fef3c7; border-radius: 6px; padding: 6px 10px; font-size: 0.82rem; color: #92400e;">
+                            <i class="bi bi-chat-left-text me-1 text-warning"></i>
+                            <strong>@Localizer["Notes"]:</strong>
+                            <span>@matn.Note</span>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-4" style="background: #f8fafc; border-radius: 10px; border: 1px dashed #cbd5e1;">
+            <i class="bi bi-bookmarks text-muted" style="font-size: 2.2rem; opacity: 0.6;"></i>
+            <p class="text-muted small mt-2 mb-0">لا توجد تسميعات متون مسجلة لهذا الطالب حتى الآن.</p>
+        </div>
+    }
+</div>
+
 <!-- Parent Notes Section -->
 <div class="wirds-section notes-section">
     <h3>

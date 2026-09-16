@@ -126,6 +126,18 @@
                 <div class="card-stat-value">@Model.TotalWirds</div>
             </div>
         </div>
+        @if (Model.TotalMatnAssignments > 0)
+        {
+            <div class="card card-stat">
+                <div class="card-stat-icon" style="background: linear-gradient(135deg, #0284c7, #0369a1);">
+                    <i class='bx bx-bookmarks'></i>
+                </div>
+                <div class="card-stat-content">
+                    <div class="card-stat-label">المتون المسندة</div>
+                    <div class="card-stat-value">@Model.TotalMatnAssignments</div>
+                </div>
+            </div>
+        }
     </div>
 
     @if (!Model.Classes.Any())
@@ -176,6 +188,12 @@
                     <i class='bx bx-chevron-left dr-toggle-icon'></i>
                     <i class='bx bx-group' style="color: var(--primary-green);"></i>
                     @cls.ClassName
+                    @if (!string.IsNullOrEmpty(cls.ProgramName))
+                    {
+                        <span class="badge @(cls.ProgramType == Hafiz.Domain.Enums.ProgramType.Quran ? "bg-success" : "bg-primary") ms-2" style="font-size: 0.75rem; vertical-align: middle;">
+                            @cls.ProgramName
+                        </span>
+                    }
                     <span class="dr-class-count">(@cls.Students.Count() طالب)</span>
                 </h3>
                 <div class="dr-class-badges">
@@ -201,7 +219,7 @@
                                     <th style="width: 40px;">#</th>
                                     <th>اسم الطالب</th>
                                     <th style="width: 130px;">الحالة</th>
-                                    <th>الأوراد المسندة اليوم</th>
+                                    <th>المهام والأوراد المسندة اليوم</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -218,10 +236,10 @@
                                         <td data-label="الحالة">
                                             <span class="dr-status @info.Css">@info.Label</span>
                                         </td>
-                                        <td data-label="الأوراد المسندة اليوم" class="dr-card-wirds">
+                                        <td data-label="المهام والأوراد اليوم" class="dr-card-wirds">
                                             @if (st.Wirds.Any())
                                             {
-                                                <div class="dr-wirds">
+                                                <div class="dr-wirds mb-1">
                                                     @foreach (var w in st.Wirds)
                                                     {
                                                         var desc = WirdDescription(w);
@@ -240,7 +258,35 @@
                                                     }
                                                 </div>
                                             }
-                                            else
+                                            @if (st.MatnAssignments.Any())
+                                            {
+                                                <div class="dr-wirds">
+                                                    @foreach (var m in st.MatnAssignments)
+                                                    {
+                                                        <span class="dr-wird @(m.IsCompleted ? "dr-wird-done" : "")" style="background: rgba(13, 110, 253, 0.08); border-color: rgba(13, 110, 253, 0.25); color: #0b5ed7;">
+                                                            <i class='bx bx-bookmarks'></i>
+                                                            <strong>@(m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Memorization ? "حفظ متن" : m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Revision ? "مراجعة متن" : "مدارسة متن")</strong>
+                                                            @if (!string.IsNullOrEmpty(m.ChapterName))
+                                                            {
+                                                                <span> (@m.ChapterName)</span>
+                                                            }
+                                                            @if (m.FromNumber.HasValue && m.ToNumber.HasValue)
+                                                            {
+                                                                <span>: من @m.FromNumber إلى @m.ToNumber</span>
+                                                            }
+                                                            else if (m.Amount.HasValue)
+                                                            {
+                                                                <span>: @m.Amount</span>
+                                                            }
+                                                            @if (m.IsCompleted)
+                                                            {
+                                                                <i class='bx bx-check'></i>
+                                                            }
+                                                        </span>
+                                                    }
+                                                </div>
+                                            }
+                                            @if (!st.Wirds.Any() && !st.MatnAssignments.Any())
                                             {
                                                 <span class="text-medium">—</span>
                                             }

@@ -1,0 +1,90 @@
+@model Hafiz.DTOs.StudyProgram.UpdateStudyProgramDto
+@using Hafiz.Domain.Enums
+@{
+    ViewData["Title"] = "تعديل برنامج تعليمي";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent border-0 pt-4 pb-2">
+                    <h3 class="h5 font-weight-bold mb-1">تعديل البرنامج التعليمي</h3>
+                    <p class="text-muted small">تحديث بيانات وإعدادات البرنامج والحالة التشغيلية.</p>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label fw-bold">اسم البرنامج <span class="text-danger">*</span></label>
+                            <input asp-for="Name" class="form-control" required />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Type" class="form-label fw-bold">نوع المسار التعليمي <span class="text-danger">*</span></label>
+                                <select asp-for="Type" id="programTypeSelect" class="form-select" required>
+                                    <option value="@((int)ProgramType.Quran)">تحفيظ القرآن الكريم</option>
+                                    <option value="@((int)ProgramType.Matn)">المتون والعلوم الشرعية</option>
+                                    <option value="@((int)ProgramType.Sanad)">السند الغيبي</option>
+                                    <option value="@((int)ProgramType.Ijaza)">الإجازة القرآنية</option>
+                                </select>
+                                <span asp-validation-for="Type" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6" id="matnSelectContainer">
+                                <label asp-for="MatnId" class="form-label fw-bold">المتن المخصص لهذا البرنامج</label>
+                                <select asp-for="MatnId" asp-items="ViewBag.Matns" class="form-select">
+                                    <option value="">-- اختر المتن من المكتبة --</option>
+                                </select>
+                                <span asp-validation-for="MatnId" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-bold">الوصف</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-check form-switch mb-4">
+                            <input class="form-check-input" type="checkbox" role="switch" asp-for="IsActive" id="isActiveSwitch">
+                            <label class="form-check-label fw-bold" for="isActiveSwitch">البرنامج نشط ومتاح لربط الحلقات</label>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 border-top pt-3">
+                            <a asp-action="Index" class="btn btn-outline-secondary">إلغاء</a>
+                            <button type="submit" class="btn btn-primary px-4">حفظ التعديلات</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const typeSelect = document.getElementById('programTypeSelect');
+            const matnContainer = document.getElementById('matnSelectContainer');
+
+            function toggleMatnField() {
+                if (typeSelect.value === '2') {
+                    matnContainer.style.display = 'block';
+                } else {
+                    matnContainer.style.display = 'none';
+                }
+            }
+
+            typeSelect.addEventListener('change', toggleMatnField);
+            toggleMatnField();
+        });
+    </script>
+}

@@ -19,6 +19,7 @@
         ? (int)Math.Round(students.Average(s => DateTime.Now.Year - s.DateOfBirth.Year))
         : 0;
     var isArabic = System.Threading.Thread.CurrentThread.CurrentCulture.Name.StartsWith("ar");
+    var matnCounts = ViewBag.MatnCountsByStudent as Dictionary<Guid, (int active, int completed)>;
 }
 
 <link rel="stylesheet" href="~/css/teacher/Students.css" asp-append-version="true" />
@@ -28,9 +29,17 @@
     <div class="class-header">
         <div class="class-header-left">
             <div class="class-header-title">
-                <i class='bx bx-book-reader header-icon'></i>
+                <i class='bx @(ViewBag.IsMatnClass == true ? "bx-bookmarks text-primary" : "bx-book-reader") header-icon'></i>
                 <div>
-                    <h2>@className</h2>
+                    <div class="d-flex align-items-center gap-2">
+                        <h2>@className</h2>
+                        @if (ViewBag.IsMatnClass == true)
+                        {
+                            <span class="badge bg-primary" style="font-size: 0.78rem; padding: 4px 9px; border-radius: 6px;">
+                                @(ViewBag.StudyProgramName ?? "حلقة متون علمية")
+                            </span>
+                        }
+                    </div>
                     <p>
                         <span>@totalStudents @Localizer["Students"]</span>
                         @if (totalStudents > 0)
@@ -91,8 +100,16 @@
         @foreach (Student student in students)
         {
             var age = DateTime.Now.Year - student.DateOfBirth.Year;
-            var activeWirds = student.wirds?.Count(w => w.Status == AssignmentStatus.notSet) ?? 0;
-            var completedWirds = student.wirds?.Count(w => w.Status != AssignmentStatus.notSet) ?? 0;
+            var isMatn = ViewBag.IsMatnClass == true;
+            int mActive = 0, mCompleted = 0;
+            if (isMatn && matnCounts != null && matnCounts.ContainsKey(student.UserId))
+            {
+                var mc = matnCounts[student.UserId];
+                mActive = mc.active;
+                mCompleted = mc.completed;
+            }
+            var activeWirds = isMatn ? mActive : (student.wirds?.Count(w => w.Status == AssignmentStatus.notSet) ?? 0);
+            var completedWirds = isMatn ? mCompleted : (student.wirds?.Count(w => w.Status != AssignmentStatus.notSet) ?? 0);
             var firstName = student.StudentInfo?.FirstName ?? string.Empty;
             var secondName = student.StudentInfo?.SecondName ?? string.Empty;
             var studentFullName = $"{firstName} {secondName}".Trim();
@@ -144,24 +161,40 @@
                     </span>
                 </div>
 
-                <div class="memorization-block">
-                    <div class="memorization-head">
-                        <span class="memorization-label">
-                            <i class='bx bx-book-bookmark'></i>@Localizer["JuzMemorized"]
-                        </span>
-                        <span class="memorization-value">
-                            @memJuzDisplay / 30
-                            @if (memPagesRemainder > 0)
-                            {
-                                <small>(+ @memPagesRemainder.ToString("0.##") @Localizer["UnitPages"])</small>
-                            }
-                        </span>
+                @if (ViewBag.IsMatnClass != true)
+                {
+                    <div class="memorization-block">
+                        <div class="memorization-head">
+                            <span class="memorization-label">
+                                <i class='bx bx-book-bookmark'></i>@Localizer["JuzMemorized"]
+                            </span>
+                            <span class="memorization-value">
+                                @memJuzDisplay / 30
+                                @if (memPagesRemainder > 0)
+                                {
+                                    <small>(+ @memPagesRemainder.ToString("0.##") @Localizer["UnitPages"])</small>
+                                }
+                            </span>
+                        </div>
+                        <div class="memorization-bar" role="progressbar" aria-valuenow="@memJuzDisplay" aria-valuemin="0"
+                             aria-valuemax="30">
+                            <div class="memorization-fill" style="width: @juzPercent%"></div>
+                        </div>
                     </div>
-                    <div class="memorization-bar" role="progressbar" aria-valuenow="@memJuzDisplay" aria-valuemin="0"
-                         aria-valuemax="30">
-                        <div class="memorization-fill" style="width: @juzPercent%"></div>
+                }
+                else
+                {
+                    <div class="memorization-block" style="background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.15); border-radius: 8px; padding: 8px 12px;">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span class="small fw-bold text-primary">
+                                <i class='bx bx-bookmarks me-1'></i> مسار المتون العلمية
+                            </span>
+                            <span class="badge bg-light text-dark border small">
+                                @(ViewBag.StudyProgramName ?? "متون")
+                            </span>
+                        </div>
                     </div>
-                </div>
+                }
 
                 <div class="student-stats">
                     <div class="stat-item">
@@ -186,14 +219,24 @@
                         <i class='bx bx-show'></i>
                         <span>@Localizer["ViewDetails"]</span>
                     </a>
-                    <button type="button" class="btn btn-routine-plan" onclick="openStudentPlanModal('@student.UserId', '@studentFullName', '@student.TajwidLevel')" title="@Localizer["StudentRoutinePlan"]">
-                        <i class='bx bx-calendar-star'></i>
-                        <span>@Localizer["StudentRoutinePlan"]</span>
-                    </button>
-                    <button class="btn btn-primary" onclick="openWirdModal('@student.UserId', '@studentFullName')">
-                        <span class="plus-icon">+</span>
-                        <span>@Localizer["AddWird"]</span>
-                    </button>
+                    @if (ViewBag.IsMatnClass != true)
+                    {
+                        <button type="button" class="btn btn-routine-plan" onclick="openStudentPlanModal('@student.UserId', '@studentFullName', '@student.TajwidLevel')" title="@Localizer["StudentRoutinePlan"]">
+                            <i class='bx bx-calendar-star'></i>
+                            <span>@Localizer["StudentRoutinePlan"]</span>
+                        </button>
+                        <button class="btn btn-primary" onclick="openWirdModal('@student.UserId', '@studentFullName')">
+                            <span class="plus-icon">+</span>
+                            <span>@Localizer["AddWird"]</span>
+                        </button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-primary" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); border-color: #2563eb;" onclick="openAssignMatnModal('@student.UserId', '@studentFullName')">
+                            <i class='bx bx-bookmarks me-1'></i>
+                            <span>تسميع المتن</span>
+                        </button>
+                    }
                 </div>
             </div>
         }
@@ -213,7 +256,13 @@
                 @foreach (Student student in students)
                 {
                     var rAge = DateTime.Now.Year - student.DateOfBirth.Year;
-                    var rActive = student.wirds?.Count(w => w.Status == AssignmentStatus.notSet) ?? 0;
+                    var isMatnRow = ViewBag.IsMatnClass == true;
+                    int rActiveCount = 0;
+                    if (isMatnRow && matnCounts != null && matnCounts.ContainsKey(student.UserId))
+                    {
+                        rActiveCount = matnCounts[student.UserId].active;
+                    }
+                    var rActive = isMatnRow ? rActiveCount : (student.wirds?.Count(w => w.Status == AssignmentStatus.notSet) ?? 0);
                     var rFirstName = student.StudentInfo?.FirstName ?? string.Empty;
                     var rSecondName = student.StudentInfo?.SecondName ?? string.Empty;
                     var rFullName = $"{rFirstName} {rSecondName}".Trim();
@@ -268,16 +317,27 @@
                         </td>
                         <td class="col-actions">
                             <div class="row-actions">
-                                <button type="button" class="row-icon-btn primary"
-                                        aria-label="@Localizer["AddWird"]" title="@Localizer["AddWird"]"
-                                        onclick="openWirdModal('@student.UserId', '@rFullName')">
-                                    <i class='bx bx-plus'></i>
-                                </button>
-                                <button type="button" class="row-icon-btn routine-plan"
-                                        aria-label="@Localizer["StudentRoutinePlan"]" title="@Localizer["StudentRoutinePlan"]"
-                                        onclick="openStudentPlanModal('@student.UserId', '@rFullName', '@student.TajwidLevel')">
-                                    <i class='bx bx-calendar-star'></i>
-                                </button>
+                                @if (ViewBag.IsMatnClass != true)
+                                {
+                                    <button type="button" class="row-icon-btn primary"
+                                            aria-label="@Localizer["AddWird"]" title="@Localizer["AddWird"]"
+                                            onclick="openWirdModal('@student.UserId', '@rFullName')">
+                                        <i class='bx bx-plus'></i>
+                                    </button>
+                                    <button type="button" class="row-icon-btn routine-plan"
+                                            aria-label="@Localizer["StudentRoutinePlan"]" title="@Localizer["StudentRoutinePlan"]"
+                                            onclick="openStudentPlanModal('@student.UserId', '@rFullName', '@student.TajwidLevel')">
+                                        <i class='bx bx-calendar-star'></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="row-icon-btn primary" style="background: #2563eb; border-color: #2563eb; color: #fff;"
+                                            aria-label="تسميع المتن" title="تسميع المتن"
+                                            onclick="openAssignMatnModal('@student.UserId', '@rFullName')">
+                                        <i class='bx bx-bookmarks'></i>
+                                    </button>
+                                }
                                 <a asp-action="Details" asp-route-id="@student.UserId"
                                    class="row-icon-btn outline" aria-label="@Localizer["ViewDetails"]"
                                    title="@Localizer["ViewDetails"]">
@@ -371,6 +431,7 @@
     window.allClassStudents = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.AllClassStudents ?? new List<object>()));
 </script>
 
-<!-- Include Wird and Routine Plan Modals -->
+<!-- Include Wird, Matn, and Routine Plan Modals -->
 @await Html.PartialAsync("_AssignWirdModal", new WirdAssignment())
+@await Html.PartialAsync("_AssignMatnModal")
 @await Html.PartialAsync("_StudentRoutinePlanModal")

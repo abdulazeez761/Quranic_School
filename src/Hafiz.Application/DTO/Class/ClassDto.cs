@@ -23,6 +23,9 @@ namespace Hafiz.DTOs
         public List<ClassDaysEnum> ClassDays { get; set; } = new List<ClassDaysEnum>();
 
         public Guid? InstituteId { get; set; }
+        public Guid? StudyProgramId { get; set; }
+        public string? StudyProgramName { get; set; }
+        public Hafiz.Domain.Enums.ProgramType? ProgramType { get; set; }
         public List<Guid>? TeacherIds { get; set; } = new(); //we get the ids then we fetch them in the repo after that we assign them to the class entity
         public List<Guid>? StudentsIds { get; set; } = new(); //we get the ids then we fetch them in the repo after that we assign them to the class entity
 

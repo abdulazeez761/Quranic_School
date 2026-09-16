@@ -74,11 +74,25 @@
                             <span>@Localizer["Parent_Management"]</span>
                         </a>
                     </li>
+                    <li class="@IsActive("StudyPrograms", "Index", "Admin")">
+                        <a asp-area="Admin" asp-controller="StudyPrograms" asp-action="Index"
+                               aria-current="@(IsActive("StudyPrograms", "Index", "Admin") == "active" ? "page" : "")">
+                            <i class='bx bx-book-open' aria-hidden="true"></i>
+                            <span>البرامج التعليمية</span>
+                        </a>
+                    </li>
                     <li class="@IsActive("Classes", "Index", "Admin")">
                         <a asp-area="Admin" asp-controller="Classes" asp-action="Index"
                                aria-current="@(IsActive("Classes", "Index", "Admin") == "active" ? "page" : "")">
                             <i class='bx bx-group' aria-hidden="true"></i>
                             <span>@Localizer["Session_Management"]</span>
+                        </a>
+                    </li>
+                    <li class="@IsActive("Matns", "Index", "Admin")">
+                        <a asp-area="Admin" asp-controller="Matns" asp-action="Index"
+                               aria-current="@(IsActive("Matns", "Index", "Admin") == "active" ? "page" : "")">
+                            <i class='bx bx-library' aria-hidden="true"></i>
+                            <span>مكتبة المتون</span>
                         </a>
                     </li>
                     <li class="@IsActive("TeacherAttendance", "Index", "Admin")">

@@ -1,0 +1,149 @@
+@model IEnumerable<Hafiz.DTOs.Matn.MatnDto>
+@using Hafiz.Domain.Enums
+@{
+    ViewData["Title"] = "مكتبة المتون العلمية";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var selectedCategory = ViewBag.SelectedCategory as MatnCategory?;
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h2 class="h4 font-weight-bold mb-1">مكتبة المتون العلمية</h2>
+            <p class="text-muted small mb-0">المتون المتاحة للتدريس في المركز (المتون العامة + المتون الخاصة بالمعهد)</p>
+        </div>
+        <div>
+            <a asp-action="Create" class="btn btn-primary d-inline-flex align-items-center gap-1">
+                <i class='bx bx-plus-circle'></i>
+                <span>إضافة متن جديد</span>
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class='bx bx-check-circle me-1'></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class='bx bx-error-circle me-1'></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- شريط البحث والتصفية حسب الفن / التخصص -->
+    <div class="card border-0 shadow-sm mb-4 p-3">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-4">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-white"><i class='bx bx-search'></i></span>
+                    <input type="text" name="search" class="form-control" placeholder="بحث باسم المتن أو الناظم..." value="@ViewBag.Search" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select name="category" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <option value="">-- كل الفنون والتخصصات --</option>
+                    <option value="@((int)MatnCategory.Tajweed)" selected="@(selectedCategory == MatnCategory.Tajweed)">تجويد وقراءات</option>
+                    <option value="@((int)MatnCategory.Aqeedah)" selected="@(selectedCategory == MatnCategory.Aqeedah)">عقيدة وتوحيد</option>
+                    <option value="@((int)MatnCategory.Hadith)" selected="@(selectedCategory == MatnCategory.Hadith)">حديث ومصطلح</option>
+                    <option value="@((int)MatnCategory.Fiqh)" selected="@(selectedCategory == MatnCategory.Fiqh)">فقه وأصوله</option>
+                    <option value="@((int)MatnCategory.NahwAndLanguage)" selected="@(selectedCategory == MatnCategory.NahwAndLanguage)">نحو ولغة</option>
+                    <option value="@((int)MatnCategory.Seerah)" selected="@(selectedCategory == MatnCategory.Seerah)">سيرة وتاريخ</option>
+                    <option value="@((int)MatnCategory.Adab)" selected="@(selectedCategory == MatnCategory.Adab)">آداب وتزكية</option>
+                    <option value="@((int)MatnCategory.General)" selected="@(selectedCategory == MatnCategory.General)">عام / أخرى</option>
+                </select>
+            </div>
+            <div class="col-md-4 d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-primary">
+                    <i class='bx bx-filter-alt me-1'></i> تصفية
+                </button>
+                @if (selectedCategory.HasValue || !string.IsNullOrWhiteSpace(ViewBag.Search as string))
+                {
+                    <a asp-action="Index" class="btn btn-sm btn-outline-secondary">
+                        <i class='bx bx-reset me-1'></i> إلغاء التصفية
+                    </a>
+                }
+            </div>
+        </form>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="py-3">اسم المتن</th>
+                        <th class="py-3">المؤلف / الناظم</th>
+                        <th class="py-3">الفن والتصنيف</th>
+                        <th class="py-3">الحجم</th>
+                        <th class="py-3">وحدة القياس الافتراضية</th>
+                        <th class="py-3">النوع</th>
+                        <th class="py-3 text-center">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var matn in Model)
+                    {
+                        <tr>
+                            <td class="font-weight-bold">
+                                <i class='bx bx-book-bookmark text-primary me-1'></i> @matn.Title
+                            </td>
+                            <td class="text-muted">@(string.IsNullOrEmpty(matn.Author) ? "-" : matn.Author)</td>
+                            <td>
+                                <span class="badge bg-light text-dark border">
+                                    @matn.CategoryName
+                                </span>
+                            </td>
+                            <td class="small">
+                                @if (matn.TotalVerses.HasValue)
+                                {
+                                    <span>@matn.TotalVerses بيت</span>
+                                }
+                                @if (matn.TotalChapters.HasValue)
+                                {
+                                    <span class="text-muted">(@matn.TotalChapters باب)</span>
+                                }
+                                @if (!matn.TotalVerses.HasValue && !matn.TotalChapters.HasValue)
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">@matn.DefaultUnitName</span>
+                            </td>
+                            <td>
+                                @if (matn.IsGlobal)
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success">عام للنظام</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-info-subtle text-info border border-info">خاص بالمعهد</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                @if (!matn.IsGlobal)
+                                {
+                                    <form asp-action="Delete" asp-route-id="@matn.Id" method="post" class="d-inline" onsubmit="return confirm('هل أنت متأكد من رغبتك في حذف هذا المتن؟');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="حذف">
+                                            <i class='bx bx-trash'></i>
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small" title="متن عام لا يمكن حذفه"><i class='bx bx-lock-alt'></i></span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

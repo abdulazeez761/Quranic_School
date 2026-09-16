@@ -44,7 +44,9 @@ namespace Hafiz.Areas.Teacher.Controllers
 
                 var teacher = await _context
                     .Teachers.Include(t => t.Classes)
-                    .ThenInclude(c => c.Students)
+                        .ThenInclude(c => c.Students)
+                    .Include(t => t.Classes)
+                        .ThenInclude(c => c.StudyProgram)
                     .FirstOrDefaultAsync(t => t.UserId == teacherId);
 
                 if (teacher == null)

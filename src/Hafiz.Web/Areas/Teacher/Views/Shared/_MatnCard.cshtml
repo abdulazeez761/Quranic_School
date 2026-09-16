@@ -1,0 +1,193 @@
+@model Hafiz.DTOs.Matn.MatnAssignmentDto
+@using Hafiz.Domain.Enums
+@using Hafiz.Models
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    var statusClass = Model.Status.ToString().ToLower();
+    var statusKey = Model.Status.ToString();
+    var localizedStatus = Localizer[char.ToUpper(statusKey[0]) + statusKey.Substring(1)];
+
+    var stripeClass = Model.PerformanceType switch
+    {
+        MatnPerformanceType.Memorization => "memorization",
+        MatnPerformanceType.Revision => "revision",
+        MatnPerformanceType.Mudarasah => "mudarasah",
+        _ => "memorization"
+    };
+
+    var perfIcon = Model.PerformanceType switch
+    {
+        MatnPerformanceType.Memorization => "bx-plus-circle",
+        MatnPerformanceType.Revision => "bx-revision",
+        MatnPerformanceType.Mudarasah => "bx-book-reader",
+        _ => "bx-bookmarks"
+    };
+
+    var initials = (Model.StudentName ?? string.Empty)
+        .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+        .Take(2)
+        .Select(s => s[0].ToString())
+        .Aggregate("", (a, b) => a + b);
+}
+
+<div id="wird-card-@Model.Id" class="wird-card matn-card @statusClass @(Model.IsUpcoming ? "is-upcoming" : "")"
+     data-student="@Model.StudentName" data-type="@Model.PerformanceTypeName"
+     data-status="@statusClass" data-upcoming="@(Model.IsUpcoming ? "true" : "false")"
+     data-date="@Model.AssignedDate.ToString("yyyy-MM-dd")">
+
+    <!-- Top Accent Stripe -->
+    <div class="matn-card-stripe @stripeClass"></div>
+
+    <!-- CARD HEADER: Student Profile & Status -->
+    <div class="wird-card-header" style="padding: 14px 16px 0;">
+        <div class="d-flex align-items-center justify-content-between w-100 gap-2 flex-wrap">
+            <div class="d-flex align-items-center gap-2">
+                <div class="matn-student-avatar">
+                    @(string.IsNullOrEmpty(initials) ? "ط" : initials)
+                </div>
+                <div>
+                    <h3 class="student-name mb-0" style="font-size: 0.98rem; font-weight: 800; color: #0f172a;">
+                        @Model.StudentName
+                    </h3>
+                    <div class="d-flex align-items-center gap-2 mt-1">
+                        <span class="wird-type-badge" style="background: rgba(37, 99, 235, 0.08); color: #2563eb; border: 1px solid rgba(37, 99, 235, 0.2); font-size: 0.74rem;">
+                            <i class='bx @perfIcon'></i>
+                            @Model.PerformanceTypeName
+                        </span>
+                        <span class="wird-date-badge" style="font-size: 0.74rem;">
+                            <i class='bx bx-calendar'></i>
+                            @Model.AssignedDate.ToString("MMM dd")
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-1">
+                @if (Model.IsUpcoming)
+                {
+                    @await Html.PartialAsync("_UpcomingBadge")
+                }
+                <span class="wird-status-badge status-@statusClass">@localizedStatus</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- RECITATION DETAILS BOX -->
+    @{
+        var hasChapter = !string.IsNullOrWhiteSpace(Model.ChapterName);
+        var hasRange = Model.FromNumber.HasValue || Model.ToNumber.HasValue;
+        var hasAmount = Model.Amount.HasValue;
+    }
+    @if (hasChapter || hasRange || hasAmount)
+    {
+        <div class="matn-recitation-box">
+            @if (hasChapter)
+            {
+                <div class="matn-chapter-badge">
+                    <i class='bx bx-book-bookmark'></i>
+                    <span>@Model.ChapterName</span>
+                </div>
+            }
+
+            <div class="matn-range-flow">
+                @if (hasRange)
+                {
+                    <div class="matn-range-pills">
+                        <span class="text-muted" style="font-size: 0.78rem;">@Model.UnitName:</span>
+                        @if (Model.FromNumber.HasValue && Model.ToNumber.HasValue)
+                        {
+                            <span class="matn-range-pill">@Model.FromNumber</span>
+                            <span class="matn-range-arrow"><i class='bx bx-left-arrow-alt'></i></span>
+                            <span class="matn-range-pill">@Model.ToNumber</span>
+                        }
+                        else if (Model.FromNumber.HasValue)
+                        {
+                            <span class="matn-range-pill">من @Model.FromNumber</span>
+                        }
+                        else if (Model.ToNumber.HasValue)
+                        {
+                            <span class="matn-range-pill">إلى @Model.ToNumber</span>
+                        }
+                    </div>
+                }
+
+                @if (hasAmount)
+                {
+                    <div class="matn-amount-pill">
+                        <i class='bx bx-layer'></i>
+                        <span>@(Model.Amount?.ToString("0.##")) @Model.UnitName</span>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- TEACHER NOTE (if exists) -->
+    @if (!string.IsNullOrEmpty(Model.Note))
+    {
+        <div class="wird-note" style="margin: 8px 16px 0; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; padding: 6px 10px; font-size: 0.82rem; color: #92400e;">
+            <div class="d-flex align-items-start gap-2">
+                <i class='bx bx-comment-detail mt-1 text-warning' style="font-size: 0.95rem;"></i>
+                <p class="mb-0">@Model.Note</p>
+            </div>
+        </div>
+    }
+
+    <!-- NOTES EDIT SECTION (Hidden by default) -->
+    <div class="notes-edit" id="notes-edit-@Model.Id" style="display: none; padding: 10px 16px;">
+        <textarea class="notes-textarea" id="notes-textarea-@Model.Id"
+                  placeholder="@Localizer["AddNotes"]" style="border-radius: 8px;">@Model.Note</textarea>
+        <div class="notes-edit-actions mt-2">
+            <button class="btn btn-success btn-sm save-note-btn"
+                    data-assignment-id="@Model.Id">@Localizer["Save"]</button>
+            <button class="btn btn-secondary btn-sm cancel-note-btn"
+                    data-assignment-id="@Model.Id">@Localizer["Cancel"]</button>
+        </div>
+    </div>
+
+    <!-- FOOTER: Segmented Rating + Actions -->
+    <div class="card-footer" style="padding: 10px 16px 12px; margin-top: auto; display: flex; align-items: center; gap: 8px; border-top: 1px solid #f1f5f9;">
+        <div class="rating-segmented">
+            <button class="seg-btn seg-excellent status-button @(Model.Status == AssignmentStatus.excellent ? "active" : "")"
+                    data-status="@AssignmentStatus.excellent" data-id="@Model.Id" title="@Localizer["Excellent"]">
+                @Localizer["Excellent"]
+            </button>
+            <button class="seg-btn seg-verygood status-button @(Model.Status == AssignmentStatus.veryGood ? "active" : "")"
+                    data-status="@AssignmentStatus.veryGood" data-id="@Model.Id" title="@Localizer["VeryGood"]">
+                @Localizer["VeryGood"]
+            </button>
+            <button class="seg-btn seg-good status-button @(Model.Status == AssignmentStatus.good ? "active" : "")"
+                    data-status="@AssignmentStatus.good" data-id="@Model.Id" title="@Localizer["Good"]">
+                @Localizer["Good"]
+            </button>
+            <button class="seg-btn seg-fair status-button @(Model.Status == AssignmentStatus.fair ? "active" : "")"
+                    data-status="@AssignmentStatus.fair" data-id="@Model.Id" title="@Localizer["Fair"]">
+                @Localizer["Fair"]
+            </button>
+            <button class="seg-btn seg-poor status-button @(Model.Status == AssignmentStatus.poor ? "active" : "")"
+                    data-status="@AssignmentStatus.poor" data-id="@Model.Id" title="@Localizer["Poor"]">
+                @Localizer["Poor"]
+            </button>
+        </div>
+
+        <div class="card-actions" style="display: flex; gap: 4px;">
+            <button class="card-action-btn" data-assignment-id="@Model.Id" title="@Localizer["AddNotes"]"
+                    style="width: 30px; height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <i class='bx bx-note'></i>
+            </button>
+            <form method="post" asp-controller="Wird" asp-action="Delete" asp-route-id="@Model.Id"
+                  class="d-inline delete-form">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="card-action-btn danger"
+                        data-confirm-delete="@Localizer["ConfirmDelete"] @Model.StudentName"
+                        title="حذف التسميع"
+                        style="width: 30px; height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                    <i class='bx bx-trash'></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+</div>
+

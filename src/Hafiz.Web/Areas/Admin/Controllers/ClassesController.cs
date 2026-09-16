@@ -24,16 +24,19 @@ namespace Hafiz.Areas.Admin.Controllers
         private readonly IClassService _ClassService;
         private readonly ITeacherService _teacherService;
         private readonly IStudentService _studentsService;
+        private readonly IStudyProgramService _studyProgramService;
 
         public ClassesController(
             IClassService classService,
             ITeacherService teacherService,
-            IStudentService studentService
+            IStudentService studentService,
+            IStudyProgramService studyProgramService
         )
         {
             _ClassService = classService;
             _teacherService = teacherService;
             _studentsService = studentService;
+            _studyProgramService = studyProgramService;
         }
 
         private Guid? GetInstituteId()
@@ -110,6 +113,7 @@ namespace Hafiz.Areas.Admin.Controllers
 
         public async Task<IActionResult> Create()
         {
+            await PopulateStudyProgramsDropdown();
             await PopulateTeachersDropdown();
             await PopulateStudentsDropDown();
             return View();
@@ -121,6 +125,7 @@ namespace Hafiz.Areas.Admin.Controllers
         {
             if (!ModelState.IsValid)
             {
+                await PopulateStudyProgramsDropdown(dto.StudyProgramId);
                 await PopulateTeachersDropdown();
                 await PopulateStudentsDropDown();
                 return View(dto);
@@ -135,6 +140,7 @@ namespace Hafiz.Areas.Admin.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "حدث خطأ أثناء إنشاء الحلقة: " + ex.Message);
+                await PopulateStudyProgramsDropdown(dto.StudyProgramId);
                 await PopulateTeachersDropdown();
                 await PopulateStudentsDropDown();
                 return View(dto);
@@ -148,6 +154,7 @@ namespace Hafiz.Areas.Admin.Controllers
             if (classToEdit == null)
                 return NotFound();
 
+            await PopulateStudyProgramsDropdown(classToEdit.StudyProgramId);
             await PopulateTeachersDropdown();
             await PopulateStudentsDropDown();
             return View(classToEdit);
@@ -158,6 +165,7 @@ namespace Hafiz.Areas.Admin.Controllers
         {
             if (!ModelState.IsValid)
             {
+                await PopulateStudyProgramsDropdown(classDto.StudyProgramId);
                 await PopulateTeachersDropdown();
                 await PopulateStudentsDropDown();
                 return View(classDto);
@@ -177,6 +185,7 @@ namespace Hafiz.Areas.Admin.Controllers
             var updated = await _ClassService.UpdateAsync(classDto);
             if (!updated)
             {
+                await PopulateStudyProgramsDropdown(classDto.StudyProgramId);
                 await PopulateTeachersDropdown();
                 await PopulateStudentsDropDown();
                 ModelState.AddModelError("", "Failed to update class. Please try again.");
@@ -267,6 +276,30 @@ namespace Hafiz.Areas.Admin.Controllers
                     Text = $"{stude.StudentInfo.FirstName} {stude.StudentInfo.SecondName}",
                 })
                 .ToList();
+        }
+
+        private async Task PopulateStudyProgramsDropdown(Guid? selectedId = null)
+        {
+            var instituteId = GetInstituteId();
+            if (instituteId.HasValue)
+            {
+                var programs = (await _studyProgramService.GetActiveByInstituteAsync(instituteId.Value)).ToList();
+                var defaultQuranProg = programs.FirstOrDefault(p => p.Type == Hafiz.Domain.Enums.ProgramType.Quran);
+                var effectiveSelected = selectedId ?? defaultQuranProg?.Id;
+
+                ViewBag.StudyPrograms = programs
+                    .Select(p => new SelectListItem
+                    {
+                        Value = p.Id.ToString(),
+                        Text = $"{p.Name} ({p.TypeName})",
+                        Selected = effectiveSelected.HasValue && p.Id == effectiveSelected.Value
+                    })
+                    .ToList();
+            }
+            else
+            {
+                ViewBag.StudyPrograms = new List<SelectListItem>();
+            }
         }
     }
 }

@@ -14,15 +14,18 @@ namespace Hafiz.Areas.Student.Controllers
     public class WirdController : Controller
     {
         private readonly IStudentService _studentService;
+        private readonly IMatnAssignmentService _matnAssignmentService;
 
-        public WirdController(IStudentService studentService)
+        public WirdController(IStudentService studentService, IMatnAssignmentService matnAssignmentService)
         {
             _studentService = studentService;
+            _matnAssignmentService = matnAssignmentService;
         }
 
         public async Task<IActionResult> Index(
             string? status,
             string? type,
+            string? tab = null,
             int page = 1,
             int pageSize = 10
         )
@@ -63,10 +66,15 @@ namespace Hafiz.Areas.Student.Controllers
                 isUpcoming
             );
 
+            var matnAssignments = (await _matnAssignmentService.GetByStudentIdAsync(student.UserId)).ToList();
+
             ViewBag.Status = status;
             ViewBag.Type = type;
             ViewBag.Student = student;
             ViewBag.PageSize = pageSize;
+            ViewBag.MatnAssignments = matnAssignments;
+            ViewBag.TotalMatnAssignments = matnAssignments.Count;
+            ViewBag.ActiveTab = !string.IsNullOrEmpty(tab) ? tab.ToLower() : (paginatedWirds.TotalCount == 0 && matnAssignments.Count > 0 ? "matn" : "quran");
 
             return View(paginatedWirds);
         }

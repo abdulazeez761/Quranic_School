@@ -77,6 +77,17 @@
                 </div>
             </div>
 
+            <div class="form-group mb-3">
+                <label asp-for="StudyProgramId" class="form-label">
+                    <i class='bx bx-book-open'></i>
+                    البرنامج التعليمي <span class="text-muted small">(افتراضي: القرآن الكريم)</span>
+                </label>
+                <select asp-for="StudyProgramId" asp-items="ViewBag.StudyPrograms" class="form-select">
+                    <option value="">-- افتراضي: برنامج القرآن الكريم --</option>
+                </select>
+                <span asp-validation-for="StudyProgramId" class="form-feedback form-feedback-invalid"></span>
+            </div>
+
             <div class="form-group">
                 <label asp-for="ClassTime" class="form-label required">
                     <i class='bx bx-time'></i>

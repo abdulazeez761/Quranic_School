@@ -119,6 +119,7 @@ namespace Hafiz.Repositories
             IList<Class> classes = await _context
                 .Classes.Include(c => c.Teachers)
                 .Include(c => c.Students)
+                .Include(c => c.StudyProgram)
                 .Where(c => c.Teachers.Any(t => t.UserId == teacherId))
                 .ToListAsync();
             return classes;

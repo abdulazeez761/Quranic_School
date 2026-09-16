@@ -11,16 +11,19 @@ namespace Hafiz.Services
         private readonly IClassRepository _classRepository;
         private readonly ITeacherRepository _teacherRepository;
         private readonly IStudentRepository _studentRepo;
+        private readonly IStudyProgramRepository _studyProgramRepository;
 
         public ClassService(
             IClassRepository classRepository,
             ITeacherRepository teacherRepository,
-            IStudentRepository studentService
+            IStudentRepository studentService,
+            IStudyProgramRepository studyProgramRepository
         )
         {
             _classRepository = classRepository;
             _teacherRepository = teacherRepository;
             _studentRepo = studentService;
+            _studyProgramRepository = studyProgramRepository;
         }
 
         public async Task CreateAsync(CreateClassDto classDto, Guid? instituteId = null)
@@ -30,18 +33,36 @@ namespace Hafiz.Services
 
             try
             {
+                // 1. معالجة البرنامج التعليمي (الافتراضي قرآن)
+                Guid? programId = classDto.StudyProgramId;
+                if (!programId.HasValue && instituteId.HasValue)
+                {
+                    var defaultProg = await _studyProgramRepository.GetDefaultQuranProgramAsync(instituteId.Value);
+                    programId = defaultProg?.Id;
+                }
+
                 var classTeachers = new List<Teacher>();
                 var classStudents = new List<Student>();
-                foreach (var id in classDto.TeacherIds)
+                if (classDto.TeacherIds != null)
                 {
-                    var teacher = await _teacherRepository.GetTeacherByIDAsync(id);
-                    classTeachers.Add(teacher);
+                    foreach (var id in classDto.TeacherIds)
+                    {
+                        var teacher = await _teacherRepository.GetTeacherByIDAsync(id, instituteId);
+                        if (teacher != null)
+                            classTeachers.Add(teacher);
+                    }
                 }
-                foreach (var id in classDto.StudentsIds)
+
+                if (classDto.StudentsIds != null)
                 {
-                    var students = await _studentRepo.GetByIdAsync(id);
-                    classStudents.Add(students);
+                    foreach (var id in classDto.StudentsIds)
+                    {
+                        var student = await _studentRepo.GetByIdAsync(id, instituteId);
+                        if (student != null)
+                            classStudents.Add(student);
+                    }
                 }
+
                 Class cls = new Class()
                 {
                     Name = classDto.Name,
@@ -51,6 +72,7 @@ namespace Hafiz.Services
                     ClassDays = classDto.ClassDays,
                     ClassTime = classDto.ClassTime,
                     InstituteId = instituteId,
+                    StudyProgramId = programId
                 };
                 await _classRepository.AddAsync(cls);
             }
@@ -74,6 +96,9 @@ namespace Hafiz.Services
                     ClassDays = c.ClassDays.ToList(),
                     TeacherIds = c.Teachers.Select(t => t.UserId).ToList(),
                     InstituteId = c.InstituteId,
+                    StudyProgramId = c.StudyProgramId,
+                    StudyProgramName = c.StudyProgram?.Name,
+                    ProgramType = c.StudyProgram?.Type
                 })
                 .ToList();
 
@@ -123,6 +148,10 @@ namespace Hafiz.Services
                     ?? new List<Guid>() // safe fallback
                 ,
                 StudentsIds = classFromDb.Students?.Select(t => t.UserId).ToList(),
+                InstituteId = classFromDb.InstituteId,
+                StudyProgramId = classFromDb.StudyProgramId,
+                StudyProgramName = classFromDb.StudyProgram?.Name,
+                ProgramType = classFromDb.StudyProgram?.Type
             };
 
             return classDto;
@@ -175,6 +204,7 @@ namespace Hafiz.Services
                 Teachers = teachers,
                 ClassDays = classDto.ClassDays,
                 InstituteId = existingClass.InstituteId,
+                StudyProgramId = classDto.StudyProgramId ?? existingClass.StudyProgramId
             };
             var isUpdated = await _classRepository.UpdateAsync(newClass);
             return isUpdated;
@@ -193,6 +223,10 @@ namespace Hafiz.Services
                     ClassTime = c.ClassTime,
                     ClassDays = c.ClassDays.ToList(),
                     TeacherIds = c.Teachers.Select(t => t.UserId).ToList(),
+                    InstituteId = c.InstituteId,
+                    StudyProgramId = c.StudyProgramId,
+                    StudyProgramName = c.StudyProgram?.Name,
+                    ProgramType = c.StudyProgram?.Type
                 })
                 .ToList();
 
