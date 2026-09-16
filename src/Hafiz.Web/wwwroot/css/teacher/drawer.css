@@ -438,17 +438,71 @@
   border-radius: var(--radius-lg);
   padding: 14px 16px;
   transition: all var(--transition-fast);
-  box-shadow: var(--shadow-xs);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-.drawer-wird-box.type-memorization { border-right: 4px solid var(--wird-memorize); }
-.drawer-wird-box.type-recentRevision { border-right: 4px solid var(--wird-recent); }
-.drawer-wird-box.type-oldRevision { border-right: 4px solid var(--wird-old); }
-.drawer-wird-box.type-recitation { border-right: 4px solid var(--wird-recite); }
+/* 1. حفظ جديد (Memorization) - Gentle Sky Blue */
+.drawer-wird-box.type-memorization {
+  background: linear-gradient(180deg, #f0f6ff 0%, #f8faff 100%);
+  border-color: #cde0fd;
+  border-right: 4.5px solid var(--wird-memorize);
+  border-inline-start: 4.5px solid var(--wird-memorize);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.04);
+}
+.drawer-wird-box.type-memorization .drawer-wird-header {
+  border-bottom: 1px solid rgba(37, 99, 235, 0.12);
+}
 
+/* 2. مراجعة صغرى / ورد قريب (Recent Revision) - Gentle Mint Emerald */
+.drawer-wird-box.type-recentRevision {
+  background: linear-gradient(180deg, #edf9f2 0%, #f7fdf9 100%);
+  border-color: #bbf0d3;
+  border-right: 4.5px solid var(--wird-recent);
+  border-inline-start: 4.5px solid var(--wird-recent);
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.04);
+}
+.drawer-wird-box.type-recentRevision .drawer-wird-header {
+  border-bottom: 1px solid rgba(5, 150, 105, 0.12);
+}
+
+/* 3. مراجعة كبرى / ورد بعيد (Old Revision) - Gentle Warm Amber */
+.drawer-wird-box.type-oldRevision {
+  background: linear-gradient(180deg, #fef7e8 0%, #fffdf6 100%);
+  border-color: #fde4ad;
+  border-right: 4.5px solid var(--wird-old);
+  border-inline-start: 4.5px solid var(--wird-old);
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.04);
+}
+.drawer-wird-box.type-oldRevision .drawer-wird-header {
+  border-bottom: 1px solid rgba(217, 119, 6, 0.12);
+}
+
+/* 4. تجويد وإتقان التلاوة (Recitation) - Gentle Lavender Violet */
+.drawer-wird-box.type-recitation {
+  background: linear-gradient(180deg, #f5f0fe 0%, #faf8ff 100%);
+  border-color: #e2d3fc;
+  border-right: 4.5px solid var(--wird-recite);
+  border-inline-start: 4.5px solid var(--wird-recite);
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.04);
+}
+.drawer-wird-box.type-recitation .drawer-wird-header {
+  border-bottom: 1px solid rgba(124, 58, 237, 0.12);
+}
+
+/* Disabled State */
 .drawer-wird-box.is-disabled {
   opacity: 0.55;
-  background: #f8fafc;
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  border-right-color: #cbd5e1 !important;
+  border-inline-start-color: #cbd5e1 !important;
+  box-shadow: none !important;
+}
+
+/* Inner elements styling inside cards */
+.drawer-wird-box .wird-rating-group {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .drawer-wird-header {
