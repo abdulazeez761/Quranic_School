@@ -1,14 +1,15 @@
 /**
  * ==========================================================================
  * Assign Matn Modal & Drawer Controller (Hafiz Platform)
- * Pure Modular JS - Fully Isolated Architecture
- * Supports Multi-card Performance (Memorization, Revision, Mudarasah)
- * Auto-detects Program & Designated Matn (No redundant card dropdown)
- * Ready for Chapters API Integration
+ * Modular, Clean & High-Performance
+ * - Auto-detects Program & Assigned Matn Title
+ * - Dual Chapter Selection: Predefined List or Manual Entry
+ * - Full-width 5-unit Selection & Inline Range Stepper
+ * - Silent Auto-Date & Multi-Card Submission
  * ==========================================================================
  */
 
-// Global State Management
+// Global State
 window.matnModalState = {
     studentsList: [],
     currentIndex: -1,
@@ -29,143 +30,68 @@ window.matnRatings = {
     mudarasah: 5
 };
 
-/**
- * =========================================================================================
- * ملاحظة معمارية بخصوص "الموضع من المتن" (Chapters/Topics API):
- * =========================================================================================
- * حالياً يتم جلب أبواب ومواضع المتون من الخريطة المحلية (MATN_CHAPTERS_MAP) أدناه لأن كيان
- * Matn في قاعدة البيانات يحوي حالياً TotalChapters فقط ولا يوجد جدول فرعي مستقل للأبواب.
- *
- * الاقتراح المعماري لواجهة برمجة التطبيقات (API Proposal) المقترحة للربط مستقبلاً:
- * 1. مسار الـ API المقترح:
- *    GET /Teacher/Matn/GetChapters?matnId={guid}&matnTitle={encodeURIComponent(title)}
- *    أو: GET /api/matn/{matnId}/chapters
- *
- * 2. هيكل الاستجابة المتوقع (Expected JSON Response):
- *    [
- *      { "id": 1, "order": 1, "title": "المقدمة والكلام وما يتألف منه", "versesCount": 15 },
- *      { "id": 2, "order": 2, "title": "باب الإعراب وعلاماته", "versesCount": 24 },
- *      { "id": 3, "order": 3, "title": "باب الأفعال وأحكامها", "versesCount": 30 }
- *    ]
- *
- * 3. دالة الاستدعاء عند توفر الـ API في الـ Backend:
- *    async function fetchMatnChaptersFromApi(matnTitle, matnId = null) {
- *        try {
- *            const url = matnId
- *                ? `/Teacher/Matn/GetChapters?matnId=${matnId}`
- *                : `/Teacher/Matn/GetChapters?matnTitle=${encodeURIComponent(matnTitle)}`;
- *            const res = await fetch(url);
- *            if (res.ok) {
- *                const data = await res.json();
- *                return data.map(item => typeof item === 'string' ? item : item.title);
- *            }
- *        } catch (e) {
- *            console.warn("تعذر جلب الأبواب من الـ API، سيتم الاعتماد على الخريطة الثابتة", e);
- *        }
- *        return MATN_CHAPTERS_MAP[matnTitle] || [];
- *    }
- * =========================================================================================
- */
+// Chapters database for standard Mutun (API /Teacher/Matn/GetChapters can be plugged here in future)
 const MATN_CHAPTERS_MAP = {
     "الآجرومية (ابن آجروم) - النحو": [
-        "المقدمة والكلام وما يتألف منه",
-        "باب الإعراب وعلاماته",
-        "باب الأفعال وأحكامها",
-        "باب مرفوعات الأسماء (الفاعل ونائبه)",
-        "باب المبتدأ والخبر ونواسخهما",
-        "باب منصوبات الأسماء (المفاعيل والحال والتمييز)",
-        "باب الاستثناء ولا والمنادى",
+        "المقدمة والكلام وما يتألف منه", "باب الإعراب وعلاماته", "باب الأفعال وأحكامها",
+        "باب مرفوعات الأسماء (الفاعل ونائبه)", "باب المبتدأ والخبر ونواسخهما",
+        "باب منصوبات الأسماء (المفاعيل والحال والتمييز)", "باب الاستثناء ولا والمنادى",
         "باب مخفوضات الأسماء (بالحرف وبالإضافة)"
     ],
     "تحفة الأطفال (الجمزوري) - التجويد": [
-        "المقدمة",
-        "باب أحكام النون الساكنة والتنوين",
-        "باب حكم النون والميم المشددتين",
-        "باب أحكام الميم الساكنة",
-        "باب حكم لام أل ولام الفعل",
-        "باب في المِثْلين والمتقاربين والمتجانسين",
-        "باب أقسام المد وأحكامه",
-        "باب أقسام المد اللازم وأحكامه",
-        "الخاتمة"
+        "المقدمة", "باب أحكام النون الساكنة والتنوين", "باب حكم النون والميم المشددتين",
+        "باب أحكام الميم الساكنة", "باب حكم لام أل ولام الفعل",
+        "باب في المِثْلين والمتقاربين والمتجانسين", "باب أقسام المد وأحكامه",
+        "باب أقسام المد اللازم وأحكامه", "الخاتمة"
     ],
     "المقدمة الجزرية (ابن الجزري) - التجويد": [
-        "المقدمة",
-        "باب مخارج الحروف",
-        "باب صفات الحروف",
-        "باب التجويد واستعمال الحروف",
-        "باب التفخيم والترقيق وأحكام الراءات",
-        "باب اللامات وأحكام النون والميم",
-        "باب المد والقصر",
-        "باب معرفة الوقف والابتداء",
-        "باب المقطوع والموصول والتاءات",
+        "المقدمة", "باب مخارج الحروف", "باب صفات الحروف", "باب التجويد واستعمال الحروف",
+        "باب التفخيم والترقيق وأحكام الراءات", "باب اللامات وأحكام النون والميم",
+        "باب المد والقصر", "باب معرفة الوقف والابتداء", "باب المقطوع والموصول والتاءات",
         "باب همز الوصل والخاتمة"
     ],
     "المنظومة البيقونية (البيقوني) - مصطلح الحديث": [
-        "المقدمة والحديث الصحيح",
-        "الحديث الحسن والضعيف",
-        "المرفوع والمقطوع والمسند والمتصل",
-        "المسلسل والعزيز والمشهور",
-        "المعنعن والمبهم والعالي والنازل",
-        "الموقوف والمقطوع والمرسل والغريب",
-        "المدرج والمدبج والمتفق والمفترق",
+        "المقدمة والحديث الصحيح", "الحديث الحسن والضعيف", "المرفوع والمقطوع والمسند والمتصل",
+        "المسلسل والعزيز والمشهور", "المعنعن والمبهم والعالي والنازل",
+        "الموقوف والمقطوع والمرسل والغريب", "المدرج والمدبج والمتفق والمفترق",
         "المتروك والموضوع والخاتمة"
     ],
     "الأربعون النووية (النووي) - الحديث الشريف": [
-        "الحديث 1: إنما الأعمال بالنيات",
-        "الحديث 2: مراتب الدين والإسلام والإيمان والإحسان",
-        "الحديث 3: بني الإسلام على خمس",
-        "الحديث 4: خلق الإنسان وشقاوته وسعادته",
-        "الحديث 5: من أحدث في أمرنا هذا ما ليس منه فهو رد",
-        "الحديث 6: الحلال بيّن والحرام بيّن",
-        "الحديث 7: الدين النصيحة",
-        "الحديث 8: أمرت أن أقاتل الناس حتى يشهدوا",
-        "الحديث 9: ما نهيتكم عنه فاجتنبوه",
-        "الحديث 10: إن الله طيب لا يقبل إلا طيبا"
+        "الحديث 1: إنما الأعمال بالنيات", "الحديث 2: مراتب الدين والإسلام والإيمان والإحسان",
+        "الحديث 3: بني الإسلام على خمس", "الحديث 4: خلق الإنسان وشقاوته وسعادته",
+        "الحديث 5: من أحدث في أمرنا هذا ما ليس منه فهو رد", "الحديث 6: الحلال بيّن والحرام بيّن",
+        "الحديث 7: الدين النصيحة", "الحديث 8: أمرت أن أقاتل الناس حتى يشهدوا",
+        "الحديث 9: ما نهيتكم عنه فاجتنبوه", "الحديث 10: إن الله طيب لا يقبل إلا طيبا"
     ],
     "عمدة الأحكام (المقدسي) - أحاديث الأحكام": [
-        "كتاب الطهارة",
-        "كتاب الصلاة",
-        "كتاب الجنائز",
-        "كتاب الزكاة",
-        "كتاب الصيام",
-        "كتاب الحج",
-        "كتاب البيوع",
-        "كتاب النكاح والطلاق"
+        "كتاب الطهارة", "كتاب الصلاة", "كتاب الجنائز", "كتاب الزكاة",
+        "كتاب الصيام", "كتاب الحج", "كتاب البيوع", "كتاب النكاح والطلاق"
     ],
     "نخبة الفكر (ابن حجر) - مصطلح الحديث": [
-        "تقسيم الخبر إلى متواتر وآحاد",
-        "المشهور والعزيز والغريب",
-        "المقبول: الصحيح والحسن",
-        "المردود وأسباب الرد",
-        "الجرح والتعديل والصفات"
+        "تقسيم الخبر إلى متواتر وآحاد", "المشهور والعزيز والغريب",
+        "المقبول: الصحيح والحسن", "المردود وأسباب الرد", "الجرح والتعديل والصفات"
     ],
     "الأصول الثلاثة (محمد بن عبد الوهاب) - العقيدة": [
-        "المقدمة والمسائل الأربع",
-        "الأصل الأول: معرفة العبد ربه وأنواع العبادة",
-        "الأصل الثاني: معرفة دين الإسلام بمراتبه الثلاث",
-        "الأصل الثالث: معرفة نبيكم محمد صلى الله عليه وسلم"
+        "المقدمة والمسائل الأربع", "الأصل الأول: معرفة العبد ربه وأنواع العبادة",
+        "الأصل الثاني: معرفة دين الإسلام بمراتبه الثلاث", "الأصل الثالث: معرفة نبيكم محمد صلى الله عليه وسلم"
     ]
 };
 
-// Aliases and search terms to match Islamic study programs to their correct Matn
 const MATN_ALIASES = [
-    { key: "الأربعون النووية (النووي) - الحديث الشريف", terms: ["نوويه", "نووي", "اربعون", "حديث", "الحديث", "احاديث", "اربعين", "سنه", "السنه"] },
-    { key: "الآجرومية (ابن آجروم) - النحو", terms: ["اجروميه", "اجروم", "نحو", "اعراب", "قواعد", "لغه"] },
-    { key: "تحفة الأطفال (الجمزوري) - التجويد", terms: ["تحفه", "اطفال", "جمزوري", "تجويد", "نون"] },
+    { key: "الأربعون النووية (النووي) - الحديث الشريف", terms: ["نوويه", "نووي", "اربعون", "حديث", "الحديث", "احاديث", "اربعين"] },
+    { key: "الآجرومية (ابن آجروم) - النحو", terms: ["اجروميه", "اجروم", "نحو", "اعراب", "قواعد"] },
+    { key: "تحفة الأطفال (الجمزوري) - التجويد", terms: ["تحفه", "اطفال", "جمزوري", "تجويد"] },
     { key: "المقدمة الجزرية (ابن الجزري) - التجويد", terms: ["جزريه", "جزري", "مقدمه جزريه", "مخارج"] },
     { key: "المنظومة البيقونية (البيقوني) - مصطلح الحديث", terms: ["بيقونيه", "بيقوني", "مصطلح"] },
     { key: "عمدة الأحكام (المقدسي) - أحاديث الأحكام", terms: ["عمده", "احكام", "مقدسي"] },
-    { key: "نخبة الفكر (ابن حجر) - مصطلح الحديث", terms: ["نخبه", "فكر", "ابن حجر", "عسقلاني"] },
+    { key: "نخبة الفكر (ابن حجر) - مصطلح الحديث", terms: ["نخبه", "فكر", "ابن حجر"] },
     { key: "الأصول الثلاثة (محمد بن عبد الوهاب) - العقيدة", terms: ["اصول", "ثلاثه", "عقيده", "توحيد"] }
 ];
 
-/**
- * Normalizes Arabic text for flexible, resilient search matching
- */
 function normalizeArabicText(text) {
     if (!text) return '';
     return text
-        .replace(/[\u064B-\u065F\u0670]/g, '') // Tashkeel / Harakat
+        .replace(/[\u064B-\u065F\u0670]/g, '')
         .replace(/[أإآٱ]/g, 'ا')
         .replace(/ة/g, 'ه')
         .replace(/[ىي]/g, 'ي')
@@ -176,15 +102,11 @@ function normalizeArabicText(text) {
         .toLowerCase();
 }
 
-/**
- * Searches and resolves predefined Matn chapters based on program name or designated Matn
- */
 function findMatchingMatnChapters(designatedTitle, programName) {
     const combined = `${designatedTitle || ''} ${programName || ''}`.trim();
     const cleanTarget = normalizeArabicText(combined);
     if (!cleanTarget) return { chapters: [], matchedKey: '' };
 
-    // 1. Check exact key or substring inclusion
     for (const key of Object.keys(MATN_CHAPTERS_MAP)) {
         const cleanKey = normalizeArabicText(key);
         if (cleanTarget.includes(cleanKey) || cleanKey.includes(cleanTarget)) {
@@ -192,11 +114,9 @@ function findMatchingMatnChapters(designatedTitle, programName) {
         }
     }
 
-    // 2. Check alias terms match
     for (const alias of MATN_ALIASES) {
         for (const term of alias.terms) {
-            const cleanTerm = normalizeArabicText(term);
-            if (cleanTarget.includes(cleanTerm)) {
+            if (cleanTarget.includes(normalizeArabicText(term))) {
                 return { chapters: MATN_CHAPTERS_MAP[alias.key] || [], matchedKey: alias.key };
             }
         }
@@ -205,9 +125,6 @@ function findMatchingMatnChapters(designatedTitle, programName) {
     return { chapters: [], matchedKey: '' };
 }
 
-/**
- * Initializes the student list from window.allClassStudents
- */
 function initMatnStudentsList() {
     if (Array.isArray(window.allClassStudents) && window.allClassStudents.length > 0) {
         window.matnModalState.studentsList = window.allClassStudents.map(s => ({
@@ -220,12 +137,6 @@ function initMatnStudentsList() {
     }
 }
 
-/**
- * Main entrance to open the Matn Assignment Drawer/Modal
- * @param {string} studentId
- * @param {string} studentName
- * @param {string} designatedMatn Optional designated Matn title from caller
- */
 function openAssignMatnModal(studentId, studentName, designatedMatn = '') {
     initMatnStudentsList();
 
@@ -235,31 +146,23 @@ function openAssignMatnModal(studentId, studentName, designatedMatn = '') {
     const saveNextBtnText = document.getElementById('matnSaveNextBtnText');
     const panel = document.getElementById('matnDrawerPanel');
 
-    // 1. Resolve Designated Matn and Study Program Name
     const targetDesignated = (designatedMatn || panel?.dataset?.assignedMatn || window.classDesignatedMatn || '').trim();
     const programName = (panel?.dataset?.programName || '').trim();
 
     window.matnModalState.designatedMatn = targetDesignated;
     window.matnModalState.programName = programName;
 
-    // 2. Update Header Badges (Program Badge + Matn Badge)
     const progBadgeText = document.getElementById('matnDrawerProgramBadgeText');
-    if (progBadgeText && programName) {
-        progBadgeText.textContent = programName;
-    }
+    if (progBadgeText && programName) progBadgeText.textContent = programName;
 
     const matnBadge = document.getElementById('matnDrawerMatnBadge');
     const matnBadgeText = document.getElementById('matnDrawerMatnBadgeText');
     if (matnBadgeText) {
         matnBadgeText.textContent = targetDesignated || 'المتن المقرر';
-        if (matnBadge) {
-            matnBadge.style.display = targetDesignated ? 'inline-flex' : 'none';
-        }
+        if (matnBadge) matnBadge.style.display = targetDesignated ? 'inline-flex' : 'none';
     }
 
-    // 3. Handle Student selection
     if (!studentId) {
-        // Opened globally (without a specific student preselected)
         window.matnModalState.currentIndex = -1;
         if (selectContainer && selectDropdown) {
             selectContainer.style.display = 'block';
@@ -271,7 +174,6 @@ function openAssignMatnModal(studentId, studentName, designatedMatn = '') {
                 selectDropdown.appendChild(opt);
             });
         }
-
         document.getElementById('matnStudentId').value = '';
         document.getElementById('matnDrawerStudentName').textContent = 'تسميع أوراد المتون';
         document.getElementById('matnDrawerSubtitle').textContent = `طلاب الحلقة: ${window.matnModalState.studentsList.length}`;
@@ -279,24 +181,18 @@ function openAssignMatnModal(studentId, studentName, designatedMatn = '') {
         if (prevBtn) prevBtn.disabled = true;
         if (saveNextBtnText) saveNextBtnText.textContent = 'اعتماد ورصد التسميع';
     } else {
-        // Opened for a specific student
         if (selectContainer) selectContainer.style.display = 'none';
-
         const cleanId = studentId.toString();
         const foundIndex = window.matnModalState.studentsList.findIndex(s => s.id.toLowerCase() === cleanId.toLowerCase());
         window.matnModalState.currentIndex = foundIndex >= 0 ? foundIndex : 0;
-
         loadMatnStudentDataByIndex(window.matnModalState.currentIndex, studentId, studentName);
     }
 
-    // 4. Automatically populate chapters & set units based on program's designated Matn
     applyDesignatedMatnToCards(targetDesignated);
 
-    // 5. Default to 'all' tab (displays ALL 3 types: memorization, revision, mudarasah)
     const allTabBtn = document.querySelector('#matnSegmentedNav .segmented-btn[data-tab="all"]');
     setMatnFilterTab('all', allTabBtn);
 
-    // 6. Open drawer & backdrop
     const backdrop = document.getElementById('matnDrawerBackdrop');
     if (panel && backdrop) {
         panel.classList.add('is-open', 'active', 'mobile-open');
@@ -305,17 +201,11 @@ function openAssignMatnModal(studentId, studentName, designatedMatn = '') {
     }
 }
 
-/**
- * Automatically applies the program's designated Matn to all cards:
- * Resolves chapters cleanly without stacking controls, recommends appropriate units,
- * and sets up preset chips.
- */
 function applyDesignatedMatnToCards(designatedTitle) {
     const cardTypes = ['memorization', 'revision', 'mudarasah'];
     const finalMatnName = designatedTitle || 'المتون العلمية';
     window.matnModalState.designatedMatn = finalMatnName;
 
-    // Set hidden inputs
     cardTypes.forEach(type => {
         const hiddenInput = document.getElementById(`matnTitle-${type}`);
         if (hiddenInput) hiddenInput.value = finalMatnName;
@@ -323,17 +213,13 @@ function applyDesignatedMatnToCards(designatedTitle) {
 
     const { chapters, matchedKey } = findMatchingMatnChapters(designatedTitle, window.matnModalState.programName);
 
-    // Populate each card's chapter dropdown or custom input cleanly
     cardTypes.forEach(type => {
         const chapterSelect = document.getElementById(`matnChapterSelect-${type}`);
         const chapterInput = document.getElementById(`matnChapterName-${type}`);
-        const selectWrap = document.getElementById(`matnChapterSelectWrap-${type}`);
-        const inputWrap = document.getElementById(`matnChapterInputWrap-${type}`);
-        const toggleBtn = document.getElementById(`matnChapterToggleBtn-${type}`);
-        const returnBtn = document.getElementById(`matnReturnListBtn-${type}`);
+        const modeToggle = document.getElementById(`matnChapterModeToggle-${type}`);
 
         if (chapters.length > 0) {
-            // Mode A: Predefined chapters exist
+            if (modeToggle) modeToggle.style.display = 'inline-flex';
             if (chapterSelect) {
                 chapterSelect.innerHTML = '';
                 chapters.forEach((ch, idx) => {
@@ -343,34 +229,18 @@ function applyDesignatedMatnToCards(designatedTitle) {
                     if (idx === 0) opt.selected = true;
                     chapterSelect.appendChild(opt);
                 });
-
-                // Add custom option at the bottom
-                const customOpt = document.createElement('option');
-                customOpt.value = '__custom__';
-                customOpt.textContent = '✏️ كتابة موضع مخصص آخر...';
-                chapterSelect.appendChild(customOpt);
             }
-
             if (chapterInput) chapterInput.value = chapters[0];
-
-            // Show Select wrapper, Hide Custom Input wrapper
-            if (selectWrap) selectWrap.style.display = 'block';
-            if (inputWrap) inputWrap.style.display = 'none';
-            if (toggleBtn) toggleBtn.style.display = 'inline-flex';
-            if (returnBtn) returnBtn.style.display = 'inline-flex';
+            setChapterInputMode(type, 'select');
         } else {
-            // Mode B: No predefined chapters -> HIDE SELECT COMPLETELY!
-            if (selectWrap) selectWrap.style.display = 'none';
-            if (inputWrap) inputWrap.style.display = 'block';
+            if (modeToggle) modeToggle.style.display = 'none';
             if (chapterInput) {
                 chapterInput.value = '';
                 chapterInput.placeholder = 'اكتب اسم الباب أو موضع التسميع...';
             }
-            if (toggleBtn) toggleBtn.style.display = 'none';
-            if (returnBtn) returnBtn.style.display = 'none';
+            setChapterInputMode(type, 'manual');
         }
 
-        // Recommend appropriate unit for this Matn
         const refName = (matchedKey || designatedTitle || window.matnModalState.programName || '').toLowerCase();
         if (refName.includes('النووية') || refName.includes('الحديث') || refName.includes('أحاديث') || refName.includes('اربعون')) {
             setMatnUnit(type, 5, 'أحاديث', 'حديث');
@@ -380,71 +250,48 @@ function applyDesignatedMatnToCards(designatedTitle) {
             setMatnUnit(type, 1, 'أبيات', 'بيت');
         }
 
-        // Update range summary badge
         updateRangeTotalBadge(type);
     });
 }
 
 /**
- * Switches cleanly to custom manual text input for chapters
+ * Clean & explicit mode toggle: 'select' (dropdown) vs 'manual' (direct text typing)
  */
-function toggleManualChapterEntry(type) {
+function setChapterInputMode(type, mode) {
     const selectWrap = document.getElementById(`matnChapterSelectWrap-${type}`);
     const inputWrap = document.getElementById(`matnChapterInputWrap-${type}`);
-    const chapterInput = document.getElementById(`matnChapterName-${type}`);
-    const chapterSelect = document.getElementById(`matnChapterSelect-${type}`);
+    const btnSelect = document.getElementById(`btnModeSelect-${type}`);
+    const btnManual = document.getElementById(`btnModeManual-${type}`);
+    const input = document.getElementById(`matnChapterName-${type}`);
+    const select = document.getElementById(`matnChapterSelect-${type}`);
 
-    if (selectWrap) selectWrap.style.display = 'none';
-    if (inputWrap) inputWrap.style.display = 'block';
-    if (chapterSelect) chapterSelect.value = '__custom__';
-
-    if (chapterInput) {
-        chapterInput.focus();
-        if (chapterSelect && chapterInput.value === chapterSelect.options[0]?.value) {
-            chapterInput.value = '';
+    if (mode === 'manual') {
+        if (btnSelect) btnSelect.classList.remove('active');
+        if (btnManual) btnManual.classList.add('active');
+        if (selectWrap) selectWrap.style.display = 'none';
+        if (inputWrap) inputWrap.style.display = 'block';
+        if (input) {
+            input.focus();
+            if (select && input.value === select.value) {
+                input.value = '';
+            }
+        }
+    } else {
+        if (btnSelect) btnSelect.classList.add('active');
+        if (btnManual) btnManual.classList.remove('active');
+        if (selectWrap) selectWrap.style.display = 'block';
+        if (inputWrap) inputWrap.style.display = 'none';
+        if (select && input) {
+            input.value = select.value;
         }
     }
 }
 
-/**
- * Returns from manual text entry back to chapter dropdown list
- */
-function returnToChapterList(type) {
-    const selectWrap = document.getElementById(`matnChapterSelectWrap-${type}`);
-    const inputWrap = document.getElementById(`matnChapterInputWrap-${type}`);
-    const chapterSelect = document.getElementById(`matnChapterSelect-${type}`);
-    const chapterInput = document.getElementById(`matnChapterName-${type}`);
-
-    if (selectWrap) selectWrap.style.display = 'block';
-    if (inputWrap) inputWrap.style.display = 'none';
-
-    if (chapterSelect) {
-        if (chapterSelect.value === '__custom__' && chapterSelect.options.length > 1) {
-            chapterSelect.selectedIndex = 0;
-        }
-        if (chapterInput) {
-            chapterInput.value = chapterSelect.value;
-        }
-    }
-}
-
-/**
- * Handles dropdown change event
- */
 function onMatnChapterSelectChange(type, val) {
     const chapterInput = document.getElementById(`matnChapterName-${type}`);
-    if (val === '__custom__') {
-        toggleManualChapterEntry(type);
-    } else {
-        if (chapterInput) {
-            chapterInput.value = val;
-        }
-    }
+    if (chapterInput) chapterInput.value = val;
 }
 
-/**
- * Loads student information and updates subtitle & stepper buttons
- */
 function loadMatnStudentDataByIndex(index, fallbackId, fallbackName) {
     let stId = fallbackId;
     let stName = fallbackName;
@@ -466,28 +313,26 @@ function loadMatnStudentDataByIndex(index, fallbackId, fallbackName) {
     const subEl = document.getElementById('matnDrawerSubtitle');
     if (subEl) subEl.textContent = `طالب ${currentDisplay} من ${totalCount}`;
 
-    // Initials Avatar Badge
     const initials = (stName || '').split(' ').filter(Boolean).slice(0, 2).map(n => n[0]).join('');
     const avatar = document.getElementById('matnDrawerAvatar');
     if (avatar) {
         avatar.innerHTML = initials ? `<span>${initials}</span>` : `<i class='bx bxs-book-reader'></i>`;
     }
 
-    // Stepper buttons state
     const prevBtn = document.getElementById('matnPrevBtn');
     const saveNextBtnText = document.getElementById('matnSaveNextBtnText');
 
-    if (prevBtn) {
-        prevBtn.disabled = (index <= 0);
+    if (prevBtn) prevBtn.disabled = (index <= 0);
+    if (saveNextBtnText) {
+        saveNextBtnText.textContent = (index >= 0 && index < totalCount - 1) ? 'حفظ والتالي' : 'حفظ وإنهاء';
     }
 
-    if (saveNextBtnText) {
-        if (index >= 0 && index < totalCount - 1) {
-            saveNextBtnText.textContent = 'حفظ والتالي';
-        } else {
-            saveNextBtnText.textContent = 'حفظ وإنهاء';
-        }
-    }
+    // Reset upcoming state for all cards on student load
+    ['memorization', 'revision', 'mudarasah'].forEach(t => {
+        const upToggle = document.getElementById(`matn-isUpcoming-${t}`);
+        if (upToggle) upToggle.checked = false;
+        toggleUpcomingMatn(t, false, true);
+    });
 }
 
 function onMatnStudentDropdownChange(select) {
@@ -526,31 +371,21 @@ function navigateMatnStudent(delta) {
 function closeAssignMatnDrawer() {
     const drawer = document.getElementById('matnDrawerPanel');
     const backdrop = document.getElementById('matnDrawerBackdrop');
-    if (drawer) {
-        drawer.classList.remove('is-open', 'active', 'mobile-open');
-    }
-    if (backdrop) {
-        backdrop.classList.remove('is-open', 'active');
-    }
-    setTimeout(() => {
-        document.body.style.overflow = '';
-    }, 260);
+    if (drawer) drawer.classList.remove('is-open', 'active', 'mobile-open');
+    if (backdrop) backdrop.classList.remove('is-open', 'active');
+    setTimeout(() => { document.body.style.overflow = ''; }, 260);
 }
 
-// Segmented Navigation: When 'all' is active, ALL 3 CARDS ARE DISPLAYED!
 function setMatnFilterTab(tabKey, btn) {
     window.matnModalState.currentTab = tabKey;
     const nav = document.getElementById('matnSegmentedNav');
-    if (nav) {
-        nav.querySelectorAll('.segmented-btn').forEach(b => b.classList.remove('active'));
-    }
+    if (nav) nav.querySelectorAll('.segmented-btn').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
 
     const boxes = document.querySelectorAll('#matnDrawerBody .drawer-wird-box');
     boxes.forEach(box => {
         const bType = box.dataset.type;
-        const visible = (tabKey === 'all' || tabKey === bType);
-        box.style.display = visible ? 'block' : 'none';
+        box.style.display = (tabKey === 'all' || tabKey === bType) ? 'block' : 'none';
     });
 }
 
@@ -562,17 +397,10 @@ function toggleMatnCard(type, isChecked) {
         label.style.color = isChecked ? '#16a34a' : '#94a3b8';
     }
     if (box) {
-        if (isChecked) {
-            box.classList.remove('is-disabled');
-        } else {
-            box.classList.add('is-disabled');
-        }
+        box.classList.toggle('is-disabled', !isChecked);
     }
 }
 
-/**
- * Sets the active measurement unit and updates labels, chips and range badge
- */
 function setMatnUnit(type, val, unitName, unitTag) {
     window.matnUnits[type] = parseInt(val);
 
@@ -580,13 +408,9 @@ function setMatnUnit(type, val, unitName, unitTag) {
     if (group) {
         group.querySelectorAll('.unit-radio-option').forEach(opt => {
             const radio = opt.querySelector('input[type="radio"]');
-            if (radio && parseInt(radio.value) === parseInt(val)) {
-                opt.classList.add('is-selected');
-                radio.checked = true;
-            } else {
-                opt.classList.remove('is-selected');
-                if (radio) radio.checked = false;
-            }
+            const match = radio && parseInt(radio.value) === parseInt(val);
+            opt.classList.toggle('is-selected', match);
+            if (radio) radio.checked = match;
         });
     }
 
@@ -599,26 +423,18 @@ function setMatnUnit(type, val, unitName, unitTag) {
     updateRangeTotalBadge(type);
 }
 
-/**
- * Stepper increment/decrement for Amount
- */
 function stepMatnAmount(type, delta) {
     const amountInput = document.getElementById(`matn-amount-${type}`);
     if (!amountInput) return;
-
-    let currentVal = parseFloat(amountInput.value) || 1;
-    let nextVal = Math.max(1, currentVal + delta);
+    const currentVal = parseFloat(amountInput.value) || 1;
+    const nextVal = Math.max(1, currentVal + delta);
     amountInput.value = nextVal;
     onMatnAmountInput(type, nextVal);
 }
 
-/**
- * Quick preset chip tap for Amount
- */
 function setQuickAmount(type, val) {
     const amountInput = document.getElementById(`matn-amount-${type}`);
     if (!amountInput) return;
-
     amountInput.value = val;
     onMatnAmountInput(type, val);
 }
@@ -640,9 +456,8 @@ function calculateMatnAmount(type) {
     const toVal = parseInt(document.getElementById(`matn-toNumber-${type}`)?.value) || 1;
     const amountInput = document.getElementById(`matn-amount-${type}`);
 
-    if (toVal >= fromVal) {
-        const calculated = (toVal - fromVal + 1);
-        if (amountInput) amountInput.value = calculated;
+    if (toVal >= fromVal && amountInput) {
+        amountInput.value = (toVal - fromVal + 1);
     }
     updateRangeTotalBadge(type);
 }
@@ -653,7 +468,6 @@ function getUnitDisplayTag(unitVal) {
         case 4: return 'باب';
         case 3: return 'صفحة';
         case 2: return 'سطر';
-        case 1:
         default: return 'بيت';
     }
 }
@@ -683,17 +497,7 @@ function updateAmountPresetChipsForUnit(type, unitVal) {
     const container = document.getElementById(`matn-amountChips-${type}`);
     if (!container) return;
 
-    let presets = [1, 2, 3, 5];
-    if (unitVal === 1) { // أبيات
-        presets = [1, 5, 10, 15];
-    } else if (unitVal === 4) { // أبواب
-        presets = [1, 2, 3, 5];
-    } else if (unitVal === 5) { // أحاديث
-        presets = [1, 2, 3, 5];
-    } else if (unitVal === 3) { // صفحات
-        presets = [1, 2, 3, 5];
-    }
-
+    const presets = (unitVal === 1) ? [1, 5, 10, 15] : [1, 2, 3, 5];
     container.innerHTML = '';
     presets.forEach(p => {
         const btn = document.createElement('button');
@@ -705,105 +509,13 @@ function updateAmountPresetChipsForUnit(type, unitVal) {
     });
 }
 
-/**
- * Appends teacher feedback text cleanly into note input
- */
-function appendMatnNote(type, noteText) {
-    const input = document.getElementById(`matnNote-${type}`);
-    if (!input) return;
-
-    if (input.value.trim().length > 0) {
-        if (!input.value.includes(noteText)) {
-            input.value = `${input.value.trim()} - ${noteText}`;
-        }
-    } else {
-        input.value = noteText;
-    }
-
-    input.focus();
-    input.classList.add('highlight-pulse');
-    setTimeout(() => input.classList.remove('highlight-pulse'), 500);
-}
-
-/**
- * Quick Action Bar: Marks all enabled cards as Excellent (5)
- */
-function setAllMatnRatingsExcellent() {
-    const cardTypes = ['memorization', 'revision', 'mudarasah'];
-    cardTypes.forEach(type => {
-        const toggle = document.getElementById(`matn-wtoggle-${type}`);
-        if (toggle && toggle.checked) {
-            setMatnRating(type, 5, 'excellent', 'متقن تماماً');
-        }
-    });
-
-    Swal.fire({
-        icon: 'success',
-        title: 'تم رصد التقييم الممتاز',
-        text: 'تم تحديد تقييم (ممتاز) لجميع الأوراد المفعلة بنجاح.',
-        timer: 1200,
-        showConfirmButton: false,
-        toast: true,
-        position: 'top-end'
-    });
-}
-
-/**
- * Quick Action Bar: Automatically advances recitation range from previous end
- */
-function autoContinueMatnRecitation(btn) {
-    const cardTypes = ['memorization', 'revision', 'mudarasah'];
-    let updatedCount = 0;
-
-    cardTypes.forEach(type => {
-        const toggle = document.getElementById(`matn-wtoggle-${type}`);
-        if (!toggle || !toggle.checked) return;
-
-        const fromInput = document.getElementById(`matn-fromNumber-${type}`);
-        const toInput = document.getElementById(`matn-toNumber-${type}`);
-        const amountInput = document.getElementById(`matn-amount-${type}`);
-
-        if (fromInput && toInput) {
-            const currentTo = parseInt(toInput.value) || 1;
-            const amount = parseInt(amountInput?.value) || 1;
-
-            const nextFrom = currentTo + 1;
-            const nextTo = nextFrom + amount - 1;
-
-            fromInput.value = nextFrom;
-            toInput.value = nextTo;
-            updateRangeTotalBadge(type);
-            updatedCount++;
-        }
-    });
-
-    if (btn) {
-        btn.classList.add('btn-success-pulse');
-        setTimeout(() => btn.classList.remove('btn-success-pulse'), 800);
-    }
-
-    Swal.fire({
-        icon: 'info',
-        title: 'تم استكمال النطاق',
-        text: 'تم تقديم نطاق التسميع تلقائياً للأوراد المفعلة.',
-        timer: 1300,
-        showConfirmButton: false,
-        toast: true,
-        position: 'top-end'
-    });
-}
-
 function setMatnRating(type, status, grade, hintText) {
     window.matnRatings[type] = status;
     const group = document.getElementById(`matn-ratingGroup-${type}`);
     if (!group) return;
 
     group.querySelectorAll('.rating-pill-btn').forEach(btn => {
-        if (parseInt(btn.dataset.status) === parseInt(status)) {
-            btn.classList.add('is-selected');
-        } else {
-            btn.classList.remove('is-selected');
-        }
+        btn.classList.toggle('is-selected', parseInt(btn.dataset.status) === parseInt(status));
     });
 
     const badge = document.getElementById(`matn-ratingBadge-${type}`);
@@ -831,6 +543,60 @@ function clearMatnRating(type) {
     if (clearBtn) clearBtn.style.display = 'none';
 }
 
+/**
+ * Handles toggling a card as an upcoming wird (ورد قادم)
+ * An upcoming wird is scheduled for next session: unrated (status = 0) and not completed (isCompleted = false)
+ */
+function toggleUpcomingMatn(type, isUpcoming, isSilent = false) {
+    const cardBox = document.getElementById(`matn-wbox-${type}`);
+    const ratingGroup = document.getElementById(`matn-ratingGroup-${type}`);
+    const ratingBadge = document.getElementById(`matn-ratingBadge-${type}`);
+    const ratingClear = document.getElementById(`matn-ratingClear-${type}`);
+
+    if (cardBox) cardBox.classList.toggle('is-upcoming-box', isUpcoming);
+    if (ratingGroup) ratingGroup.classList.toggle('is-upcoming-mode', isUpcoming);
+
+    if (isUpcoming) {
+        // Upcoming wird cannot have completion status or grade - reset to 0 (notSet)
+        window.matnRatings[type] = 0;
+
+        if (ratingGroup) {
+            ratingGroup.querySelectorAll('.rating-pill-btn').forEach(b => b.classList.remove('is-selected'));
+        }
+
+        if (ratingBadge) {
+            ratingBadge.className = 'wird-rating-badge rate-upcoming';
+            ratingBadge.innerHTML = "<i class='bx bx-calendar-star'></i> ورد قادم (مجدول ولم يُسمّع بعد)";
+        }
+
+        if (ratingClear) ratingClear.style.display = 'none';
+
+        // Ensure card is active so it gets saved
+        const cardToggle = document.getElementById(`matn-wtoggle-${type}`);
+        if (cardToggle && !cardToggle.checked) {
+            cardToggle.checked = true;
+            toggleMatnCard(type, true);
+        }
+
+        if (!isSilent && typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'info',
+                title: 'تحديد كورد قادم',
+                text: 'تم تحديد هذا الورد كورد قادم للجلسة القادمة (مجدول وغير مقيّم).',
+                timer: 1500,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
+        }
+    } else {
+        // Return to active evaluated mode (default to excellent 5)
+        if (!isSilent) {
+            setMatnRating(type, 5, 'excellent', 'متقن تماماً');
+        }
+    }
+}
+
 function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -838,10 +604,6 @@ function getCookie(name) {
     return '';
 }
 
-/**
- * Submits the Matn assignment(s) for the active card(s)
- * Handled with silent date (today's date) and automatic program Matn title
- */
 async function submitMatnAssignment(navigateNext = false) {
     const studentId = document.getElementById('matnStudentId')?.value;
     const classId = document.getElementById('matnClassId')?.value || getCookie('selectedClassId');
@@ -857,14 +619,12 @@ async function submitMatnAssignment(navigateNext = false) {
         return;
     }
 
-    // All 3 Matn types: Memorization (1), Revision (2), Mudarasah (3)
     const allTypes = [
         { key: 'memorization', perfVal: 1 },
         { key: 'revision', perfVal: 2 },
         { key: 'mudarasah', perfVal: 3 }
     ];
 
-    // Check all cards when tab is 'all', or only the active tab card
     const targetTypes = window.matnModalState.currentTab === 'all'
         ? allTypes
         : allTypes.filter(t => t.key === window.matnModalState.currentTab);
@@ -872,22 +632,33 @@ async function submitMatnAssignment(navigateNext = false) {
     const payloads = [];
     const todayDateStr = new Date().toISOString().split('T')[0];
 
-    // Matn title is designated automatically from the Study Program
     const matnTitle = window.matnModalState.designatedMatn
         || document.getElementById('matnDrawerPanel')?.dataset?.assignedMatn
         || 'المتون العلمية';
 
     for (const t of targetTypes) {
         const toggle = document.getElementById(`matn-wtoggle-${t.key}`);
-        if (!toggle || !toggle.checked) continue; // Skip disabled card
+        if (!toggle || !toggle.checked) continue;
 
         const amountVal = document.getElementById(`matn-amount-${t.key}`)?.value;
         if (!amountVal || parseFloat(amountVal) <= 0) continue;
 
-        const chapterSelectVal = document.getElementById(`matnChapterSelect-${t.key}`)?.value || '';
-        const chapterCustom = document.getElementById(`matnChapterName-${t.key}`)?.value.trim() || '';
-        const chapterVal = (chapterSelectVal === '__custom__' ? chapterCustom : chapterSelectVal) || chapterCustom;
+        // Resolve chapter value based on active mode (select vs manual)
+        const btnManual = document.getElementById(`btnModeManual-${t.key}`);
+        const modeToggle = document.getElementById(`matnChapterModeToggle-${t.key}`);
+        const isManual = (btnManual && btnManual.classList.contains('active')) || (modeToggle && modeToggle.style.display === 'none');
+
+        const chapterVal = isManual
+            ? (document.getElementById(`matnChapterName-${t.key}`)?.value.trim() || '')
+            : (document.getElementById(`matnChapterSelect-${t.key}`)?.value || '');
+
         const combinedChapterName = chapterVal ? `${matnTitle}: ${chapterVal}` : matnTitle;
+
+        const isUpcoming = document.getElementById(`matn-isUpcoming-${t.key}`)?.checked || false;
+
+        // When upcoming: status = 0 (AssignmentStatus.notSet / غير مقيم), and isCompleted = false (غير مكتمل)
+        const finalStatus = isUpcoming ? 0 : (parseInt(window.matnRatings[t.key]) || 5);
+        const finalIsCompleted = !isUpcoming && finalStatus > 0;
 
         payloads.push({
             studentId: studentId,
@@ -898,9 +669,9 @@ async function submitMatnAssignment(navigateNext = false) {
             chapterName: combinedChapterName.substring(0, 150),
             fromNumber: parseInt(document.getElementById(`matn-fromNumber-${t.key}`)?.value) || null,
             toNumber: parseInt(document.getElementById(`matn-toNumber-${t.key}`)?.value) || null,
-            status: parseInt(window.matnRatings[t.key]) || 5,
-            isCompleted: true,
-            isUpcoming: document.getElementById(`matn-isUpcoming-${t.key}`)?.checked || false,
+            status: finalStatus,
+            isCompleted: finalIsCompleted,
+            isUpcoming: isUpcoming,
             assignedDate: todayDateStr,
             note: document.getElementById(`matnNote-${t.key}`)?.value.trim() || null
         });
@@ -958,9 +729,7 @@ async function submitMatnAssignment(navigateNext = false) {
                 navigateMatnStudent(1);
             } else {
                 closeAssignMatnDrawer();
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1200);
+                setTimeout(() => { window.location.reload(); }, 1200);
             }
         } else {
             Swal.fire({
@@ -999,8 +768,7 @@ document.addEventListener('keydown', function (e) {
 // Explicit Global Window Attachments
 window.openAssignMatnModal = openAssignMatnModal;
 window.closeAssignMatnDrawer = closeAssignMatnDrawer;
-window.toggleManualChapterEntry = toggleManualChapterEntry;
-window.returnToChapterList = returnToChapterList;
+window.setChapterInputMode = setChapterInputMode;
 window.onMatnChapterSelectChange = onMatnChapterSelectChange;
 window.setMatnFilterTab = setMatnFilterTab;
 window.toggleMatnCard = toggleMatnCard;
@@ -1009,11 +777,9 @@ window.stepMatnAmount = stepMatnAmount;
 window.setQuickAmount = setQuickAmount;
 window.onMatnAmountInput = onMatnAmountInput;
 window.calculateMatnAmount = calculateMatnAmount;
-window.appendMatnNote = appendMatnNote;
-window.setAllMatnRatingsExcellent = setAllMatnRatingsExcellent;
-window.autoContinueMatnRecitation = autoContinueMatnRecitation;
 window.setMatnRating = setMatnRating;
 window.clearMatnRating = clearMatnRating;
 window.submitMatnAssignment = submitMatnAssignment;
 window.navigateMatnStudent = navigateMatnStudent;
 window.onMatnStudentDropdownChange = onMatnStudentDropdownChange;
+window.toggleUpcomingMatn = toggleUpcomingMatn;

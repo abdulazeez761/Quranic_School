@@ -5,6 +5,7 @@
 <!-- Load Shared, Drawer & Matn Styles -->
 <link rel="stylesheet" href="~/css/teacher/shared.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/teacher/drawer.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/upcoming.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/teacher/modals/assignMatnModal.css" asp-append-version="true" />
 
 <!-- Backdrop overlay for Matn Drawer & Mobile Modal -->
@@ -48,19 +49,6 @@
         </div>
     </div>
 
-    <!-- Quick 1-Click Action Buttons for Matn (Unified with _AssignWirdModal) -->
-    <div class="drawer-quick-actions" id="matnQuickActionsBar">
-        <button type="button" class="btn btn-quick-action" id="btnQuickContinueMatn" onclick="autoContinueMatnRecitation(this)"
-                title="استكمال نطاق المتن تلقائياً للتسميع التالي">
-            <i class='bx bx-sync' style="color: #059669;"></i>
-            <span>استكمال من التسميع السابق</span>
-        </button>
-        <button type="button" class="btn btn-quick-action" id="btnQuickEvaluateAll" onclick="setAllMatnRatingsExcellent()"
-                title="رصد تقييم ممتاز لجميع الأوراد المفعلة بنقرة واحدة">
-            <i class='bx bxs-star' style="color: #eab308;"></i>
-            <span>رصد الكل (ممتاز)</span>
-        </button>
-    </div>
 
     <!-- Segmented Navigation for Matn Types (All 3 Types Shown on "الكل") -->
     <div class="segmented-nav" id="matnSegmentedNav" role="tablist" aria-label="أقسام أوراد المتون">
@@ -113,35 +101,35 @@
                 <!-- المعرف المخفي للمتن المحدد للبرنامج التعليمي -->
                 <input type="hidden" id="matnTitle-memorization" value="" />
 
-                <!-- الباب / الموضع من المتن (بنية تبديل نظيفة تمنع التكدس نهائياً) -->
+                <!-- الباب أو الموضع من المتن (واجهة واضحة للاختيار أو الكتابة اليدوية) -->
                 <div class="chapter-selection-section mb-3" id="matnChapterSection-memorization">
-                    <div class="d-flex align-items-center justify-content-between mb-1">
+                    <div class="chapter-selection-header d-flex align-items-center justify-content-between mb-1">
                         <label class="compact-label mb-0" for="matnChapterSelect-memorization">
-                            <i class='bx bx-book-open text-muted'></i> الباب / الموضع من المتن:
+                            <i class='bx bx-book-open text-muted'></i> الباب أو الموضع من المتن:
                         </label>
-                        <button type="button" class="btn-chapter-custom-toggle" id="matnChapterToggleBtn-memorization"
-                                onclick="toggleManualChapterEntry('memorization')" title="كتابة موضع أو باب مخصص">
-                            <i class='bx bx-edit-alt'></i> كتابة مخصصة
-                        </button>
+                        <div class="chapter-mode-toggle" id="matnChapterModeToggle-memorization">
+                            <button type="button" class="chapter-mode-btn active" id="btnModeSelect-memorization"
+                                    onclick="setChapterInputMode('memorization', 'select')" title="اختيار الباب من قائمة أبواب المتن">
+                                <i class='bx bx-list-ul'></i> اختيار الباب
+                            </button>
+                            <button type="button" class="chapter-mode-btn" id="btnModeManual-memorization"
+                                    onclick="setChapterInputMode('memorization', 'manual')" title="كتابة اسم الباب أو الموضع يدوياً">
+                                <i class='bx bx-edit'></i> كتابة يدوية
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Mode A: Dropdown from Predefined List -->
+                    <!-- وضع الاختيار من القائمة -->
                     <div id="matnChapterSelectWrap-memorization" class="chapter-control-wrap">
                         <select id="matnChapterSelect-memorization" class="form-select form-control matn-chapter-select"
                                 onchange="onMatnChapterSelectChange('memorization', this.value)">
                         </select>
                     </div>
 
-                    <!-- Mode B: Direct Custom Text Input -->
+                    <!-- وضع الإدخال اليدوي -->
                     <div id="matnChapterInputWrap-memorization" class="chapter-control-wrap" style="display: none;">
-                        <div class="input-with-return-btn">
-                            <input type="text" id="matnChapterName-memorization" class="form-control"
-                                   placeholder="اكتب موضع التسميع أو اسم الباب..." />
-                            <button type="button" class="btn btn-return-chapters" id="matnReturnListBtn-memorization"
-                                    onclick="returnToChapterList('memorization')" title="العودة لاختيار باب من القائمة">
-                                <i class='bx bx-list-ul'></i> القائمة
-                            </button>
-                        </div>
+                        <input type="text" id="matnChapterName-memorization" class="form-control matn-chapter-input"
+                               placeholder="اكتب اسم الباب أو موضع التسميع (مثال: باب الإعراب)..." />
                     </div>
                 </div>
 
@@ -267,24 +255,18 @@
                     </div>
                 </div>
 
-                <!-- الملاحظات مع شرائح التوجيه السريعة والورد القادم -->
+                <!-- الملاحظات والورد القادم -->
                 <div class="drawer-bottom-row">
                     <div style="flex: 1; min-width: 0;">
                         <input type="text" class="form-control" id="matnNote-memorization"
                                placeholder="ملاحظة أو توجيه للطالب (اختياري)..." style="font-size: 0.82rem; height: 38px; border-radius: var(--radius-md);">
-                        <div class="feedback-quick-chips">
-                            <button type="button" class="feedback-chip" onclick="appendMatnNote('memorization', 'أحسنت، إتقان ممتاز وبدون تردد')">🌟 ممتاز</button>
-                            <button type="button" class="feedback-chip" onclick="appendMatnNote('memorization', 'جيد جداً، سرد سريع وضبط جيد')">✨ متقن</button>
-                            <button type="button" class="feedback-chip" onclick="appendMatnNote('memorization', 'يحتاج مراجعة وإعادة تثبيت')">⚠️ يحتاج ضبطاً</button>
-                            <button type="button" class="feedback-chip" onclick="appendMatnNote('memorization', 'إتمام التسميع في الحلقة القادمة')">🎯 إتمام غداً</button>
-                        </div>
                     </div>
                     <div class="upcoming-badge-toggle">
                         <span style="font-size: 0.74rem; color: #6b21a8; font-weight: 700; white-space: nowrap;">
                             <i class='bx bx-calendar-star'></i> ورد قادم
                         </span>
                         <label class="switch" style="transform: scale(0.68); transform-origin: left center;">
-                            <input type="checkbox" id="matn-isUpcoming-memorization">
+                            <input type="checkbox" id="matn-isUpcoming-memorization" onchange="toggleUpcomingMatn('memorization', this.checked)">
                             <span class="switch-slider"></span>
                         </label>
                     </div>
@@ -313,35 +295,35 @@
                 <!-- المعرف المخفي للمتن المحدد للبرنامج التعليمي -->
                 <input type="hidden" id="matnTitle-revision" value="" />
 
-                <!-- الباب / الموضع من المتن -->
+                <!-- الباب أو الموضع من المتن (واجهة واضحة للاختيار أو الكتابة اليدوية) -->
                 <div class="chapter-selection-section mb-3" id="matnChapterSection-revision">
-                    <div class="d-flex align-items-center justify-content-between mb-1">
+                    <div class="chapter-selection-header d-flex align-items-center justify-content-between mb-1">
                         <label class="compact-label mb-0" for="matnChapterSelect-revision">
-                            <i class='bx bx-book-open text-muted'></i> الباب / الموضع من المتن:
+                            <i class='bx bx-book-open text-muted'></i> الباب أو الموضع من المتن:
                         </label>
-                        <button type="button" class="btn-chapter-custom-toggle" id="matnChapterToggleBtn-revision"
-                                onclick="toggleManualChapterEntry('revision')" title="كتابة موضع أو باب مخصص">
-                            <i class='bx bx-edit-alt'></i> كتابة مخصصة
-                        </button>
+                        <div class="chapter-mode-toggle" id="matnChapterModeToggle-revision">
+                            <button type="button" class="chapter-mode-btn active" id="btnModeSelect-revision"
+                                    onclick="setChapterInputMode('revision', 'select')" title="اختيار الباب من قائمة أبواب المتن">
+                                <i class='bx bx-list-ul'></i> اختيار الباب
+                            </button>
+                            <button type="button" class="chapter-mode-btn" id="btnModeManual-revision"
+                                    onclick="setChapterInputMode('revision', 'manual')" title="كتابة اسم الباب أو الموضع يدوياً">
+                                <i class='bx bx-edit'></i> كتابة يدوية
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Mode A: Dropdown from Predefined List -->
+                    <!-- وضع الاختيار من القائمة -->
                     <div id="matnChapterSelectWrap-revision" class="chapter-control-wrap">
                         <select id="matnChapterSelect-revision" class="form-select form-control matn-chapter-select"
                                 onchange="onMatnChapterSelectChange('revision', this.value)">
                         </select>
                     </div>
 
-                    <!-- Mode B: Direct Custom Text Input -->
+                    <!-- وضع الإدخال اليدوي -->
                     <div id="matnChapterInputWrap-revision" class="chapter-control-wrap" style="display: none;">
-                        <div class="input-with-return-btn">
-                            <input type="text" id="matnChapterName-revision" class="form-control"
-                                   placeholder="اكتب موضع التسميع أو اسم الباب..." />
-                            <button type="button" class="btn btn-return-chapters" id="matnReturnListBtn-revision"
-                                    onclick="returnToChapterList('revision')" title="العودة لاختيار باب من القائمة">
-                                <i class='bx bx-list-ul'></i> القائمة
-                            </button>
-                        </div>
+                        <input type="text" id="matnChapterName-revision" class="form-control matn-chapter-input"
+                               placeholder="اكتب اسم الباب أو موضع التسميع (مثال: باب أحكام النون)..." />
                     </div>
                 </div>
 
@@ -472,19 +454,13 @@
                     <div style="flex: 1; min-width: 0;">
                         <input type="text" class="form-control" id="matnNote-revision"
                                placeholder="ملاحظة أو توجيه للطالب (اختياري)..." style="font-size: 0.82rem; height: 38px; border-radius: var(--radius-md);">
-                        <div class="feedback-quick-chips">
-                            <button type="button" class="feedback-chip" onclick="appendMatnNote('revision', 'أحسنت، مراجعة متقنة بدون تلعثم')">🌟 ممتاز</button>
-                            <button type="button" class="feedback-chip" onclick="appendMatnNote('revision', 'متقن، ضبط سليم للأبيات')">✨ متقن</button>
-                            <button type="button" class="feedback-chip" onclick="appendMatnNote('revision', 'يحتاج إعادة تثبيت الورد السابق')">⚠️ يحتاج ضبطاً</button>
-                            <button type="button" class="feedback-chip" onclick="appendMatnNote('revision', 'استمرار المراجعة مع التسميع الجديد')">🎯 استمرار</button>
-                        </div>
                     </div>
                     <div class="upcoming-badge-toggle">
                         <span style="font-size: 0.74rem; color: #6b21a8; font-weight: 700; white-space: nowrap;">
                             <i class='bx bx-calendar-star'></i> ورد قادم
                         </span>
                         <label class="switch" style="transform: scale(0.68); transform-origin: left center;">
-                            <input type="checkbox" id="matn-isUpcoming-revision">
+                            <input type="checkbox" id="matn-isUpcoming-revision" onchange="toggleUpcomingMatn('revision', this.checked)">
                             <span class="switch-slider"></span>
                         </label>
                     </div>
@@ -513,35 +489,35 @@
                 <!-- المعرف المخفي للمتن المحدد للبرنامج التعليمي -->
                 <input type="hidden" id="matnTitle-mudarasah" value="" />
 
-                <!-- الباب / الموضع من المتن -->
+                <!-- الباب أو الموضع من المتن (واجهة واضحة للاختيار أو الكتابة اليدوية) -->
                 <div class="chapter-selection-section mb-3" id="matnChapterSection-mudarasah">
-                    <div class="d-flex align-items-center justify-content-between mb-1">
+                    <div class="chapter-selection-header d-flex align-items-center justify-content-between mb-1">
                         <label class="compact-label mb-0" for="matnChapterSelect-mudarasah">
-                            <i class='bx bx-book-open text-muted'></i> الباب / الموضع من المتن:
+                            <i class='bx bx-book-open text-muted'></i> الباب أو الموضع من المتن:
                         </label>
-                        <button type="button" class="btn-chapter-custom-toggle" id="matnChapterToggleBtn-mudarasah"
-                                onclick="toggleManualChapterEntry('mudarasah')" title="كتابة موضع أو باب مخصص">
-                            <i class='bx bx-edit-alt'></i> كتابة مخصصة
-                        </button>
+                        <div class="chapter-mode-toggle" id="matnChapterModeToggle-mudarasah">
+                            <button type="button" class="chapter-mode-btn active" id="btnModeSelect-mudarasah"
+                                    onclick="setChapterInputMode('mudarasah', 'select')" title="اختيار الباب من قائمة أبواب المتن">
+                                <i class='bx bx-list-ul'></i> اختيار الباب
+                            </button>
+                            <button type="button" class="chapter-mode-btn" id="btnModeManual-mudarasah"
+                                    onclick="setChapterInputMode('mudarasah', 'manual')" title="كتابة اسم الباب أو الموضع يدوياً">
+                                <i class='bx bx-edit'></i> كتابة يدوية
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Mode A: Dropdown from Predefined List -->
+                    <!-- وضع الاختيار من القائمة -->
                     <div id="matnChapterSelectWrap-mudarasah" class="chapter-control-wrap">
                         <select id="matnChapterSelect-mudarasah" class="form-select form-control matn-chapter-select"
                                 onchange="onMatnChapterSelectChange('mudarasah', this.value)">
                         </select>
                     </div>
 
-                    <!-- Mode B: Direct Custom Text Input -->
+                    <!-- وضع الإدخال اليدوي -->
                     <div id="matnChapterInputWrap-mudarasah" class="chapter-control-wrap" style="display: none;">
-                        <div class="input-with-return-btn">
-                            <input type="text" id="matnChapterName-mudarasah" class="form-control"
-                                   placeholder="اكتب موضع التسميع أو اسم الباب..." />
-                            <button type="button" class="btn btn-return-chapters" id="matnReturnListBtn-mudarasah"
-                                    onclick="returnToChapterList('mudarasah')" title="العودة لاختيار باب من القائمة">
-                                <i class='bx bx-list-ul'></i> القائمة
-                            </button>
-                        </div>
+                        <input type="text" id="matnChapterName-mudarasah" class="form-control matn-chapter-input"
+                               placeholder="اكتب اسم الباب أو موضع التسميع (مثال: باب مخارج الحروف)..." />
                     </div>
                 </div>
 
@@ -672,19 +648,13 @@
                     <div style="flex: 1; min-width: 0;">
                         <input type="text" class="form-control" id="matnNote-mudarasah"
                                placeholder="ملاحظة أو توجيه للطالب (اختياري)..." style="font-size: 0.82rem; height: 38px; border-radius: var(--radius-md);">
-                        <div class="feedback-quick-chips">
-                            <button type="button" class="feedback-chip" onclick="appendMatnNote('mudarasah', 'مدارسة ممتازة وفهم متقن للمعاني')">🌟 ممتاز</button>
-                            <button type="button" class="feedback-chip" onclick="appendMatnNote('mudarasah', 'ضبط جيد للألفاظ وشرح المعاني')">✨ متقن</button>
-                            <button type="button" class="feedback-chip" onclick="appendMatnNote('mudarasah', 'مراجعة المعاني الغريبة وضبط الأبيات')">⚠️ يحتاج ضبطاً</button>
-                            <button type="button" class="feedback-chip" onclick="appendMatnNote('mudarasah', 'إكمال المدارسة في الجلسة القادمة')">🎯 إكمال غداً</button>
-                        </div>
                     </div>
                     <div class="upcoming-badge-toggle">
                         <span style="font-size: 0.74rem; color: #6b21a8; font-weight: 700; white-space: nowrap;">
                             <i class='bx bx-calendar-star'></i> ورد قادم
                         </span>
                         <label class="switch" style="transform: scale(0.68); transform-origin: left center;">
-                            <input type="checkbox" id="matn-isUpcoming-mudarasah">
+                            <input type="checkbox" id="matn-isUpcoming-mudarasah" onchange="toggleUpcomingMatn('mudarasah', this.checked)">
                             <span class="switch-slider"></span>
                         </label>
                     </div>

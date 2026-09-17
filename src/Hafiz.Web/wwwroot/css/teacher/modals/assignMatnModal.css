@@ -217,67 +217,57 @@
   position: relative;
 }
 
-.btn-chapter-custom-toggle {
+/* Chapter Mode Segmented Toggle (اختيار الباب / كتابة يدوية) */
+.chapter-mode-toggle {
+  display: inline-flex;
+  align-items: center;
+  background: #f1f5f9;
+  padding: 2px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  gap: 2px;
+}
+
+.chapter-mode-btn {
   background: transparent;
   border: none;
-  color: var(--primary-green, #15803d);
-  font-size: 0.76rem;
-  font-weight: 700;
+  font-size: 0.73rem;
+  font-weight: 600;
+  color: #64748b;
+  padding: 2px 8px;
+  border-radius: 6px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 6px;
-  border-radius: 4px;
+  gap: 3px;
   transition: all 0.15s ease;
+  user-select: none;
 }
 
-.btn-chapter-custom-toggle:hover {
-  background: rgba(21, 128, 61, 0.08);
+.chapter-mode-btn:hover {
+  color: #1e293b;
+}
+
+.chapter-mode-btn.active {
+  background: #ffffff;
+  color: var(--matn-primary-dark, #3b6329);
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .matn-chapter-select {
-  height: 42px;
+  height: 40px;
   font-weight: 600;
   font-size: 0.86rem;
   border-radius: var(--radius-md);
   background-color: #ffffff;
 }
 
-.input-with-return-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.input-with-return-btn input {
-  flex: 1;
-  height: 42px;
+.matn-chapter-input {
+  height: 40px;
   font-weight: 600;
-  font-size: 0.86rem;
+  font-size: 0.85rem;
   border-radius: var(--radius-md);
-}
-
-.btn-return-chapters {
-  height: 42px;
-  padding: 0 12px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  white-space: nowrap;
-  background: #f1f5f9;
-  border: 1px solid #cbd5e1;
-  border-radius: var(--radius-md);
-  color: #334155;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.btn-return-chapters:hover {
-  background: #e2e8f0;
-  color: #0f172a;
 }
 
 /* ==========================================================================
@@ -402,61 +392,6 @@
 }
 
 /* ==========================================================================
-   Feedback Quick Chips & Micro-Animations
-   ========================================================================== */
-.feedback-quick-chips {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-top: 6px;
-}
-
-.feedback-chip {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  padding: 3px 9px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #475569;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-}
-
-.feedback-chip:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-  color: #1e293b;
-  transform: translateY(-1px);
-}
-
-.feedback-chip:active {
-  transform: scale(0.95);
-}
-
-.highlight-pulse {
-  animation: pulseHighlight 0.5s ease;
-}
-
-@keyframes pulseHighlight {
-  0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
-  70% { box-shadow: 0 0 0 6px rgba(37, 99, 235, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
-}
-
-.btn-success-pulse {
-  animation: pulseGreen 0.6s ease;
-}
-
-@keyframes pulseGreen {
-  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
-  70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-}
-
-/* ==========================================================================
    Mobile Responsiveness (< 480px)
    ========================================================================== */
 @media (max-width: 480px) {
@@ -471,13 +406,6 @@
   .range-total-pill {
     font-size: 0.68rem;
     padding: 1px 6px;
-  }
-  .feedback-quick-chips {
-    gap: 4px;
-  }
-  .feedback-chip {
-    font-size: 0.68rem;
-    padding: 2px 7px;
   }
   .wird-rating-options-grid {
     grid-template-columns: repeat(5, 1fr) !important;
@@ -498,5 +426,34 @@
     font-size: 0.72rem !important;
     padding: 0 2px !important;
   }
+}
+
+/* ==========================================================================
+   Upcoming Wird (ورد قادم) Styling & States
+   ========================================================================== */
+#matnDrawerPanel .drawer-wird-box.is-upcoming-box {
+  border-color: #c4b5fd !important;
+  border-right-color: #8b5cf6 !important;
+  border-inline-start-color: #8b5cf6 !important;
+  box-shadow: 0 0 0 1px #ddd6fe, 0 4px 12px rgba(124, 58, 237, 0.08) !important;
+  background: linear-gradient(180deg, #faf5ff 0%, #ffffff 100%) !important;
+}
+
+#matnDrawerPanel .wird-rating-group.is-upcoming-mode .wird-rating-options-grid {
+  opacity: 0.35 !important;
+  pointer-events: none !important;
+  filter: grayscale(0.7) !important;
+  user-select: none !important;
+}
+
+#matnDrawerPanel .wird-rating-badge.rate-upcoming {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  background: #ede9fe !important;
+  color: #6b21a8 !important;
+  border: 1px solid #c4b5fd !important;
+  font-weight: 700 !important;
+  font-size: 0.74rem !important;
 }
 
