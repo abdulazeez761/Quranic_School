@@ -3,43 +3,59 @@
 
 @{
     ViewData["Title"] = Localizer["PageTitle"].Value;
+    var classes = Model ?? new List<Hafiz.Models.Class>();
+    var totalClasses = classes.Count();
+    var activeMeetings = classes.Count(c => c.IsMeetingActive);
+    var quranClassesCount = classes.Count(c => c.StudyProgram?.Type == Hafiz.Domain.Enums.ProgramType.Quran);
+    var matnClassesCount = classes.Count(c => c.StudyProgram?.Type == Hafiz.Domain.Enums.ProgramType.Matn);
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/teacher/meeting.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/teacher/modal.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 }
 
 <div class="meetings-page">
-    <!-- Header Section -->
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-        <div>
-            <h2 class="t-section-title mb-1">
-                <i class='bx bx-video text-primary'></i>
-                <span>@Localizer["PageTitle"]</span>
-            </h2>
-            <p class="t-section-desc">@Localizer["PageSubtitle"]</p>
-        </div>
-        <div>
-            <span class="t-badge t-badge-quran fs-6 py-2 px-3">
-                <i class='bx bx-chalkboard'></i>
-                <span>@Model.Count() @Localizer["TotalClasses"]</span>
-            </span>
+
+    <!-- Top Hero Header -->
+    <div class="meetings-hero-banner">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <h2 class="t-section-title m-0">
+                        <i class='bx bx-video'></i>
+                        <span>@Localizer["PageTitle"]</span>
+                    </h2>
+                    @if (activeMeetings > 0)
+                    {
+                        <span class="live-broadcast-pill">
+                            <span class="live-pulse-dot"></span>
+                            <span>@activeMeetings بث مباشر نشط</span>
+                        </span>
+                    }
+                </div>
+                <p class="t-section-desc m-0">@Localizer["PageSubtitle"]</p>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+                <span class="t-badge t-badge-quran fs-6 py-2 px-3">
+                    <i class='bx bx-chalkboard'></i>
+                    <span>@totalClasses @Localizer["TotalClasses"]</span>
+                </span>
+            </div>
         </div>
     </div>
 
-    <!-- Alert Messages -->
+    <!-- Toast Alerts -->
     @if (TempData["Success"] != null)
     {
-        <div class="t-toast t-toast-success alert-dismissible" role="alert">
+        <div class="t-toast t-toast-success alert-dismissible" role="alert" id="meetingSuccessAlert">
             <i class="bx bx-check-circle" style="font-size: 1.3rem;"></i>
             <span>@TempData["Success"]</span>
         </div>
     }
     @if (TempData["Error"] != null)
     {
-        <div class="t-toast t-toast-error alert-dismissible" role="alert">
+        <div class="t-toast t-toast-error alert-dismissible" role="alert" id="meetingErrorAlert">
             <i class="bx bx-error-circle" style="font-size: 1.3rem;"></i>
             <span>@TempData["Error"]</span>
         </div>
@@ -52,133 +68,256 @@
         </div>
     }
 
-    <!-- Active Meetings Summary -->
-    @{
-        var activeMeetings = Model.Count(c => c.IsMeetingActive);
-        if (activeMeetings > 0)
-        {
-            <div class="active-meetings-alert mb-4">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="pulse-indicator">
-                        <i class='bx bx-broadcast'></i>
-                    </div>
-                    <div>
-                        <strong class="d-block text-success">@activeMeetings @Localizer["ActiveMeetings"]</strong>
-                        <span class="small text-muted">@Localizer["ActiveMeetingsNote"]</span>
-                    </div>
-                </div>
+    <!-- Active Live Broadcast Alert Banner -->
+    @if (activeMeetings > 0)
+    {
+        <div class="active-broadcast-alert">
+            <div class="broadcast-icon-box">
+                <i class='bx bx-broadcast'></i>
             </div>
-        }
+            <div class="broadcast-text">
+                <strong>يوجد حالياً (@activeMeetings) اجتماع وغرفة درس مباشر قيد البث</strong>
+                <span>يمكنك الانضمام مباشرة إلى الغرفة أو إنهاء الجلسة عند اكتمال الحلقة.</span>
+            </div>
+        </div>
     }
 
-    <!-- Classes Table & Responsive Cards -->
-    @if (Model.Any())
+    @if (classes.Any())
     {
-        <div class="classes-card t-card">
-            <div class="table-responsive">
-                <table class="classes-table table mb-0">
-                    <thead>
-                        <tr>
-                            <th>
-                                <i class="bx bx-book-open me-1"></i> @Localizer["ClassName"]
-                            </th>
-                            <th>
-                                <i class="bx bx-user me-1"></i> @Localizer["Gender"]
-                            </th>
-                            <th>
-                                <i class="bx bx-group me-1"></i> @Localizer["Students"]
-                            </th>
-                            <th>
-                                <i class="bx bx-pulse me-1"></i> @Localizer["Status"]
-                            </th>
-                            <th class="text-center">
-                                <i class="bx bx-cog me-1"></i> @Localizer["Actions"]
-                            </th>
-                        </tr>
-                    </thead>
+        <!-- Actionable Toolbar & Filters -->
+        <div class="meetings-toolbar">
+            <div class="search-wrapper">
+                <i class='bx bx-search search-icon'></i>
+                <input id="meetingSearch" type="text" class="search-input" placeholder="ابحث باسم الحلقة..."
+                       autocomplete="off" />
+            </div>
 
-                    <tbody>
-                        @foreach (var cls in Model)
+            <div class="meetings-filter-tabs">
+                <button type="button" class="meeting-filter-tab active" data-filter="all">
+                    جميع الحلقات <span class="filter-count">@totalClasses</span>
+                </button>
+                @if (activeMeetings > 0)
+                {
+                    <button type="button" class="meeting-filter-tab tab-live" data-filter="live">
+                        <span class="live-pulse-dot"></span> بث نشط الآن <span class="filter-count">@activeMeetings</span>
+                    </button>
+                }
+                @if (quranClassesCount > 0)
+                {
+                    <button type="button" class="meeting-filter-tab" data-filter="quran">
+                        حلقات القرآن
+                    </button>
+                }
+                @if (matnClassesCount > 0)
+                {
+                    <button type="button" class="meeting-filter-tab" data-filter="matn">
+                        حلقات المتون
+                    </button>
+                }
+            </div>
+        </div>
+
+        <!-- Mobile / Tablet Meeting Record Cards -->
+        <div class="meeting-records-mobile" id="meetingRecordsMobile">
+            @foreach (var cls in classes)
+            {
+                var isMatn = cls.StudyProgram?.Type == Hafiz.Domain.Enums.ProgramType.Matn;
+                var programType = isMatn ? "matn" : "quran";
+                var isLive = cls.IsMeetingActive;
+                var genderClass = cls.Gender.ToString().ToLower();
+
+                <div class="meeting-record-card @(isLive ? "is-live" : "")"
+                     data-name="@cls.Name.ToLower()"
+                     data-type="@programType"
+                     data-live="@(isLive ? "true" : "false")">
+
+                    <div class="meeting-record-main">
+                        <div class="meeting-avatar @(isLive ? "avatar-live" : (isMatn ? "avatar-matn" : "avatar-quran"))">
+                            <i class='bx @(isLive ? "bx-broadcast" : (isMatn ? "bx-bookmarks" : "bx-book-reader"))'></i>
+                        </div>
+
+                        <div class="meeting-info">
+                            <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                                <span class="meeting-name">@cls.Name</span>
+                                @if (isLive)
+                                {
+                                    <span class="live-status-badge">
+                                        <span class="live-pulse-dot"></span> مباشر
+                                    </span>
+                                }
+                            </div>
+
+                            <div class="meeting-meta-row">
+                                @if (isMatn)
+                                {
+                                    <span class="t-badge t-badge-matn">
+                                        @(cls.StudyProgram?.Name ?? "متون علمية")
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="t-badge t-badge-quran">
+                                        @(cls.StudyProgram?.Name ?? "قرآن كريم")
+                                    </span>
+                                }
+
+                                <span class="gender-pill gender-@genderClass">
+                                    @cls.Gender
+                                </span>
+
+                                <span class="enrolled-pill">
+                                    <i class='bx bx-group'></i> @(cls.Students?.Count ?? 0) طالب
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="meeting-actions">
+                        @if (isLive)
                         {
-                            var isMatn = cls.StudyProgram?.Type == Hafiz.Domain.Enums.ProgramType.Matn;
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div class="row-avatar @(isMatn ? "avatar-matn" : "avatar-male")">
-                                            @cls.Name.Substring(0, 1).ToUpper()
-                                        </div>
-                                        <div>
-                                            <div class="fw-bold text-dark">@cls.Name</div>
-                                            @if (cls.StudyProgram != null)
-                                            {
-                                                <span class="t-badge @(isMatn ? "t-badge-matn" : "t-badge-quran")" style="font-size: 0.72rem; padding: 2px 6px;">
-                                                    @cls.StudyProgram.Name
-                                                </span>
-                                            }
-                                        </div>
-                                    </div>
-                                </td>
+                            <a asp-area="Teacher" asp-controller="Meeting" asp-action="Room"
+                               asp-route-classId="@cls.Id" class="t-btn t-btn-primary t-btn-sm flex-grow-1">
+                                <i class="bx bx-log-in-circle"></i>
+                                <span>دخول البث المباشر</span>
+                            </a>
+                            <button type="button" class="t-btn t-btn-danger t-btn-sm"
+                                    onclick="showEndMeetingModal('@cls.Id')">
+                                <i class="bx bx-stop-circle"></i>
+                                <span>إنهاء</span>
+                            </button>
+                        }
+                        else
+                        {
+                            <form asp-action="StartMeeting" asp-route-classId="@cls.Id" method="post" class="w-100">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="t-btn t-btn-primary t-btn-sm w-100">
+                                    <i class="bx bx-play-circle"></i>
+                                    <span>بدء الاجتماع والانضمام</span>
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
 
-                                <td>
-                                    <span class="gender-pill gender-@(cls.Gender.ToString().ToLower())">
+        <!-- Desktop High-Density Records Table -->
+        <div class="meetings-table-wrap" id="meetingsTableWrap">
+            <table class="meetings-table">
+                <thead>
+                    <tr>
+                        <th>الحلقة الدراسية</th>
+                        <th>المسار التعليمي</th>
+                        <th>الجنس والطلاب</th>
+                        <th>حالة البث المباشر</th>
+                        <th class="text-center">إجراءات البث</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cls in classes)
+                    {
+                        var isMatn = cls.StudyProgram?.Type == Hafiz.Domain.Enums.ProgramType.Matn;
+                        var programType = isMatn ? "matn" : "quran";
+                        var isLive = cls.IsMeetingActive;
+                        var genderClass = cls.Gender.ToString().ToLower();
+
+                        <tr class="meeting-table-row @(isLive ? "is-live-row" : "")"
+                            data-name="@cls.Name.ToLower()"
+                            data-type="@programType"
+                            data-live="@(isLive ? "true" : "false")">
+
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="meeting-avatar @(isLive ? "avatar-live" : (isMatn ? "avatar-matn" : "avatar-quran"))">
+                                        <i class='bx @(isLive ? "bx-broadcast" : (isMatn ? "bx-bookmarks" : "bx-book-reader"))'></i>
+                                    </div>
+                                    <div>
+                                        <span class="meeting-name d-block">@cls.Name</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                @if (isMatn)
+                                {
+                                    <span class="t-badge t-badge-matn">
+                                        <i class='bx bx-bookmarks'></i> @(cls.StudyProgram?.Name ?? "متون علمية")
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="t-badge t-badge-quran">
+                                        <i class='bx bx-book-open'></i> @(cls.StudyProgram?.Name ?? "قرآن كريم")
+                                    </span>
+                                }
+                            </td>
+
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="gender-pill gender-@genderClass">
                                         @cls.Gender
                                     </span>
-                                </td>
-
-                                <td>
-                                    <span class="fw-bold text-muted">
-                                        @(cls.Students?.Count ?? 0) @Localizer["Enrolled"]
+                                    <span class="enrolled-pill">
+                                        <i class='bx bx-group'></i> @(cls.Students?.Count ?? 0) طالب
                                     </span>
-                                </td>
+                                </div>
+                            </td>
 
-                                <td>
-                                    @if (cls.IsMeetingActive)
+                            <td>
+                                @if (isLive)
+                                {
+                                    <span class="live-status-badge">
+                                        <span class="live-pulse-dot"></span>
+                                        <span>بث مباشر نشط الآن</span>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="offline-status-badge">
+                                        <i class="bx bx-circle me-1"></i> غير مفعل
+                                    </span>
+                                }
+                            </td>
+
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center gap-2">
+                                    @if (isLive)
                                     {
-                                        <span class="t-badge t-badge-present">
-                                            <i class="bx bx-broadcast me-1"></i> @Localizer["Active"]
-                                        </span>
+                                        <a asp-area="Teacher" asp-controller="Meeting" asp-action="Room"
+                                           asp-route-classId="@cls.Id" class="t-btn t-btn-sm t-btn-primary">
+                                            <i class="bx bx-log-in-circle"></i>
+                                            <span>دخول البث</span>
+                                        </a>
+                                        <button type="button" class="t-btn t-btn-sm t-btn-danger"
+                                                onclick="showEndMeetingModal('@cls.Id')">
+                                            <i class="bx bx-stop-circle"></i>
+                                            <span>إنهاء</span>
+                                        </button>
                                     }
                                     else
                                     {
-                                        <span class="t-badge" style="background: var(--t-surface-muted); color: var(--t-text-subtle);">
-                                            <i class="bx bx-circle me-1"></i> @Localizer["Inactive"]
-                                        </span>
-                                    }
-                                </td>
-
-                                <td class="text-center">
-                                    <div class="action-buttons justify-content-center">
-                                        @if (cls.IsMeetingActive)
-                                        {
-                                            <a asp-area="Teacher" asp-controller="Meeting" asp-action="Room"
-                                               asp-route-classId="@cls.Id" class="t-btn t-btn-sm t-btn-primary">
-                                                <i class="bx bx-log-in-circle"></i>
-                                                <span>@Localizer["Join"]</span>
-                                            </a>
-                                            <button type="button" class="t-btn t-btn-sm t-btn-danger"
-                                                    onclick="showEndMeetingModal('@cls.Id')">
-                                                <i class="bx bx-stop-circle"></i>
-                                                <span>@Localizer["End"]</span>
+                                        <form asp-action="StartMeeting" asp-route-classId="@cls.Id" method="post"
+                                              class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="t-btn t-btn-sm t-btn-primary">
+                                                <i class="bx bx-play-circle"></i>
+                                                <span>بدء الاجتماع والانضمام</span>
                                             </button>
-                                        }
-                                        else
-                                        {
-                                            <form asp-action="StartMeeting" asp-route-classId="@cls.Id" method="post"
-                                                  class="d-inline">
-                                                @Html.AntiForgeryToken()
-                                                <button type="submit" class="t-btn t-btn-sm t-btn-primary">
-                                                    <i class="bx bx-play-circle"></i>
-                                                    <span>@Localizer["StartAndJoin"]</span>
-                                                </button>
-                                            </form>
-                                        }
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                                        </form>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- No Matching Classes State -->
+        <div class="meetings-empty-state" id="meetingsNoMatch" style="display: none;">
+            <div class="empty-icon"><i class='bx bx-search-alt'></i></div>
+            <h3>لا توجد حلقات مطابقة للبحث</h3>
+            <p>يرجى تعديل نص البحث أو الفلتر للعثور على الحلقة المطلوبة</p>
         </div>
     }
     else
@@ -191,13 +330,13 @@
     }
 </div>
 
-<!-- End Meeting Modal -->
-<div id="endMeetingModal" class="modal-overlay">
+<!-- End Meeting Confirmation Modal -->
+<div id="endMeetingModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="endModalTitle">
     <div class="modal-content t-card" style="max-width: 440px; margin: auto; padding: 1.75rem; text-align: center;">
-        <div class="t-empty-icon mx-auto mb-3" style="background: var(--t-absent-bg); color: var(--t-absent);">
+        <div class="t-empty-icon mx-auto mb-3" style="background: var(--t-absent-bg); color: var(--t-absent); width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem;">
             <i class="bx bx-error-circle"></i>
         </div>
-        <h3 class="modal-title h5 fw-bold mb-2">@Localizer["EndMeeting"]</h3>
+        <h3 class="modal-title h5 fw-bold mb-2" id="endModalTitle">@Localizer["EndMeeting"]</h3>
         <p class="modal-description text-muted small mb-4">
             @Localizer["EndMeetingConfirm"]
         </p>
@@ -225,7 +364,6 @@
         const modal = document.getElementById('endMeetingModal');
         const form = document.getElementById('endMeetingForm');
 
-        // Set the form action
         form.action = '@Url.Action("EndMeeting", "TeacherClasses", new { area = "Teacher" })' + '?classId=' + classId;
 
         if (modal) {
@@ -241,11 +379,86 @@
         currentClassId = null;
     }
 
-    // Close modal when clicking outside
     document.addEventListener('click', function (e) {
         const modal = document.getElementById('endMeetingModal');
         if (e.target === modal) {
             closeEndMeetingModal();
         }
     });
+
+    // Auto-dismiss alerts
+    setTimeout(function () {
+        const s = document.getElementById('meetingSuccessAlert');
+        const err = document.getElementById('meetingErrorAlert');
+        if (s) { s.style.opacity = '0'; setTimeout(() => s.style.display = 'none', 500); }
+        if (err) { err.style.opacity = '0'; setTimeout(() => err.style.display = 'none', 500); }
+    }, 5000);
+
+    // Meetings Search & Filter
+    (function () {
+        const searchInput = document.getElementById('meetingSearch');
+        const filterTabs = document.querySelectorAll('.meetings-filter-tabs .meeting-filter-tab');
+        const cards = document.querySelectorAll('#meetingRecordsMobile .meeting-record-card');
+        const rows = document.querySelectorAll('#meetingsTableWrap .meeting-table-row');
+        const noMatch = document.getElementById('meetingsNoMatch');
+        const mobileWrap = document.getElementById('meetingRecordsMobile');
+        const tableWrap = document.getElementById('meetingsTableWrap');
+
+        let query = '';
+        let filter = 'all';
+
+        function checkMatch(el) {
+            const name = el.getAttribute('data-name') || '';
+            const type = el.getAttribute('data-type') || '';
+            const isLive = el.getAttribute('data-live') === 'true';
+
+            const matchQuery = query === '' || name.indexOf(query) !== -1;
+            let matchFilter = true;
+
+            if (filter === 'live') {
+                matchFilter = isLive;
+            } else if (filter === 'quran') {
+                matchFilter = (type === 'quran');
+            } else if (filter === 'matn') {
+                matchFilter = (type === 'matn');
+            }
+
+            return matchQuery && matchFilter;
+        }
+
+        function filterMeetings() {
+            let visibleCount = 0;
+            cards.forEach(card => {
+                const show = checkMatch(card);
+                card.style.display = show ? '' : 'none';
+                if (show) visibleCount++;
+            });
+            rows.forEach(row => {
+                const show = checkMatch(row);
+                row.style.display = show ? '' : 'none';
+            });
+
+            const total = cards.length || rows.length;
+            const isEmpty = visibleCount === 0 && total > 0;
+            if (noMatch) noMatch.style.display = isEmpty ? 'flex' : 'none';
+            if (mobileWrap) mobileWrap.style.display = isEmpty ? 'none' : '';
+            if (tableWrap) tableWrap.style.display = isEmpty ? 'none' : '';
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                query = this.value.trim().toLowerCase();
+                filterMeetings();
+            });
+        }
+
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', function () {
+                filterTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                filter = this.getAttribute('data-filter') || 'all';
+                filterMeetings();
+            });
+        });
+    })();
 </script>
