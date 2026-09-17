@@ -49,13 +49,21 @@
         </div>
     </div>
 
-
     <!-- Segmented Navigation for Matn Types (All 3 Types Shown on "الكل") -->
     <div class="segmented-nav" id="matnSegmentedNav" role="tablist" aria-label="أقسام أوراد المتون">
         <button type="button" class="segmented-btn active" data-tab="all" onclick="setMatnFilterTab('all', this)">الكل</button>
-        <button type="button" class="segmented-btn" data-tab="memorization" onclick="setMatnFilterTab('memorization', this)">حفظ المتن</button>
-        <button type="button" class="segmented-btn" data-tab="revision" onclick="setMatnFilterTab('revision', this)">مراجعة المتن</button>
-        <button type="button" class="segmented-btn" data-tab="mudarasah" onclick="setMatnFilterTab('mudarasah', this)">مدارسة وضبط</button>
+        <button type="button" class="segmented-btn" data-tab="memorization" onclick="setMatnFilterTab('memorization', this)">
+            <span class="tab-text-full">حفظ المتن</span>
+            <span class="tab-text-short">حفظ</span>
+        </button>
+        <button type="button" class="segmented-btn" data-tab="revision" onclick="setMatnFilterTab('revision', this)">
+            <span class="tab-text-full">مراجعة المتن</span>
+            <span class="tab-text-short">مراجعة</span>
+        </button>
+        <button type="button" class="segmented-btn" data-tab="mudarasah" onclick="setMatnFilterTab('mudarasah', this)">
+            <span class="tab-text-full">مدارسة وضبط</span>
+            <span class="tab-text-short">مدارسة</span>
+        </button>
     </div>
 
     <!-- Form container -->
@@ -105,16 +113,16 @@
                 <div class="chapter-selection-section mb-3" id="matnChapterSection-memorization">
                     <div class="chapter-selection-header d-flex align-items-center justify-content-between mb-1">
                         <label class="compact-label mb-0" for="matnChapterSelect-memorization">
-                            <i class='bx bx-book-open text-muted'></i> الباب أو الموضع من المتن:
+                            <i class='bx bx-book-open text-muted'></i> <span class="label-text-full">الباب أو الموضع من المتن:</span><span class="label-text-short">الباب أو الموضع:</span>
                         </label>
                         <div class="chapter-mode-toggle" id="matnChapterModeToggle-memorization">
                             <button type="button" class="chapter-mode-btn active" id="btnModeSelect-memorization"
                                     onclick="setChapterInputMode('memorization', 'select')" title="اختيار الباب من قائمة أبواب المتن">
-                                <i class='bx bx-list-ul'></i> اختيار الباب
+                                <i class='bx bx-list-ul'></i> <span class="mode-text-full">اختيار الباب</span><span class="mode-text-short">اختيار</span>
                             </button>
                             <button type="button" class="chapter-mode-btn" id="btnModeManual-memorization"
                                     onclick="setChapterInputMode('memorization', 'manual')" title="كتابة اسم الباب أو الموضع يدوياً">
-                                <i class='bx bx-edit'></i> كتابة يدوية
+                                <i class='bx bx-edit'></i> <span class="mode-text-full">كتابة يدوية</span><span class="mode-text-short">يدوي</span>
                             </button>
                         </div>
                     </div>
@@ -129,7 +137,7 @@
                     <!-- وضع الإدخال اليدوي -->
                     <div id="matnChapterInputWrap-memorization" class="chapter-control-wrap" style="display: none;">
                         <input type="text" id="matnChapterName-memorization" class="form-control matn-chapter-input"
-                               placeholder="اكتب اسم الباب أو موضع التسميع (مثال: باب الإعراب)..." />
+                                placeholder="اكتب اسم الباب أو موضع التسميع (مثال: باب الإعراب)..." />
                     </div>
                 </div>
 
@@ -137,8 +145,8 @@
                 <div class="drawer-fields-grid">
                     <div class="field-item">
                         <label class="compact-label" for="matn-amount-memorization">المقدار المحدد:</label>
-                        <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <div class="stepper-input-container" style="max-width: 170px;">
+                        <div class="matn-amount-control-row">
+                            <div class="stepper-input-container">
                                 <button type="button" class="stepper-btn stepper-btn-minus" onclick="stepMatnAmount('memorization', -1)" title="نقصان المقدار">
                                     <i class='bx bx-minus'></i>
                                 </button>
@@ -148,7 +156,7 @@
                                     <i class='bx bx-plus'></i>
                                 </button>
                             </div>
-                            <div class="amount-quick-chips mt-0" id="matn-amountChips-memorization">
+                            <div class="amount-quick-chips" id="matn-amountChips-memorization">
                                 <button type="button" class="amount-chip" onclick="setQuickAmount('memorization', 1)">1</button>
                                 <button type="button" class="amount-chip" onclick="setQuickAmount('memorization', 2)">2</button>
                                 <button type="button" class="amount-chip" onclick="setQuickAmount('memorization', 3)">3</button>
@@ -299,16 +307,16 @@
                 <div class="chapter-selection-section mb-3" id="matnChapterSection-revision">
                     <div class="chapter-selection-header d-flex align-items-center justify-content-between mb-1">
                         <label class="compact-label mb-0" for="matnChapterSelect-revision">
-                            <i class='bx bx-book-open text-muted'></i> الباب أو الموضع من المتن:
+                            <i class='bx bx-book-open text-muted'></i> <span class="label-text-full">الباب أو الموضع من المتن:</span><span class="label-text-short">الباب أو الموضع:</span>
                         </label>
                         <div class="chapter-mode-toggle" id="matnChapterModeToggle-revision">
                             <button type="button" class="chapter-mode-btn active" id="btnModeSelect-revision"
                                     onclick="setChapterInputMode('revision', 'select')" title="اختيار الباب من قائمة أبواب المتن">
-                                <i class='bx bx-list-ul'></i> اختيار الباب
+                                <i class='bx bx-list-ul'></i> <span class="mode-text-full">اختيار الباب</span><span class="mode-text-short">اختيار</span>
                             </button>
                             <button type="button" class="chapter-mode-btn" id="btnModeManual-revision"
                                     onclick="setChapterInputMode('revision', 'manual')" title="كتابة اسم الباب أو الموضع يدوياً">
-                                <i class='bx bx-edit'></i> كتابة يدوية
+                                <i class='bx bx-edit'></i> <span class="mode-text-full">كتابة يدوية</span><span class="mode-text-short">يدوي</span>
                             </button>
                         </div>
                     </div>
@@ -323,7 +331,7 @@
                     <!-- وضع الإدخال اليدوي -->
                     <div id="matnChapterInputWrap-revision" class="chapter-control-wrap" style="display: none;">
                         <input type="text" id="matnChapterName-revision" class="form-control matn-chapter-input"
-                               placeholder="اكتب اسم الباب أو موضع التسميع (مثال: باب أحكام النون)..." />
+                                placeholder="اكتب اسم الباب أو موضع التسميع (مثال: باب أحكام النون)..." />
                     </div>
                 </div>
 
@@ -331,8 +339,8 @@
                 <div class="drawer-fields-grid">
                     <div class="field-item">
                         <label class="compact-label" for="matn-amount-revision">المقدار المحدد:</label>
-                        <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <div class="stepper-input-container" style="max-width: 170px;">
+                        <div class="matn-amount-control-row">
+                            <div class="stepper-input-container">
                                 <button type="button" class="stepper-btn stepper-btn-minus" onclick="stepMatnAmount('revision', -1)" title="نقصان المقدار">
                                     <i class='bx bx-minus'></i>
                                 </button>
@@ -342,7 +350,7 @@
                                     <i class='bx bx-plus'></i>
                                 </button>
                             </div>
-                            <div class="amount-quick-chips mt-0" id="matn-amountChips-revision">
+                            <div class="amount-quick-chips" id="matn-amountChips-revision">
                                 <button type="button" class="amount-chip" onclick="setQuickAmount('revision', 3)">3</button>
                                 <button type="button" class="amount-chip" onclick="setQuickAmount('revision', 5)">5</button>
                                 <button type="button" class="amount-chip" onclick="setQuickAmount('revision', 10)">10</button>
@@ -493,16 +501,16 @@
                 <div class="chapter-selection-section mb-3" id="matnChapterSection-mudarasah">
                     <div class="chapter-selection-header d-flex align-items-center justify-content-between mb-1">
                         <label class="compact-label mb-0" for="matnChapterSelect-mudarasah">
-                            <i class='bx bx-book-open text-muted'></i> الباب أو الموضع من المتن:
+                            <i class='bx bx-book-open text-muted'></i> <span class="label-text-full">الباب أو الموضع من المتن:</span><span class="label-text-short">الباب أو الموضع:</span>
                         </label>
                         <div class="chapter-mode-toggle" id="matnChapterModeToggle-mudarasah">
                             <button type="button" class="chapter-mode-btn active" id="btnModeSelect-mudarasah"
                                     onclick="setChapterInputMode('mudarasah', 'select')" title="اختيار الباب من قائمة أبواب المتن">
-                                <i class='bx bx-list-ul'></i> اختيار الباب
+                                <i class='bx bx-list-ul'></i> <span class="mode-text-full">اختيار الباب</span><span class="mode-text-short">اختيار</span>
                             </button>
                             <button type="button" class="chapter-mode-btn" id="btnModeManual-mudarasah"
                                     onclick="setChapterInputMode('mudarasah', 'manual')" title="كتابة اسم الباب أو الموضع يدوياً">
-                                <i class='bx bx-edit'></i> كتابة يدوية
+                                <i class='bx bx-edit'></i> <span class="mode-text-full">كتابة يدوية</span><span class="mode-text-short">يدوي</span>
                             </button>
                         </div>
                     </div>
@@ -517,7 +525,7 @@
                     <!-- وضع الإدخال اليدوي -->
                     <div id="matnChapterInputWrap-mudarasah" class="chapter-control-wrap" style="display: none;">
                         <input type="text" id="matnChapterName-mudarasah" class="form-control matn-chapter-input"
-                               placeholder="اكتب اسم الباب أو موضع التسميع (مثال: باب مخارج الحروف)..." />
+                                placeholder="اكتب اسم الباب أو موضع التسميع (مثال: باب مخارج الحروف)..." />
                     </div>
                 </div>
 
@@ -525,8 +533,8 @@
                 <div class="drawer-fields-grid">
                     <div class="field-item">
                         <label class="compact-label" for="matn-amount-mudarasah">المقدار المحدد:</label>
-                        <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <div class="stepper-input-container" style="max-width: 170px;">
+                        <div class="matn-amount-control-row">
+                            <div class="stepper-input-container">
                                 <button type="button" class="stepper-btn stepper-btn-minus" onclick="stepMatnAmount('mudarasah', -1)" title="نقصان المقدار">
                                     <i class='bx bx-minus'></i>
                                 </button>
@@ -536,7 +544,7 @@
                                     <i class='bx bx-plus'></i>
                                 </button>
                             </div>
-                            <div class="amount-quick-chips mt-0" id="matn-amountChips-mudarasah">
+                            <div class="amount-quick-chips" id="matn-amountChips-mudarasah">
                                 <button type="button" class="amount-chip" onclick="setQuickAmount('mudarasah', 3)">3</button>
                                 <button type="button" class="amount-chip" onclick="setQuickAmount('mudarasah', 6)">6</button>
                                 <button type="button" class="amount-chip" onclick="setQuickAmount('mudarasah', 10)">10</button>
@@ -666,10 +674,10 @@
         <!-- Sticky Drawer Footer (Identical Responsive Layout to _AssignWirdModal) -->
         <div class="drawer-footer">
             <button type="button" class="btn btn-outline drawer-prev-btn" id="matnPrevBtn" onclick="navigateMatnStudent(-1)" title="الطالب السابق">
-                <i class='bx bx-chevron-right'></i> السابق
+                <i class='bx bx-chevron-right'></i> <span>السابق</span>
             </button>
             <button type="button" class="btn btn-outline drawer-save-btn" id="matnSaveOnlyBtn" onclick="submitMatnAssignment(false)">
-                <i class='bx bx-check'></i> حفظ فقط
+                <i class='bx bx-check'></i> <span>حفظ</span><span class="save-only-text-full"> فقط</span>
             </button>
             <button type="button" class="btn btn-primary drawer-save-next-btn" id="matnSaveNextBtn" onclick="submitMatnAssignment(true)">
                 <span id="matnSaveNextBtnText">حفظ والتالي</span> <i class='bx bx-chevron-left'></i>
