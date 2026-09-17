@@ -125,6 +125,7 @@ namespace Hafiz.Areas.Teacher.Controllers
             ViewBag.IsMatnClass = isMatnClass;
             ViewBag.MatnCountsByStudent = matnCountsByStudent;
             ViewBag.StudyProgramName = classDto?.StudyProgramName;
+            ViewBag.AssignedMatnTitle = classDto?.MatnTitle ?? classDto?.StudyProgramName;
             ViewBag.ClassDto = classDto;
             ViewBag.Search = search;
             ViewBag.Level = level;

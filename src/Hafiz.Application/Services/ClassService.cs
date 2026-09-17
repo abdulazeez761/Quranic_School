@@ -98,6 +98,7 @@ namespace Hafiz.Services
                     InstituteId = c.InstituteId,
                     StudyProgramId = c.StudyProgramId,
                     StudyProgramName = c.StudyProgram?.Name,
+                    MatnTitle = c.StudyProgram?.Matn?.Title,
                     ProgramType = c.StudyProgram?.Type
                 })
                 .ToList();
@@ -151,6 +152,7 @@ namespace Hafiz.Services
                 InstituteId = classFromDb.InstituteId,
                 StudyProgramId = classFromDb.StudyProgramId,
                 StudyProgramName = classFromDb.StudyProgram?.Name,
+                MatnTitle = classFromDb.StudyProgram?.Matn?.Title,
                 ProgramType = classFromDb.StudyProgram?.Type
             };
 
@@ -226,6 +228,7 @@ namespace Hafiz.Services
                     InstituteId = c.InstituteId,
                     StudyProgramId = c.StudyProgramId,
                     StudyProgramName = c.StudyProgram?.Name,
+                    MatnTitle = c.StudyProgram?.Matn?.Title,
                     ProgramType = c.StudyProgram?.Type
                 })
                 .ToList();

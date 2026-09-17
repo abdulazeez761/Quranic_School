@@ -147,6 +147,8 @@ public class MatnController : Controller
         var assignments = await _assignmentService.GetByClassAndDateAsync(selectedClass.Id, targetDate);
 
         ViewBag.Class = cls;
+        ViewBag.StudyProgramName = cls.StudyProgramName;
+        ViewBag.AssignedMatnTitle = cls.MatnTitle ?? cls.StudyProgramName;
         ViewBag.TargetDate = targetDate;
 
         return View(assignments);

@@ -55,6 +55,7 @@ namespace Hafiz.Repositories
         {
             return await _context
                 .Classes.Include(c => c.StudyProgram)
+                    .ThenInclude(sp => sp.Matn)
                 .Include(c => c.Teachers)
                 .ThenInclude(t => t.TeacherInfo)
                 .Include(c => c.Students)
@@ -66,6 +67,7 @@ namespace Hafiz.Repositories
             var query = _context
                 .Classes.IgnoreQueryFilters()
                 .Include(c => c.StudyProgram)
+                    .ThenInclude(sp => sp.Matn)
                 .Include(c => c.Teachers)
                 .ThenInclude(t => t.TeacherInfo)
                 .Include(c => c.Students)

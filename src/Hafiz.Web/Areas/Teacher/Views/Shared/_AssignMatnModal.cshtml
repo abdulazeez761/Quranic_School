@@ -2,242 +2,264 @@
 @using Hafiz.Models
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
-<!-- Load Core Drawer Styles -->
+<!-- Load Shared, Drawer & Matn Styles -->
 <link rel="stylesheet" href="~/css/teacher/shared.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/teacher/drawer.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/teacher/modals/assignMatnModal.css" asp-append-version="true" />
 
-<style>
-    .matn-type-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-    }
-    .matn-type-card-btn {
-        border: 1.5px solid #e2e8f0;
-        border-radius: 10px;
-        padding: 9px 8px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 4px;
-        cursor: pointer;
-        background: #ffffff;
-        transition: all 0.22s ease;
-        font-weight: 700;
-        font-size: 0.82rem;
-        color: #475569;
-        text-align: center;
-        width: 100%;
-    }
-    .matn-type-card-btn i {
-        font-size: 1.3rem;
-        transition: transform 0.2s ease;
-    }
-    .matn-type-card-btn:hover {
-        border-color: #93c5fd;
-        background: #f8fafc;
-        transform: translateY(-1px);
-    }
-    .matn-type-card-btn.active[data-value="1"] {
-        border-color: #10b981;
-        background: rgba(16, 185, 129, 0.08);
-        color: #059669;
-        box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
-    }
-    .matn-type-card-btn.active[data-value="2"] {
-        border-color: #2563eb;
-        background: rgba(37, 99, 235, 0.08);
-        color: #2563eb;
-        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-    }
-    .matn-type-card-btn.active[data-value="3"] {
-        border-color: #8b5cf6;
-        background: rgba(139, 92, 246, 0.08);
-        color: #7c3aed;
-        box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
-    }
-    .matn-range-connector {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #94a3b8;
-        font-size: 1.1rem;
-        height: 100%;
-        padding-top: 20px;
-    }
-</style>
-
-<!-- Backdrop overlay for Matn Drawer & Mobile Bottom Sheet -->
+<!-- Backdrop overlay for Matn Drawer & Mobile Modal -->
 <div class="drawer-backdrop" id="matnDrawerBackdrop" onclick="closeAssignMatnDrawer()"></div>
 
-<!-- Offcanvas Drawer Panel / Mobile Modal -->
-<div class="drawer-panel" id="matnDrawerPanel" role="dialog" aria-modal="true" aria-labelledby="matnDrawerStudentName">
+<div class="drawer-panel" id="matnDrawerPanel" role="dialog" aria-modal="true" aria-labelledby="matnDrawerStudentName"
+     data-assigned-matn="@(ViewBag.AssignedMatnTitle ?? "")"
+     data-program-name="@(ViewBag.StudyProgramName ?? "المتون العلمية")">
 
     <!-- Touch Grab Handle for Mobile Phones -->
     <div class="drawer-mobile-handle" onclick="closeAssignMatnDrawer()" title="سحب أو نقر للإغلاق"></div>
 
     <!-- Drawer Header: Student Identity Profile -->
-    <div class="drawer-header" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-bottom: 1px solid #e2e8f0; padding: 14px 20px;">
+    <div class="drawer-header">
         <div class="drawer-student-profile">
-            <div class="drawer-student-avatar" id="matnDrawerAvatar" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; width: 44px; height: 44px; font-size: 1.2rem; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);">
-                <i class='bx bx-bookmarks'></i>
+            <div class="drawer-student-avatar" id="matnDrawerAvatar" style="background: linear-gradient(135deg, var(--matn-primary), var(--matn-primary-dark));">
+                <i class='bx bxs-book-reader'></i>
             </div>
             <div class="drawer-student-meta">
-                <h3 id="matnDrawerStudentName" style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0;">اسم الطالب</h3>
-                <span class="drawer-student-subtitle" style="display: flex; align-items: center; gap: 6px; margin-top: 3px;">
-                    <span id="matnDrawerClassName" style="color: #64748b; font-size: 0.8rem;">@(ViewBag.ClassName ?? "حلقة المتون")</span>
+                <h3 id="matnDrawerStudentName">اسم الطالب</h3>
+                <span class="drawer-student-subtitle">
+                    <span id="matnDrawerSubtitle">طالب 1 من 1</span>
                     <span class="header-dot text-muted">•</span>
-                    <span class="badge" id="matnDrawerProgramBadge" style="background: rgba(37, 99, 235, 0.1); color: #2563eb; font-size: 0.72rem; padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(37, 99, 235, 0.2);">
-                        @(ViewBag.StudyProgramName ?? "المتون العلمية")
+                    <span class="badge" id="matnDrawerProgramBadge" style="background: rgba(111, 161, 90, 0.12); color: #436b32; font-size: 0.74rem; padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(111, 161, 90, 0.25); font-weight: 600;">
+                        <i class='bx bx-book-bookmark' style="font-size: 0.85rem; vertical-align: middle; margin-left: 2px;"></i>
+                        <span id="matnDrawerProgramBadgeText">@(ViewBag.StudyProgramName ?? "المتون العلمية")</span>
+                    </span>
+                    <span class="badge" id="matnDrawerMatnBadge" style="background: rgba(191, 145, 59, 0.12); color: #8c6418; font-size: 0.74rem; padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(191, 145, 59, 0.28); font-weight: 700;">
+                        <i class='bx bxs-book-open' style="font-size: 0.85rem; vertical-align: middle; margin-left: 2px;"></i>
+                        <span id="matnDrawerMatnBadgeText">@(ViewBag.AssignedMatnTitle ?? "المتن المقرر")</span>
                     </span>
                 </span>
             </div>
         </div>
 
-        <button type="button" class="drawer-close-btn" onclick="closeAssignMatnDrawer()" title="إغلاق" style="border-radius: 8px; width: 34px; height: 34px;">
-            <i class='bx bx-x' style="font-size: 1.3rem;"></i>
+        <div class="d-flex align-items-center gap-2">
+            <!-- Close Button -->
+            <button type="button" class="drawer-close-btn" onclick="closeAssignMatnDrawer()" title="إغلاق (Esc)">
+                <i class='bx bx-x'></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Quick 1-Click Action Buttons for Matn (Unified with _AssignWirdModal) -->
+    <div class="drawer-quick-actions" id="matnQuickActionsBar">
+        <button type="button" class="btn btn-quick-action" id="btnQuickContinueMatn" onclick="autoContinueMatnRecitation(this)"
+                title="استكمال نطاق المتن تلقائياً للتسميع التالي">
+            <i class='bx bx-sync' style="color: #059669;"></i>
+            <span>استكمال من التسميع السابق</span>
+        </button>
+        <button type="button" class="btn btn-quick-action" id="btnQuickEvaluateAll" onclick="setAllMatnRatingsExcellent()"
+                title="رصد تقييم ممتاز لجميع الأوراد المفعلة بنقرة واحدة">
+            <i class='bx bxs-star' style="color: #eab308;"></i>
+            <span>رصد الكل (ممتاز)</span>
         </button>
     </div>
 
+    <!-- Segmented Navigation for Matn Types (All 3 Types Shown on "الكل") -->
+    <div class="segmented-nav" id="matnSegmentedNav" role="tablist" aria-label="أقسام أوراد المتون">
+        <button type="button" class="segmented-btn active" data-tab="all" onclick="setMatnFilterTab('all', this)">الكل</button>
+        <button type="button" class="segmented-btn" data-tab="memorization" onclick="setMatnFilterTab('memorization', this)">حفظ المتن</button>
+        <button type="button" class="segmented-btn" data-tab="revision" onclick="setMatnFilterTab('revision', this)">مراجعة المتن</button>
+        <button type="button" class="segmented-btn" data-tab="mudarasah" onclick="setMatnFilterTab('mudarasah', this)">مدارسة وضبط</button>
+    </div>
+
     <!-- Form container -->
-    <form id="matnAssignmentForm" onsubmit="event.preventDefault(); submitMatnAssignment();"
+    <form id="matnAssignmentForm" onsubmit="event.preventDefault(); submitMatnAssignment(false);"
           style="display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden;">
-        
+
         <input type="hidden" id="matnStudentId" name="StudentId" />
         <input type="hidden" id="matnClassId" name="ClassId" value="@Context.Request.Cookies["selectedClassId"]" />
-        <input type="hidden" id="matnPerformanceType" name="PerformanceType" value="1" />
-        <input type="hidden" id="matnUnit" name="Unit" value="1" />
-        <input type="hidden" id="matnStatus" name="Status" value="5" />
 
-        <!-- Drawer Body -->
-        <div class="drawer-body" style="padding: 18px 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px;">
+        <!-- Drawer Body containing all 3 Wird Cards -->
+        <div class="drawer-body" id="matnDrawerBody">
 
-            <!-- Header Card for Matn Recitation -->
-            <div style="border-radius: 14px; background: #ffffff; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); border: 1px solid #e2e8f0;">
-                
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="d-flex align-items-center gap-2" style="color: #2563eb; font-weight: 800; font-size: 0.95rem;">
-                        <div style="width: 28px; height: 28px; border-radius: 6px; background: rgba(37, 99, 235, 0.1); display: flex; align-items: center; justify-content: center;">
-                            <i class='bx bx-edit'></i>
-                        </div>
-                        <span>رصد إنجاز المتن</span>
+            <!-- Student Selection (When Opened Globally) -->
+            <div id="matnStudentSelectContainer" style="display: none; background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 6px;">
+                <label class="compact-label mb-1 d-block" style="font-size: 0.82rem;">
+                    <i class='bx bx-user me-1 text-primary'></i> اختر الطالب من الحلقة: <span class="text-danger">*</span>
+                </label>
+                <select id="matnStudentSelectDropdown" class="form-select form-control" onchange="onMatnStudentDropdownChange(this)"
+                        style="border-radius: var(--radius-md); font-weight: 600;">
+                    <option value="">-- اختر الطالب من القائمة --</option>
+                </select>
+            </div>
+
+            <!-- ===================================================================
+                 CARD 1: حفظ المتن الجديد (Memorization) - Soft Sage Theme
+                 =================================================================== -->
+            <div class="drawer-wird-box type-memorization" id="matn-wbox-memorization" data-type="memorization">
+                <!-- Header -->
+                <div class="drawer-wird-header">
+                    <div class="drawer-wird-title">
+                        <i class='bx bxs-book-bookmark' style="font-size: 1.25rem;"></i>
+                        <span>حفظ المتن الجديد</span>
                     </div>
-                    <div>
-                        <input type="date" id="matnAssignedDate" class="form-control form-control-sm"
-                               value="@DateTime.Today.ToString("yyyy-MM-dd")" style="font-size: 0.82rem; width: 140px; border-radius: 8px; border: 1px solid #cbd5e1;" />
-                    </div>
-                </div>
-
-                <!-- 0. اختيار الطالب عند فتح النافذة بدون تحديد مسبق -->
-                <div class="mb-3" id="matnStudentSelectContainer" style="display: none;">
-                    <label class="compact-label fw-bold mb-1 d-block" style="font-size: 0.82rem; color: #1e293b;">
-                        <i class='bx bx-user me-1 text-primary'></i> اختر الطالب: <span class="text-danger">*</span>
-                    </label>
-                    <select id="matnStudentSelectDropdown" class="form-select form-select-sm" onchange="onMatnStudentDropdownChange(this)" style="border-radius: 8px; border: 1.5px solid #93c5fd; padding: 7px 12px; font-weight: 600;">
-                        <option value="">-- اختر الطالب من القائمة --</option>
-                    </select>
-                </div>
-
-                <!-- 1. نوع الأداء (حفظ جديد / مراجعة / مدارسة) كبطاقات تفاعلية -->
-                <div class="mb-3">
-                    <label class="compact-label fw-bold mb-2 d-block" style="font-size: 0.82rem; color: #334155;">
-                        <i class='bx bx-layer me-1 text-primary'></i> مسار التسميع:
-                    </label>
-                    <div class="matn-type-grid" role="group" aria-label="نوع الأداء">
-                        <button type="button" class="matn-type-card-btn matn-perf-btn active" data-value="1" onclick="setMatnPerformanceType(1, this)">
-                            <i class='bx bx-plus-circle' style="color: #10b981;"></i>
-                            <span>حفظ جديد</span>
-                        </button>
-                        <button type="button" class="matn-type-card-btn matn-perf-btn" data-value="2" onclick="setMatnPerformanceType(2, this)">
-                            <i class='bx bx-revision' style="color: #2563eb;"></i>
-                            <span>مراجعة</span>
-                        </button>
-                        <button type="button" class="matn-type-card-btn matn-perf-btn" data-value="3" onclick="setMatnPerformanceType(3, this)">
-                            <i class='bx bx-book-reader' style="color: #8b5cf6;"></i>
-                            <span>مدارسة</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- 2. وحدة القياس والمقدار المنجز -->
-                <div class="row g-2 mb-3">
-                    <div class="col-sm-6">
-                        <label class="compact-label fw-bold mb-1 d-block" style="font-size: 0.8rem; color: #334155;">
-                            وحدة القياس:
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="wird-status-label" id="matn-wstatus-memorization" style="font-size: 0.74rem; font-weight: 700; color: #16a34a;">مفعل</span>
+                        <label class="switch" style="transform: scale(0.8); transform-origin: left center;">
+                            <input type="checkbox" id="matn-wtoggle-memorization" checked onchange="toggleMatnCard('memorization', this.checked)">
+                            <span class="switch-slider"></span>
                         </label>
-                        <select id="matnUnitSelect" class="form-select form-select-sm" onchange="setMatnUnit(this.value)" style="border-radius: 8px; padding: 7px 10px; border: 1px solid #cbd5e1;">
-                            <option value="1" selected>أبيات منظومات</option>
-                            <option value="2">سطور</option>
-                            <option value="3">صفحات</option>
-                            <option value="4">أبواب / فصول</option>
-                            <option value="5">أحاديث نبوية</option>
+                    </div>
+                </div>
+
+                <!-- المعرف المخفي للمتن المحدد للبرنامج التعليمي -->
+                <input type="hidden" id="matnTitle-memorization" value="" />
+
+                <!-- الباب / الموضع من المتن (بنية تبديل نظيفة تمنع التكدس نهائياً) -->
+                <div class="chapter-selection-section mb-3" id="matnChapterSection-memorization">
+                    <div class="d-flex align-items-center justify-content-between mb-1">
+                        <label class="compact-label mb-0" for="matnChapterSelect-memorization">
+                            <i class='bx bx-book-open text-muted'></i> الباب / الموضع من المتن:
+                        </label>
+                        <button type="button" class="btn-chapter-custom-toggle" id="matnChapterToggleBtn-memorization"
+                                onclick="toggleManualChapterEntry('memorization')" title="كتابة موضع أو باب مخصص">
+                            <i class='bx bx-edit-alt'></i> كتابة مخصصة
+                        </button>
+                    </div>
+
+                    <!-- Mode A: Dropdown from Predefined List -->
+                    <div id="matnChapterSelectWrap-memorization" class="chapter-control-wrap">
+                        <select id="matnChapterSelect-memorization" class="form-select form-control matn-chapter-select"
+                                onchange="onMatnChapterSelectChange('memorization', this.value)">
                         </select>
                     </div>
-                    <div class="col-sm-6">
-                        <label class="compact-label fw-bold mb-1 d-block" style="font-size: 0.8rem; color: #334155;">
-                            الكمية المنجزة: <span class="text-danger">*</span>
-                        </label>
-                        <input type="number" step="0.5" min="0.5" id="matnAmount" class="form-control form-control-sm"
-                               placeholder="مثلاً: 10" required style="border-radius: 8px; font-weight: 800; font-size: 0.95rem; border: 1.5px solid #2563eb; color: #1e293b; padding: 6px 12px;" />
-                    </div>
-                </div>
 
-                <!-- 3. تفاصيل موضع التسميع (اسم الباب، من رقم، إلى رقم) -->
-                <div class="mb-3">
-                    <label class="compact-label fw-bold mb-1 d-block" style="font-size: 0.8rem; color: #334155;">
-                        <i class='bx bx-book-bookmark me-1 text-muted'></i> اسم الباب / الفصل (اختياري):
-                    </label>
-                    <input type="text" id="matnChapterName" class="form-control form-control-sm"
-                           placeholder="مثال: باب أحكام النون الساكنة، باب الإعراب..." style="border-radius: 8px; border: 1px solid #cbd5e1; padding: 7px 12px;" />
-                </div>
-
-                <div class="row g-2 mb-3 align-items-center">
-                    <div class="col-5">
-                        <label class="compact-label fw-bold mb-1 d-block" style="font-size: 0.8rem; color: #334155;">
-                            من رقم:
-                        </label>
-                        <input type="number" id="matnFromNumber" class="form-control form-control-sm text-center" placeholder="مثلاً: 1" style="border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 700;" />
-                    </div>
-                    <div class="col-2 text-center">
-                        <div class="matn-range-connector">
-                            <i class='bx bx-left-arrow-alt'></i>
+                    <!-- Mode B: Direct Custom Text Input -->
+                    <div id="matnChapterInputWrap-memorization" class="chapter-control-wrap" style="display: none;">
+                        <div class="input-with-return-btn">
+                            <input type="text" id="matnChapterName-memorization" class="form-control"
+                                   placeholder="اكتب موضع التسميع أو اسم الباب..." />
+                            <button type="button" class="btn btn-return-chapters" id="matnReturnListBtn-memorization"
+                                    onclick="returnToChapterList('memorization')" title="العودة لاختيار باب من القائمة">
+                                <i class='bx bx-list-ul'></i> القائمة
+                            </button>
                         </div>
                     </div>
-                    <div class="col-5">
-                        <label class="compact-label fw-bold mb-1 d-block" style="font-size: 0.8rem; color: #334155;">
-                            إلى رقم:
-                        </label>
-                        <input type="number" id="matnToNumber" class="form-control form-control-sm text-center" placeholder="مثلاً: 15" style="border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 700;" />
+                </div>
+
+                <!-- المقدار والوحدة مع أزرار الزيادة والنقصان اللمسية والشرائح السريعة -->
+                <div class="drawer-fields-grid">
+                    <div class="field-item">
+                        <label class="compact-label" for="matn-amount-memorization">المقدار المحدد:</label>
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <div class="stepper-input-container" style="max-width: 170px;">
+                                <button type="button" class="stepper-btn stepper-btn-minus" onclick="stepMatnAmount('memorization', -1)" title="نقصان المقدار">
+                                    <i class='bx bx-minus'></i>
+                                </button>
+                                <input type="number" step="1" min="1" class="form-control form-control-prominent text-center stepper-input"
+                                       id="matn-amount-memorization" value="1" placeholder="المقدار" oninput="onMatnAmountInput('memorization', this.value)">
+                                <button type="button" class="stepper-btn stepper-btn-plus" onclick="stepMatnAmount('memorization', 1)" title="زيادة المقدار">
+                                    <i class='bx bx-plus'></i>
+                                </button>
+                            </div>
+                            <div class="amount-quick-chips mt-0" id="matn-amountChips-memorization">
+                                <button type="button" class="amount-chip" onclick="setQuickAmount('memorization', 1)">1</button>
+                                <button type="button" class="amount-chip" onclick="setQuickAmount('memorization', 2)">2</button>
+                                <button type="button" class="amount-chip" onclick="setQuickAmount('memorization', 3)">3</button>
+                                <button type="button" class="amount-chip" onclick="setQuickAmount('memorization', 5)">5</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field-item">
+                        <label class="compact-label">الوحدة المقررة:</label>
+                        <div class="unit-radio-group" id="matn-unitGroup-memorization" role="radiogroup">
+                            <label class="unit-radio-option" id="matn-unitOpt-memorization-1" onclick="setMatnUnit('memorization', 1, 'أبيات', 'بيت')">
+                                <input type="radio" name="matn-unit-memorization" value="1">
+                                <span class="unit-radio-circle"></span>
+                                <span>أبيات</span>
+                            </label>
+                            <label class="unit-radio-option" id="matn-unitOpt-memorization-5" onclick="setMatnUnit('memorization', 5, 'أحاديث', 'حديث')">
+                                <input type="radio" name="matn-unit-memorization" value="5">
+                                <span class="unit-radio-circle"></span>
+                                <span>أحاديث</span>
+                            </label>
+                            <label class="unit-radio-option is-selected" id="matn-unitOpt-memorization-4" onclick="setMatnUnit('memorization', 4, 'أبواب', 'باب')">
+                                <input type="radio" name="matn-unit-memorization" value="4" checked>
+                                <span class="unit-radio-circle"></span>
+                                <span>أبواب</span>
+                            </label>
+                            <label class="unit-radio-option" id="matn-unitOpt-memorization-3" onclick="setMatnUnit('memorization', 3, 'صفحات', 'ص')">
+                                <input type="radio" name="matn-unit-memorization" value="3">
+                                <span class="unit-radio-circle"></span>
+                                <span>صفحات</span>
+                            </label>
+                            <label class="unit-radio-option" id="matn-unitOpt-memorization-2" onclick="setMatnUnit('memorization', 2, 'سطور', 'سطر')">
+                                <input type="radio" name="matn-unit-memorization" value="2">
+                                <span class="unit-radio-circle"></span>
+                                <span>سطور</span>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
-                <!-- 4. شريط التقييم -->
-                <div class="rating-strip-block mb-3">
-                    <label class="compact-label fw-bold mb-2 d-block" style="font-size: 0.82rem; color: #334155;">
-                        <i class='bx bx-award me-1 text-warning'></i> التقييم وضبط المتن:
-                    </label>
-                    <div class="rating-pills-row" style="display: flex; gap: 6px; flex-wrap: wrap;">
-                        <button type="button" class="rating-pill-btn rate-excellent active" data-status="5" onclick="setMatnRatingStatus(5, this)">
+                <!-- نطاق المتن المتصل (من ← إلى) مع شارة المجموع التلقائية -->
+                <div class="drawer-range-connected">
+                    <div class="range-box">
+                        <label class="compact-label" id="matn-fromLabel-memorization">من (باب):</label>
+                        <input type="number" class="form-control form-control-prominent text-center" id="matn-fromNumber-memorization"
+                               value="1" placeholder="من" oninput="calculateMatnAmount('memorization')">
+                    </div>
+                    <div class="range-connector-indicator">
+                        <i class='bx bx-left-arrow-alt'></i>
+                        <span class="range-total-pill" id="matn-rangeBadge-memorization">1 باب</span>
+                    </div>
+                    <div class="range-box">
+                        <label class="compact-label" id="matn-toLabel-memorization">إلى (باب):</label>
+                        <input type="number" class="form-control form-control-prominent text-center" id="matn-toNumber-memorization"
+                               value="1" placeholder="إلى" oninput="calculateMatnAmount('memorization')">
+                    </div>
+                </div>
+
+                <!-- التقييم الخماسي اللمسي -->
+                <div class="wird-rating-group" id="matn-ratingGroup-memorization">
+                    <div class="wird-rating-header">
+                        <div class="wird-rating-title">
+                            <i class='bx bxs-award'></i>
+                            <span>تقييم تسميع المتن وإتقانه:</span>
+                        </div>
+                        <div class="wird-rating-header-actions">
+                            <span class="wird-rating-badge rate-excellent" id="matn-ratingBadge-memorization">متقن تماماً</span>
+                            <button type="button" class="btn-rating-clear" id="matn-ratingClear-memorization"
+                                    style="display: none;" onclick="clearMatnRating('memorization')" title="إلغاء التقييم">
+                                <i class='bx bx-x'></i> مسح
+                            </button>
+                        </div>
+                    </div>
+                    <div class="wird-rating-options-grid" role="radiogroup">
+                        <button type="button" class="rating-pill-btn rate-excellent is-selected" data-status="5"
+                                onclick="setMatnRating('memorization', 5, 'excellent', 'متقن تماماً')">
                             <span class="rating-icon"><i class='bx bxs-star'></i></span>
                             <span class="rating-text">ممتاز</span>
-                            <span class="rating-hint">متقن تماماً</span>
+                            <span class="rating-hint">إتقان تام</span>
                         </button>
-                        <button type="button" class="rating-pill-btn rate-very-good" data-status="4" onclick="setMatnRatingStatus(4, this)">
+                        <button type="button" class="rating-pill-btn rate-very_good" data-status="4"
+                                onclick="setMatnRating('memorization', 4, 'very_good', 'أخطاء يسيرة')">
                             <span class="rating-icon"><i class='bx bxs-like'></i></span>
                             <span class="rating-text">جيد جداً</span>
                             <span class="rating-hint">أخطاء يسيرة</span>
                         </button>
-                        <button type="button" class="rating-pill-btn rate-good" data-status="3" onclick="setMatnRatingStatus(3, this)">
+                        <button type="button" class="rating-pill-btn rate-good" data-status="3"
+                                onclick="setMatnRating('memorization', 3, 'good', 'يحتاج ضبطاً')">
                             <span class="rating-icon"><i class='bx bx-check-circle'></i></span>
                             <span class="rating-text">جيد</span>
                             <span class="rating-hint">يحتاج ضبطاً</span>
                         </button>
-                        <button type="button" class="rating-pill-btn rate-acceptable" data-status="2" onclick="setMatnRatingStatus(2, this)">
+                        <button type="button" class="rating-pill-btn rate-acceptable" data-status="2"
+                                onclick="setMatnRating('memorization', 2, 'acceptable', 'تنبيهات')">
                             <span class="rating-icon"><i class='bx bx-minus-circle'></i></span>
                             <span class="rating-text">مقبول</span>
-                            <span class="rating-hint">تنبيهات كثيرة</span>
+                            <span class="rating-hint">تنبيهات</span>
                         </button>
-                        <button type="button" class="rating-pill-btn rate-weak" data-status="1" onclick="setMatnRatingStatus(1, this)">
+                        <button type="button" class="rating-pill-btn rate-weak" data-status="1"
+                                onclick="setMatnRating('memorization', 1, 'weak', 'إعادة')">
                             <span class="rating-icon"><i class='bx bx-error-circle'></i></span>
                             <span class="rating-text">ضعيف</span>
                             <span class="rating-hint">إعادة</span>
@@ -245,237 +267,446 @@
                     </div>
                 </div>
 
-                <!-- 5. ملاحظات المعلم وورد قادم -->
-                <div class="row g-2 align-items-center">
-                    <div class="col">
-                        <input type="text" class="form-control form-control-sm" id="matnNote"
-                               placeholder="ملاحظات المعلم على الضبط أو النطق (اختياري)..." style="font-size: 0.82rem; border-radius: 8px; border: 1px solid #cbd5e1; padding: 7px 12px;">
+                <!-- الملاحظات مع شرائح التوجيه السريعة والورد القادم -->
+                <div class="drawer-bottom-row">
+                    <div style="flex: 1; min-width: 0;">
+                        <input type="text" class="form-control" id="matnNote-memorization"
+                               placeholder="ملاحظة أو توجيه للطالب (اختياري)..." style="font-size: 0.82rem; height: 38px; border-radius: var(--radius-md);">
+                        <div class="feedback-quick-chips">
+                            <button type="button" class="feedback-chip" onclick="appendMatnNote('memorization', 'أحسنت، إتقان ممتاز وبدون تردد')">🌟 ممتاز</button>
+                            <button type="button" class="feedback-chip" onclick="appendMatnNote('memorization', 'جيد جداً، سرد سريع وضبط جيد')">✨ متقن</button>
+                            <button type="button" class="feedback-chip" onclick="appendMatnNote('memorization', 'يحتاج مراجعة وإعادة تثبيت')">⚠️ يحتاج ضبطاً</button>
+                            <button type="button" class="feedback-chip" onclick="appendMatnNote('memorization', 'إتمام التسميع في الحلقة القادمة')">🎯 إتمام غداً</button>
+                        </div>
                     </div>
-                    <div class="col-auto">
-                        <div class="form-check form-switch mb-0">
-                            <input class="form-check-input" type="checkbox" id="matnIsUpcoming" style="cursor: pointer;">
-                            <label class="form-check-label small fw-bold text-muted" for="matnIsUpcoming" style="font-size: 0.78rem; cursor: pointer;">
-                                ورد قادم
+                    <div class="upcoming-badge-toggle">
+                        <span style="font-size: 0.74rem; color: #6b21a8; font-weight: 700; white-space: nowrap;">
+                            <i class='bx bx-calendar-star'></i> ورد قادم
+                        </span>
+                        <label class="switch" style="transform: scale(0.68); transform-origin: left center;">
+                            <input type="checkbox" id="matn-isUpcoming-memorization">
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===================================================================
+                 CARD 2: مراجعة المتن وتثبيته (Revision) - Soft Amber/Gold Theme
+                 =================================================================== -->
+            <div class="drawer-wird-box type-revision" id="matn-wbox-revision" data-type="revision">
+                <!-- Header -->
+                <div class="drawer-wird-header">
+                    <div class="drawer-wird-title">
+                        <i class='bx bx-refresh' style="font-size: 1.25rem;"></i>
+                        <span>مراجعة المتن وتثبيته</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="wird-status-label" id="matn-wstatus-revision" style="font-size: 0.74rem; font-weight: 700; color: #16a34a;">مفعل</span>
+                        <label class="switch" style="transform: scale(0.8); transform-origin: left center;">
+                            <input type="checkbox" id="matn-wtoggle-revision" checked onchange="toggleMatnCard('revision', this.checked)">
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- المعرف المخفي للمتن المحدد للبرنامج التعليمي -->
+                <input type="hidden" id="matnTitle-revision" value="" />
+
+                <!-- الباب / الموضع من المتن -->
+                <div class="chapter-selection-section mb-3" id="matnChapterSection-revision">
+                    <div class="d-flex align-items-center justify-content-between mb-1">
+                        <label class="compact-label mb-0" for="matnChapterSelect-revision">
+                            <i class='bx bx-book-open text-muted'></i> الباب / الموضع من المتن:
+                        </label>
+                        <button type="button" class="btn-chapter-custom-toggle" id="matnChapterToggleBtn-revision"
+                                onclick="toggleManualChapterEntry('revision')" title="كتابة موضع أو باب مخصص">
+                            <i class='bx bx-edit-alt'></i> كتابة مخصصة
+                        </button>
+                    </div>
+
+                    <!-- Mode A: Dropdown from Predefined List -->
+                    <div id="matnChapterSelectWrap-revision" class="chapter-control-wrap">
+                        <select id="matnChapterSelect-revision" class="form-select form-control matn-chapter-select"
+                                onchange="onMatnChapterSelectChange('revision', this.value)">
+                        </select>
+                    </div>
+
+                    <!-- Mode B: Direct Custom Text Input -->
+                    <div id="matnChapterInputWrap-revision" class="chapter-control-wrap" style="display: none;">
+                        <div class="input-with-return-btn">
+                            <input type="text" id="matnChapterName-revision" class="form-control"
+                                   placeholder="اكتب موضع التسميع أو اسم الباب..." />
+                            <button type="button" class="btn btn-return-chapters" id="matnReturnListBtn-revision"
+                                    onclick="returnToChapterList('revision')" title="العودة لاختيار باب من القائمة">
+                                <i class='bx bx-list-ul'></i> القائمة
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المقدار والوحدة مع أزرار الزيادة والنقصان والشرائح -->
+                <div class="drawer-fields-grid">
+                    <div class="field-item">
+                        <label class="compact-label" for="matn-amount-revision">المقدار المحدد:</label>
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <div class="stepper-input-container" style="max-width: 170px;">
+                                <button type="button" class="stepper-btn stepper-btn-minus" onclick="stepMatnAmount('revision', -1)" title="نقصان المقدار">
+                                    <i class='bx bx-minus'></i>
+                                </button>
+                                <input type="number" step="1" min="1" class="form-control form-control-prominent text-center stepper-input"
+                                       id="matn-amount-revision" value="5" placeholder="المقدار" oninput="onMatnAmountInput('revision', this.value)">
+                                <button type="button" class="stepper-btn stepper-btn-plus" onclick="stepMatnAmount('revision', 1)" title="زيادة المقدار">
+                                    <i class='bx bx-plus'></i>
+                                </button>
+                            </div>
+                            <div class="amount-quick-chips mt-0" id="matn-amountChips-revision">
+                                <button type="button" class="amount-chip" onclick="setQuickAmount('revision', 3)">3</button>
+                                <button type="button" class="amount-chip" onclick="setQuickAmount('revision', 5)">5</button>
+                                <button type="button" class="amount-chip" onclick="setQuickAmount('revision', 10)">10</button>
+                                <button type="button" class="amount-chip" onclick="setQuickAmount('revision', 15)">15</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field-item">
+                        <label class="compact-label">الوحدة المقررة:</label>
+                        <div class="unit-radio-group" id="matn-unitGroup-revision" role="radiogroup">
+                            <label class="unit-radio-option is-selected" id="matn-unitOpt-revision-1" onclick="setMatnUnit('revision', 1, 'أبيات', 'بيت')">
+                                <input type="radio" name="matn-unit-revision" value="1" checked>
+                                <span class="unit-radio-circle"></span>
+                                <span>أبيات</span>
+                            </label>
+                            <label class="unit-radio-option" id="matn-unitOpt-revision-5" onclick="setMatnUnit('revision', 5, 'أحاديث', 'حديث')">
+                                <input type="radio" name="matn-unit-revision" value="5">
+                                <span class="unit-radio-circle"></span>
+                                <span>أحاديث</span>
+                            </label>
+                            <label class="unit-radio-option" id="matn-unitOpt-revision-4" onclick="setMatnUnit('revision', 4, 'أبواب', 'باب')">
+                                <input type="radio" name="matn-unit-revision" value="4">
+                                <span class="unit-radio-circle"></span>
+                                <span>أبواب</span>
+                            </label>
+                            <label class="unit-radio-option" id="matn-unitOpt-revision-3" onclick="setMatnUnit('revision', 3, 'صفحات', 'ص')">
+                                <input type="radio" name="matn-unit-revision" value="3">
+                                <span class="unit-radio-circle"></span>
+                                <span>صفحات</span>
+                            </label>
+                            <label class="unit-radio-option" id="matn-unitOpt-revision-2" onclick="setMatnUnit('revision', 2, 'سطور', 'سطر')">
+                                <input type="radio" name="matn-unit-revision" value="2">
+                                <span class="unit-radio-circle"></span>
+                                <span>سطور</span>
                             </label>
                         </div>
                     </div>
                 </div>
 
+                <!-- نطاق المتن المتصل (من ← إلى) -->
+                <div class="drawer-range-connected">
+                    <div class="range-box">
+                        <label class="compact-label" id="matn-fromLabel-revision">من (بيت):</label>
+                        <input type="number" class="form-control form-control-prominent text-center" id="matn-fromNumber-revision"
+                               value="1" placeholder="من" oninput="calculateMatnAmount('revision')">
+                    </div>
+                    <div class="range-connector-indicator">
+                        <i class='bx bx-left-arrow-alt'></i>
+                        <span class="range-total-pill" id="matn-rangeBadge-revision">5 أبيات</span>
+                    </div>
+                    <div class="range-box">
+                        <label class="compact-label" id="matn-toLabel-revision">إلى (بيت):</label>
+                        <input type="number" class="form-control form-control-prominent text-center" id="matn-toNumber-revision"
+                               value="5" placeholder="إلى" oninput="calculateMatnAmount('revision')">
+                    </div>
+                </div>
+
+                <!-- التقييم -->
+                <div class="wird-rating-group" id="matn-ratingGroup-revision">
+                    <div class="wird-rating-header">
+                        <div class="wird-rating-title">
+                            <i class='bx bxs-award'></i>
+                            <span>تقييم مراجعة المتن:</span>
+                        </div>
+                        <div class="wird-rating-header-actions">
+                            <span class="wird-rating-badge rate-excellent" id="matn-ratingBadge-revision">متقن تماماً</span>
+                            <button type="button" class="btn-rating-clear" id="matn-ratingClear-revision"
+                                    style="display: none;" onclick="clearMatnRating('revision')" title="إلغاء التقييم">
+                                <i class='bx bx-x'></i> مسح
+                            </button>
+                        </div>
+                    </div>
+                    <div class="wird-rating-options-grid" role="radiogroup">
+                        <button type="button" class="rating-pill-btn rate-excellent is-selected" data-status="5"
+                                onclick="setMatnRating('revision', 5, 'excellent', 'متقن تماماً')">
+                            <span class="rating-icon"><i class='bx bxs-star'></i></span>
+                            <span class="rating-text">ممتاز</span>
+                            <span class="rating-hint">إتقان تام</span>
+                        </button>
+                        <button type="button" class="rating-pill-btn rate-very_good" data-status="4"
+                                onclick="setMatnRating('revision', 4, 'very_good', 'أخطاء يسيرة')">
+                            <span class="rating-icon"><i class='bx bxs-like'></i></span>
+                            <span class="rating-text">جيد جداً</span>
+                            <span class="rating-hint">أخطاء يسيرة</span>
+                        </button>
+                        <button type="button" class="rating-pill-btn rate-good" data-status="3"
+                                onclick="setMatnRating('revision', 3, 'good', 'يحتاج ضبطاً')">
+                            <span class="rating-icon"><i class='bx bx-check-circle'></i></span>
+                            <span class="rating-text">جيد</span>
+                            <span class="rating-hint">يحتاج ضبطاً</span>
+                        </button>
+                        <button type="button" class="rating-pill-btn rate-acceptable" data-status="2"
+                                onclick="setMatnRating('revision', 2, 'acceptable', 'تنبيهات')">
+                            <span class="rating-icon"><i class='bx bx-minus-circle'></i></span>
+                            <span class="rating-text">مقبول</span>
+                            <span class="rating-hint">تنبيهات</span>
+                        </button>
+                        <button type="button" class="rating-pill-btn rate-weak" data-status="1"
+                                onclick="setMatnRating('revision', 1, 'weak', 'إعادة')">
+                            <span class="rating-icon"><i class='bx bx-error-circle'></i></span>
+                            <span class="rating-text">ضعيف</span>
+                            <span class="rating-hint">إعادة</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- الملاحظات والورد القادم -->
+                <div class="drawer-bottom-row">
+                    <div style="flex: 1; min-width: 0;">
+                        <input type="text" class="form-control" id="matnNote-revision"
+                               placeholder="ملاحظة أو توجيه للطالب (اختياري)..." style="font-size: 0.82rem; height: 38px; border-radius: var(--radius-md);">
+                        <div class="feedback-quick-chips">
+                            <button type="button" class="feedback-chip" onclick="appendMatnNote('revision', 'أحسنت، مراجعة متقنة بدون تلعثم')">🌟 ممتاز</button>
+                            <button type="button" class="feedback-chip" onclick="appendMatnNote('revision', 'متقن، ضبط سليم للأبيات')">✨ متقن</button>
+                            <button type="button" class="feedback-chip" onclick="appendMatnNote('revision', 'يحتاج إعادة تثبيت الورد السابق')">⚠️ يحتاج ضبطاً</button>
+                            <button type="button" class="feedback-chip" onclick="appendMatnNote('revision', 'استمرار المراجعة مع التسميع الجديد')">🎯 استمرار</button>
+                        </div>
+                    </div>
+                    <div class="upcoming-badge-toggle">
+                        <span style="font-size: 0.74rem; color: #6b21a8; font-weight: 700; white-space: nowrap;">
+                            <i class='bx bx-calendar-star'></i> ورد قادم
+                        </span>
+                        <label class="switch" style="transform: scale(0.68); transform-origin: left center;">
+                            <input type="checkbox" id="matn-isUpcoming-revision">
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===================================================================
+                 CARD 3: مدارسة وضبط المتن (Mudarasah) - Soft Slate Theme
+                 =================================================================== -->
+            <div class="drawer-wird-box type-mudarasah" id="matn-wbox-mudarasah" data-type="mudarasah">
+                <!-- Header -->
+                <div class="drawer-wird-header">
+                    <div class="drawer-wird-title">
+                        <i class='bx bx-glasses' style="font-size: 1.25rem;"></i>
+                        <span>مدارسة وضبط المتن</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="wird-status-label" id="matn-wstatus-mudarasah" style="font-size: 0.74rem; font-weight: 700; color: #16a34a;">مفعل</span>
+                        <label class="switch" style="transform: scale(0.8); transform-origin: left center;">
+                            <input type="checkbox" id="matn-wtoggle-mudarasah" checked onchange="toggleMatnCard('mudarasah', this.checked)">
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- المعرف المخفي للمتن المحدد للبرنامج التعليمي -->
+                <input type="hidden" id="matnTitle-mudarasah" value="" />
+
+                <!-- الباب / الموضع من المتن -->
+                <div class="chapter-selection-section mb-3" id="matnChapterSection-mudarasah">
+                    <div class="d-flex align-items-center justify-content-between mb-1">
+                        <label class="compact-label mb-0" for="matnChapterSelect-mudarasah">
+                            <i class='bx bx-book-open text-muted'></i> الباب / الموضع من المتن:
+                        </label>
+                        <button type="button" class="btn-chapter-custom-toggle" id="matnChapterToggleBtn-mudarasah"
+                                onclick="toggleManualChapterEntry('mudarasah')" title="كتابة موضع أو باب مخصص">
+                            <i class='bx bx-edit-alt'></i> كتابة مخصصة
+                        </button>
+                    </div>
+
+                    <!-- Mode A: Dropdown from Predefined List -->
+                    <div id="matnChapterSelectWrap-mudarasah" class="chapter-control-wrap">
+                        <select id="matnChapterSelect-mudarasah" class="form-select form-control matn-chapter-select"
+                                onchange="onMatnChapterSelectChange('mudarasah', this.value)">
+                        </select>
+                    </div>
+
+                    <!-- Mode B: Direct Custom Text Input -->
+                    <div id="matnChapterInputWrap-mudarasah" class="chapter-control-wrap" style="display: none;">
+                        <div class="input-with-return-btn">
+                            <input type="text" id="matnChapterName-mudarasah" class="form-control"
+                                   placeholder="اكتب موضع التسميع أو اسم الباب..." />
+                            <button type="button" class="btn btn-return-chapters" id="matnReturnListBtn-mudarasah"
+                                    onclick="returnToChapterList('mudarasah')" title="العودة لاختيار باب من القائمة">
+                                <i class='bx bx-list-ul'></i> القائمة
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المقدار والوحدة مع أزرار الزيادة والنقصان والشرائح -->
+                <div class="drawer-fields-grid">
+                    <div class="field-item">
+                        <label class="compact-label" for="matn-amount-mudarasah">المقدار المحدد:</label>
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <div class="stepper-input-container" style="max-width: 170px;">
+                                <button type="button" class="stepper-btn stepper-btn-minus" onclick="stepMatnAmount('mudarasah', -1)" title="نقصان المقدار">
+                                    <i class='bx bx-minus'></i>
+                                </button>
+                                <input type="number" step="1" min="1" class="form-control form-control-prominent text-center stepper-input"
+                                       id="matn-amount-mudarasah" value="6" placeholder="المقدار" oninput="onMatnAmountInput('mudarasah', this.value)">
+                                <button type="button" class="stepper-btn stepper-btn-plus" onclick="stepMatnAmount('mudarasah', 1)" title="زيادة المقدار">
+                                    <i class='bx bx-plus'></i>
+                                </button>
+                            </div>
+                            <div class="amount-quick-chips mt-0" id="matn-amountChips-mudarasah">
+                                <button type="button" class="amount-chip" onclick="setQuickAmount('mudarasah', 3)">3</button>
+                                <button type="button" class="amount-chip" onclick="setQuickAmount('mudarasah', 6)">6</button>
+                                <button type="button" class="amount-chip" onclick="setQuickAmount('mudarasah', 10)">10</button>
+                                <button type="button" class="amount-chip" onclick="setQuickAmount('mudarasah', 15)">15</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field-item">
+                        <label class="compact-label">الوحدة المقررة:</label>
+                        <div class="unit-radio-group" id="matn-unitGroup-mudarasah" role="radiogroup">
+                            <label class="unit-radio-option is-selected" id="matn-unitOpt-mudarasah-1" onclick="setMatnUnit('mudarasah', 1, 'أبيات', 'بيت')">
+                                <input type="radio" name="matn-unit-mudarasah" value="1" checked>
+                                <span class="unit-radio-circle"></span>
+                                <span>أبيات</span>
+                            </label>
+                            <label class="unit-radio-option" id="matn-unitOpt-mudarasah-5" onclick="setMatnUnit('mudarasah', 5, 'أحاديث', 'حديث')">
+                                <input type="radio" name="matn-unit-mudarasah" value="5">
+                                <span class="unit-radio-circle"></span>
+                                <span>أحاديث</span>
+                            </label>
+                            <label class="unit-radio-option" id="matn-unitOpt-mudarasah-4" onclick="setMatnUnit('mudarasah', 4, 'أبواب', 'باب')">
+                                <input type="radio" name="matn-unit-mudarasah" value="4">
+                                <span class="unit-radio-circle"></span>
+                                <span>أبواب</span>
+                            </label>
+                            <label class="unit-radio-option" id="matn-unitOpt-mudarasah-3" onclick="setMatnUnit('mudarasah', 3, 'صفحات', 'ص')">
+                                <input type="radio" name="matn-unit-mudarasah" value="3">
+                                <span class="unit-radio-circle"></span>
+                                <span>صفحات</span>
+                            </label>
+                            <label class="unit-radio-option" id="matn-unitOpt-mudarasah-2" onclick="setMatnUnit('mudarasah', 2, 'سطور', 'سطر')">
+                                <input type="radio" name="matn-unit-mudarasah" value="2">
+                                <span class="unit-radio-circle"></span>
+                                <span>سطور</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- نطاق المتن المتصل (من ← إلى) -->
+                <div class="drawer-range-connected">
+                    <div class="range-box">
+                        <label class="compact-label" id="matn-fromLabel-mudarasah">من (بيت):</label>
+                        <input type="number" class="form-control form-control-prominent text-center" id="matn-fromNumber-mudarasah"
+                               value="10" placeholder="من" oninput="calculateMatnAmount('mudarasah')">
+                    </div>
+                    <div class="range-connector-indicator">
+                        <i class='bx bx-left-arrow-alt'></i>
+                        <span class="range-total-pill" id="matn-rangeBadge-mudarasah">6 أبيات</span>
+                    </div>
+                    <div class="range-box">
+                        <label class="compact-label" id="matn-toLabel-mudarasah">إلى (بيت):</label>
+                        <input type="number" class="form-control form-control-prominent text-center" id="matn-toNumber-mudarasah"
+                               value="15" placeholder="إلى" oninput="calculateMatnAmount('mudarasah')">
+                    </div>
+                </div>
+
+                <!-- التقييم -->
+                <div class="wird-rating-group" id="matn-ratingGroup-mudarasah">
+                    <div class="wird-rating-header">
+                        <div class="wird-rating-title">
+                            <i class='bx bxs-award'></i>
+                            <span>تقييم مدارسة المتن:</span>
+                        </div>
+                        <div class="wird-rating-header-actions">
+                            <span class="wird-rating-badge rate-excellent" id="matn-ratingBadge-mudarasah">متقن تماماً</span>
+                            <button type="button" class="btn-rating-clear" id="matn-ratingClear-mudarasah"
+                                    style="display: none;" onclick="clearMatnRating('mudarasah')" title="إلغاء التقييم">
+                                <i class='bx bx-x'></i> مسح
+                            </button>
+                        </div>
+                    </div>
+                    <div class="wird-rating-options-grid" role="radiogroup">
+                        <button type="button" class="rating-pill-btn rate-excellent is-selected" data-status="5"
+                                onclick="setMatnRating('mudarasah', 5, 'excellent', 'متقن تماماً')">
+                            <span class="rating-icon"><i class='bx bxs-star'></i></span>
+                            <span class="rating-text">ممتاز</span>
+                            <span class="rating-hint">إتقان تام</span>
+                        </button>
+                        <button type="button" class="rating-pill-btn rate-very_good" data-status="4"
+                                onclick="setMatnRating('mudarasah', 4, 'very_good', 'أخطاء يسيرة')">
+                            <span class="rating-icon"><i class='bx bxs-like'></i></span>
+                            <span class="rating-text">جيد جداً</span>
+                            <span class="rating-hint">أخطاء يسيرة</span>
+                        </button>
+                        <button type="button" class="rating-pill-btn rate-good" data-status="3"
+                                onclick="setMatnRating('mudarasah', 3, 'good', 'يحتاج ضبطاً')">
+                            <span class="rating-icon"><i class='bx bx-check-circle'></i></span>
+                            <span class="rating-text">جيد</span>
+                            <span class="rating-hint">يحتاج ضبطاً</span>
+                        </button>
+                        <button type="button" class="rating-pill-btn rate-acceptable" data-status="2"
+                                onclick="setMatnRating('mudarasah', 2, 'acceptable', 'تنبيهات')">
+                            <span class="rating-icon"><i class='bx bx-minus-circle'></i></span>
+                            <span class="rating-text">مقبول</span>
+                            <span class="rating-hint">تنبيهات</span>
+                        </button>
+                        <button type="button" class="rating-pill-btn rate-weak" data-status="1"
+                                onclick="setMatnRating('mudarasah', 1, 'weak', 'إعادة')">
+                            <span class="rating-icon"><i class='bx bx-error-circle'></i></span>
+                            <span class="rating-text">ضعيف</span>
+                            <span class="rating-hint">إعادة</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- الملاحظات والورد القادم -->
+                <div class="drawer-bottom-row">
+                    <div style="flex: 1; min-width: 0;">
+                        <input type="text" class="form-control" id="matnNote-mudarasah"
+                               placeholder="ملاحظة أو توجيه للطالب (اختياري)..." style="font-size: 0.82rem; height: 38px; border-radius: var(--radius-md);">
+                        <div class="feedback-quick-chips">
+                            <button type="button" class="feedback-chip" onclick="appendMatnNote('mudarasah', 'مدارسة ممتازة وفهم متقن للمعاني')">🌟 ممتاز</button>
+                            <button type="button" class="feedback-chip" onclick="appendMatnNote('mudarasah', 'ضبط جيد للألفاظ وشرح المعاني')">✨ متقن</button>
+                            <button type="button" class="feedback-chip" onclick="appendMatnNote('mudarasah', 'مراجعة المعاني الغريبة وضبط الأبيات')">⚠️ يحتاج ضبطاً</button>
+                            <button type="button" class="feedback-chip" onclick="appendMatnNote('mudarasah', 'إكمال المدارسة في الجلسة القادمة')">🎯 إكمال غداً</button>
+                        </div>
+                    </div>
+                    <div class="upcoming-badge-toggle">
+                        <span style="font-size: 0.74rem; color: #6b21a8; font-weight: 700; white-space: nowrap;">
+                            <i class='bx bx-calendar-star'></i> ورد قادم
+                        </span>
+                        <label class="switch" style="transform: scale(0.68); transform-origin: left center;">
+                            <input type="checkbox" id="matn-isUpcoming-mudarasah">
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+                </div>
             </div>
 
         </div>
 
-        <!-- Sticky Drawer Footer -->
-        <div class="drawer-footer" style="padding: 14px 20px; border-top: 1px solid #e2e8f0; background: #f8fafc; display: flex; justify-content: space-between; align-items: center; gap: 12px;">
-            <button type="button" class="btn btn-outline-secondary" onclick="closeAssignMatnDrawer()" style="border-radius: 10px; font-weight: 600; padding: 8px 18px;">
-                <i class='bx bx-x me-1'></i> إلغاء
+        <!-- Sticky Drawer Footer (Identical Responsive Layout to _AssignWirdModal) -->
+        <div class="drawer-footer">
+            <button type="button" class="btn btn-outline drawer-prev-btn" id="matnPrevBtn" onclick="navigateMatnStudent(-1)" title="الطالب السابق">
+                <i class='bx bx-chevron-right'></i> السابق
             </button>
-            <button type="submit" class="btn-hero-primary" id="matnSaveBtn" style="padding: 9px 24px;">
-                <i class='bx bx-check'></i> اعتماد ورصد التسميع
+            <button type="button" class="btn btn-outline drawer-save-btn" id="matnSaveOnlyBtn" onclick="submitMatnAssignment(false)">
+                <i class='bx bx-check'></i> حفظ فقط
+            </button>
+            <button type="button" class="btn btn-primary drawer-save-next-btn" id="matnSaveNextBtn" onclick="submitMatnAssignment(true)">
+                <span id="matnSaveNextBtnText">حفظ والتالي</span> <i class='bx bx-chevron-left'></i>
             </button>
         </div>
 
     </form>
 </div>
-
-<script>
-    function openAssignMatnModal(studentId, studentName) {
-        const selectContainer = document.getElementById('matnStudentSelectContainer');
-        const selectDropdown = document.getElementById('matnStudentSelectDropdown');
-
-        if (!studentId) {
-            // Opened globally (e.g. from Awrad page)
-            if (selectContainer && selectDropdown) {
-                selectContainer.style.display = 'block';
-                selectDropdown.innerHTML = '<option value="">-- اختر الطالب --</option>';
-                if (window.allClassStudents && window.allClassStudents.length > 0) {
-                    window.allClassStudents.forEach(st => {
-                        const opt = document.createElement('option');
-                        opt.value = st.id;
-                        opt.textContent = st.name;
-                        selectDropdown.appendChild(opt);
-                    });
-                }
-            }
-            document.getElementById('matnStudentId').value = '';
-            document.getElementById('matnDrawerStudentName').textContent = 'تسميع متن جديد';
-            document.getElementById('matnDrawerAvatar').innerHTML = `<i class='bx bx-bookmarks'></i>`;
-        } else {
-            // Opened for specific student
-            if (selectContainer) selectContainer.style.display = 'none';
-            document.getElementById('matnStudentId').value = studentId;
-            document.getElementById('matnDrawerStudentName').textContent = studentName || 'اسم الطالب';
-            
-            // Compute avatar initials
-            const initials = (studentName || '').split(' ').slice(0, 2).map(n => n[0] || '').join('');
-            document.getElementById('matnDrawerAvatar').innerHTML = initials ? `<span>${initials}</span>` : `<i class='bx bx-user'></i>`;
-        }
-
-        // Reset form fields
-        document.getElementById('matnAmount').value = '';
-        document.getElementById('matnChapterName').value = '';
-        document.getElementById('matnFromNumber').value = '';
-        document.getElementById('matnToNumber').value = '';
-        document.getElementById('matnNote').value = '';
-        document.getElementById('matnIsUpcoming').checked = false;
-        
-        setMatnPerformanceType(1, document.querySelector('.matn-perf-btn[data-value="1"]'));
-        setMatnRatingStatus(5, document.querySelector('.rating-pill-btn.rate-excellent'));
-        document.getElementById('matnUnitSelect').value = "1";
-        document.getElementById('matnUnit').value = "1";
-
-        // Open drawer
-        const drawer = document.getElementById('matnDrawerPanel');
-        const backdrop = document.getElementById('matnDrawerBackdrop');
-        if (drawer && backdrop) {
-            drawer.classList.add('is-open', 'active', 'mobile-open');
-            backdrop.classList.add('is-open', 'active');
-            document.body.style.overflow = 'hidden';
-        }
-    }
-
-    function onMatnStudentDropdownChange(select) {
-        const stId = select.value;
-        const stName = select.options[select.selectedIndex]?.text || '';
-        document.getElementById('matnStudentId').value = stId;
-        if (stId) {
-            document.getElementById('matnDrawerStudentName').textContent = stName;
-            const initials = (stName || '').split(' ').slice(0, 2).map(n => n[0] || '').join('');
-            document.getElementById('matnDrawerAvatar').innerHTML = initials ? `<span>${initials}</span>` : `<i class='bx bx-user'></i>`;
-        } else {
-            document.getElementById('matnDrawerStudentName').textContent = 'تسميع متن جديد';
-            document.getElementById('matnDrawerAvatar').innerHTML = `<i class='bx bx-bookmarks'></i>`;
-        }
-    }
-
-    function closeAssignMatnDrawer() {
-        const drawer = document.getElementById('matnDrawerPanel');
-        const backdrop = document.getElementById('matnDrawerBackdrop');
-        if (drawer) {
-            drawer.classList.remove('is-open', 'active', 'mobile-open');
-        }
-        if (backdrop) {
-            backdrop.classList.remove('is-open', 'active');
-        }
-        setTimeout(() => {
-            document.body.style.overflow = '';
-        }, 280);
-    }
-
-    function setMatnPerformanceType(val, btn) {
-        document.getElementById('matnPerformanceType').value = val;
-        document.querySelectorAll('.matn-perf-btn').forEach(b => b.classList.remove('active'));
-        if (btn) btn.classList.add('active');
-    }
-
-    function setMatnUnit(val) {
-        document.getElementById('matnUnit').value = val;
-    }
-
-    function setMatnRatingStatus(val, btn) {
-        document.getElementById('matnStatus').value = val;
-        document.querySelectorAll('.rating-pills-row .rating-pill-btn').forEach(b => b.classList.remove('active'));
-        if (btn) btn.classList.add('active');
-    }
-
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-        return '';
-    }
-
-    async function submitMatnAssignment() {
-        const studentId = document.getElementById('matnStudentId').value;
-        const classId = document.getElementById('matnClassId').value || getCookie('selectedClassId');
-        const amountVal = document.getElementById('matnAmount').value;
-
-        if (!studentId || !classId) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'تنبيه',
-                text: 'يرجى التأكد من تحديد الطالب والحلقة.',
-                confirmButtonText: 'حسناً'
-            });
-            return;
-        }
-
-        if (!amountVal || parseFloat(amountVal) <= 0) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'المقدار مطلوب',
-                text: 'يرجى إدخال الكمية المنجزة (أكبر من 0).',
-                confirmButtonText: 'حسناً'
-            });
-            return;
-        }
-
-        const payload = {
-            studentId: studentId,
-            classId: classId,
-            performanceType: parseInt(document.getElementById('matnPerformanceType').value) || 1,
-            unit: parseInt(document.getElementById('matnUnit').value) || 1,
-            amount: parseFloat(amountVal),
-            chapterName: document.getElementById('matnChapterName').value.trim() || null,
-            fromNumber: parseInt(document.getElementById('matnFromNumber').value) || null,
-            toNumber: parseInt(document.getElementById('matnToNumber').value) || null,
-            status: parseInt(document.getElementById('matnStatus').value) || 5,
-            isCompleted: true,
-            isUpcoming: document.getElementById('matnIsUpcoming').checked,
-            assignedDate: document.getElementById('matnAssignedDate').value || new Date().toISOString().split('T')[0],
-            note: document.getElementById('matnNote').value.trim() || null
-        };
-
-        const saveBtn = document.getElementById('matnSaveBtn');
-        const originalText = saveBtn.innerHTML;
-        saveBtn.disabled = true;
-        saveBtn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> جاري الحفظ...";
-
-        try {
-            const response = await fetch('/Teacher/Student/AssignMatn', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
-                },
-                body: JSON.stringify(payload)
-            });
-
-            const resData = await response.json();
-
-            if (response.ok && resData.success !== false) {
-                closeAssignMatnDrawer();
-                Swal.fire({
-                    icon: 'success',
-                    title: 'تم الاعتماد',
-                    text: resData.message || 'تم رصد تسميع المتن بنجاح.',
-                    timer: 1500,
-                    showConfirmButton: false,
-                    toast: true,
-                    position: 'top-end'
-                });
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1200);
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'تعذر الحفظ',
-                    text: resData.message || 'حدث خطأ أثناء رصد التسميع.',
-                    confirmButtonText: 'حسناً'
-                });
-            }
-        } catch (err) {
-            console.error(err);
-            Swal.fire({
-                icon: 'error',
-                title: 'خطأ في الاتصال',
-                text: 'تعذر الاتصال بالخادم، يرجى المحاولة مرة أخرى.',
-                confirmButtonText: 'حسناً'
-            });
-        } finally {
-            saveBtn.disabled = false;
-            saveBtn.innerHTML = originalText;
-        }
-    }
-</script>
+<!-- Isolated Matn Modal Script -->
+<script src="~/js/teacher_portal/modals/matn_drawer/assignMatnModal.js" asp-append-version="true"></script>
