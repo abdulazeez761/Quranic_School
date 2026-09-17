@@ -413,8 +413,24 @@
   gap: 0.25rem;
   font-size: 0.72rem;
   font-weight: 700;
-  padding: 0.15rem 0.5rem;
+  padding: 0.18rem 0.6rem;
   border-radius: var(--t-radius-full);
+  white-space: nowrap;
+}
+
+.record-status-pill.status-recorded-today {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #86efac;
+  font-weight: 800;
+  box-shadow: 0 1px 3px rgba(22, 101, 52, 0.08);
+}
+
+.record-status-pill.status-not-recorded {
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+  font-weight: 600;
 }
 
 .record-status-pill.status-active {

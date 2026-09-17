@@ -104,6 +104,7 @@ namespace Hafiz.Areas.Teacher.Controllers
 
             var isMatnClass = (classDto?.ProgramType == Hafiz.Domain.Enums.ProgramType.Matn);
             Dictionary<Guid, (int active, int completed)> matnCountsByStudent = new();
+            Dictionary<Guid, int> matnTodayCountsByStudent = new();
             if (isMatnClass)
             {
                 var classMatnAssignments = await _matnAssignmentService.GetByClassIdAsync(selectedClass.Value);
@@ -116,6 +117,11 @@ namespace Hafiz.Areas.Teacher.Controllers
                             completed: g.Count(m => m.IsCompleted)
                         )
                     );
+
+                matnTodayCountsByStudent = classMatnAssignments
+                    .Where(m => m.AssignedDate.Date == DateTime.Today || m.AssignedDate.ToLocalTime().Date == DateTime.Today)
+                    .GroupBy(m => m.StudentId)
+                    .ToDictionary(g => g.Key, g => g.Count());
             }
 
             ViewBag.TotalStudents = totalStudents;
@@ -124,6 +130,7 @@ namespace Hafiz.Areas.Teacher.Controllers
             ViewBag.ClassName = className;
             ViewBag.IsMatnClass = isMatnClass;
             ViewBag.MatnCountsByStudent = matnCountsByStudent;
+            ViewBag.MatnTodayCountsByStudent = matnTodayCountsByStudent;
             ViewBag.StudyProgramName = classDto?.StudyProgramName;
             ViewBag.AssignedMatnTitle = classDto?.MatnTitle ?? classDto?.StudyProgramName;
             ViewBag.ClassDto = classDto;
