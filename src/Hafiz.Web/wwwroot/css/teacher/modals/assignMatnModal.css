@@ -375,7 +375,7 @@
   box-sizing: border-box !important;
   white-space: nowrap !important;
   cursor: pointer !important;
-  transition: all 0.15s ease !important;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease !important;
   user-select: none !important;
   position: relative !important;
   gap: 4px !important;
@@ -389,46 +389,14 @@
   height: 0 !important;
 }
 
-/* Radio circle indicator (Original Initial Design Restored) */
-#matnDrawerPanel .unit-radio-circle {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 14px !important;
-  height: 14px !important;
-  min-width: 14px !important;
-  border-radius: 50% !important;
-  border: 1.5px solid #94a3b8 !important;
-  background: #ffffff !important;
-  flex-shrink: 0 !important;
-  margin-left: 2px !important;
-  transition: border-color 0.15s ease, background 0.15s ease !important;
-}
+/* Radio circle indicator: REMOVED — clean pill-only selection */
 
-#matnDrawerPanel .unit-radio-circle::after {
-  content: '' !important;
-  display: block !important;
-  width: 6px !important;
-  height: 6px !important;
-  border-radius: 50% !important;
-  transform: scale(0) !important;
-  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-}
-
-/* Card-Specific Selected Styles */
+/* Card-Specific Selected Styles — lightweight background only */
 .type-memorization .unit-radio-option.is-selected {
   background: #f0f7ec !important;
   border-color: var(--matn-primary) !important;
   color: var(--matn-primary-dark) !important;
   font-weight: 800 !important;
-  box-shadow: 0 1px 3px rgba(111, 161, 90, 0.2) !important;
-}
-.type-memorization .unit-radio-option.is-selected .unit-radio-circle {
-  border-color: var(--matn-primary) !important;
-}
-.type-memorization .unit-radio-option.is-selected .unit-radio-circle::after {
-  background: var(--matn-primary) !important;
-  transform: scale(1) !important;
 }
 
 .type-revision .unit-radio-option.is-selected {
@@ -436,14 +404,6 @@
   border-color: var(--matn-gold) !important;
   color: var(--matn-gold-dark) !important;
   font-weight: 800 !important;
-  box-shadow: 0 1px 3px rgba(191, 145, 59, 0.2) !important;
-}
-.type-revision .unit-radio-option.is-selected .unit-radio-circle {
-  border-color: var(--matn-gold) !important;
-}
-.type-revision .unit-radio-option.is-selected .unit-radio-circle::after {
-  background: var(--matn-gold) !important;
-  transform: scale(1) !important;
 }
 
 .type-mudarasah .unit-radio-option.is-selected {
@@ -451,15 +411,8 @@
   border-color: var(--matn-slate) !important;
   color: var(--matn-slate-dark) !important;
   font-weight: 800 !important;
-  box-shadow: 0 1px 3px rgba(91, 114, 137, 0.2) !important;
 }
-.type-mudarasah .unit-radio-option.is-selected .unit-radio-circle {
-  border-color: var(--matn-slate) !important;
-}
-.type-mudarasah .unit-radio-option.is-selected .unit-radio-circle::after {
-  background: var(--matn-slate) !important;
-  transform: scale(1) !important;
-}
+
 
 /* ==========================================================================
    Connected Range (من ← إلى) with Indicator
