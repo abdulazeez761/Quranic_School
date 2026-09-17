@@ -18,11 +18,13 @@
     <div class="wird-card-header">
         <div class="wird-header-title">
             <h3 class="student-name">@Model.Student.StudentInfo.FirstName @Model.Student.StudentInfo.SecondName</h3>
-            @if (Model.IsUpcoming)
-            {
-                @await Html.PartialAsync("_UpcomingBadge")
-            }
-            <span class="wird-status-badge status-@statusClass">@localizedStatus</span>
+            <div class="d-flex align-items-center gap-1">
+                @if (Model.IsUpcoming)
+                {
+                    @await Html.PartialAsync("_UpcomingBadge")
+                }
+                <span class="wird-status-badge status-@statusClass">@localizedStatus</span>
+            </div>
         </div>
         <div class="wird-meta">
             <span class="wird-type-badge">
@@ -98,9 +100,11 @@
                     </span>
                 }
             </div>
+
             <div class="range-divider">
-                <i class='bx bx-right-arrow-alt'></i>
+                <i class='bx bx-left-arrow-alt'></i>
             </div>
+
             <div class="range-item">
                 <span class="range-label">@Localizer["To"]</span>
                 <span class="range-value">
@@ -161,32 +165,42 @@
     <!-- FOOTER: segmented rating + actions -->
     <div class="card-footer">
         <div class="rating-segmented">
-            <button class="seg-btn seg-excellent status-button" data-status="@AssignmentStatus.excellent"
-                    data-id="@Model.Id" title="@Localizer["Excellent"]">@Localizer["Excellent"]</button>
-            <button class="seg-btn seg-verygood status-button" data-status="@AssignmentStatus.veryGood"
-                    data-id="@Model.Id" title="@Localizer["VeryGood"]">@Localizer["VeryGood"]</button>
-            <button class="seg-btn seg-good status-button" data-status="@AssignmentStatus.good" data-id="@Model.Id"
-                    title="@Localizer["Good"]">@Localizer["Good"]</button>
-            <button class="seg-btn seg-fair status-button" data-status="@AssignmentStatus.fair" data-id="@Model.Id"
-                    title="@Localizer["Fair"]">@Localizer["Fair"]</button>
-            <button class="seg-btn seg-poor status-button" data-status="@AssignmentStatus.poor" data-id="@Model.Id"
-                    title="@Localizer["Poor"]">@Localizer["Poor"]</button>
+            <button class="seg-btn seg-excellent status-button @(Model.Status == AssignmentStatus.excellent ? "active" : "")" 
+                    data-status="@AssignmentStatus.excellent" data-id="@Model.Id" title="@Localizer["Excellent"]">
+                @Localizer["Excellent"]
+            </button>
+            <button class="seg-btn seg-verygood status-button @(Model.Status == AssignmentStatus.veryGood ? "active" : "")" 
+                    data-status="@AssignmentStatus.veryGood" data-id="@Model.Id" title="@Localizer["VeryGood"]">
+                @Localizer["VeryGood"]
+            </button>
+            <button class="seg-btn seg-good status-button @(Model.Status == AssignmentStatus.good ? "active" : "")" 
+                    data-status="@AssignmentStatus.good" data-id="@Model.Id" title="@Localizer["Good"]">
+                @Localizer["Good"]
+            </button>
+            <button class="seg-btn seg-fair status-button @(Model.Status == AssignmentStatus.fair ? "active" : "")" 
+                    data-status="@AssignmentStatus.fair" data-id="@Model.Id" title="@Localizer["Fair"]">
+                @Localizer["Fair"]
+            </button>
+            <button class="seg-btn seg-poor status-button @(Model.Status == AssignmentStatus.poor ? "active" : "")" 
+                    data-status="@AssignmentStatus.poor" data-id="@Model.Id" title="@Localizer["Poor"]">
+                @Localizer["Poor"]
+            </button>
         </div>
         <div class="card-actions">
             <button class="card-action-btn" data-assignment-id="@Model.Id" title="@Localizer["AddNotes"]">
                 <i class='bx bx-note'></i>
             </button>
             <button class="card-action-btn"
-                    onclick="
-                fetchWirdAssignmentById('@Model.Id');
-                openWirdModal('@Model.StudentId', '@Model.Student.StudentInfo.FirstName @Model.Student.StudentInfo.SecondName')"
+                    onclick="fetchWirdAssignmentById('@Model.Id'); openWirdModal('@Model.StudentId', '@Model.Student.StudentInfo.FirstName @Model.Student.StudentInfo.SecondName')"
                     title="@Localizer["Edit"]">
                 <i class='bx bx-edit'></i>
             </button>
             <form method="post" asp-controller="Wird" asp-action="Delete" asp-route-id="@Model.Id"
                   class="d-inline delete-form">
+                @Html.AntiForgeryToken()
                 <button type="submit" class="card-action-btn danger"
-                        data-confirm-delete="@Localizer["ConfirmDelete"] @Model.Student.StudentInfo.FirstName @Model.Student.StudentInfo.SecondName">
+                        data-confirm-delete="@Localizer["ConfirmDelete"] @Model.Student.StudentInfo.FirstName @Model.Student.StudentInfo.SecondName"
+                        title="حذف">
                     <i class='bx bx-trash'></i>
                 </button>
             </form>

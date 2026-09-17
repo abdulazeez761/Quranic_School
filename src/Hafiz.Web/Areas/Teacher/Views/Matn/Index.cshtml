@@ -10,42 +10,45 @@
     Layout = "~/Views/Shared/_TeacherLayout.cshtml";
 }
 
-<div class="container-fluid py-4">
+<div class="container-fluid py-2">
     @if (noClasses)
     {
-        <div class="card border-0 shadow-sm text-center py-5">
-            <div class="card-body">
-                <i class='bx bx-book-bookmark text-muted' style="font-size: 3.5rem;"></i>
-                <h4 class="mt-3 fw-bold">لا توجد حلقات مسندة إليك حالياً</h4>
-                <p class="text-muted col-md-6 mx-auto">
-                    لم يتم إسناد أي حلقة إلى حسابك حتى الآن. يرجى مراجعة إدارة المركز لإسناد حلقة لك لتتمكن من رصد تسميع المتون العلمية للطلاب.
-                </p>
-                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary mt-2">
-                    <i class='bx bx-arrow-back me-1'></i> العودة للرئيسية
-                </a>
+        <div class="t-empty-state py-5 mt-4">
+            <div class="t-empty-icon" style="background: var(--t-matn-light); color: var(--t-matn);">
+                <i class='bx bx-bookmarks'></i>
             </div>
+            <h4 class="t-empty-title">لا توجد حلقات مسندة إليك حالياً</h4>
+            <p class="t-empty-text">
+                لم يتم إسناد أي حلقة إلى حسابك حتى الآن. يرجى مراجعة إدارة المركز لإسناد حلقة لك لتتمكن من رصد تسميع المتون العلمية للطلاب.
+            </p>
+            <a asp-controller="Home" asp-action="Index" class="t-btn t-btn-outline mt-2">
+                <i class='bx bx-right-arrow-alt me-1'></i> العودة للرئيسية
+            </a>
         </div>
     }
     else
     {
-        <!-- Header -->
+        <!-- Header Banner -->
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
             <div>
-                <div class="d-flex align-items-center gap-2">
-                    <span class="badge bg-primary fs-6">شعبة متون</span>
-                    <h2 class="h4 font-weight-bold mb-0">@cls!.Name</h2>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <span class="t-badge t-badge-matn">
+                        <i class='bx bx-bookmarks'></i> شعبة متون علمية
+                    </span>
+                    <h2 class="h4 fw-bold mb-0">@cls!.Name</h2>
                 </div>
                 <p class="text-muted small mb-0 mt-1">
-                    البرنامج: <strong>@(cls.StudyProgramName ?? "المتون العلمية")</strong> | تاريخ التسميع: <strong>@targetDate.ToString("yyyy-MM-dd")</strong>
+                    البرنامج: <strong>@(cls.StudyProgramName ?? "المتون العلمية")</strong> · تاريخ التسميع: <strong>@targetDate.ToString("yyyy-MM-dd")</strong>
                 </p>
             </div>
+
             <div class="d-flex gap-2 align-items-center flex-wrap">
                 @if (teacherClasses.Count() > 1)
                 {
                     <form method="get" class="d-flex align-items-center gap-1">
                         <input type="hidden" name="date" value="@targetDate.ToString("yyyy-MM-dd")" />
                         <label class="small text-muted mb-0 me-1">الحلقة:</label>
-                        <select name="classId" class="form-select form-select-sm" onchange="this.form.submit()" style="min-width: 170px;">
+                        <select name="classId" class="form-select form-select-sm" onchange="this.form.submit()" style="min-width: 170px; border-radius: var(--t-radius-md);">
                             @foreach (var c in teacherClasses)
                             {
                                 <option value="@c.Id" selected="@(c.Id == cls.Id ? "selected" : null)">
@@ -57,199 +60,202 @@
                 }
                 <form method="get" class="d-flex gap-2 align-items-center">
                     <input type="hidden" name="classId" value="@cls.Id" />
-                    <input type="date" name="date" class="form-control form-control-sm" value="@targetDate.ToString("yyyy-MM-dd")" onchange="this.form.submit()" />
+                    <input type="date" name="date" class="form-control form-control-sm" value="@targetDate.ToString("yyyy-MM-dd")" onchange="this.form.submit()" style="border-radius: var(--t-radius-md);" />
                 </form>
-                <a asp-action="ExportExcel" asp-route-classId="@cls.Id" asp-route-date="@targetDate.ToString("yyyy-MM-dd")" class="btn btn-sm btn-outline-success">
-                    <i class='bx bx-file me-1'></i> تصدير Excel
+                <a asp-action="ExportExcel" asp-route-classId="@cls.Id" asp-route-date="@targetDate.ToString("yyyy-MM-dd")" class="t-btn t-btn-outline t-btn-sm">
+                    <i class='bx bx-file'></i> <span>تصدير Excel</span>
                 </a>
-                <a asp-controller="Home" asp-action="Index" class="btn btn-sm btn-outline-secondary">
-                    <i class='bx bx-arrow-back me-1'></i> الحلقات
+                <a asp-controller="Home" asp-action="Index" class="t-btn t-btn-outline t-btn-sm">
+                    <i class='bx bx-right-arrow-alt'></i> <span>الحلقات</span>
                 </a>
             </div>
         </div>
 
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class='bx bx-check-circle me-1'></i> @TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class='bx bx-error-circle me-1'></i> @TempData["ErrorMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="t-toast t-toast-success alert-dismissible" role="alert">
+                <i class='bx bx-check-circle' style="font-size: 1.3rem;"></i>
+                <span>@TempData["SuccessMessage"]</span>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="t-toast t-toast-error alert-dismissible" role="alert">
+                <i class='bx bx-error-circle' style="font-size: 1.3rem;"></i>
+                <span>@TempData["ErrorMessage"]</span>
+            </div>
+        }
 
-    <div class="row g-4">
-        <!-- نموذج تسجيل تسميع جديد -->
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm sticky-top" style="top: 1.5rem;">
-                <div class="card-header bg-transparent border-0 pt-3 pb-1">
-                    <h5 class="card-title h6 font-weight-bold mb-0">
-                        <i class='bx bx-plus-circle text-primary me-1'></i> رصد تسميع جديد للطالب
-                    </h5>
-                </div>
-                <div class="card-body pt-2">
-                    <form asp-action="Assign" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="ClassId" value="@cls?.Id" />
-                        <input type="hidden" name="AssignedDate" value="@targetDate.ToString("yyyy-MM-dd")" />
+        <div class="row g-4">
+            <!-- نموذج تسجيل تسميع جديد -->
+            <div class="col-lg-4">
+                <div class="t-card sticky-top" style="top: 80px;">
+                    <div class="t-card-header">
+                        <h5 class="fw-bold mb-0 fs-6 d-flex align-items-center gap-2">
+                            <i class='bx bx-plus-circle text-primary fs-5'></i>
+                            <span>رصد تسميع جديد للطالب</span>
+                        </h5>
+                    </div>
+                    <div class="t-card-body">
+                        <form asp-action="Assign" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="ClassId" value="@cls?.Id" />
+                            <input type="hidden" name="AssignedDate" value="@targetDate.ToString("yyyy-MM-dd")" />
 
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">الطالب <span class="text-danger">*</span></label>
-                            <select name="StudentId" asp-items="ViewBag.Students" class="form-select form-select-sm" required>
-                                <option value="">-- اختر الطالب --</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">نموذج الأداء <span class="text-danger">*</span></label>
-                            <div class="btn-group w-100" role="group">
-                                <input type="radio" class="btn-check" name="PerformanceType" id="perfMem" value="@((int)MatnPerformanceType.Memorization)" checked>
-                                <label class="btn btn-outline-success btn-sm" for="perfMem">حفظ جديد</label>
-
-                                <input type="radio" class="btn-check" name="PerformanceType" id="perfRev" value="@((int)MatnPerformanceType.Revision)">
-                                <label class="btn btn-outline-primary btn-sm" for="perfRev">مراجعة</label>
-
-                                <input type="radio" class="btn-check" name="PerformanceType" id="perfMud" value="@((int)MatnPerformanceType.Mudarasah)">
-                                <label class="btn btn-outline-info btn-sm" for="perfMud">مدارسة</label>
-                            </div>
-                        </div>
-
-                        <div class="row g-2 mb-3">
-                            <div class="col-6">
-                                <label class="form-label small fw-bold">وحدة القياس <span class="text-danger">*</span></label>
-                                <select name="Unit" class="form-select form-select-sm" required>
-                                    <option value="@((int)MatnUnit.Verses)">أبيات</option>
-                                    <option value="@((int)MatnUnit.Lines)">سطور</option>
-                                    <option value="@((int)MatnUnit.Pages)">صفحات</option>
-                                    <option value="@((int)MatnUnit.Chapters)">أبواب</option>
-                                    <option value="@((int)MatnUnit.Hadiths)">أحاديث</option>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">الطالب <span class="text-danger">*</span></label>
+                                <select name="StudentId" asp-items="ViewBag.Students" class="form-select form-select-sm" required style="border-radius: var(--t-radius-md);">
+                                    <option value="">-- اختر الطالب --</option>
                                 </select>
                             </div>
-                            <div class="col-6">
-                                <label class="form-label small fw-bold">الكمية المنجزة</label>
-                                <input type="number" step="0.5" min="0.5" name="Amount" class="form-control form-control-sm" placeholder="مثلاً: 5" />
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">نموذج الأداء <span class="text-danger">*</span></label>
+                                <div class="btn-group w-100" role="group">
+                                    <input type="radio" class="btn-check" name="PerformanceType" id="perfMem" value="@((int)MatnPerformanceType.Memorization)" checked>
+                                    <label class="btn btn-outline-success btn-sm" for="perfMem">حفظ جديد</label>
+
+                                    <input type="radio" class="btn-check" name="PerformanceType" id="perfRev" value="@((int)MatnPerformanceType.Revision)">
+                                    <label class="btn btn-outline-primary btn-sm" for="perfRev">مراجعة</label>
+
+                                    <input type="radio" class="btn-check" name="PerformanceType" id="perfMud" value="@((int)MatnPerformanceType.Mudarasah)">
+                                    <label class="btn btn-outline-info btn-sm" for="perfMud">مدارسة</label>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">اسم الباب / الفصل (اختياري)</label>
-                            <input type="text" name="ChapterName" class="form-control form-control-sm" placeholder="مثال: باب مخارج الحروف" />
-                        </div>
-
-                        <div class="row g-2 mb-3">
-                            <div class="col-6">
-                                <label class="form-label small fw-bold">من رقم</label>
-                                <input type="number" name="FromNumber" class="form-control form-control-sm" placeholder="مثلاً: 1" />
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold">وحدة القياس <span class="text-danger">*</span></label>
+                                    <select name="Unit" class="form-select form-select-sm" required style="border-radius: var(--t-radius-md);">
+                                        <option value="@((int)MatnUnit.Verses)">أبيات</option>
+                                        <option value="@((int)MatnUnit.Lines)">سطور</option>
+                                        <option value="@((int)MatnUnit.Pages)">صفحات</option>
+                                        <option value="@((int)MatnUnit.Chapters)">أبواب</option>
+                                        <option value="@((int)MatnUnit.Hadiths)">أحاديث</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold">الكمية المنجزة</label>
+                                    <input type="number" step="0.5" min="0.5" name="Amount" class="form-control form-control-sm" placeholder="مثلاً: 5" style="border-radius: var(--t-radius-md);" />
+                                </div>
                             </div>
-                            <div class="col-6">
-                                <label class="form-label small fw-bold">إلى رقم</label>
-                                <input type="number" name="ToNumber" class="form-control form-control-sm" placeholder="مثلاً: 10" />
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">اسم الباب / الفصل (اختياري)</label>
+                                <input type="text" name="ChapterName" class="form-control form-control-sm" placeholder="مثال: باب مخارج الحروف" style="border-radius: var(--t-radius-md);" />
                             </div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">التقييم <span class="text-danger">*</span></label>
-                            <select name="Status" class="form-select form-select-sm" required>
-                                <option value="@((int)AssignmentStatus.excellent)">ممتاز</option>
-                                <option value="@((int)AssignmentStatus.veryGood)">جيد جداً</option>
-                                <option value="@((int)AssignmentStatus.good)">جيد</option>
-                                <option value="@((int)AssignmentStatus.fair)">مقبول</option>
-                                <option value="@((int)AssignmentStatus.poor)">ضعيف (يحتاج إعادة)</option>
-                            </select>
-                        </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold">من رقم</label>
+                                    <input type="number" name="FromNumber" class="form-control form-control-sm" placeholder="مثلاً: 1" style="border-radius: var(--t-radius-md);" />
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold">إلى رقم</label>
+                                    <input type="number" name="ToNumber" class="form-control form-control-sm" placeholder="مثلاً: 10" style="border-radius: var(--t-radius-md);" />
+                                </div>
+                            </div>
 
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">ملاحظات المعلم</label>
-                            <textarea name="Note" class="form-control form-control-sm" rows="2" placeholder="ملاحظات على الضبط أو الحفظ..."></textarea>
-                        </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">التقييم <span class="text-danger">*</span></label>
+                                <select name="Status" class="form-select form-select-sm" required style="border-radius: var(--t-radius-md);">
+                                    <option value="@((int)AssignmentStatus.excellent)">ممتاز</option>
+                                    <option value="@((int)AssignmentStatus.veryGood)">جيد جداً</option>
+                                    <option value="@((int)AssignmentStatus.good)">جيد</option>
+                                    <option value="@((int)AssignmentStatus.fair)">مقبول</option>
+                                    <option value="@((int)AssignmentStatus.poor)">ضعيف (يحتاج إعادة)</option>
+                                </select>
+                            </div>
 
-                        <button type="submit" class="btn btn-primary btn-sm w-100 py-2">
-                            <i class='bx bx-check me-1'></i> اعتماد التسميع
-                        </button>
-                    </form>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">ملاحظات المعلم</label>
+                                <textarea name="Note" class="form-control form-control-sm" rows="2" placeholder="ملاحظات على الضبط أو الحفظ..." style="border-radius: var(--t-radius-md);"></textarea>
+                            </div>
+
+                            <button type="submit" class="t-btn t-btn-matn w-100 py-2">
+                                <i class='bx bx-check me-1'></i> اعتماد التسميع
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- جدول التسميعات المسجلة لهذا اليوم -->
+            <div class="col-lg-8">
+                <div class="t-card">
+                    <div class="t-card-header">
+                        <h5 class="fw-bold mb-0 fs-6 d-flex align-items-center gap-2">
+                            <i class='bx bx-list-check text-primary fs-5'></i>
+                            <span>سجل تسميع اليوم (@Model.Count())</span>
+                        </h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light small">
+                                <tr>
+                                    <th>الطالب</th>
+                                    <th>نوع الأداء</th>
+                                    <th>الموضع والكمية</th>
+                                    <th>التقييم</th>
+                                    <th>ملاحظات</th>
+                                    <th class="text-center">إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (!Model.Any())
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4 text-muted small">
+                                            لا توجد تسميعات مسجلة لهذا التاريخ. استخدم النموذج لإدخال تسميع جديد.
+                                        </td>
+                                    </tr>
+                                }
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td class="fw-bold">@item.StudentName</td>
+                                        <td>
+                                            <span class="t-badge @(item.PerformanceType == MatnPerformanceType.Memorization ? "t-badge-present" : item.PerformanceType == MatnPerformanceType.Revision ? "t-badge-matn" : "t-badge-excuse")">
+                                                @item.PerformanceTypeName
+                                            </span>
+                                        </td>
+                                        <td class="small">
+                                            @if (!string.IsNullOrEmpty(item.ChapterName))
+                                            {
+                                                <div><strong>@item.ChapterName</strong></div>
+                                            }
+                                            @if (item.FromNumber.HasValue && item.ToNumber.HasValue)
+                                            {
+                                                <span>من @item.FromNumber إلى @item.ToNumber (@item.UnitName)</span>
+                                            }
+                                            else if (item.Amount.HasValue)
+                                            {
+                                                <span>@item.Amount @item.UnitName</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <span class="t-badge t-badge-gold">
+                                                @item.Status.ToString()
+                                            </span>
+                                        </td>
+                                        <td class="small text-muted">
+                                            @(string.IsNullOrEmpty(item.Note) ? "-" : item.Note)
+                                        </td>
+                                        <td class="text-center">
+                                            <form asp-action="Delete" asp-route-id="@item.Id" asp-route-classId="@cls?.Id" asp-route-date="@targetDate.ToString("yyyy-MM-dd")" method="post" class="d-inline" onsubmit="return confirm('هل تريد حذف هذا السجل؟');">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="t-btn t-btn-sm t-btn-danger p-1" title="حذف">
+                                                    <i class='bx bx-trash'></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- جدول التسميعات المسجلة لهذا اليوم -->
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-transparent border-0 pt-3 pb-2 d-flex justify-content-between align-items-center">
-                    <h5 class="card-title h6 font-weight-bold mb-0">سجل تسميع اليوم (@Model.Count())</h5>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light small">
-                            <tr>
-                                <th>الطالب</th>
-                                <th>نوع الأداء</th>
-                                <th>الموضع والكمية</th>
-                                <th>التقييم</th>
-                                <th>ملاحظات</th>
-                                <th class="text-center">إجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (!Model.Any())
-                            {
-                                <tr>
-                                    <td colspan="6" class="text-center py-4 text-muted small">
-                                        لا توجد تسميعات مسجلة لهذا التاريخ. استخدم النموذج لإدخال تسميع جديد.
-                                    </td>
-                                </tr>
-                            }
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td class="font-weight-bold">@item.StudentName</td>
-                                    <td>
-                                        <span class="badge @(item.PerformanceType == MatnPerformanceType.Memorization ? "bg-success" : item.PerformanceType == MatnPerformanceType.Revision ? "bg-primary" : "bg-info")">
-                                            @item.PerformanceTypeName
-                                        </span>
-                                    </td>
-                                    <td class="small">
-                                        @if (!string.IsNullOrEmpty(item.ChapterName))
-                                        {
-                                            <div><strong>@item.ChapterName</strong></div>
-                                        }
-                                        @if (item.FromNumber.HasValue && item.ToNumber.HasValue)
-                                        {
-                                            <span>من @item.FromNumber إلى @item.ToNumber (@item.UnitName)</span>
-                                        }
-                                        else if (item.Amount.HasValue)
-                                        {
-                                            <span>@item.Amount @item.UnitName</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-light text-dark border">
-                                            @item.Status.ToString()
-                                        </span>
-                                    </td>
-                                    <td class="small text-muted">
-                                        @(string.IsNullOrEmpty(item.Note) ? "-" : item.Note)
-                                    </td>
-                                    <td class="text-center">
-                                        <form asp-action="Delete" asp-route-id="@item.Id" asp-route-classId="@cls?.Id" asp-route-date="@targetDate.ToString("yyyy-MM-dd")" method="post" class="d-inline" onsubmit="return confirm('هل تريد حذف هذا السجل؟');">
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn btn-sm btn-outline-danger p-1" title="حذف">
-                                                <i class='bx bx-trash'></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
     }
 </div>
-

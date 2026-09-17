@@ -1,0 +1,471 @@
+/* ==========================================================================
+   Teacher Student Attendance - Modern, Touch-First & Mobile Ergonomics
+   ========================================================================== */
+
+.attendance-page-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-md);
+  width: 100%;
+}
+
+/* Header Action Group */
+.attendance-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+/* Floating Save Indicator Toast */
+.save-indicator {
+  position: fixed;
+  bottom: 80px;
+  right: 24px;
+  z-index: 1050;
+  padding: 0.65rem 1.25rem;
+  border-radius: var(--t-radius-full);
+  font-weight: 700;
+  font-size: 0.88rem;
+  box-shadow: var(--t-shadow-lg);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+}
+
+[dir='ltr'] .save-indicator {
+  right: auto;
+  left: 24px;
+}
+
+.save-indicator.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.save-indicator.success {
+  background: #065f46;
+  color: #ffffff;
+}
+
+.save-indicator.error {
+  background: #991b1b;
+  color: #ffffff;
+}
+
+/* Stats Cards Grid */
+.attendance-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.85rem;
+}
+
+.att-stat-card {
+  background: var(--t-surface);
+  border: 1px solid var(--t-border);
+  border-radius: var(--t-radius-md);
+  padding: 0.85rem 1rem;
+  box-shadow: var(--t-shadow-xs);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: var(--t-transition);
+}
+
+.att-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--t-shadow-sm);
+}
+
+.att-stat-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--t-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.att-stat-card.present .att-stat-icon {
+  background: var(--t-present-bg);
+  color: var(--t-present);
+}
+
+.att-stat-card.late .att-stat-icon {
+  background: var(--t-late-bg);
+  color: var(--t-late);
+}
+
+.att-stat-card.absent .att-stat-icon {
+  background: var(--t-absent-bg);
+  color: var(--t-absent);
+}
+
+.att-stat-card.excuse .att-stat-icon {
+  background: var(--t-excuse-bg);
+  color: var(--t-excuse);
+}
+
+.att-stat-val {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--t-text-main);
+  line-height: 1.1;
+}
+
+.att-stat-lbl {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--t-text-muted);
+}
+
+/* Attendance Filters Card */
+.att-filters-card {
+  background: var(--t-surface);
+  border: 1px solid var(--t-border);
+  border-radius: var(--t-radius-lg);
+  padding: 1rem 1.25rem;
+  box-shadow: var(--t-shadow-xs);
+}
+
+.att-filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.att-filter-item label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--t-text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.att-filter-item .form-input,
+.att-filter-item select {
+  width: 100%;
+  padding: 0.55rem 0.85rem;
+  background: #ffffff;
+  border: 1.5px solid var(--t-border);
+  border-radius: var(--t-radius-md);
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--t-text-main);
+  transition: var(--t-transition);
+}
+
+.att-filter-item .form-input:focus,
+.att-filter-item select:focus {
+  outline: none;
+  border-color: var(--t-primary);
+  box-shadow: 0 0 0 3px rgba(30, 107, 67, 0.15);
+}
+
+/* Table Toolbar */
+.att-table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.att-search-box {
+  position: relative;
+  flex: 1;
+  max-width: 360px;
+}
+
+.att-search-box input {
+  width: 100%;
+  padding: 0.6rem 2.5rem 0.6rem 0.85rem;
+  background: var(--t-surface);
+  border: 1.5px solid var(--t-border);
+  border-radius: var(--t-radius-md);
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--t-text-main);
+  box-shadow: var(--t-shadow-xs);
+  transition: var(--t-transition);
+}
+
+[dir='ltr'] .att-search-box input {
+  padding: 0.6rem 0.85rem 0.6rem 2.5rem;
+}
+
+.att-search-box input:focus {
+  outline: none;
+  border-color: var(--t-primary);
+  box-shadow: 0 0 0 3px rgba(30, 107, 67, 0.15);
+}
+
+.att-search-box i {
+  position: absolute;
+  top: 50%;
+  right: 0.85rem;
+  transform: translateY(-50%);
+  color: var(--t-text-subtle);
+  pointer-events: none;
+  font-size: 1.15rem;
+}
+
+[dir='ltr'] .att-search-box i {
+  right: auto;
+  left: 0.85rem;
+}
+
+/* Attendance Table Styling */
+.table-attendance-card {
+  background: var(--t-surface);
+  border: 1px solid var(--t-border);
+  border-radius: var(--t-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--t-shadow-sm);
+}
+
+.table-attendance {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-attendance th {
+  background: var(--t-surface-muted);
+  padding: 0.85rem 1rem;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--t-text-muted);
+  border-bottom: 1px solid var(--t-border);
+}
+
+.table-attendance td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--t-border-subtle);
+  vertical-align: middle;
+}
+
+.table-attendance tr:hover td {
+  background: #fafffc;
+}
+
+/* Radio Button Controls */
+.attendance-radio {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 0;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.attendance-radio input[type='radio'] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: auto;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.radio-custom {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--t-border-strong);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--t-transition);
+  position: relative;
+  pointer-events: none;
+}
+
+.attendance-radio input[type='radio']:checked + .radio-custom.present {
+  background: var(--t-present);
+  border-color: var(--t-present);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.attendance-radio input[type='radio']:checked + .radio-custom.late {
+  background: var(--t-late);
+  border-color: var(--t-late);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
+.attendance-radio input[type='radio']:checked + .radio-custom.absent {
+  background: var(--t-absent);
+  border-color: var(--t-absent);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.attendance-radio input[type='radio']:checked + .radio-custom.excuse {
+  background: var(--t-excuse);
+  border-color: var(--t-excuse);
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+}
+
+.attendance-radio input[type='radio']:checked + .radio-custom::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+/* Row states */
+tr.status-present td {
+  background: rgba(16, 185, 129, 0.03);
+}
+
+tr.status-late td {
+  background: rgba(245, 158, 11, 0.03);
+}
+
+tr.status-absent td {
+  background: rgba(239, 68, 68, 0.03);
+}
+
+tr.status-excuse td {
+  background: rgba(2, 132, 199, 0.03);
+}
+
+/* ========== Mobile Touch Transformation (<768px) ========== */
+@media (max-width: 767.98px) {
+  .table-attendance-card {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  .table-attendance,
+  .table-attendance tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .table-attendance thead {
+    display: none;
+  }
+
+  .table-attendance tr {
+    display: flex;
+    flex-direction: column;
+    background: var(--t-surface);
+    border: 1px solid var(--t-border);
+    border-radius: var(--t-radius-lg);
+    box-shadow: var(--t-shadow-xs);
+    margin-bottom: 0.85rem;
+    padding: 0.85rem 1rem;
+    gap: 0.65rem;
+    transition: var(--t-transition);
+  }
+
+  .table-attendance tr.status-present {
+    border-right: 4px solid var(--t-present);
+  }
+
+  .table-attendance tr.status-late {
+    border-right: 4px solid var(--t-late);
+  }
+
+  .table-attendance tr.status-absent {
+    border-right: 4px solid var(--t-absent);
+  }
+
+  .table-attendance tr.status-excuse {
+    border-right: 4px solid var(--t-excuse);
+  }
+
+  [dir='ltr'] .table-attendance tr.status-present {
+    border-right: 1px solid var(--t-border);
+    border-left: 4px solid var(--t-present);
+  }
+
+  /* Index cell */
+  .table-attendance td:first-child {
+    display: none;
+  }
+
+  /* Student name cell */
+  .table-attendance td:nth-child(2) {
+    display: block;
+    padding: 0 0 0.5rem 0;
+    border-bottom: 1px solid var(--t-border-subtle);
+  }
+
+  /* Wrap the 4 radio tds into a 4-button horizontal row */
+  .table-attendance tr {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .table-attendance td:nth-child(2) {
+    grid-column: span 4;
+  }
+
+  .table-attendance td:nth-child(n + 3) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    border-bottom: none;
+  }
+
+  .attendance-radio {
+    width: 100%;
+    min-height: 44px;
+    border-radius: var(--t-radius-md);
+    background: var(--t-surface-subtle);
+    border: 1.5px solid var(--t-border);
+    padding: 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .attendance-radio input[type='radio'] {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  .attendance-radio:has(input[type='radio']:checked) {
+    border-color: currentColor;
+  }
+
+  .attendance-radio:has(input.status-present:checked) {
+    background: var(--t-present-bg);
+    border-color: var(--t-present);
+    color: var(--t-present-text);
+  }
+
+  .attendance-radio:has(input.status-late:checked) {
+    background: var(--t-late-bg);
+    border-color: var(--t-late);
+    color: var(--t-late-text);
+  }
+
+  .attendance-radio:has(input.status-absent:checked) {
+    background: var(--t-absent-bg);
+    border-color: var(--t-absent);
+    color: var(--t-absent-text);
+  }
+
+  .attendance-radio:has(input.status-excuse:checked) {
+    background: var(--t-excuse-bg);
+    border-color: var(--t-excuse);
+    color: var(--t-excuse-text);
+  }
+}

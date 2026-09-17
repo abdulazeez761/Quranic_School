@@ -26,7 +26,7 @@
 @* Token for fetch requests *@
 @Html.AntiForgeryToken()
 
-<div class="page-container">
+<div class="wirds-page-wrapper">
 
     <!-- HERO BANNER -->
     <div class="wird-hero-banner">
@@ -35,35 +35,35 @@
                 <i class='bx @(isMatnClass ? "bx-bookmarks" : "bx-book-open")'></i>
             </div>
             <div class="wird-hero-details">
-                <div class="d-flex align-items-center gap-2 flex-wrap">
+                <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
                     <h2>@className</h2>
                     @if (isMatnClass)
                     {
-                        <span class="wird-hero-badge badge-matn">
+                        <span class="t-badge t-badge-matn">
                             <i class='bx bx-bookmark-alt'></i>
                             @(studyProgramName ?? "حلقة متون علمية")
                         </span>
                     }
                     else if (!string.IsNullOrEmpty(studyProgramName))
                     {
-                        <span class="wird-hero-badge badge-quran">
+                        <span class="t-badge t-badge-quran">
                             <i class='bx bx-check-double'></i>
                             @studyProgramName
                         </span>
                     }
                 </div>
                 <div class="wird-hero-stats">
-                    <span class="wird-stat-chip">
+                    <span class="wird-stat-chip total">
                         <i class='bx bx-list-check text-primary'></i>
-                        إجمالي التسميع: <strong>@(totalQuran + totalMatn)</strong>
+                        <span>إجمالي التسميع: <strong>@(totalQuran + totalMatn)</strong></span>
                     </span>
-                    <span class="wird-stat-chip">
+                    <span class="wird-stat-chip quran">
                         <i class='bx bx-book-open text-success'></i>
-                        القرآن: <strong>@totalQuran</strong>
+                        <span>القرآن: <strong>@totalQuran</strong></span>
                     </span>
-                    <span class="wird-stat-chip">
+                    <span class="wird-stat-chip matn">
                         <i class='bx bx-bookmarks text-info'></i>
-                        المتون: <strong>@totalMatn</strong>
+                        <span>المتون: <strong>@totalMatn</strong></span>
                     </span>
                 </div>
             </div>
@@ -72,26 +72,26 @@
         <div class="wird-hero-actions">
             @if (isMatnClass)
             {
-                <button type="button" class="btn-hero-primary" onclick="openAssignMatnModal('', '')">
+                <button type="button" class="t-btn t-btn-matn" onclick="openAssignMatnModal('', '')">
                     <i class='bx bx-plus'></i>
                     <span>تسميع متن جديد</span>
                 </button>
             }
             else
             {
-                <button type="button" class="btn-hero-success" onclick="openWirdModal('', '')">
+                <button type="button" class="t-btn t-btn-primary" onclick="openWirdModal('', '')">
                     <i class='bx bx-plus'></i>
                     <span>إضافة ورد قرآني</span>
                 </button>
                 @if (totalMatn > 0 || isMatnClass)
                 {
-                    <button type="button" class="btn-hero-primary" onclick="openAssignMatnModal('', '')">
+                    <button type="button" class="t-btn t-btn-matn" onclick="openAssignMatnModal('', '')">
                         <i class='bx bx-bookmarks'></i>
                         <span>تسميع متن</span>
                     </button>
                 }
             }
-            <a class="btn-hero-outline" asp-action="Index" asp-controller="Home">
+            <a class="t-btn t-btn-outline" asp-action="Index" asp-controller="Home">
                 <i class='bx bx-transfer-alt'></i>
                 <span>@Localizer["ChangeClass"]</span>
             </a>
@@ -128,7 +128,7 @@
                 <div class="results-count" id="resultsCount">
                     <strong>@(activeTab == "matn" ? totalMatn : totalQuran)</strong> @Localizer["Assignments"]
                 </div>
-                <button class="filter-toggle" id="filterToggle">
+                <button class="filter-toggle" id="filterToggle" title="خيارات الفلترة">
                     <i class='bx bx-chevron-down'></i>
                 </button>
             </div>
@@ -188,8 +188,8 @@
                 </div>
 
                 <div class="filter-actions">
-                    <button class="btn-filter btn-apply" id="applyFilters">@Localizer["ApplyFilters"]</button>
-                    <button class="btn-filter btn-reset" id="resetFilters">@Localizer["Reset"]</button>
+                    <button class="t-btn t-btn-primary btn-apply" id="applyFilters">@Localizer["ApplyFilters"]</button>
+                    <button class="t-btn t-btn-outline btn-reset" id="resetFilters">@Localizer["Reset"]</button>
                 </div>
             </div>
         </div>
@@ -197,18 +197,17 @@
 
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert" id="successAlert">
-            <i class="bi bi-check-circle-fill me-2"></i>
-            <strong>@Localizer["Success"]</strong> @TempData["SuccessMessage"]
+        <div class="t-toast t-toast-success alert-dismissible" role="alert" id="successAlert">
+            <i class="bx bx-check-circle" style="font-size: 1.3rem;"></i>
+            <span>@TempData["SuccessMessage"]</span>
         </div>
     }
 
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert" id="errorAlert">
-            <i class="bi bi-x-circle-fill me-2"></i>
-            <strong>@Localizer["Error"]</strong> @TempData["ErrorMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="t-toast t-toast-error alert-dismissible" role="alert" id="errorAlert">
+            <i class="bx bx-error-circle" style="font-size: 1.3rem;"></i>
+            <span>@TempData["ErrorMessage"]</span>
         </div>
     }
 
@@ -230,15 +229,15 @@
         }
         else
         {
-            <div class="empty-state-modern">
-                <div class="empty-icon-circle matn-icon">
+            <div class="t-empty-state">
+                <div class="t-empty-icon" style="background: var(--t-matn-light); color: var(--t-matn);">
                     <i class='bx bx-bookmarks'></i>
                 </div>
-                <h4>لا توجد تسميعات متون مسجلة لهذا التاريخ</h4>
-                <p>
+                <h4 class="t-empty-title">لا توجد تسميعات متون مسجلة لهذا التاريخ</h4>
+                <p class="t-empty-text">
                     يمكنك استخدام زر "تسميع متن جديد" لرصد حفظ أو مراجعة المتون العلمية لطلاب هذه الحلقة بسهولة.
                 </p>
-                <button type="button" class="btn-hero-primary" onclick="openAssignMatnModal('', '')">
+                <button type="button" class="t-btn t-btn-matn" onclick="openAssignMatnModal('', '')">
                     <i class='bx bx-plus'></i>
                     <span>رصد أول تسميع متن</span>
                 </button>
@@ -261,15 +260,15 @@
         }
         else
         {
-            <div class="empty-state-modern">
-                <div class="empty-icon-circle quran-icon">
+            <div class="t-empty-state">
+                <div class="t-empty-icon">
                     <i class='bx bx-book-open'></i>
                 </div>
-                <h4>لا توجد أوراد قرآنية مسجلة لهذا التاريخ</h4>
-                <p>
+                <h4 class="t-empty-title">لا توجد أوراد قرآنية مسجلة لهذا التاريخ</h4>
+                <p class="t-empty-text">
                     لم يتم رصد أي أوراد حفظ أو مراجعة للقرآن الكريم في هذه الحلقة لهذا اليوم بعد.
                 </p>
-                <button type="button" class="btn-hero-success" onclick="openWirdModal('', '')">
+                <button type="button" class="t-btn t-btn-primary" onclick="openWirdModal('', '')">
                     <i class='bx bx-plus'></i>
                     <span>إضافة أول ورد قرآني</span>
                 </button>

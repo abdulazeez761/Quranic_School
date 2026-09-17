@@ -1,347 +1,375 @@
-/* 
-   Classes Container
-    */
-.classes-container {
-  padding: 2rem;
-  margin: 1px 1px !important;
-  min-height: calc(100vh - var(--topbar-height, 70px));
+/* ==========================================================================
+   Teacher Dashboard & Classes - Clean, Modern Teacher Workspace Styles
+   ========================================================================== */
+
+.teacher-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-lg);
 }
 
-.classes-header {
+/* ========== Hero Welcome Banner ========== */
+.teacher-hero-banner {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid var(--t-border);
+  border-radius: var(--t-radius-xl);
+  padding: 1.75rem 2rem;
+  box-shadow: var(--t-shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.teacher-hero-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle, rgba(30, 107, 67, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.hero-greeting {
+  flex: 1;
+  min-width: 280px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  background: var(--t-primary-light);
+  color: var(--t-primary);
+  border: 1px solid var(--t-primary-border);
+  border-radius: var(--t-radius-full);
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-bottom: 0.65rem;
+}
+
+.hero-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--t-text-main);
+  margin: 0 0 0.4rem 0;
+  letter-spacing: -0.02em;
+}
+
+.hero-subtitle {
+  font-size: 0.92rem;
+  color: var(--t-text-muted);
+  margin: 0;
+  line-height: 1.5;
+  max-width: 600px;
+}
+
+/* Quick Metrics in Hero */
+.hero-metrics {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.hero-metric-item {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 2rem;
+  background: var(--t-surface);
+  border: 1px solid var(--t-border);
+  padding: 0.75rem 1.15rem;
+  border-radius: var(--t-radius-lg);
+  box-shadow: var(--t-shadow-xs);
+  min-width: 140px;
 }
 
-.header-icon {
-  width: 28px;
-  height: 28px;
-  font-size: 30px;
-  color: var(--primary-green);
-  animation: fadeInDown 0.6s ease-out;
+.metric-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--t-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
 }
 
-.classes-title {
-  font-size: 1.75rem;
+.metric-icon.green {
+  background: var(--t-primary-light);
+  color: var(--t-primary);
+}
+
+.metric-icon.blue {
+  background: var(--t-matn-light);
+  color: var(--t-matn);
+}
+
+.metric-icon.amber {
+  background: var(--t-gold-light);
+  color: var(--t-gold);
+}
+
+.metric-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-value {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--t-text-main);
+  line-height: 1.1;
+}
+
+.metric-label {
+  font-size: 0.75rem;
   font-weight: 600;
-  color: #1f2937;
-  margin: 0;
-  animation: fadeInDown 0.6s ease-out;
+  color: var(--t-text-muted);
 }
 
-/* 
-   Classes Grid
-    */
+/* ========== Classes Grid ========== */
 .classes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
   gap: 1.25rem;
 }
 
-/* 
-   Class Card Base
-    */
+/* ========== Class Card ========== */
 .class-card {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 1.25rem;
+  background: var(--t-surface);
+  border: 1.5px solid var(--t-border);
+  border-radius: var(--t-radius-lg);
+  padding: 1.35rem;
   position: relative;
-  top: 0;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: var(--t-transition);
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  animation: fadeInDown 0.6s ease-out;
+  box-shadow: var(--t-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .class-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border-color: #d1d5db;
+  transform: translateY(-3px);
+  border-color: var(--t-border-strong);
+  box-shadow: var(--t-shadow-md);
 }
 
-/* 
-   Active Class Card
-    */
+.class-card:active {
+  transform: scale(0.99);
+}
+
+/* Active Class Highlight */
 .class-card.active {
-  border-color: var(--primary-green);
+  border-color: var(--t-primary);
   border-width: 2px;
-  background: #fafffe;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.12);
+  background: #fafffc;
+  box-shadow: 0 4px 14px rgba(30, 107, 67, 0.12);
 }
 
-.class-card.active:hover {
-  box-shadow: var(--shadow-hover);
-  transform: translateY(-4px);
-  border-color: var(--primary-green);
-  transition: all var(--transition-base);
+.class-card.is-matn-card.active {
+  border-color: var(--t-matn);
+  background: #fbfdff;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.12);
 }
 
-/* 
-   Status Badge
-    */
 .status-badge {
   position: absolute;
   top: 1rem;
-  right: 1rem;
-  background: var(--primary-green);
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: capitalize;
-  letter-spacing: 0.025em;
-}
-
-/* ===================================
-   Card Content
-   =================================== */
-.class-card-content {
+  left: 1rem;
+  background: var(--t-primary);
+  color: #ffffff;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--t-radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(30, 107, 67, 0.25);
   display: flex;
-  flex-direction: column;
+  align-items: center;
 }
 
+[dir='ltr'] .status-badge {
+  left: auto;
+  right: 1rem;
+}
+
+/* Card Top / Badges */
+.class-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.gender-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--t-radius-sm);
+  background: var(--t-surface-muted);
+  color: var(--t-text-muted);
+  border: 1px solid var(--t-border);
+}
+
+.gender-pill.gender-male {
+  background: #f0f9ff;
+  color: #0284c7;
+  border-color: #bae6fd;
+}
+
+.gender-pill.gender-female {
+  background: #fdf2f8;
+  color: #db2777;
+  border-color: #fbcfe8;
+}
+
+/* Card Title */
 .class-name {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #111827;
-  margin: 0 0 0.875rem 0;
-  padding-right: 5rem;
-  line-height: 1.4;
+  font-size: 1.18rem;
+  font-weight: 800;
+  color: var(--t-text-main);
+  margin: 0 0 1rem 0;
+  line-height: 1.35;
 }
 
-.class-card.active .class-name {
-  color: #111827;
-}
-
+/* Info List */
 .class-info-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding: 0;
-  margin-bottom: 0.875rem;
+  gap: 0.65rem;
+  margin-bottom: 1.25rem;
+  background: var(--t-surface-subtle);
+  padding: 0.85rem;
+  border-radius: var(--t-radius-md);
+  border: 1px solid var(--t-border-subtle);
 }
 
 .class-info-item {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
-  color: #6b7280;
-  font-size: 0.875rem;
-  line-height: 1.5;
+  gap: 0.65rem;
 }
 
-.info-icon {
-  width: 16px;
-  height: 16px;
-  color: #9ca3af;
+.info-icon-box {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--t-radius-xs);
+  background: var(--t-surface);
+  border: 1px solid var(--t-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--t-text-subtle);
+  font-size: 0.95rem;
   flex-shrink: 0;
 }
 
-.class-card.active .class-info-item {
-  color: #374151;
+.info-details {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 0.84rem;
 }
 
-.class-card.active .info-icon {
-  color: var(--primary-green);
+.info-label {
+  color: var(--t-text-muted);
+  font-weight: 500;
 }
 
+.info-val {
+  color: var(--t-text-main);
+  font-weight: 700;
+}
+
+/* Card Footer */
 .class-footer {
-  padding-top: 0.875rem;
-  border-top: 1px solid #f3f4f6;
+  margin-top: auto;
+  padding-top: 0.5rem;
 }
 
-.gender-badge {
-  display: inline-block;
-  padding: 0.375rem 0.875rem;
-  border-radius: 6px;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  text-transform: capitalize;
+.class-footer .t-btn {
+  font-size: 0.9rem;
+  font-weight: 700;
+  justify-content: space-between;
+  padding: 0.65rem 1.15rem;
 }
 
-.gender-badge.gender-male {
-  background-color: #dbeafe;
-  color: #52b9ff;
+.arrow-icon {
+  font-size: 1.2rem;
+  transition: transform 0.2s ease;
 }
 
-.gender-badge.gender-female {
-  background-color: #fce7f3;
-  color: #ff4a99;
+[dir='ltr'] .arrow-icon {
+  transform: rotate(180deg);
 }
 
-.gender-badge.gender-mixed {
-  background-color: #fef3c7;
-  color: #d97706;
+.class-card:hover .arrow-icon {
+  transform: translateX(-4px);
 }
 
+[dir='ltr'] .class-card:hover .arrow-icon {
+  transform: rotate(180deg) translateX(-4px);
+}
+
+/* ========== Mobile Responsive Adjustments ========== */
 @media (max-width: 768px) {
-  .classes-container {
-    padding: var(--space-md);
+  .teacher-hero-banner {
+    padding: 1.25rem 1.15rem;
+    border-radius: var(--t-radius-lg);
   }
 
-  .classes-header {
-    margin-bottom: var(--space-lg);
-    gap: var(--space-sm);
+  .hero-title {
+    font-size: 1.35rem;
   }
 
-  .classes-title {
-    font-size: var(--font-size-xl);
+  .hero-subtitle {
+    font-size: 0.85rem;
   }
 
-  .header-icon {
-    font-size: 24px;
-    width: 24px;
-    height: 24px;
+  .hero-metrics {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.65rem;
+  }
+
+  .hero-metric-item {
+    min-width: 0;
+    padding: 0.65rem 0.85rem;
   }
 
   .classes-grid {
     grid-template-columns: 1fr;
-    gap: var(--space-md);
-  }
-
-  .class-card {
-    padding: var(--space-md);
-  }
-
-  .class-name {
-    font-size: var(--font-size-sm);
-    padding-right: 4rem;
-  }
-
-  .status-badge {
-    top: var(--space-sm);
-    right: var(--space-sm);
-    padding: 0.2rem 0.6rem;
-    font-size: 0.7rem;
-  }
-
-  .class-info-item {
-    font-size: var(--font-size-xs);
-  }
-
-  .info-icon {
-    width: 14px;
-    height: 14px;
-  }
-
-  .gender-badge {
-    padding: 0.3rem 0.7rem;
-    font-size: var(--font-size-xs);
-  }
-
-  .class-footer {
-    padding-top: var(--space-sm);
+    gap: 1rem;
   }
 }
 
 @media (max-width: 480px) {
-  .classes-container {
-    padding: var(--space-sm);
-    margin: 0;
-  }
-
-  .classes-header {
-    margin-bottom: var(--space-md);
-    gap: 8px;
-  }
-
-  .classes-title {
-    font-size: var(--font-size-lg);
-    margin: 0;
-  }
-
-  .header-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-    flex-shrink: 0;
-  }
-
-  .classes-grid {
+  .hero-metrics {
     grid-template-columns: 1fr;
-    gap: var(--space-sm);
   }
 
   .class-card {
-    padding: var(--space-sm);
-    border-radius: 8px;
-  }
-
-  .class-card:active {
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    padding: 1.1rem;
   }
 
   .class-name {
-    font-size: 0.85rem;
-    margin-bottom: var(--space-sm);
-    padding-right: 3.5rem;
-    font-weight: 600;
-  }
-
-  .class-info-list {
-    gap: 0.3rem;
-    margin-bottom: var(--space-sm);
-  }
-
-  .class-info-item {
-    font-size: 0.75rem;
-    gap: 0.4rem;
-  }
-
-  .info-icon {
-    width: 12px;
-    height: 12px;
-    min-width: 12px;
-  }
-
-  .status-badge {
-    font-size: 0.6rem;
-    padding: 0.15rem 0.4rem;
-    top: 0.5rem;
-    right: 0.5rem;
-  }
-
-  .class-footer {
-    padding-top: 0.6rem;
-    border-top: 1px solid #f3f4f6;
-  }
-
-  .gender-badge {
-    padding: 0.25rem 0.6rem;
-    font-size: 0.7rem;
-  }
-}
-
-@media print {
-  .class-card {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-}
-
-/* Touch Improvements for Mobile */
-@media (hover: none) and (pointer: coarse) {
-  .class-card {
-    cursor: pointer;
-    -webkit-tap-highlight-color: rgba(141, 242, 156, 0.1);
-  }
-
-  .class-card:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-  }
-}
-
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+    font-size: 1.1rem;
   }
 }

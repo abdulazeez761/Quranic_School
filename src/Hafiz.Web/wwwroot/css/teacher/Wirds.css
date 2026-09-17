@@ -1,62 +1,191 @@
-/* ===================================
-   PAGE LAYOUT
-   =================================== */
-.page-container {
-  max-width: var(--container-max);
-  margin: auto;
-  padding: var(--space-xl);
-  animation: fadeIn 0.4s ease;
+/* ==========================================================================
+   Teacher Wirds & Matn - Clean, Calm, Professional Workspace Styles
+   ========================================================================== */
+
+.wirds-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-md);
+  width: 100%;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* ========== Hero Banner ========== */
+.wird-hero-banner {
+  background: var(--t-surface);
+  border: 1px solid var(--t-border);
+  border-radius: var(--t-radius-lg);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--t-shadow-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
 }
 
-.page-header h2 {
-  font-size: var(--font-size-2xl);
-  color: var(--text-dark);
-  margin-bottom: var(--space-lg);
+.wird-hero-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  min-width: 280px;
+}
+
+.wird-hero-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--t-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.wird-hero-icon.quran-theme {
+  background: var(--t-primary-light);
+  color: var(--t-primary);
+  border: 1px solid var(--t-primary-border);
+}
+
+.wird-hero-icon.matn-theme {
+  background: var(--t-matn-light);
+  color: var(--t-matn);
+  border: 1px solid var(--t-matn-border);
+}
+
+.wird-hero-details h2 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--t-text-main);
+  margin: 0;
+}
+
+.wird-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.35rem;
+}
+
+.wird-stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--t-radius-full);
+  background: var(--t-surface-muted);
+  color: var(--t-text-muted);
+  border: 1px solid var(--t-border);
+}
+
+.wird-stat-chip.total {
+  background: var(--t-primary-subtle);
+  color: var(--t-primary);
+  border-color: var(--t-primary-border);
   font-weight: 700;
 }
 
-/* ===================================
-   FILTER BAR — Compact inline
-   =================================== */
+.wird-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+/* ========== Segmented Capsule Tabs ========== */
+.wird-tabs-segmented {
+  display: flex;
+  align-items: center;
+  background: var(--t-surface-muted);
+  border: 1px solid var(--t-border);
+  border-radius: var(--t-radius-full);
+  padding: 4px;
+  gap: 4px;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.wird-tab-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1.15rem;
+  border-radius: var(--t-radius-full);
+  border: none;
+  background: transparent;
+  color: var(--t-text-muted);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--t-transition);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 38px;
+}
+
+.wird-tab-pill:hover {
+  color: var(--t-text-main);
+}
+
+.wird-tab-pill.active {
+  background: var(--t-surface);
+  color: var(--t-primary);
+  box-shadow: var(--t-shadow-xs);
+}
+
+.wird-tab-pill.tab-matn.active {
+  color: var(--t-matn);
+}
+
+.wird-tab-count {
+  display: inline-flex;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--t-radius-full);
+  font-size: 0.72rem;
+  font-weight: 800;
+  background: rgba(15, 23, 42, 0.08);
+}
+
+.wird-tab-pill.active .wird-tab-count {
+  background: var(--t-primary-light);
+  color: var(--t-primary);
+}
+
+.wird-tab-pill.tab-matn.active .wird-tab-count {
+  background: var(--t-matn-light);
+  color: var(--t-matn);
+}
+
+/* ========== Filter Bar ========== */
 .filter-bar {
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  padding: var(--space-md) var(--space-lg);
-  margin-bottom: var(--space-lg);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-  border: 1px solid var(--border-color);
+  background: var(--t-surface);
+  border: 1px solid var(--t-border);
+  border-radius: var(--t-radius-lg);
+  padding: 0.85rem 1.15rem;
+  box-shadow: var(--t-shadow-xs);
 }
 
 .filter-bar-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: var(--space-md);
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .filter-bar-left {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: 0.75rem;
   flex: 1;
-  min-width: 0;
 }
 
 .filter-bar-left > i {
   font-size: 1.25rem;
-  color: var(--dark-green);
-  flex-shrink: 0;
+  color: var(--t-text-subtle);
 }
 
 .filter-search-wrapper {
@@ -68,295 +197,245 @@
 .filter-search-wrapper > i {
   position: absolute;
   top: 50%;
-  left: 10px;
+  right: 0.85rem;
   transform: translateY(-50%);
-  color: var(--text-light);
-  font-size: 1rem;
+  color: var(--t-text-subtle);
   pointer-events: none;
 }
 
-[dir='rtl'] .filter-search-wrapper > i {
-  left: auto;
-  right: 10px;
+[dir='ltr'] .filter-search-wrapper > i {
+  right: auto;
+  left: 0.85rem;
 }
 
 .filter-search-input {
   width: 100%;
-  padding: 7px 12px 7px 34px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-full);
-  font-size: var(--font-size-sm);
-  font-family: var(--font-base);
-  background: var(--light-gray);
-  color: var(--text-dark);
-  transition: var(--transition-base);
+  padding: 0.45rem 2.4rem 0.45rem 0.85rem;
+  background: var(--t-surface-subtle);
+  border: 1px solid var(--t-border);
+  border-radius: var(--t-radius-full);
+  font-size: 0.88rem;
+  font-family: inherit;
+  color: var(--t-text-main);
+  transition: var(--t-transition);
 }
 
-[dir='rtl'] .filter-search-input {
-  padding: 7px 34px 7px 12px;
+[dir='ltr'] .filter-search-input {
+  padding: 0.45rem 0.85rem 0.45rem 2.4rem;
 }
 
 .filter-search-input:focus {
   outline: none;
-  border-color: var(--primary-green);
-  background: var(--white);
-  box-shadow: 0 0 0 3px rgba(141, 242, 156, 0.15);
-}
-
-.filter-search-input::placeholder {
-  color: var(--text-light);
+  background: #ffffff;
+  border-color: var(--t-primary);
+  box-shadow: 0 0 0 3px rgba(30, 107, 67, 0.12);
 }
 
 .filter-bar-right {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  flex-shrink: 0;
+  gap: 0.75rem;
 }
 
 .results-count {
-  font-size: var(--font-size-sm);
-  color: var(--text-medium);
-  white-space: nowrap;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--t-text-muted);
 }
 
 .filter-toggle {
-  background: transparent;
-  border: 1px solid var(--border-color);
-  cursor: pointer;
   width: 32px;
   height: 32px;
+  border-radius: var(--t-radius-full);
+  background: var(--t-surface-muted);
+  border: 1px solid var(--t-border);
+  color: var(--t-text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-sm);
-  color: var(--text-medium);
-  transition: var(--transition-base);
+  cursor: pointer;
+  transition: var(--t-transition);
 }
 
 .filter-toggle:hover {
-  background: var(--light-gray);
-  color: var(--primary-green);
-  border-color: var(--primary-green);
-}
-
-.filter-toggle i {
-  font-size: 1.1rem;
-  transition: transform 0.2s ease;
-}
-
-.filter-toggle.active i {
-  transform: rotate(180deg);
+  background: var(--t-surface-subtle);
+  color: var(--t-text-main);
 }
 
 .filter-content {
-  padding-top: var(--space-md);
-  margin-top: var(--space-md);
-  border-top: 1px solid var(--border-color);
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--t-border-subtle);
 }
 
 .filter-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.85rem;
   align-items: flex-end;
-  gap: var(--space-md);
-  flex-wrap: wrap;
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  flex: 1;
-  min-width: 140px;
+  gap: 0.3rem;
 }
 
 .filter-label {
-  font-size: var(--font-size-xs);
-  font-weight: 600;
-  color: var(--text-medium);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--t-text-muted);
 }
 
-.filter-input,
-.filter-select {
-  padding: 7px 10px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
-  font-family: var(--font-base);
-  transition: var(--transition-base);
-  background: var(--white);
-  color: var(--text-dark);
-}
-
-.filter-input:focus,
-.filter-select:focus {
-  outline: none;
-  border-color: var(--primary-green);
-  box-shadow: 0 0 0 3px rgba(141, 242, 156, 0.15);
+.filter-select,
+.filter-input {
+  width: 100%;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid var(--t-border);
+  border-radius: var(--t-radius-sm);
+  background: #ffffff;
+  font-size: 0.85rem;
+  font-family: inherit;
+  color: var(--t-text-main);
 }
 
 .filter-actions {
   display: flex;
-  gap: var(--space-xs);
-  align-items: flex-end;
+  gap: 0.4rem;
 }
 
-.btn-filter {
-  padding: 7px 16px;
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  font-size: var(--font-size-sm);
-  transition: var(--transition-base);
-  border: none;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.btn-apply {
-  background: var(--primary-green);
-  color: var(--text-dark);
-}
-
-.btn-apply:hover {
-  background: var(--dark-green);
-  transform: translateY(-1px);
-}
-
-.btn-reset {
-  background: transparent;
-  color: var(--text-medium);
-  border: 1px solid var(--border-color);
-}
-
-.btn-reset:hover {
-  background: var(--light-gray);
-  border-color: var(--text-medium);
-}
-
-/* ===================================
-   WIRD CARDS GRID
-   =================================== */
+/* ========== Cards Grid ========== */
 .wird-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: var(--space-lg);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr));
+  gap: 1.15rem;
 }
 
-/* ===================================
-   WIRD CARD
-   =================================== */
+/* ========== Wird & Matn Card Base ========== */
 .wird-card {
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  padding: 0;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-  transition: all 0.25s ease;
+  background: var(--t-surface);
+  border: 1px solid var(--t-border);
+  border-radius: var(--t-radius-lg);
+  box-shadow: var(--t-shadow-sm);
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  transition: var(--t-transition);
+  padding: 1.15rem;
 }
 
 .wird-card:hover {
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  border-color: var(--t-border-strong);
+  box-shadow: var(--t-shadow-md);
 }
 
 .wird-card-top-stripe {
-  height: 3px;
-  background: var(--dark-green);
-  flex-shrink: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--t-primary);
 }
 
-.wird-card.excellent .wird-card-top-stripe {
-  background: #28a745;
-}
-.wird-card.verygood .wird-card-top-stripe {
-  background: #17a2b8;
-}
-.wird-card.good .wird-card-top-stripe {
-  background: #fd7e14;
-}
-.wird-card.fair .wird-card-top-stripe {
-  background: #ffc107;
-}
-.wird-card.poor .wird-card-top-stripe {
-  background: #dc3545;
-}
-.wird-card.notset .wird-card-top-stripe {
-  background: #d9d9d9;
+.matn-card-stripe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
 }
 
-/* ===================================
-   CARD HEADER — Name+badge inline, meta below
-   =================================== */
+.matn-card-stripe.memorization {
+  background: var(--t-present);
+}
+
+.matn-card-stripe.revision {
+  background: var(--t-matn);
+}
+
+.matn-card-stripe.mudarasah {
+  background: #8b5cf6;
+}
+
+/* Card Header */
 .wird-card-header {
-  padding: 14px 16px 0;
+  margin-bottom: 0.75rem;
 }
 
 .wird-header-title {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
 }
 
-.student-name {
-  color: var(--text-dark);
-  font-size: var(--font-size-lg);
-  font-weight: 700;
-  margin: 0;
-  line-height: 1.3;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-  flex: 1;
+.matn-student-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--t-radius-full);
+  background: var(--t-matn-light);
+  color: var(--t-matn);
+  border: 1px solid var(--t-matn-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.88rem;
+  flex-shrink: 0;
 }
 
 .wird-status-badge {
-  padding: 3px 10px;
-  border-radius: var(--radius-full);
-  font-size: 11px;
+  display: inline-flex;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--t-radius-full);
+  font-size: 0.72rem;
   font-weight: 700;
-  text-transform: capitalize;
-  white-space: nowrap;
-  flex-shrink: 0;
-  line-height: 1.4;
+  background: var(--t-surface-muted);
+  color: var(--t-text-muted);
+  border: 1px solid var(--t-border);
 }
 
-.wird-status-badge.status-notset {
-  background: #f0f0f0;
-  color: #757575;
-}
-.wird-status-badge.status-poor {
-  background: #ffebee;
-  color: #c62828;
-}
-.wird-status-badge.status-fair {
-  background: #fff9c4;
-  color: #f57f17;
-}
-.wird-status-badge.status-good {
-  background: #fff3e0;
-  color: #f57c00;
-}
-.wird-status-badge.status-verygood {
-  background: #e3f2fd;
-  color: #1976d2;
-}
+.wird-status-badge.status-completed,
 .wird-status-badge.status-excellent {
-  background: #e8f5e9;
-  color: #2e7d32;
+  background: var(--t-present-bg);
+  color: var(--t-present-text);
+  border-color: var(--t-present-border);
 }
 
-/* Meta badges row */
+.wird-status-badge.status-verygood {
+  background: #f0f9ff;
+  color: #0284c7;
+  border-color: #bae6fd;
+}
+
+.wird-status-badge.status-good {
+  background: #eef2ff;
+  color: #4f46e5;
+  border-color: #c7d2fe;
+}
+
+.wird-status-badge.status-fair {
+  background: var(--t-late-bg);
+  color: var(--t-late-text);
+  border-color: var(--t-late-border);
+}
+
+.wird-status-badge.status-poor {
+  background: var(--t-absent-bg);
+  color: var(--t-absent-text);
+  border-color: var(--t-absent-border);
+}
+
 .wird-meta {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
   align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
 }
 
 .wird-type-badge,
@@ -364,1059 +443,276 @@
 .wird-date-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
-  font-size: 11px;
+  gap: 0.25rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  line-height: 1.5;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--t-radius-xs);
+  background: var(--t-surface-muted);
+  color: var(--t-text-muted);
+  border: 1px solid var(--t-border);
 }
 
-.wird-type-badge {
-  background: var(--light-green, #e8f5e9);
-  color: var(--dark-green);
+.wird-type-badge.matn-badge {
+  background: var(--t-matn-light);
+  color: var(--t-matn);
+  border-color: var(--t-matn-border);
 }
 
-.wird-amount-badge {
-  background: #e3f2fd;
-  color: #1565c0;
-}
-
-.wird-date-badge {
-  background: var(--light-gray);
-  color: var(--text-medium);
-}
-
-.wird-type-badge i,
-.wird-amount-badge i,
-.wird-date-badge i {
-  font-size: 12px;
-}
-
-/* ===================================
-   QURAN RANGE — Tight
-   =================================== */
+/* Quran Range & Matn Details */
 .wird-range-compact {
+  background: var(--t-surface-subtle);
+  border: 1px solid var(--t-border-subtle);
+  border-radius: var(--t-radius-md);
+  padding: 0.65rem 0.85rem;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  margin: 10px 16px 0;
-  background: var(--light-gray);
-  border-radius: var(--radius-md);
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.82rem;
 }
 
 .range-item {
-  flex: 1;
-  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .range-label {
-  display: block;
-  font-size: 10px;
+  font-size: 0.7rem;
+  color: var(--t-text-subtle);
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-light);
-  margin-bottom: 1px;
 }
 
 .range-value {
-  display: block;
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--text-dark);
-  line-height: 1.3;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-weight: 700;
+  color: var(--t-text-main);
 }
 
 .range-detail {
-  display: block;
-  font-size: 11px;
-  color: var(--text-medium);
-  margin-top: 1px;
+  font-size: 0.74rem;
+  color: var(--t-text-subtle);
 }
 
 .range-divider {
-  color: var(--text-light);
-  font-size: 1.1rem;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-}
-
-[dir='rtl'] .range-divider {
-  transform: scaleX(-1);
-}
-
-/* ===================================
-   NOTE — no space reserved when absent
-   =================================== */
-.wird-note {
-  background: #fffbeb;
-  border-left: 2px solid #f59e0b;
-  padding: 6px 12px;
-  margin: 10px 16px 0;
-  border-radius: var(--radius-sm);
-  display: flex;
-  gap: 6px;
-  align-items: flex-start;
-}
-
-[dir='rtl'] .wird-note {
-  border-left: none;
-  border-right: 2px solid #f59e0b;
-}
-
-.wird-note i {
-  font-size: 0.85rem;
-  color: #b45309;
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-
-.wird-note p {
-  margin: 0;
-  color: #92400e;
-  font-size: var(--font-size-xs);
-  line-height: 1.4;
-}
-
-/* ===================================
-   NOTES EDIT
-   =================================== */
-.notes-edit {
-  width: 100%;
-  animation: slideDown 0.2s ease;
-  padding: 8px 16px;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.notes-textarea {
-  width: 100%;
-  min-height: 50px;
-  padding: 6px 8px;
-  border: 1.5px solid var(--primary-green);
-  border-radius: var(--radius-md);
-  font-family: var(--font-base);
-  font-size: var(--font-size-xs);
-  resize: vertical;
-  transition: var(--transition-base);
-  background: var(--white);
-  color: var(--text-dark);
-}
-
-.notes-textarea:focus {
-  outline: none;
-  border-color: var(--dark-green);
-  box-shadow: 0 0 0 3px rgba(141, 242, 156, 0.15);
-}
-
-.notes-textarea::placeholder {
-  color: var(--text-light);
-  font-style: italic;
-}
-
-.notes-edit-actions {
-  margin-top: 4px;
-  display: flex;
-  gap: 4px;
-}
-
-/* ===================================
-   CARD FOOTER — Segmented rating + actions
-   =================================== */
-.card-footer {
-  margin-top: auto;
-  padding: 10px 16px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-/* Segmented control */
-.rating-segmented {
-  display: flex;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  border: 1px solid var(--border-color);
-}
-
-.seg-btn {
-  flex: 1;
-  padding: 10px 6px;
-  border: none;
-  border-right: 1px solid var(--border-color);
-  background: var(--light-gray);
-  color: var(--text-medium);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  text-align: center;
-  line-height: 1.4;
-  white-space: nowrap;
-  overflow: visible;
-  text-overflow: unset;
-  min-height: 40px;
-}
-
-.seg-btn:last-child {
-  border-right: none;
-}
-
-[dir='rtl'] .seg-btn {
-  border-right: none;
-  border-left: 1px solid var(--border-color);
-}
-
-[dir='rtl'] .seg-btn:last-child {
-  border-left: none;
-}
-
-/* Hover: show the color lightly */
-.seg-btn.seg-excellent:hover {
-  background: #d4edda;
-  color: #1e7e34;
-}
-.seg-btn.seg-verygood:hover {
-  background: #d1ecf1;
-  color: #117a8b;
-}
-.seg-btn.seg-good:hover {
-  background: #ffe5cc;
-  color: #d56a00;
-}
-.seg-btn.seg-fair:hover {
-  background: #fff3cd;
-  color: #c69500;
-}
-.seg-btn.seg-poor:hover {
-  background: #f8d7da;
-  color: #bd2130;
-}
-
-/* Active: card status class drives the highlight */
-.wird-card.excellent .seg-btn.seg-excellent {
-  background: #28a745;
-  color: #fff;
-  font-weight: 700;
-}
-.wird-card.verygood .seg-btn.seg-verygood {
-  background: #17a2b8;
-  color: #fff;
-  font-weight: 700;
-}
-.wird-card.good .seg-btn.seg-good {
-  background: #fd7e14;
-  color: #fff;
-  font-weight: 700;
-}
-.wird-card.fair .seg-btn.seg-fair {
-  background: #ffc107;
-  color: #5a4400;
-  font-weight: 700;
-}
-.wird-card.poor .seg-btn.seg-poor {
-  background: #dc3545;
-  color: #fff;
-  font-weight: 700;
-}
-
-/* Action icons row */
-.card-actions {
-  display: flex;
-  gap: 4px;
-  justify-content: flex-end;
-}
-
-.card-action-btn {
-  background: transparent;
-  border: 1px solid var(--border-color);
-  cursor: pointer;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-sm);
-  color: var(--text-medium);
-  transition: var(--transition-base);
-  font-size: 0.9rem;
-}
-
-.card-action-btn:hover {
-  background: var(--light-gray);
-  color: var(--dark-green);
-  border-color: var(--dark-green);
-}
-
-.card-action-btn.danger:hover {
-  background: #ffebee;
-  color: #dc3545;
-  border-color: #dc3545;
-}
-
-/* ===================================
-   SHARED BUTTONS
-   =================================== */
-.btn {
-  padding: 6px 14px;
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  text-decoration: none;
-  font-size: var(--font-size-sm);
-  transition: var(--transition-base);
-  color: var(--white);
-  border: none;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-}
-
-.btn-sm {
-  padding: 4px 10px;
-  font-size: var(--font-size-xs);
-}
-
-.btn:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-.btn:active {
-  transform: translateY(0);
-}
-
-.btn-success {
-  background: #28a745;
-}
-
-.btn-success:hover {
-  background: #218838;
-}
-
-.btn-secondary {
-  background: #6c757d;
-  color: var(--white);
-}
-
-.btn-secondary:hover {
-  background: #5a6268;
-}
-
-/* ===================================
-   UPDATE FEEDBACK
-   =================================== */
-.wird-card.updated {
-  box-shadow:
-    0 0 16px rgba(76, 175, 80, 0.45),
-    0 2px 8px rgba(76, 175, 80, 0.2);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: successPulse 0.3s ease-out;
-}
-
-.wird-card.failed-to-update {
-  box-shadow:
-    0 0 16px rgba(244, 67, 54, 0.45),
-    0 2px 8px rgba(244, 67, 54, 0.2);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: errorShake 0.5s ease-in-out;
-}
-
-@keyframes successPulse {
-  0% {
-    box-shadow: 0 0 0 rgba(76, 175, 80, 0);
-  }
-  50% {
-    box-shadow: 0 0 24px rgba(76, 175, 80, 0.6);
-  }
-  100% {
-    box-shadow:
-      0 0 16px rgba(76, 175, 80, 0.45),
-      0 2px 8px rgba(76, 175, 80, 0.2);
-  }
-}
-
-@keyframes errorShake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  10%,
-  30%,
-  50%,
-  70%,
-  90% {
-    transform: translateX(-3px);
-  }
-  20%,
-  40%,
-  60%,
-  80% {
-    transform: translateX(3px);
-  }
-}
-
-/* ===================================
-   RESPONSIVE
-   =================================== */
-@media (max-width: 1200px) {
-  .page-container {
-    padding: var(--space-lg);
-  }
-
-  .wird-cards-grid {
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  }
-}
-
-@media (max-width: 768px) {
-  .page-container {
-    padding: var(--space-md);
-  }
-
-  .page-header h2 {
-    font-size: var(--font-size-xl);
-  }
-
-  .filter-bar {
-    padding: var(--space-sm) var(--space-md);
-  }
-
-  .filter-bar-header {
-    flex-wrap: wrap;
-    gap: var(--space-sm);
-  }
-
-  .filter-bar-left {
-    flex: 1 1 100%;
-  }
-
-  .filter-search-wrapper {
-    max-width: none;
-  }
-
-  .filter-row {
-    flex-direction: column;
-    gap: var(--space-sm);
-  }
-
-  .filter-group {
-    min-width: 100%;
-  }
-
-  .filter-actions {
-    width: 100%;
-    gap: var(--space-sm);
-  }
-
-  .btn-filter {
-    flex: 1;
-    text-align: center;
-  }
-
-  .wird-cards-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-sm);
-  }
-
-  .wird-range-compact {
-    flex-direction: column;
-    text-align: center;
-    gap: 4px;
-  }
-
-  .range-divider i {
-    transform: rotate(90deg);
-  }
-
-  [dir='rtl'] .range-divider i {
-    transform: rotate(90deg);
-  }
-
-  .seg-btn {
-    font-size: 11px;
-    padding: 8px 4px;
-    min-height: 44px;
-  }
-}
-
-@media (max-width: 480px) {
-  .page-container {
-    padding: var(--space-sm);
-  }
-
-  .page-header h2 {
-    font-size: var(--font-size-lg);
-  }
-
-  .filter-bar {
-    padding: var(--space-xs) var(--space-sm);
-  }
-
-  .wird-meta {
-    gap: 3px;
-  }
-
-  .wird-type-badge,
-  .wird-amount-badge,
-  .wird-date-badge {
-    font-size: 9px;
-    padding: 1px 5px;
-  }
-
-  .wird-card-header {
-    padding: 8px 10px 0;
-  }
-
-  .wird-range-compact {
-    margin: 6px 10px 0;
-    padding: 5px 8px;
-  }
-
-  .wird-note {
-    margin: 6px 10px 0;
-  }
-
-  .card-footer {
-    padding: 6px 10px 8px;
-  }
-}
-
-/* ===================================
-   ALERTS
-   =================================== */
-.alert {
-  border-radius: 8px;
-  border: none;
-  padding: 1rem 1.25rem;
-  margin-bottom: 1rem;
-  animation: slideDown 0.3s ease-out;
-  transition:
-    opacity 0.5s ease-out,
-    transform 0.5s ease-out;
-  align-items: baseline !important;
-}
-
-.alert-success {
-  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-  color: #155724;
-  border-left: 4px solid #28a745;
-}
-
-.alert-danger {
-  background: linear-gradient(135deg, #f8d7da 0%, #f1c2c7 100%);
-  color: #721c24;
-  border-left: 4px solid #dc3545;
-}
-
-.alert i {
-  font-size: 1.25rem;
-  position: relative;
-  top: 2px;
-}
-
-/* ==========================================================================
-   ENHANCED MODERN STYLES: HERO BANNER, TABS, MATN CARDS & EMPTY STATES
-   ========================================================================== */
-
-/* 1. Hero Banner */
-.wird-hero-banner {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border-radius: 16px;
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
-  padding: 18px 24px;
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-  transition: all 0.3s ease;
-}
-
-.wird-hero-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.wird-hero-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.6rem;
-  flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: transform 0.25s ease;
-}
-
-.wird-hero-icon:hover {
-  transform: scale(1.06);
-}
-
-.wird-hero-icon.matn-theme {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
-}
-
-.wird-hero-icon.quran-theme {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
-}
-
-.wird-hero-details h2 {
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: #0f172a;
-  margin: 0;
-  letter-spacing: -0.02em;
-}
-
-.wird-hero-tags {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 4px;
-  flex-wrap: wrap;
-}
-
-.wird-hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  padding: 3px 10px;
-  border-radius: 9999px;
-  letter-spacing: 0.01em;
-}
-
-.wird-hero-badge.badge-matn {
-  background: rgba(37, 99, 235, 0.1);
-  color: #2563eb;
-  border: 1px solid rgba(37, 99, 235, 0.2);
-}
-
-.wird-hero-badge.badge-quran {
-  background: rgba(16, 185, 129, 0.1);
-  color: #059669;
-  border: 1px solid rgba(16, 185, 129, 0.2);
-}
-
-.wird-hero-stats {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 6px;
-  font-size: 0.82rem;
-  color: #64748b;
-}
-
-.wird-stat-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: #f1f5f9;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-weight: 600;
-  color: #334155;
-}
-
-.wird-hero-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.btn-hero-primary {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  color: #ffffff !important;
-  border: none;
-  padding: 8px 18px;
-  font-size: 0.88rem;
-  font-weight: 700;
-  border-radius: 10px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
-  transition: all 0.25s ease;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.btn-hero-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
-  color: #ffffff !important;
-}
-
-.btn-hero-success {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: #ffffff !important;
-  border: none;
-  padding: 8px 18px;
-  font-size: 0.88rem;
-  font-weight: 700;
-  border-radius: 10px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
-  transition: all 0.25s ease;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.btn-hero-success:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
-  color: #ffffff !important;
-}
-
-.btn-hero-outline {
-  background: #ffffff;
-  color: #475569 !important;
-  border: 1px solid #cbd5e1;
-  padding: 8px 16px;
-  font-size: 0.88rem;
-  font-weight: 600;
-  border-radius: 10px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  transition: all 0.2s ease;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.btn-hero-outline:hover {
-  background: #f8fafc;
-  border-color: #94a3b8;
-  color: #1e293b !important;
-  transform: translateY(-1px);
-}
-
-/* 2. Modern Segmented Capsule Tabs */
-.wird-tabs-segmented {
-  display: inline-flex;
-  background: #f1f5f9;
-  padding: 4px;
-  border-radius: 14px;
-  border: 1px solid #e2e8f0;
-  gap: 4px;
-  margin-bottom: 18px;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
-}
-
-.wird-tab-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 20px;
-  border-radius: 10px;
-  border: none;
-  background: transparent;
-  color: #64748b;
-  font-size: 0.88rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-  user-select: none;
-}
-
-.wird-tab-pill:hover:not(.active) {
-  color: #1e293b;
-  background: rgba(255, 255, 255, 0.5);
-}
-
-.wird-tab-pill.active {
-  background: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
-}
-
-.wird-tab-pill.tab-matn.active {
-  color: #2563eb;
-}
-
-.wird-tab-pill.tab-quran.active {
-  color: #059669;
-}
-
-.wird-tab-pill i {
-  font-size: 1.1rem;
-}
-
-.wird-tab-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 22px;
-  height: 22px;
-  padding: 0 6px;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  background: #e2e8f0;
-  color: #475569;
-  transition: all 0.2s ease;
-}
-
-.wird-tab-pill.tab-matn.active .wird-tab-count {
-  background: rgba(37, 99, 235, 0.12);
-  color: #2563eb;
-}
-
-.wird-tab-pill.tab-quran.active .wird-tab-count {
-  background: rgba(16, 185, 129, 0.12);
-  color: #059669;
-}
-
-/* 3. Matn Card Specific Styles */
-.matn-card {
-  border: 1px solid rgba(226, 232, 240, 0.9) !important;
-  border-radius: 16px !important;
-  background: #ffffff !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-.matn-card:hover {
-  transform: translateY(-4px) !important;
-  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.04) !important;
-  border-color: #cbd5e1 !important;
-}
-
-.matn-card-stripe {
-  height: 5px;
-  width: 100%;
-}
-
-.matn-card-stripe.memorization {
-  background: linear-gradient(90deg, #10b981, #059669);
-}
-
-.matn-card-stripe.revision {
-  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
-}
-
-.matn-card-stripe.mudarasah {
-  background: linear-gradient(90deg, #8b5cf6, #6d28d9);
-}
-
-.matn-student-avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.85rem;
-  color: #ffffff;
-  flex-shrink: 0;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+  color: var(--t-text-subtle);
+  font-size: 1.15rem;
 }
 
 .matn-recitation-box {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 10px 14px;
-  margin: 10px 16px 4px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  background: var(--t-surface-subtle);
+  border: 1px solid var(--t-border-subtle);
+  border-radius: var(--t-radius-md);
+  padding: 0.65rem 0.85rem;
+  margin-bottom: 0.75rem;
 }
 
 .matn-chapter-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.86rem;
+  gap: 0.35rem;
+  font-size: 0.84rem;
   font-weight: 700;
-  color: #1e293b;
-}
-
-.matn-chapter-badge i {
-  color: #2563eb;
-  font-size: 1rem;
+  color: var(--t-matn);
+  margin-bottom: 0.35rem;
 }
 
 .matn-range-flow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.82rem;
-  color: #475569;
+  gap: 0.5rem;
   flex-wrap: wrap;
-  gap: 6px;
 }
 
 .matn-range-pills {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 6px;
-  font-weight: 600;
+  gap: 0.35rem;
 }
 
 .matn-range-pill {
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  padding: 2px 8px;
-  border-radius: 6px;
-  color: #0f172a;
-}
-
-.matn-range-arrow {
-  color: #94a3b8;
-  font-size: 0.85rem;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--t-text-main);
 }
 
 .matn-amount-pill {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  background: rgba(37, 99, 235, 0.08);
-  color: #2563eb;
-  padding: 2px 8px;
-  border-radius: 6px;
+  gap: 0.3rem;
+  font-size: 0.76rem;
   font-weight: 700;
-  font-size: 0.78rem;
-  border: 1px solid rgba(37, 99, 235, 0.15);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--t-radius-full);
+  background: var(--t-surface);
+  border: 1px solid var(--t-border);
+  color: var(--t-text-muted);
 }
 
-/* 4. Enhanced Rating Segmented Bar */
+/* Card Note */
+.wird-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  border-radius: var(--t-radius-sm);
+  padding: 0.45rem 0.65rem;
+  font-size: 0.8rem;
+  color: #92400e;
+  margin-bottom: 0.75rem;
+}
+
+.wird-note p {
+  margin: 0;
+  line-height: 1.35;
+}
+
+/* Notes Inline Edit */
+.notes-edit {
+  margin-bottom: 0.75rem;
+}
+
+.notes-textarea {
+  width: 100%;
+  padding: 0.45rem;
+  font-size: 0.82rem;
+  font-family: inherit;
+  border: 1px solid var(--t-border);
+  border-radius: var(--t-radius-sm);
+}
+
+.notes-edit-actions {
+  display: flex;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+}
+
+/* Card Footer: Segmented Ratings & Action Buttons */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--t-border-subtle);
+}
+
 .rating-segmented {
   display: flex;
-  background: #f1f5f9;
-  border-radius: 8px;
-  padding: 3px;
+  align-items: center;
+  background: var(--t-surface-muted);
+  border: 1px solid var(--t-border);
+  border-radius: var(--t-radius-full);
+  padding: 2px;
   gap: 2px;
   flex: 1;
 }
 
 .seg-btn {
   flex: 1;
-  padding: 5px 2px;
+  padding: 0.25rem 0.2rem;
+  border-radius: var(--t-radius-full);
   border: none;
   background: transparent;
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  color: #64748b;
-  border-radius: 6px;
+  color: var(--t-text-muted);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--t-transition);
   text-align: center;
   white-space: nowrap;
 }
 
-.seg-btn:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.6);
-  color: #1e293b;
+.seg-btn:hover {
+  background: var(--t-surface);
+  color: var(--t-text-main);
 }
 
-.seg-btn.seg-excellent.active {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-  color: #ffffff !important;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4) !important;
+.seg-btn.active.seg-excellent {
+  background: var(--t-present);
+  color: #ffffff;
 }
 
-.seg-btn.seg-verygood.active {
-  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
-  color: #ffffff !important;
-  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4) !important;
+.seg-btn.active.seg-verygood {
+  background: #0284c7;
+  color: #ffffff;
 }
 
-.seg-btn.seg-good.active {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
-  color: #ffffff !important;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4) !important;
+.seg-btn.active.seg-good {
+  background: #4f46e5;
+  color: #ffffff;
 }
 
-.seg-btn.seg-fair.active {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
-  color: #ffffff !important;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4) !important;
+.seg-btn.active.seg-fair {
+  background: var(--t-late);
+  color: #ffffff;
 }
 
-.seg-btn.seg-poor.active {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
-  color: #ffffff !important;
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4) !important;
+.seg-btn.active.seg-poor {
+  background: var(--t-absent);
+  color: #ffffff;
 }
 
-/* 5. Modern Illustrated Empty State */
-.empty-state-modern {
-  text-align: center;
-  padding: 50px 24px;
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border-radius: 18px;
-  border: 1px dashed #cbd5e1;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
-  margin-top: 15px;
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-.empty-state-modern .empty-icon-circle {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  margin: 0 auto 16px;
+.card-action-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--t-radius-sm);
+  background: var(--t-surface);
+  border: 1px solid var(--t-border);
+  color: var(--t-text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
+  cursor: pointer;
+  transition: var(--t-transition);
 }
 
-.empty-state-modern .empty-icon-circle.matn-icon {
-  background: rgba(37, 99, 235, 0.08);
-  color: #2563eb;
-  border: 2px dashed rgba(37, 99, 235, 0.3);
+.card-action-btn:hover {
+  background: var(--t-surface-muted);
+  color: var(--t-text-main);
 }
 
-.empty-state-modern .empty-icon-circle.quran-icon {
-  background: rgba(16, 185, 129, 0.08);
-  color: #10b981;
-  border: 2px dashed rgba(16, 185, 129, 0.3);
+.card-action-btn.danger:hover {
+  background: var(--t-absent-bg);
+  color: var(--t-absent-text);
+  border-color: var(--t-absent-border);
 }
 
-.empty-state-modern h4 {
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: #0f172a;
-  margin-bottom: 6px;
-}
-
-.empty-state-modern p {
-  font-size: 0.88rem;
-  color: #64748b;
-  max-width: 460px;
-  margin: 0 auto 20px;
-  line-height: 1.6;
+/* ========== Mobile Responsive Adjustments ========== */
+@media (max-width: 768px) {
+  .wird-hero-banner {
+    padding: 1.15rem;
+  }
+  .wird-tabs-segmented {
+    width: 100%;
+    display: flex;
+  }
+  .wird-tab-pill {
+    flex: 1;
+    justify-content: center;
+  }
+  .wird-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .card-footer {
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+  .rating-segmented {
+    width: 100%;
+  }
+  .card-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
 }

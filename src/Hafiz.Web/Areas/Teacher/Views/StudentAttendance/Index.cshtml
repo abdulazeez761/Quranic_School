@@ -10,186 +10,138 @@
         ? "~/Views/Shared/_AdminLayout.cshtml"
         : "~/Views/Shared/_TeacherLayout.cshtml";
     ViewData["Title"] = Localizer["PageTitle"];
-    ViewData["UseSelect2"] = true; // Enable Select2
+    ViewData["UseSelect2"] = true;
 }
 
-<!-- Page Header -->
-<div class="d-flex justify-between align-center mb-lg flex-wrap gap-md">
-    <div>
-        <h2 class="section-title mb-sm">
-            <i class='bx bx-user-check' style="color: var(--primary-green);"></i>
-            @Localizer["PageHeader"]
-        </h2>
-        <p class="text-medium">@Localizer["PageDescription"]</p>
-    </div>
-    <div class="btn-group">
-        <button class="btn btn-primary" id="saveAllBtn">
-            <i class='bx bx-save'></i>
-            <span>@Localizer["SaveAll"]</span>
-        </button>
-        <button class="btn btn-outline" id="exportBtn">
-            <i class='bx bx-download'></i>
-            <span>@Localizer["Export"]</span>
-        </button>
-    </div>
-</div>
-<div id="saveIndicator" class="save-indicator"></div>
+<link rel="stylesheet" href="~/css/teacher/attendance-modern.css" asp-append-version="true" />
 
-@* adding an antiforgery token *@
-@Html.AntiForgeryToken()
-<!-- Statistics Cards -->
-<div class="grid-4 mb-lg  ">
-    <div class="card card-stat">
-        <div class="card-stat-icon" style="background: var(--success);">
-            <i class='bx bx-check-circle'></i>
+<div class="attendance-page-container">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+        <div>
+            <h2 class="t-section-title mb-1">
+                <i class='bx bx-calendar-check text-primary'></i>
+                <span>@Localizer["PageHeader"]</span>
+            </h2>
+            <p class="t-section-desc">@Localizer["PageDescription"]</p>
         </div>
-        <div class="card-stat-content">
-            <div class="card-stat-label">@Localizer["Present"]</div>
-            <div class="card-stat-value" id="presentCount">0</div>
+        <div class="attendance-actions">
+            <button class="t-btn t-btn-primary" id="saveAllBtn">
+                <i class='bx bx-save'></i>
+                <span>@Localizer["SaveAll"]</span>
+            </button>
+            <button class="t-btn t-btn-outline" id="exportBtn">
+                <i class='bx bx-download'></i>
+                <span>@Localizer["Export"]</span>
+            </button>
         </div>
     </div>
 
-    <div class="card card-stat">
-        <div class="card-stat-icon" style="background: var(--warning);">
-            <i class='bx bx-time-five'></i>
+    <!-- Floating Save Indicator -->
+    <div id="saveIndicator" class="save-indicator"></div>
+
+    @* Anti-forgery token for AJAX calls *@
+    @Html.AntiForgeryToken()
+
+    <!-- Statistics Cards -->
+    <div class="attendance-stats-grid">
+        <div class="att-stat-card present">
+            <div class="att-stat-icon">
+                <i class='bx bx-check-circle'></i>
+            </div>
+            <div>
+                <div class="att-stat-val" id="presentCount">0</div>
+                <div class="att-stat-lbl">@Localizer["Present"]</div>
+            </div>
         </div>
-        <div class="card-stat-content">
-            <div class="card-stat-label">@Localizer["Late"]</div>
-            <div class="card-stat-value" id="lateCount">0</div>
+
+        <div class="att-stat-card late">
+            <div class="att-stat-icon">
+                <i class='bx bx-time-five'></i>
+            </div>
+            <div>
+                <div class="att-stat-val" id="lateCount">0</div>
+                <div class="att-stat-lbl">@Localizer["Late"]</div>
+            </div>
+        </div>
+
+        <div class="att-stat-card absent">
+            <div class="att-stat-icon">
+                <i class='bx bx-x-circle'></i>
+            </div>
+            <div>
+                <div class="att-stat-val" id="absentCount">0</div>
+                <div class="att-stat-lbl">@Localizer["Absent"]</div>
+            </div>
+        </div>
+
+        <div class="att-stat-card excuse">
+            <div class="att-stat-icon">
+                <i class='bx bx-message-square-dots'></i>
+            </div>
+            <div>
+                <div class="att-stat-val" id="excuseCount">0</div>
+                <div class="att-stat-lbl">@Localizer["Excuse"]</div>
+            </div>
         </div>
     </div>
 
-    <div class="card card-stat">
-        <div class="card-stat-icon" style="background: var(--danger);">
-            <i class='bx bx-x-circle'></i>
-        </div>
-        <div class="card-stat-content">
-            <div class="card-stat-label">@Localizer["Absent"]</div>
-            <div class="card-stat-value" id="absentCount">0</div>
-        </div>
-    </div>
-
-    <div class="card card-stat">
-        <div class="card-stat-icon" style="background: var(--info);">
-            <i class='bx bx-message-square-dots'></i>
-        </div>
-        <div class="card-stat-content">
-            <div class="card-stat-label">@Localizer["Excuse"]</div>
-            <div class="card-stat-value" id="excuseCount">0</div>
-        </div>
-    </div>
-</div>
-
-<!-- Status Legend -->
-<div class="card attendance-legend mb-lg">
-    <span class="legend-title">
-        <i class='bx bx-info-circle'></i> @Localizer["LegendTitle"]
-    </span>
-    <div class="legend-items">
-        <div class="legend-item">
-            <span class="legend-badge present"><i class='bx bx-check-circle'></i></span>
-            <span class="legend-text">
-                <span class="legend-label">@Localizer["Present"]</span>
-                <span class="legend-desc">@Localizer["PresentDesc"]</span>
-            </span>
-        </div>
-        <div class="legend-item">
-            <span class="legend-badge late"><i class='bx bx-time-five'></i></span>
-            <span class="legend-text">
-                <span class="legend-label">@Localizer["Late"]</span>
-                <span class="legend-desc">@Localizer["LateDesc"]</span>
-            </span>
-        </div>
-        <div class="legend-item">
-            <span class="legend-badge absent"><i class='bx bx-x-circle'></i></span>
-            <span class="legend-text">
-                <span class="legend-label">@Localizer["Absent"]</span>
-                <span class="legend-desc">@Localizer["AbsentDesc"]</span>
-            </span>
-        </div>
-        <div class="legend-item">
-            <span class="legend-badge excuse"><i class='bx bx-message-square-dots'></i></span>
-            <span class="legend-text">
-                <span class="legend-label">@Localizer["Excuse"]</span>
-                <span class="legend-desc">@Localizer["ExcuseDesc"]</span>
-            </span>
-        </div>
-    </div>
-</div>
-
-<!-- Filters Card -->
-<div class="card card-standard mb-lg d">
-    <div class="card-header">
-        <h3 class="card-title">
-            <i class='bx bx-filter-alt'></i>
-            @Localizer["FilterData"]
-        </h3>
-    </div>
-    <div class="card-body">
-        <div class="form-row">
-            <div class="form-group mb-0">
-                <label class="form-label">
-                    <i class='bx bx-calendar'></i> @Localizer["Date"]
+    <!-- Filters Card -->
+    <div class="att-filters-card">
+        <div class="att-filters-grid">
+            <div class="att-filter-item">
+                <label for="attendanceDate">
+                    <i class='bx bx-calendar text-primary'></i> @Localizer["Date"]
                 </label>
                 <input type="text" class="form-input" id="attendanceDate" value="@TimeZoneHelper.GetUserToday(Context).ToString("yyyy-MM-dd")"
                        placeholder="@Localizer["SelectDate"]">
             </div>
 
-            <div class="form-group mb-0">
-                <label class="form-label">
-                    <i class='bx bx-group'></i> @Localizer["Class"]
+            <div class="att-filter-item">
+                <label for="classSession">
+                    <i class='bx bx-group text-primary'></i> @Localizer["Class"]
                 </label>
                 <select class="form-select select2-classes" id="classSession" asp-items="ViewBag.Classes">
                 </select>
             </div>
-
-            @* <div class="form-group mb-0 d-flex align-end">
-                <button class="btn btn-primary btn-block" id="filterBtn">
-                    <i class='bx bx-filter'></i>
-                    <span>تطبيق الفلتر</span>
-                </button>
-            </div> *@
         </div>
     </div>
-</div>
 
-<!-- Attendance Table -->
-<div class="table-container">
-    <div class="table-toolbar">
-        <div class="table-search">
+    <!-- Attendance Table & Search -->
+    <div class="att-table-toolbar">
+        <div class="att-search-box">
             <input type="text" id="studentSearch" placeholder="@Localizer["SearchStudent"]">
             <i class='bx bx-search'></i>
         </div>
-        <div class="d-flex gap-sm align-center">
-            <span class="text-medium fs-sm">
-                @Localizer["TotalStudents"] <strong id="totalStudents">@(Model?.Count() ?? 0)</strong>
-            </span>
+        <div class="text-muted small fw-bold">
+            @Localizer["TotalStudents"]: <strong id="totalStudents" class="text-primary">@(Model?.Count() ?? 0)</strong>
         </div>
     </div>
 
-    <div class="table-wrapper">
+    <div class="table-attendance-card">
         <table class="table table-attendance">
             <thead>
                 <tr>
                     <th style="width: 50px;">#</th>
                     <th>
-                        <i class='bx bx-user'></i> @Localizer["StudentName"]
+                        <i class='bx bx-user me-1'></i> @Localizer["StudentName"]
                     </th>
-                    <th class="text-center" style="width: 100px;">
-                        <i class='bx bx-check-circle' style="color: var(--success);"></i>
-                        <span class="d-none d-md-inline">@Localizer["Present"]</span>
+                    <th class="text-center" style="width: 110px;">
+                        <i class='bx bx-check-circle text-success me-1'></i>
+                        <span>@Localizer["Present"]</span>
                     </th>
-                    <th class="text-center" style="width: 100px;">
-                        <i class='bx bx-time-five' style="color: var(--warning);"></i>
-                        <span class="d-none d-md-inline">@Localizer["Late"]</span>
+                    <th class="text-center" style="width: 110px;">
+                        <i class='bx bx-time-five text-warning me-1'></i>
+                        <span>@Localizer["Late"]</span>
                     </th>
-                    <th class="text-center" style="width: 100px;">
-                        <i class='bx bx-x-circle' style="color: var(--danger);"></i>
-                        <span class="d-none d-md-inline">@Localizer["Absent"]</span>
+                    <th class="text-center" style="width: 110px;">
+                        <i class='bx bx-x-circle text-danger me-1'></i>
+                        <span>@Localizer["Absent"]</span>
                     </th>
-                    <th class="text-center" style="width: 100px;">
-                        <i class='bx bx-message-square-dots' style="color: var(--info);"></i>
-                        <span class="d-none d-md-inline">@Localizer["Excuse"]</span>
+                    <th class="text-center" style="width: 110px;">
+                        <i class='bx bx-message-square-dots text-info me-1'></i>
+                        <span>@Localizer["Excuse"]</span>
                     </th>
                 </tr>
             </thead>
@@ -238,42 +190,45 @@
                         }
 
                         <tr data-student-id="@student.Id" class="@rowClass">
-                            <td class="text-center text-medium">@index</td>
+                            <td class="text-center text-muted fw-bold">@index</td>
                             <td>
-                                <div class="d-flex align-center gap-sm">
-                                    <div
-                                        class="avatar-sm bg-primary text-white d-flex align-center justify-center rounded-full">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="row-avatar avatar-male">
                                         @(student?.FirstName?.Substring(0, 1) ?? "?")
                                     </div>
-                                    <span class="fw-medium">@student?.FirstName @student?.SecondName</span>
+                                    <span class="fw-bold">@student?.FirstName @student?.SecondName</span>
                                 </div>
                             </td>
                             <td class="text-center">
-                                <label class="attendance-radio">
+                                <label class="attendance-radio" title="@Localizer["Present"]">
                                     <input type="radio" name="attendance_@studentId" class="attendance-checkbox status-present"
                                            data-student-id="@studentId" data-status="0" @presentChecked>
                                     <span class="radio-custom present"></span>
+                                    <span class="d-inline d-md-none ms-1 small fw-bold">حاضر</span>
                                 </label>
                             </td>
                             <td class="text-center">
-                                <label class="attendance-radio">
+                                <label class="attendance-radio" title="@Localizer["Late"]">
                                     <input type="radio" name="attendance_@studentId" class="attendance-checkbox status-late"
                                            data-student-id="@studentId" data-status="1" @lateChecked>
                                     <span class="radio-custom late"></span>
+                                    <span class="d-inline d-md-none ms-1 small fw-bold">متأخر</span>
                                 </label>
                             </td>
                             <td class="text-center">
-                                <label class="attendance-radio">
+                                <label class="attendance-radio" title="@Localizer["Absent"]">
                                     <input type="radio" name="attendance_@studentId" class="attendance-checkbox status-absent"
                                            data-student-id="@studentId" data-status="2" @absentChecked>
                                     <span class="radio-custom absent"></span>
+                                    <span class="d-inline d-md-none ms-1 small fw-bold">غائب</span>
                                 </label>
                             </td>
                             <td class="text-center">
-                                <label class="attendance-radio">
+                                <label class="attendance-radio" title="@Localizer["Excuse"]">
                                     <input type="radio" name="attendance_@studentId" class="attendance-checkbox status-excuse"
                                            data-student-id="@studentId" data-status="3" @excuseChecked>
                                     <span class="radio-custom excuse"></span>
+                                    <span class="d-inline d-md-none ms-1 small fw-bold">معذور</span>
                                 </label>
                             </td>
                         </tr>
@@ -284,10 +239,10 @@
                 {
                     <tr>
                         <td colspan="6">
-                            <div class="table-empty">
-                                <i class='bx bx-user-x'></i>
-                                <h3 class="table-empty-title">@Localizer["NoData"]</h3>
-                                <p class="text-medium">@Localizer["NoStudentsFound"]</p>
+                            <div class="t-empty-state py-4">
+                                <div class="t-empty-icon"><i class='bx bx-user-x'></i></div>
+                                <h4 class="t-empty-title">@Localizer["NoData"]</h4>
+                                <p class="t-empty-text">@Localizer["NoStudentsFound"]</p>
                             </div>
                         </td>
                     </tr>
@@ -295,16 +250,14 @@
             </tbody>
         </table>
     </div>
+
 </div>
-
-
 
 <!-- Load Required Libraries -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 @section Scripts {
-
     <script src="~/js/student/utils.js" asp-append-version="true"></script>
     <script src="~/js/student/api.js" asp-append-version="true"></script>
     <script src="~/js/student/events.js" asp-append-version="true"></script>

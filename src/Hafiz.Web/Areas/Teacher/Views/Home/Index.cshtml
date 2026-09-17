@@ -1,91 +1,191 @@
 @{
     ViewData["Title"] = Localizer["PageTitle"].Value;
-
+    var teacherName = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "المعلم";
+    var totalStudents = Model?.Sum(c => c.Students?.Count ?? 0) ?? 0;
+    var totalClasses = Model?.Count ?? 0;
+    var quranClassesCount = Model?.Count(c => c.StudyProgram?.Type == Hafiz.Domain.Enums.ProgramType.Quran) ?? 0;
+    var matnClassesCount = Model?.Count(c => c.StudyProgram?.Type == Hafiz.Domain.Enums.ProgramType.Matn) ?? 0;
 }
 
 @using Hafiz.DTOs
 @using Hafiz.Models.enums
 @model List<Class>
-
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 <link rel="stylesheet" href="~/css/teacher/Index_Classes.css" asp-append-version="true" />
-<div class="classes-container">
-    <div class="classes-header">
 
-        <i class='bx bx-group header-icon header-icon"'></i>
-        <h1 class="classes-title">@Localizer["MyClasses"]</h1>
-    </div>
+<div class="teacher-dashboard">
 
-    <div class="classes-grid">
-        @foreach (var classItem in Model)
-        {
+    <!-- Teacher Welcome & Today's Overview Banner -->
+    <div class="teacher-hero-banner">
+        <div class="hero-content">
+            <div class="hero-greeting">
+                <span class="hero-badge">
+                    <i class='bx bx-calendar-star'></i>
+                    @(System.Threading.Thread.CurrentThread.CurrentCulture.Name.StartsWith("ar") ? DateTime.Now.ToString("dddd، d MMMM yyyy", new System.Globalization.CultureInfo("ar-SA")) : DateTime.Now.ToString("dddd, MMMM d, yyyy"))
+                </span>
+                <h1 class="hero-title">مرحباً بك، @teacherName</h1>
+                <p class="hero-subtitle">
+                    مساحة عملك اليومية لمتابعة حلقات التحفيظ، رصد الأوراد والمتون، وتسجيل حضور الطلاب بكل يسر وسرعة.
+                </p>
+            </div>
 
-            var genderClass = classItem.Gender.ToString().ToLower();
-
-            <div class="class-card" data-class-id="@classItem.Id" data-class-name="@classItem.Name">
-                <span class="status-badge" style="display:none">@Localizer["Active"]</span>
-
-                <div class="class-card-content">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h3 class="class-name mb-0">@classItem.Name</h3>
-                        @if (classItem.StudyProgram != null)
-                        {
-                            <span class="badge @(classItem.StudyProgram.Type == Hafiz.Domain.Enums.ProgramType.Quran ? "bg-success" : "bg-primary")" style="font-size: 0.75rem; padding: 4px 8px; border-radius: 6px;">
-                                @classItem.StudyProgram.Name
-                            </span>
-                        }
+            <!-- Quick Metrics Overview -->
+            <div class="hero-metrics">
+                <div class="hero-metric-item">
+                    <div class="metric-icon green">
+                        <i class='bx bx-chalkboard'></i>
                     </div>
-
-                    <div class="class-info-list">
-                        <div class="class-info-item">
-                            <svg class="info-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
-                                <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                            </svg>
-                            <span>@GetFormattedTime(classItem.ClassTime)</span>
-                        </div>
-
-                        <div class="class-info-item">
-                            <svg class="info-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" />
-                                <path d="M3 10H21M8 2V6M16 2V6" stroke="currentColor" stroke-width="2"
-                                      stroke-linecap="round" />
-                            </svg>
-                            <span>@GetFormattedDays(classItem.ClassDays)</span>
-                        </div>
-
-                        <div class="class-info-item">
-                            <svg class="info-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path
-                                d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" />
-                                <path
-                                d="M23 21V19C23 18.1645 22.7111 17.3736 22.2239 16.7329M16 3.12988C17.7699 3.58305 19 5.14814 19 7C19 8.85186 17.7699 10.417 16 10.8701"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                            <span>@classItem.Students.Count @Localizer["Students"]</span>
-                        </div>
-                    </div>
-
-                    <div class="class-footer d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
-                        <span class="gender-badge gender-@genderClass">
-                            @classItem.Gender
-                        </span>
-                        <a asp-area="Teacher" asp-controller="Student" asp-action="Index" class="btn btn-sm @(classItem.StudyProgram?.Type == Hafiz.Domain.Enums.ProgramType.Matn ? "btn-outline-primary" : "btn-outline-success")" onclick="event.stopPropagation(); document.cookie='selectedClassId=@classItem.Id; path=/; max-age=2592000'; document.cookie='selectedClassName=@classItem.Name; path=/; max-age=2592000';">
-                            <i class='bx @(classItem.StudyProgram?.Type == Hafiz.Domain.Enums.ProgramType.Matn ? "bx-bookmarks" : "bx-book-open") me-1'></i> @(classItem.StudyProgram?.Type == Hafiz.Domain.Enums.ProgramType.Matn ? "الطلاب وتسميع المتن" : "الطلاب والورد")
-                        </a>
+                    <div class="metric-text">
+                        <span class="metric-value">@totalClasses</span>
+                        <span class="metric-label">@Localizer["MyClasses"]</span>
                     </div>
                 </div>
+
+                <div class="hero-metric-item">
+                    <div class="metric-icon blue">
+                        <i class='bx bx-group'></i>
+                    </div>
+                    <div class="metric-text">
+                        <span class="metric-value">@totalStudents</span>
+                        <span class="metric-label">إجمالي الطلاب</span>
+                    </div>
+                </div>
+
+                @if (matnClassesCount > 0)
+                {
+                    <div class="hero-metric-item">
+                        <div class="metric-icon amber">
+                            <i class='bx bx-bookmarks'></i>
+                        </div>
+                        <div class="metric-text">
+                            <span class="metric-value">@matnClassesCount</span>
+                            <span class="metric-label">حلقات المتون</span>
+                        </div>
+                    </div>
+                }
             </div>
-        }
+        </div>
     </div>
+
+    <!-- Section Title -->
+    <div class="t-section-header mt-4">
+        <div>
+            <h2 class="t-section-title">
+                <i class='bx bx-grid-alt'></i>
+                <span>حلقاتي الدراسية</span>
+            </h2>
+            <p class="t-section-desc">اختر الحلقة للدخول المباشر إلى قائمة الطلاب ورصد التسميع اليومي</p>
+        </div>
+    </div>
+
+    <!-- Classes Grid -->
+    @if (Model != null && Model.Any())
+    {
+        <div class="classes-grid">
+            @foreach (var classItem in Model)
+            {
+                var genderClass = classItem.Gender.ToString().ToLower();
+                var isMatn = classItem.StudyProgram?.Type == Hafiz.Domain.Enums.ProgramType.Matn;
+                var studentCount = classItem.Students?.Count ?? 0;
+
+                <div class="class-card @(isMatn ? "is-matn-card" : "is-quran-card")" 
+                     data-class-id="@classItem.Id" 
+                     data-class-name="@classItem.Name"
+                     role="button"
+                     tabindex="0"
+                     aria-label="الحلقة @classItem.Name">
+                    
+                    <span class="status-badge" style="display:none">
+                        <i class='bx bx-check-circle me-1'></i> @Localizer["Active"]
+                    </span>
+
+                    <div class="class-card-content">
+                        <div class="class-card-top">
+                            <div class="class-program-badge">
+                                @if (isMatn)
+                                {
+                                    <span class="t-badge t-badge-matn">
+                                        <i class='bx bx-bookmarks'></i> @(classItem.StudyProgram?.Name ?? "متون علمية")
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="t-badge t-badge-quran">
+                                        <i class='bx bx-book-open'></i> @(classItem.StudyProgram?.Name ?? "قرآن كريم")
+                                    </span>
+                                }
+                            </div>
+                            <span class="gender-pill gender-@genderClass">
+                                <i class='bx @(genderClass == "female" ? "bx-female-sign" : "bx-male-sign")'></i>
+                                @classItem.Gender
+                            </span>
+                        </div>
+
+                        <h3 class="class-name">@classItem.Name</h3>
+
+                        <div class="class-info-list">
+                            <div class="class-info-item">
+                                <div class="info-icon-box">
+                                    <i class='bx bx-time-five'></i>
+                                </div>
+                                <div class="info-details">
+                                    <span class="info-label">الوقت المحدد</span>
+                                    <span class="info-val">@GetFormattedTime(classItem.ClassTime)</span>
+                                </div>
+                            </div>
+
+                            <div class="class-info-item">
+                                <div class="info-icon-box">
+                                    <i class='bx bx-calendar'></i>
+                                </div>
+                                <div class="info-details">
+                                    <span class="info-label">أيام الحلقة</span>
+                                    <span class="info-val">@GetFormattedDays(classItem.ClassDays)</span>
+                                </div>
+                            </div>
+
+                            <div class="class-info-item">
+                                <div class="info-icon-box">
+                                    <i class='bx bx-user'></i>
+                                </div>
+                                <div class="info-details">
+                                    <span class="info-label">عدد المقيدين</span>
+                                    <span class="info-val"><strong>@studentCount</strong> @Localizer["Students"]</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="class-footer">
+                            <a asp-area="Teacher" asp-controller="Student" asp-action="Index" 
+                               class="t-btn @(isMatn ? "t-btn-matn" : "t-btn-primary") w-100" 
+                               onclick="event.stopPropagation(); document.cookie='selectedClassId=@classItem.Id; path=/; max-age=2592000'; document.cookie='selectedClassName=@classItem.Name; path=/; max-age=2592000';">
+                                <i class='bx @(isMatn ? "bx-bookmarks" : "bx-book-reader") me-1'></i>
+                                <span>@(isMatn ? "دخول حلقة المتون" : "دخول حلقة القرآن")</span>
+                                <i class='bx bx-left-arrow-alt ms-auto arrow-icon'></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="t-empty-state mt-4">
+            <div class="t-empty-icon">
+                <i class='bx bx-chalkboard'></i>
+            </div>
+            <h3 class="t-empty-title">لا توجد حلقات مسندة إليك حالياً</h3>
+            <p class="t-empty-text">
+                لم يتم إسناد أي حلقة دراسية إلى حسابك حتى الآن. يرجى التواصل مع إدارة المركز لإسناد الحلقات لك.
+            </p>
+        </div>
+    }
+
 </div>
 
 @functions {
-
-
     private string GetFormattedTime(DateTime classTime)
     {
         var startTime = classTime.ToString("h:mm tt");
@@ -95,8 +195,8 @@
 
     private string GetFormattedDays(ICollection<ClassDaysEnum> classDays)
     {
-        if (!classDays.Any()) return Localizer["NoDaysSet"].Value;
-        return string.Join(", ", classDays.Select(d => d.ToString()));
+        if (classDays == null || !classDays.Any()) return Localizer["NoDaysSet"].Value;
+        return string.Join("، ", classDays.Select(d => d.ToString()));
     }
 }
 

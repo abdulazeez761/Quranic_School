@@ -15,54 +15,64 @@
     var totalStudents = ViewBag.TotalStudents ?? Model?.TotalCount ?? 0;
     var boysCount = ViewBag.BoysCount ?? 0;
     var girlsCount = ViewBag.GirlsCount ?? 0;
-    var avgAge = totalStudents > 0 && students.Any()
-        ? (int)Math.Round(students.Average(s => DateTime.Now.Year - s.DateOfBirth.Year))
-        : 0;
     var isArabic = System.Threading.Thread.CurrentThread.CurrentCulture.Name.StartsWith("ar");
     var matnCounts = ViewBag.MatnCountsByStudent as Dictionary<Guid, (int active, int completed)>;
+    var isMatnClass = ViewBag.IsMatnClass == true;
 }
 
 <link rel="stylesheet" href="~/css/teacher/Students.css" asp-append-version="true" />
 
 <div class="students-page">
 
+    <!-- Class Header Banner -->
     <div class="class-header">
         <div class="class-header-left">
             <div class="class-header-title">
-                <i class='bx @(ViewBag.IsMatnClass == true ? "bx-bookmarks text-primary" : "bx-book-reader") header-icon'></i>
+                <div class="class-header-icon-box @(isMatnClass ? "matn-icon" : "quran-icon")">
+                    <i class='bx @(isMatnClass ? "bx-bookmarks" : "bx-book-reader")'></i>
+                </div>
                 <div>
-                    <div class="d-flex align-items-center gap-2">
+                    <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
                         <h2>@className</h2>
-                        @if (ViewBag.IsMatnClass == true)
+                        @if (isMatnClass)
                         {
-                            <span class="badge bg-primary" style="font-size: 0.78rem; padding: 4px 9px; border-radius: 6px;">
+                            <span class="t-badge t-badge-matn">
+                                <i class='bx bx-bookmarks'></i>
                                 @(ViewBag.StudyProgramName ?? "حلقة متون علمية")
                             </span>
                         }
+                        else
+                        {
+                            <span class="t-badge t-badge-quran">
+                                <i class='bx bx-book-open'></i>
+                                @(ViewBag.StudyProgramName ?? "حلقة قرآن كريم")
+                            </span>
+                        }
                     </div>
-                    <p>
-                        <span>@totalStudents @Localizer["Students"]</span>
+                    <div class="class-meta-row">
+                        <span class="meta-pill total">
+                            <i class='bx bx-group'></i> @totalStudents @Localizer["Students"]
+                        </span>
                         @if (totalStudents > 0)
                         {
-                            <span class="header-dot">•</span>
-                            if (boysCount > 0)
+                            @if (boysCount > 0)
                             {
-                                <span class="header-meta-item">
-                                    <i class='bx bx-male'></i>@boysCount @Localizer["Boys"]
+                                <span class="meta-pill boy">
+                                    <i class='bx bx-male'></i> @boysCount @Localizer["Boys"]
                                 </span>
                             }
-                            if (girlsCount > 0)
+                            @if (girlsCount > 0)
                             {
-                                <span class="header-meta-item">
-                                    <i class='bx bx-female'></i>@girlsCount @Localizer["Girls"]
+                                <span class="meta-pill girl">
+                                    <i class='bx bx-female'></i> @girlsCount @Localizer["Girls"]
                                 </span>
                             }
                         }
-                    </p>
+                    </div>
                 </div>
             </div>
         </div>
-        <a class="change-class-btn" asp-action="Index" asp-controller="Home">
+        <a class="change-class-btn t-btn t-btn-outline" asp-action="Index" asp-controller="Home">
             <i class='bx bx-transfer-alt'></i>
             <span>@Localizer["ChangeClass"]</span>
         </a>
@@ -70,37 +80,71 @@
 
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert" id="successAlert">
-            <i class="bi bi-check-circle-fill me-2"></i>
-            <strong>@Localizer["Success"]</strong> @TempData["SuccessMessage"]
+        <div class="t-toast t-toast-success alert-dismissible" role="alert" id="successAlert">
+            <i class="bx bx-check-circle" style="font-size: 1.3rem;"></i>
+            <span>@TempData["SuccessMessage"]</span>
         </div>
     }
 
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert" id="errorAlert">
-            <i class="bi bi-x-circle-fill me-2"></i>
-            <strong>@Localizer["Error"]</strong> @TempData["ErrorMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="t-toast t-toast-error alert-dismissible" role="alert" id="errorAlert">
+            <i class="bx bx-error-circle" style="font-size: 1.3rem;"></i>
+            <span>@TempData["ErrorMessage"]</span>
         </div>
     }
 
     @if (totalStudents > 0)
     {
+        <!-- Actionable Records Toolbar -->
         <div class="students-toolbar">
-            <div class="search-wrapper">
-                <i class='bx bx-search search-icon'></i>
-                <input id="studentSearch" type="text" class="search-input" placeholder="@Localizer["SearchPlaceholder"]"
-                       autocomplete="off" />
+            <div class="toolbar-top-row">
+                <div class="search-wrapper">
+                    <i class='bx bx-search search-icon'></i>
+                    <input id="studentSearch" type="text" class="search-input" placeholder="@Localizer["SearchPlaceholder"]"
+                           autocomplete="off" />
+                </div>
+                @if (students.Any())
+                {
+                    <button type="button" class="t-btn @(isMatnClass ? "t-btn-matn" : "t-btn-primary") quick-recite-btn"
+                            onclick="startSequentialRecitation()" title="بدء جلسة تسميع متتابعة تبدأ بأول طالب">
+                        <i class='bx bx-play-circle'></i>
+                        <span>بدء التسميع السريع</span>
+                    </button>
+                }
+            </div>
+
+            <!-- Quick Filter Chips -->
+            <div class="records-filter-tabs">
+                <button type="button" class="filter-tab active" data-filter="all">
+                    الكل <span class="filter-count">@totalStudents</span>
+                </button>
+                <button type="button" class="filter-tab" data-filter="active">
+                    أوراد نشطة
+                </button>
+                <button type="button" class="filter-tab" data-filter="pending">
+                    يحتاج تسميع
+                </button>
+                @if (students.Any(s => WirdPageCalculator.IsHafiz(s)))
+                {
+                    <button type="button" class="filter-tab" data-filter="hafiz">
+                        الحفّاظ ⭐
+                    </button>
+                }
             </div>
         </div>
     }
 
-    <div class="students-grid" id="studentsGrid">
+    <!-- High-Efficiency Records View (Mobile / Tablet Cards) -->
+    <div class="students-records-list" id="studentsGrid">
+        @{
+            int mobileIdx = 0;
+        }
         @foreach (Student student in students)
         {
-            var age = DateTime.Now.Year - student.DateOfBirth.Year;
-            var isMatn = ViewBag.IsMatnClass == true;
+            if (student == null) continue;
+            mobileIdx++;
+            var isMatn = isMatnClass;
             int mActive = 0, mCompleted = 0;
             if (isMatn && matnCounts != null && matnCounts.ContainsKey(student.UserId))
             {
@@ -122,145 +166,143 @@
             var juzPercent = Math.Min(100, (int)((double)totalMemPages / WirdPageCalculator.TotalQuranPages * 100));
             var isHafizCard = WirdPageCalculator.IsHafiz(student);
             var searchKey = studentFullName.ToLower();
+            var hasTajwid = student.TajwidLevel != TajwidLevel.none;
 
-            <div class="student-card" data-name="@searchKey" data-level="@student.TajwidLevel"
-                 data-juz="@memJuzDisplay">
+            <div class="student-card student-record-row"
+                 data-id="@student.UserId"
+                 data-name="@searchKey"
+                 data-full-name="@studentFullName"
+                 data-level="@student.TajwidLevel"
+                 data-active="@(activeWirds > 0 ? "true" : "false")"
+                 data-hafiz="@(isHafizCard ? "true" : "false")">
 
-                <div class="student-card-stripe stripe-@genderClass"></div>
+                <div class="record-stripe stripe-@genderClass"></div>
 
-                <div class="student-card-header">
-                    <div class="student-avatar avatar-@genderClass" aria-hidden="true">
-                        @if (!string.IsNullOrWhiteSpace(initials))
+                <div class="record-body">
+                    <!-- Avatar & Primary Info -->
+                    <div class="record-main-block">
+                        <div class="record-avatar avatar-@genderClass" aria-hidden="true">
+                            @if (!string.IsNullOrWhiteSpace(initials))
+                            {
+                                <span>@initials</span>
+                            }
+                            else
+                            {
+                                <i class='bx bx-user'></i>
+                            }
+                        </div>
+                        <div class="record-identity">
+                            <div class="record-name-wrap">
+                                <a asp-action="Details" asp-route-id="@student.UserId" class="record-name" title="@studentFullName">
+                                    @studentFullName
+                                </a>
+                                @if (isHafizCard)
+                                {
+                                    <span class="record-badge badge-hafiz" title="@Localizer["Hafiz"]">
+                                        <i class='bx bxs-award'></i> حافظ
+                                    </span>
+                                }
+                                @if (hasTajwid)
+                                {
+                                    <span class="record-badge badge-tajwid tajwid-@tajwidClass">
+                                        @Localizer[student.TajwidLevel.ToString()]
+                                    </span>
+                                }
+                            </div>
+
+                            <div class="record-subline">
+                                @if (!isMatnClass)
+                                {
+                                    <span class="record-stat-pill" title="مقدار الحفظ">
+                                        <i class='bx bx-book-bookmark'></i>
+                                        <strong>@memJuzDisplay/30</strong> جزء
+                                        @if (memPagesRemainder > 0)
+                                        {
+                                            <small>(+@memPagesRemainder.ToString("0.#") ص)</small>
+                                        }
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="record-stat-pill matn-pill" title="حالة المتون">
+                                        <i class='bx bx-bookmarks'></i>
+                                        @(mActive > 0 ? $"{mActive} متون جارية" : (mCompleted > 0 ? $"{mCompleted} منجز" : "جاهز للإسناد"))
+                                    </span>
+                                }
+
+                                <span class="record-status-pill @(activeWirds > 0 ? "status-active" : "status-idle")">
+                                    <i class='bx @(activeWirds > 0 ? "bx-pulse" : "bx-check")'></i>
+                                    @(activeWirds > 0 ? $"{activeWirds} نشط" : "مكتمل")
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Direct Action Buttons -->
+                    <div class="record-actions-block">
+                        @if (!isMatnClass)
                         {
-                            <span>@initials</span>
+                            <button type="button" class="rec-btn rec-btn-primary"
+                                    onclick="openWirdModal('@student.UserId', '@studentFullName')"
+                                    title="@Localizer["AddWird"]">
+                                <i class='bx bx-plus'></i>
+                                <span>تسميع ورد</span>
+                            </button>
+                            <button type="button" class="rec-btn rec-btn-plan"
+                                    onclick="openStudentPlanModal('@student.UserId', '@studentFullName', '@student.TajwidLevel')"
+                                    title="@Localizer["StudentRoutinePlan"]">
+                                <i class='bx bx-calendar-star'></i>
+                                <span>الخطة</span>
+                            </button>
                         }
                         else
                         {
-                            <i class='bx bx-user'></i>
+                            <button type="button" class="rec-btn rec-btn-matn"
+                                    onclick="openAssignMatnModal('@student.UserId', '@studentFullName')"
+                                    title="تسميع أو إسناد المتن">
+                                <i class='bx bx-bookmarks'></i>
+                                <span>تسميع المتن</span>
+                            </button>
                         }
-                    </div>
-                    <div class="student-identity">
-                        <h3 class="student-name" title="@studentFullName">
-                            @studentFullName
-                            @if (isHafizCard)
-                            {
-                                <span class="hafiz-badge"><i class='bx bxs-award'></i>@Localizer["Hafiz"]</span>
-                            }
-                        </h3>
-                        <div class="student-tags">
-                            <span class="chip chip-age">
-                                <i class='bx bx-cake'></i>@age @Localizer["Years"]
-                            </span>
-                            <span class="chip chip-tajwid tajwid-@tajwidClass">
-                                <i class='bx bx-medal'></i>@Localizer[student.TajwidLevel.ToString()]
-                            </span>
-                        </div>
-                    </div>
-                    <span class="active-badge @(activeWirds == 0 ? "zero" : "")" title="@Localizer["ActiveWirds"]">
-                        <i class='bx bx-pulse'></i>@activeWirds
-                    </span>
-                </div>
 
-                @if (ViewBag.IsMatnClass != true)
-                {
-                    <div class="memorization-block">
-                        <div class="memorization-head">
-                            <span class="memorization-label">
-                                <i class='bx bx-book-bookmark'></i>@Localizer["JuzMemorized"]
-                            </span>
-                            <span class="memorization-value">
-                                @memJuzDisplay / 30
-                                @if (memPagesRemainder > 0)
-                                {
-                                    <small>(+ @memPagesRemainder.ToString("0.##") @Localizer["UnitPages"])</small>
-                                }
-                            </span>
-                        </div>
-                        <div class="memorization-bar" role="progressbar" aria-valuenow="@memJuzDisplay" aria-valuemin="0"
-                             aria-valuemax="30">
-                            <div class="memorization-fill" style="width: @juzPercent%"></div>
-                        </div>
+                        <a asp-action="Details" asp-route-id="@student.UserId"
+                           class="rec-btn-icon"
+                           title="@Localizer["ViewDetails"]">
+                            <i class='bx bx-show'></i>
+                        </a>
                     </div>
-                }
-                else
-                {
-                    <div class="memorization-block" style="background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.15); border-radius: 8px; padding: 8px 12px;">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <span class="small fw-bold text-primary">
-                                <i class='bx bx-bookmarks me-1'></i> مسار المتون العلمية
-                            </span>
-                            <span class="badge bg-light text-dark border small">
-                                @(ViewBag.StudyProgramName ?? "متون")
-                            </span>
-                        </div>
-                    </div>
-                }
-
-                <div class="student-stats">
-                    <div class="stat-item">
-                        <i class='bx bx-time-five stat-icon'></i>
-                        <div class="stat-text">
-                            <span class="stat-value">@activeWirds</span>
-                            <span class="stat-label">@Localizer["ActiveWirds"]</span>
-                        </div>
-                    </div>
-                    <div class="stat-divider"></div>
-                    <div class="stat-item">
-                        <i class='bx bx-check-circle stat-icon'></i>
-                        <div class="stat-text">
-                            <span class="stat-value">@completedWirds</span>
-                            <span class="stat-label">@Localizer["CompletedWirds"]</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="student-actions">
-                    <a asp-action="Details" asp-route-id="@student.UserId" class="btn btn-outline">
-                        <i class='bx bx-show'></i>
-                        <span>@Localizer["ViewDetails"]</span>
-                    </a>
-                    @if (ViewBag.IsMatnClass != true)
-                    {
-                        <button type="button" class="btn btn-routine-plan" onclick="openStudentPlanModal('@student.UserId', '@studentFullName', '@student.TajwidLevel')" title="@Localizer["StudentRoutinePlan"]">
-                            <i class='bx bx-calendar-star'></i>
-                            <span>@Localizer["StudentRoutinePlan"]</span>
-                        </button>
-                        <button class="btn btn-primary" onclick="openWirdModal('@student.UserId', '@studentFullName')">
-                            <span class="plus-icon">+</span>
-                            <span>@Localizer["AddWird"]</span>
-                        </button>
-                    }
-                    else
-                    {
-                        <button class="btn btn-primary" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); border-color: #2563eb;" onclick="openAssignMatnModal('@student.UserId', '@studentFullName')">
-                            <i class='bx bx-bookmarks me-1'></i>
-                            <span>تسميع المتن</span>
-                        </button>
-                    }
                 </div>
             </div>
         }
     </div>
 
+    <!-- Desktop High-Density Records Table -->
     <div class="students-table-wrap" id="studentsTableWrap">
         <table class="students-table">
             <thead>
                 <tr>
+                    <th class="col-num">#</th>
                     <th class="col-student">@Localizer["Students"]</th>
-                    <th class="col-juz">@Localizer["ColJuz"]</th>
-                    <th class="col-active">@Localizer["ColActive"]</th>
-                    <th class="col-actions">@Localizer["ColActions"]</th>
+                    <th class="col-juz">@(isMatnClass ? "المتون المقررة" : "مقدار الحفظ")</th>
+                    <th class="col-active">حالة الأوراد</th>
+                    <th class="col-actions">الإجراءات المباشرة</th>
                 </tr>
             </thead>
             <tbody>
+                @{
+                    int rowIdx = 0;
+                }
                 @foreach (Student student in students)
                 {
-                    var rAge = DateTime.Now.Year - student.DateOfBirth.Year;
-                    var isMatnRow = ViewBag.IsMatnClass == true;
-                    int rActiveCount = 0;
+                    if (student == null) continue;
+                    rowIdx++;
+                    var isMatnRow = isMatnClass;
+                    int rActiveCount = 0, rCompletedCount = 0;
                     if (isMatnRow && matnCounts != null && matnCounts.ContainsKey(student.UserId))
                     {
-                        rActiveCount = matnCounts[student.UserId].active;
+                        var mc = matnCounts[student.UserId];
+                        rActiveCount = mc.active;
+                        rCompletedCount = mc.completed;
                     }
                     var rActive = isMatnRow ? rActiveCount : (student.wirds?.Count(w => w.Status == AssignmentStatus.notSet) ?? 0);
                     var rFirstName = student.StudentInfo?.FirstName ?? string.Empty;
@@ -273,11 +315,20 @@
                     var rTotalMemPages = WirdPageCalculator.TotalMemorizedPages(student);
                     var (rMemJuzDisplay, rMemPagesRemainder) = WirdPageCalculator.SplitJuzAndPages(rTotalMemPages);
                     var rJuzPercent = Math.Min(100, (int)((double)rTotalMemPages / WirdPageCalculator.TotalQuranPages * 100));
+                    var rIsHafiz = WirdPageCalculator.IsHafiz(student);
                     var rSearchKey = rFullName.ToLower();
+                    var rHasTajwid = student.TajwidLevel != TajwidLevel.none;
 
                     <tr class="student-row"
+                        data-id="@student.UserId"
                         data-name="@rSearchKey"
-                        data-level="@student.TajwidLevel">
+                        data-full-name="@rFullName"
+                        data-level="@student.TajwidLevel"
+                        data-active="@(rActive > 0 ? "true" : "false")"
+                        data-hafiz="@(rIsHafiz ? "true" : "false")">
+                        <td class="col-num">
+                            <span class="row-index">@rowIdx</span>
+                        </td>
                         <td class="col-student">
                             <div class="row-student">
                                 <div class="row-avatar avatar-@rGenderClass" aria-hidden="true">
@@ -291,55 +342,87 @@
                                     }
                                 </div>
                                 <div class="row-identity">
-                                    <span class="row-name" title="@rFullName">@rFullName</span>
-                                    <span class="row-meta">
-                                        <span class="row-chip tajwid-@rTajwidClass">@Localizer[student.TajwidLevel.ToString()]</span>
-                                        <span class="row-age">@rAge @Localizer["Years"]</span>
-                                    </span>
+                                    <div class="row-name-line">
+                                        <a asp-action="Details" asp-route-id="@student.UserId" class="row-name" title="@rFullName">
+                                            @rFullName
+                                        </a>
+                                        @if (rIsHafiz)
+                                        {
+                                            <span class="record-badge badge-hafiz" title="@Localizer["Hafiz"]">
+                                                <i class='bx bxs-award'></i> حافظ
+                                            </span>
+                                        }
+                                        @if (rHasTajwid)
+                                        {
+                                            <span class="record-badge badge-tajwid tajwid-@rTajwidClass">
+                                                @Localizer[student.TajwidLevel.ToString()]
+                                            </span>
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </td>
                         <td class="col-juz">
-                            <div class="row-juz">
-                                <span class="row-juz-value">@rMemJuzDisplay<span class="row-juz-total">/30</span></span>
-                                @if (rMemPagesRemainder > 0)
-                                {
-                                    <small class="row-juz-extra">+ @rMemPagesRemainder.ToString("0.##") @Localizer["UnitPages"]</small>
-                                }
-                                <div class="row-juz-bar" role="progressbar"
-                                     aria-valuenow="@rMemJuzDisplay" aria-valuemin="0" aria-valuemax="30">
-                                    <div class="row-juz-fill" style="width: @rJuzPercent%"></div>
+                            @if (!isMatnRow)
+                            {
+                                <div class="row-juz">
+                                    <div class="row-juz-meta">
+                                        <span class="row-juz-value">@rMemJuzDisplay <span class="row-juz-total">/ 30 جزء</span></span>
+                                        @if (rMemPagesRemainder > 0)
+                                        {
+                                            <small class="row-juz-extra">(+@rMemPagesRemainder.ToString("0.#") ص)</small>
+                                        }
+                                    </div>
+                                    <div class="row-juz-bar" role="progressbar"
+                                         aria-valuenow="@rMemJuzDisplay" aria-valuemin="0" aria-valuemax="30">
+                                        <div class="row-juz-fill" style="width: @rJuzPercent%"></div>
+                                    </div>
                                 </div>
-                            </div>
+                            }
+                            else
+                            {
+                                <div class="row-matn-meta">
+                                    <span class="matn-status-text">
+                                        <i class='bx bx-bookmarks text-primary'></i>
+                                        @(rActiveCount > 0 ? $"{rActiveCount} متون جارية" : (rCompletedCount > 0 ? $"{rCompletedCount} منجز" : "جاهز للإسناد"))
+                                    </span>
+                                </div>
+                            }
                         </td>
                         <td class="col-active">
-                            <span class="row-active-badge @(rActive == 0 ? "zero" : "")">@rActive</span>
+                            <span class="record-status-pill @(rActive > 0 ? "status-active" : "status-idle")">
+                                <i class='bx @(rActive > 0 ? "bx-pulse" : "bx-check")'></i>
+                                @(rActive > 0 ? $"{rActive} نشط" : "مكتمل")
+                            </span>
                         </td>
                         <td class="col-actions">
                             <div class="row-actions">
-                                @if (ViewBag.IsMatnClass != true)
+                                @if (!isMatnRow)
                                 {
-                                    <button type="button" class="row-icon-btn primary"
-                                            aria-label="@Localizer["AddWird"]" title="@Localizer["AddWird"]"
+                                    <button type="button" class="rec-btn rec-btn-primary rec-btn-sm"
+                                            title="@Localizer["AddWird"]"
                                             onclick="openWirdModal('@student.UserId', '@rFullName')">
                                         <i class='bx bx-plus'></i>
+                                        <span>تسميع ورد</span>
                                     </button>
-                                    <button type="button" class="row-icon-btn routine-plan"
-                                            aria-label="@Localizer["StudentRoutinePlan"]" title="@Localizer["StudentRoutinePlan"]"
+                                    <button type="button" class="rec-btn rec-btn-plan rec-btn-sm"
+                                            title="@Localizer["StudentRoutinePlan"]"
                                             onclick="openStudentPlanModal('@student.UserId', '@rFullName', '@student.TajwidLevel')">
                                         <i class='bx bx-calendar-star'></i>
+                                        <span>الخطة</span>
                                     </button>
                                 }
                                 else
                                 {
-                                    <button type="button" class="row-icon-btn primary" style="background: #2563eb; border-color: #2563eb; color: #fff;"
-                                            aria-label="تسميع المتن" title="تسميع المتن"
+                                    <button type="button" class="rec-btn rec-btn-matn rec-btn-sm"
+                                            title="تسميع أو إسناد المتن"
                                             onclick="openAssignMatnModal('@student.UserId', '@rFullName')">
                                         <i class='bx bx-bookmarks'></i>
+                                        <span>تسميع المتن</span>
                                     </button>
                                 }
                                 <a asp-action="Details" asp-route-id="@student.UserId"
-                                   class="row-icon-btn outline" aria-label="@Localizer["ViewDetails"]"
+                                   class="rec-btn-icon"
                                    title="@Localizer["ViewDetails"]">
                                     <i class='bx bx-show'></i>
                                 </a>
@@ -353,6 +436,7 @@
 
     @await Html.PartialAsync("_Pagination", Model)
 
+    <!-- Empty States -->
     <div class="students-empty" id="studentsEmpty" style="display: @(totalStudents == 0 ? "flex" : "none");">
         <div class="empty-icon"><i class='bx bx-user-x'></i></div>
         <h3>@Localizer["NoStudents"]</h3>
@@ -362,6 +446,7 @@
     <div class="students-empty no-match" id="studentsNoMatch" style="display: none;">
         <div class="empty-icon"><i class='bx bx-search-alt'></i></div>
         <h3>@Localizer["NoMatch"]</h3>
+        <p class="text-muted small">لم يتم العثور على طالب يطابق البحث أو الفلتر المحدد</p>
     </div>
 
 </div>
@@ -384,8 +469,10 @@
         }
     }, 5000);
 
+    // Filter and Search System for Records
     (function () {
         const searchInput = document.getElementById('studentSearch');
+        const filterTabs = document.querySelectorAll('.records-filter-tabs .filter-tab');
         const cards = document.querySelectorAll('#studentsGrid .student-card');
         const rows = document.querySelectorAll('#studentsTableWrap .student-row');
         const noMatch = document.getElementById('studentsNoMatch');
@@ -393,10 +480,25 @@
         const tableWrap = document.getElementById('studentsTableWrap');
 
         let activeQuery = '';
+        let activeFilter = 'all';
 
         function matches(el) {
             const name = el.getAttribute('data-name') || '';
-            return activeQuery === '' || name.indexOf(activeQuery) !== -1;
+            const isActive = el.getAttribute('data-active') === 'true';
+            const isHafiz = el.getAttribute('data-hafiz') === 'true';
+
+            const matchesSearch = activeQuery === '' || name.indexOf(activeQuery) !== -1;
+            let matchesTab = true;
+
+            if (activeFilter === 'active') {
+                matchesTab = isActive;
+            } else if (activeFilter === 'pending') {
+                matchesTab = !isActive;
+            } else if (activeFilter === 'hafiz') {
+                matchesTab = isHafiz;
+            }
+
+            return matchesSearch && matchesTab;
         }
 
         function applyFilters() {
@@ -424,6 +526,49 @@
                 applyFilters();
             });
         }
+
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', function () {
+                filterTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                activeFilter = this.getAttribute('data-filter') || 'all';
+                applyFilters();
+            });
+        });
+
+        // Expose function to start sequential recitation with first visible student
+        window.startSequentialRecitation = function () {
+            // Find first visible card or row
+            let firstVisible = null;
+            for (let i = 0; i < cards.length; i++) {
+                if (cards[i].style.display !== 'none') {
+                    firstVisible = cards[i];
+                    break;
+                }
+            }
+            if (!firstVisible) {
+                for (let i = 0; i < rows.length; i++) {
+                    if (rows[i].style.display !== 'none') {
+                        firstVisible = rows[i];
+                        break;
+                    }
+                }
+            }
+
+            if (firstVisible) {
+                const studentId = firstVisible.getAttribute('data-id');
+                const studentName = firstVisible.getAttribute('data-full-name');
+                const isMatn = @(isMatnClass ? "true" : "false");
+
+                if (isMatn && typeof window.openAssignMatnModal === 'function') {
+                    window.openAssignMatnModal(studentId, studentName);
+                } else if (typeof window.openWirdModal === 'function') {
+                    window.openWirdModal(studentId, studentName);
+                }
+            } else {
+                alert('لا يوجد طلاب مطابقين للفلتر الحالي');
+            }
+        };
     })();
 </script>
 

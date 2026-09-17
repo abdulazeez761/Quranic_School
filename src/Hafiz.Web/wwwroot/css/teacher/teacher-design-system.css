@@ -1,0 +1,455 @@
+/* ==========================================================================
+   Hafiz Teacher Area - Unified Design System & Tokens
+   Mobile-First, RTL-Optimized, Calm Professional Workspace Aesthetics
+   ========================================================================== */
+
+:root {
+  /* --- Brand / Primary Palette (Deep Calming Emerald) --- */
+  --t-primary: #1e6b43;
+  --t-primary-hover: #165333;
+  --t-primary-active: #114228;
+  --t-primary-light: #eaf5ee;
+  --t-primary-subtle: #f0fdf4;
+  --t-primary-border: #bbf7d0;
+
+  /* --- Matn / Academic Scientific Branch (Royal Indigo Blue) --- */
+  --t-matn: #2563eb;
+  --t-matn-hover: #1d4ed8;
+  --t-matn-light: #eff6ff;
+  --t-matn-subtle: #f8faff;
+  --t-matn-border: #bfdbfe;
+
+  /* --- Warm Accent / Quranic Gold --- */
+  --t-gold: #c29437;
+  --t-gold-hover: #a67c29;
+  --t-gold-light: #fef9ee;
+  --t-gold-border: #fde68a;
+
+  /* --- Neutrals & Workspace Surfaces --- */
+  --t-bg: #f8fafc;
+  --t-surface: #ffffff;
+  --t-surface-elevated: #ffffff;
+  --t-surface-muted: #f1f5f9;
+  --t-surface-subtle: #f8fafc;
+
+  /* --- Borders & Separators --- */
+  --t-border: #e2e8f0;
+  --t-border-subtle: #edf2f7;
+  --t-border-strong: #cbd5e1;
+  --t-border-focus: #1e6b43;
+
+  /* --- Text & Typography Colors --- */
+  --t-text-main: #0f172a;
+  --t-text-muted: #475569;
+  --t-text-subtle: #64748b;
+  --t-text-placeholder: #94a3b8;
+  --t-text-inverse: #ffffff;
+
+  /* --- Semantics / Attendance & Evaluation Statuses --- */
+  --t-present: #10b981;
+  --t-present-bg: #ecfdf5;
+  --t-present-border: #a7f3d0;
+  --t-present-text: #065f46;
+
+  --t-late: #f59e0b;
+  --t-late-bg: #fffbeb;
+  --t-late-border: #fde68a;
+  --t-late-text: #92400e;
+
+  --t-absent: #ef4444;
+  --t-absent-bg: #fef2f2;
+  --t-absent-border: #fecaca;
+  --t-absent-text: #991b1b;
+
+  --t-excuse: #0284c7;
+  --t-excuse-bg: #f0f9ff;
+  --t-excuse-border: #bae6fd;
+  --t-excuse-text: #075985;
+
+  /* Evaluation Ratings */
+  --t-rating-excellent: #10b981;
+  --t-rating-verygood: #0ea5e9;
+  --t-rating-good: #6366f1;
+  --t-rating-fair: #f59e0b;
+  --t-rating-poor: #ef4444;
+
+  /* --- Shadows & Elevation --- */
+  --t-shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+  --t-shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.06);
+  --t-shadow-md: 0 4px 8px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+  --t-shadow-lg: 0 10px 20px -3px rgba(15, 23, 42, 0.08), 0 4px 8px -4px rgba(15, 23, 42, 0.04);
+  --t-shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+
+  /* --- Border Radius Scale --- */
+  --t-radius-xs: 6px;
+  --t-radius-sm: 8px;
+  --t-radius-md: 12px;
+  --t-radius-lg: 16px;
+  --t-radius-xl: 22px;
+  --t-radius-full: 9999px;
+
+  /* --- Spacing Scale --- */
+  --t-space-2xs: 0.25rem; /* 4px */
+  --t-space-xs: 0.5rem;   /* 8px */
+  --t-space-sm: 0.75rem;  /* 12px */
+  --t-space-md: 1rem;     /* 16px */
+  --t-space-lg: 1.5rem;   /* 24px */
+  --t-space-xl: 2rem;     /* 32px */
+  --t-space-2xl: 2.5rem;  /* 40px */
+
+  /* --- Component Dimensions --- */
+  --t-header-height: 68px;
+  --t-bottom-nav-height: 64px;
+  --t-touch-target: 44px;
+
+  /* --- Transitions --- */
+  --t-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --t-transition-bounce: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ==========================================================================
+   Global Reset & Base Workspace Styling
+   ========================================================================== */
+body {
+  background-color: var(--t-bg) !important;
+  color: var(--t-text-main);
+  font-family: 'Cairo', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Safe area insets for modern mobile devices */
+@supports (padding: max(0px)) {
+  .mobile-bottom-nav {
+    padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
+    height: calc(var(--t-bottom-nav-height) + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* ==========================================================================
+   Reusable Design System Components
+   ========================================================================== */
+
+/* --- Modern Card Language (.t-card) --- */
+.t-card {
+  background: var(--t-surface);
+  border: 1px solid var(--t-border);
+  border-radius: var(--t-radius-lg);
+  box-shadow: var(--t-shadow-sm);
+  transition: var(--t-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.t-card:hover {
+  box-shadow: var(--t-shadow-md);
+  border-color: var(--t-border-strong);
+}
+
+.t-card-header {
+  padding: var(--t-space-md) var(--t-space-lg);
+  border-bottom: 1px solid var(--t-border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--t-space-sm);
+}
+
+.t-card-body {
+  padding: var(--t-space-lg);
+}
+
+.t-card-footer {
+  padding: var(--t-space-sm) var(--t-space-lg);
+  background: var(--t-surface-subtle);
+  border-top: 1px solid var(--t-border-subtle);
+}
+
+/* --- Standardized Buttons (.t-btn) --- */
+.t-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  padding: 0.55rem 1.15rem;
+  border-radius: var(--t-radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none !important;
+  white-space: nowrap;
+  transition: var(--t-transition);
+  min-height: var(--t-touch-target);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.t-btn:active {
+  transform: scale(0.98);
+}
+
+.t-btn-primary {
+  background: var(--t-primary);
+  color: var(--t-text-inverse) !important;
+  box-shadow: 0 2px 4px rgba(30, 107, 67, 0.2);
+}
+
+.t-btn-primary:hover {
+  background: var(--t-primary-hover);
+  color: var(--t-text-inverse) !important;
+  box-shadow: 0 4px 8px rgba(30, 107, 67, 0.3);
+}
+
+.t-btn-matn {
+  background: var(--t-matn);
+  color: var(--t-text-inverse) !important;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+.t-btn-matn:hover {
+  background: var(--t-matn-hover);
+  color: var(--t-text-inverse) !important;
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+}
+
+.t-btn-outline {
+  background: var(--t-surface);
+  border-color: var(--t-border-strong);
+  color: var(--t-text-main) !important;
+}
+
+.t-btn-outline:hover {
+  background: var(--t-surface-muted);
+  border-color: var(--t-text-muted);
+  color: var(--t-text-main) !important;
+}
+
+.t-btn-ghost {
+  background: transparent;
+  color: var(--t-text-muted) !important;
+}
+
+.t-btn-ghost:hover {
+  background: var(--t-surface-muted);
+  color: var(--t-text-main) !important;
+}
+
+.t-btn-danger {
+  background: var(--t-absent-bg);
+  border-color: var(--t-absent-border);
+  color: var(--t-absent-text) !important;
+}
+
+.t-btn-danger:hover {
+  background: var(--t-absent);
+  color: #ffffff !important;
+}
+
+.t-btn-sm {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8125rem;
+  min-height: 36px;
+  border-radius: var(--t-radius-sm);
+}
+
+.t-btn-icon {
+  width: var(--t-touch-target);
+  height: var(--t-touch-target);
+  padding: 0;
+  border-radius: var(--t-radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Badges & Chips (.t-badge, .t-chip) --- */
+.t-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: var(--t-radius-full);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.t-badge-quran {
+  background: var(--t-primary-light);
+  color: var(--t-primary);
+  border: 1px solid var(--t-primary-border);
+}
+
+.t-badge-matn {
+  background: var(--t-matn-light);
+  color: var(--t-matn);
+  border: 1px solid var(--t-matn-border);
+}
+
+.t-badge-present {
+  background: var(--t-present-bg);
+  color: var(--t-present-text);
+  border: 1px solid var(--t-present-border);
+}
+
+.t-badge-late {
+  background: var(--t-late-bg);
+  color: var(--t-late-text);
+  border: 1px solid var(--t-late-border);
+}
+
+.t-badge-absent {
+  background: var(--t-absent-bg);
+  color: var(--t-absent-text);
+  border: 1px solid var(--t-absent-border);
+}
+
+.t-badge-excuse {
+  background: var(--t-excuse-bg);
+  color: var(--t-excuse-text);
+  border: 1px solid var(--t-excuse-border);
+}
+
+.t-badge-gold {
+  background: var(--t-gold-light);
+  color: var(--t-gold);
+  border: 1px solid var(--t-gold-border);
+}
+
+.t-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: var(--t-radius-sm);
+  background: var(--t-surface-muted);
+  color: var(--t-text-muted);
+  border: 1px solid var(--t-border);
+}
+
+/* --- Standardized Section Headers --- */
+.t-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--t-space-md);
+  flex-wrap: wrap;
+  gap: var(--t-space-sm);
+}
+
+.t-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--t-text-main);
+  margin: 0;
+}
+
+.t-section-title i {
+  color: var(--t-primary);
+  font-size: 1.4rem;
+}
+
+.t-section-desc {
+  font-size: 0.875rem;
+  color: var(--t-text-muted);
+  margin: 0.25rem 0 0 0;
+}
+
+/* --- Empty States --- */
+.t-empty-state {
+  text-align: center;
+  padding: var(--t-space-2xl) var(--t-space-lg);
+  background: var(--t-surface);
+  border: 1px dashed var(--t-border-strong);
+  border-radius: var(--t-radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.t-empty-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--t-primary-light);
+  color: var(--t-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin-bottom: var(--t-space-md);
+}
+
+.t-empty-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--t-text-main);
+  margin-bottom: 0.35rem;
+}
+
+.t-empty-text {
+  font-size: 0.875rem;
+  color: var(--t-text-muted);
+  max-width: 420px;
+  margin-bottom: var(--t-space-md);
+}
+
+/* --- Floating Notifications / Toasts --- */
+.t-toast {
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-sm);
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--t-radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: var(--t-shadow-lg);
+  margin-bottom: var(--t-space-md);
+  animation: t-slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.t-toast-success {
+  background: #065f46;
+  color: #ffffff;
+}
+
+.t-toast-error {
+  background: #991b1b;
+  color: #ffffff;
+}
+
+@keyframes t-slide-in {
+  from {
+    transform: translateY(-12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* --- Responsive Helpers --- */
+@media (max-width: 767.98px) {
+  .t-hide-mobile {
+    display: none !important;
+  }
+  .t-card-body {
+    padding: var(--t-space-md);
+  }
+}
+
+@media (min-width: 768px) {
+  .t-show-mobile {
+    display: none !important;
+  }
+}
