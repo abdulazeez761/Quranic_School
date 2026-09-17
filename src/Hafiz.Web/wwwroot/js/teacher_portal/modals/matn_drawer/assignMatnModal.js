@@ -25,9 +25,9 @@ window.matnUnits = {
 };
 
 window.matnRatings = {
-    memorization: 5,
-    revision: 5,
-    mudarasah: 5
+    memorization: 0,
+    revision: 0,
+    mudarasah: 0
 };
 
 // Chapters database for standard Mutun (API /Teacher/Matn/GetChapters can be plugged here in future)
@@ -180,6 +180,24 @@ function openAssignMatnModal(studentId, studentName, designatedMatn = '') {
         document.getElementById('matnDrawerAvatar').innerHTML = `<i class='bx bxs-book-reader'></i>`;
         if (prevBtn) prevBtn.disabled = true;
         if (saveNextBtnText) saveNextBtnText.textContent = 'اعتماد ورصد التسميع';
+
+        ['memorization', 'revision', 'mudarasah'].forEach(t => {
+            window.matnRatings[t] = 0;
+            const group = document.getElementById(`matn-ratingGroup-${t}`);
+            if (group) {
+                group.querySelectorAll('.rating-pill-btn').forEach(btn => btn.classList.remove('is-selected'));
+            }
+            const badge = document.getElementById(`matn-ratingBadge-${t}`);
+            if (badge) {
+                badge.className = 'wird-rating-badge rate-none';
+                badge.textContent = 'لم يُسمّع بعد';
+            }
+            const clearBtn = document.getElementById(`matn-ratingClear-${t}`);
+            if (clearBtn) {
+                clearBtn.style.display = 'none';
+                clearBtn.classList.add('is-hidden');
+            }
+        });
     } else {
         if (selectContainer) selectContainer.style.display = 'none';
         const cleanId = studentId.toString();
@@ -327,11 +345,30 @@ function loadMatnStudentDataByIndex(index, fallbackId, fallbackName) {
         saveNextBtnText.textContent = (index >= 0 && index < totalCount - 1) ? 'حفظ والتالي' : 'حفظ وإنهاء';
     }
 
-    // Reset upcoming state for all cards on student load
+    // Reset upcoming state and rating for all cards on student load
     ['memorization', 'revision', 'mudarasah'].forEach(t => {
         const upToggle = document.getElementById(`matn-isUpcoming-${t}`);
         if (upToggle) upToggle.checked = false;
         toggleUpcomingMatn(t, false, true);
+
+        // Reset rating to unrated ("لم يُسمّع بعد") with clear button hidden
+        window.matnRatings[t] = 0;
+        const group = document.getElementById(`matn-ratingGroup-${t}`);
+        if (group) {
+            group.querySelectorAll('.rating-pill-btn').forEach(btn => {
+                btn.classList.remove('is-selected');
+            });
+        }
+        const badge = document.getElementById(`matn-ratingBadge-${t}`);
+        if (badge) {
+            badge.className = 'wird-rating-badge rate-none';
+            badge.textContent = 'لم يُسمّع بعد';
+        }
+        const clearBtn = document.getElementById(`matn-ratingClear-${t}`);
+        if (clearBtn) {
+            clearBtn.style.display = 'none';
+            clearBtn.classList.add('is-hidden');
+        }
     });
 }
 
@@ -510,21 +547,31 @@ function updateAmountPresetChipsForUnit(type, unitVal) {
 }
 
 function setMatnRating(type, status, grade, hintText) {
-    window.matnRatings[type] = status;
+    const numStatus = parseInt(status) || 0;
+    window.matnRatings[type] = numStatus;
     const group = document.getElementById(`matn-ratingGroup-${type}`);
     if (!group) return;
 
     group.querySelectorAll('.rating-pill-btn').forEach(btn => {
-        btn.classList.toggle('is-selected', parseInt(btn.dataset.status) === parseInt(status));
+        btn.classList.toggle('is-selected', parseInt(btn.dataset.status) === numStatus);
     });
 
     const badge = document.getElementById(`matn-ratingBadge-${type}`);
     const clearBtn = document.getElementById(`matn-ratingClear-${type}`);
     if (badge) {
-        badge.className = `wird-rating-badge rate-${grade}`;
-        badge.textContent = hintText || 'تم التقييم';
+        if (numStatus > 0) {
+            badge.className = `wird-rating-badge rate-${grade}`;
+            badge.textContent = hintText || 'تم التقييم';
+        } else {
+            badge.className = 'wird-rating-badge rate-none';
+            badge.textContent = 'لم يُسمّع بعد';
+        }
     }
-    if (clearBtn) clearBtn.style.display = 'inline-flex';
+    const hasRating = numStatus > 0;
+    if (clearBtn) {
+        clearBtn.style.display = hasRating ? 'inline-flex' : 'none';
+        clearBtn.classList.toggle('is-hidden', !hasRating);
+    }
 }
 
 function clearMatnRating(type) {
@@ -540,7 +587,10 @@ function clearMatnRating(type) {
         badge.className = 'wird-rating-badge rate-none';
         badge.textContent = 'لم يُسمّع بعد';
     }
-    if (clearBtn) clearBtn.style.display = 'none';
+    if (clearBtn) {
+        clearBtn.style.display = 'none';
+        clearBtn.classList.add('is-hidden');
+    }
 }
 
 /**
@@ -569,7 +619,10 @@ function toggleUpcomingMatn(type, isUpcoming, isSilent = false) {
             ratingBadge.innerHTML = "<i class='bx bx-calendar-star'></i> ورد قادم (مجدول ولم يُسمّع بعد)";
         }
 
-        if (ratingClear) ratingClear.style.display = 'none';
+        if (ratingClear) {
+            ratingClear.style.display = 'none';
+            ratingClear.classList.add('is-hidden');
+        }
 
         // Ensure card is active so it gets saved
         const cardToggle = document.getElementById(`matn-wtoggle-${type}`);
@@ -656,8 +709,9 @@ async function submitMatnAssignment(navigateNext = false) {
 
         const isUpcoming = document.getElementById(`matn-isUpcoming-${t.key}`)?.checked || false;
 
-        // When upcoming: status = 0 (AssignmentStatus.notSet / غير مقيم), and isCompleted = false (غير مكتمل)
-        const finalStatus = isUpcoming ? 0 : (parseInt(window.matnRatings[t.key]) || 5);
+        // When upcoming or unrated: status = 0 (AssignmentStatus.notSet / غير مقيم), and isCompleted = false (غير مكتمل)
+        const parsedStatus = parseInt(window.matnRatings[t.key], 10);
+        const finalStatus = isUpcoming ? 0 : (!isNaN(parsedStatus) ? parsedStatus : 0);
         const finalIsCompleted = !isUpcoming && finalStatus > 0;
 
         payloads.push({

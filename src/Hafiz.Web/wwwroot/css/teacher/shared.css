@@ -960,6 +960,11 @@ select.form-control {
   background: #fee2e2;
 }
 
+.btn-rating-clear[style*="display: none"],
+.btn-rating-clear.is-hidden {
+  display: none !important;
+}
+
 /* 5-Column Grid for Touch Screen / Mobile First */
 .wird-rating-options-grid {
   display: grid;

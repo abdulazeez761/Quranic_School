@@ -169,6 +169,12 @@ function syncUpcomingRatingState(typeKey, isUpcoming) {
         badge.className = 'wird-rating-badge rate-upcoming';
         badge.innerHTML = "<i class='bx bx-calendar-star'></i> ورد قادم (مجدول ولم يُسمّع بعد)";
     }
+
+    const clearBtnUpcoming = document.getElementById(`ratingClear-${typeKey}`);
+    if (clearBtnUpcoming && isUpcoming) {
+        clearBtnUpcoming.style.display = 'none';
+        clearBtnUpcoming.classList.add('is-hidden');
+    }
 }
 
 function updateRatingUI(typeKey, ratingKey) {
@@ -186,6 +192,7 @@ function updateRatingUI(typeKey, ratingKey) {
 
     if (clearBtn) {
         clearBtn.style.display = meta ? 'inline-flex' : 'none';
+        clearBtn.classList.toggle('is-hidden', !meta);
     }
 
     const prevSelected = group.querySelector('.rating-pill-btn.is-selected');

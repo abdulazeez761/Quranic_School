@@ -508,9 +508,14 @@
   font-weight: 700 !important;
   cursor: pointer !important;
   padding: 2px 4px !important;
-  display: inline-flex !important;
+  display: inline-flex;
   align-items: center !important;
   gap: 2px !important;
+}
+
+.btn-rating-clear[style*="display: none"],
+.btn-rating-clear.is-hidden {
+  display: none !important;
 }
 
 .wird-rating-options-grid {
