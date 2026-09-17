@@ -594,14 +594,10 @@
   border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-/* 60 FPS Mobile GPU Performance Guard:
-   Strictly restrict any child transition to transform and opacity,
-   instantly eliminating main-thread background/border/box-shadow/color recalculation */
-.drawer-panel *,
-.drawer-panel *::before,
-.drawer-panel *::after {
-  transition-property: transform, opacity !important;
-}
+/* GPU Performance: Individual elements define their own transitions.
+   The previous wildcard rule (.drawer-panel *, *::before, *::after) was removed
+   because it forced style recalculation on hundreds of elements per interaction,
+   causing INP spikes of 640ms+. */
 
 .drawer-wird-header {
   display: flex;

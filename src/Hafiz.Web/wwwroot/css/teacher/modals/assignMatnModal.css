@@ -206,7 +206,7 @@
   display: inline-flex !important;
   align-items: center !important;
   gap: 3px !important;
-  transition: all 0.15s ease !important;
+  transition: background-color 0.15s ease, color 0.15s ease !important;
   user-select: none !important;
   line-height: 1.2 !important;
 }
@@ -262,7 +262,7 @@
   align-items: center !important;
   justify-content: center !important;
   cursor: pointer !important;
-  transition: all 0.15s ease !important;
+  transition: background-color 0.15s ease, border-color 0.15s ease !important;
   user-select: none !important;
 }
 
@@ -321,7 +321,7 @@
   align-items: center !important;
   justify-content: center !important;
   cursor: pointer !important;
-  transition: all 0.15s ease !important;
+  transition: background-color 0.15s ease, border-color 0.15s ease !important;
 }
 
 .amount-chip:hover {
@@ -370,7 +370,7 @@
   font-weight: 700 !important;
   border-radius: 8px !important;
   border: 1.5px solid #cbd5e1 !important;
-  background: #ffffff !important;
+  background: #f6faf4 !important;
   color: #475569 !important;
   box-sizing: border-box !important;
   white-space: nowrap !important;
@@ -532,7 +532,7 @@
   border: 1.5px solid #e2e8f0 !important;
   background: #ffffff !important;
   cursor: pointer !important;
-  transition: all 0.15s ease !important;
+  transition: background-color 0.15s ease, border-color 0.15s ease !important;
 }
 
 .rating-pill-btn .rating-icon i {
