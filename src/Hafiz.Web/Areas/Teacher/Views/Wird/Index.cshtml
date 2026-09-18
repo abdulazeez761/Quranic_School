@@ -235,22 +235,29 @@
                         <option value="false">أوراد حالية ومسجلة</option>
                     </select>
                 </div>
+            </div>
 
-                <!-- Custom Date Range -->
-                <div class="filter-field-card filter-date-range-card">
+            <!-- Custom Date Range Section -->
+            @{
+                var displayFrom = (ViewBag.FromDate as string) == "2020-01-01" ? "" : (ViewBag.FromDate as string);
+                var displayTo = (ViewBag.ToDate as string) == "2030-01-01" ? "" : (ViewBag.ToDate as string);
+            }
+            <div class="filter-custom-date-section">
+                <div class="filter-section-header">
                     <label class="filter-field-label">
                         <i class='bx bx-calendar-event'></i>
-                        <span>تاريخ مخصص</span>
+                        <span>تحديد نطاق تاريخ مخصص</span>
                     </label>
-                    <div class="filter-date-inputs">
-                        <div class="filter-date-item">
-                            <span class="date-tag">من:</span>
-                            <input type="date" id="filterDateFrom" class="filter-modern-date" value="@ViewBag.FromDate">
-                        </div>
-                        <div class="filter-date-item">
-                            <span class="date-tag">إلى:</span>
-                            <input type="date" id="filterDateTo" class="filter-modern-date" value="@ViewBag.ToDate">
-                        </div>
+                    <span class="filter-field-hint">حدد تاريخ البداية والنهاية لعرض أوراد فترة محددة</span>
+                </div>
+                <div class="filter-date-inputs-row">
+                    <div class="filter-date-item">
+                        <label class="date-tag" for="filterDateFrom">من تاريخ:</label>
+                        <input type="date" id="filterDateFrom" class="filter-modern-date" value="@displayFrom">
+                    </div>
+                    <div class="filter-date-item">
+                        <label class="date-tag" for="filterDateTo">إلى تاريخ:</label>
+                        <input type="date" id="filterDateTo" class="filter-modern-date" value="@displayTo">
                     </div>
                 </div>
             </div>
