@@ -294,6 +294,33 @@ html {
   border: 1px solid var(--t-matn-border);
 }
 
+/* Class Title Row & Header Badges */
+.class-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.35rem;
+}
+
+.class-title-row h2 {
+  margin: 0;
+  line-height: 1.25;
+}
+
+.class-title-row .t-badge {
+  padding: 0.3rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* Utility Gaps */
+.gap-1 { gap: 0.25rem !important; }
+.gap-2 { gap: 0.5rem !important; }
+.gap-3 { gap: 1rem !important; }
+.gap-4 { gap: 1.5rem !important; }
+
 .t-badge-present {
   background: var(--t-present-bg);
   color: var(--t-present-text);

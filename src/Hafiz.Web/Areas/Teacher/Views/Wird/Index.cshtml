@@ -37,19 +37,19 @@
                 <i class='bx @(isMatnClass ? "bx-bookmarks" : "bx-book-open")'></i>
             </div>
             <div class="wird-hero-details">
-                <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                <div class="class-title-row">
                     <h2>@className</h2>
                     @if (isMatnClass)
                     {
                         <span class="t-badge t-badge-matn">
-                            <i class='bx bx-bookmark-alt'></i>
+                            <i class='bx bx-bookmarks'></i>
                             @(studyProgramName ?? "حلقة متون علمية")
                         </span>
                     }
                     else if (!string.IsNullOrEmpty(studyProgramName))
                     {
                         <span class="t-badge t-badge-quran">
-                            <i class='bx bx-check-double'></i>
+                            <i class='bx bx-book-open'></i>
                             @studyProgramName
                         </span>
                     }

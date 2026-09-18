@@ -18,20 +18,26 @@
     <!-- Header Section -->
     <div class="meeting-header-bar">
         <div class="meeting-header-content">
-            <div>
+            <div class="meeting-header-left">
                 <h2 class="meeting-title">
-                    <i class="bi bi-camera-video"></i>
-                    @className
+                    <i class="bx bx-video"></i>
+                    <span>@className</span>
                 </h2>
-                <p class="meeting-subtitle">
-                    <i class="bi bi-person-circle me-1"></i>@displayName
-                    <span class="mx-2">•</span>
-                    <i class="bi bi-door-open me-1"></i>@Localizer["Room"]: @roomName
-                </p>
+                <div class="meeting-subtitle">
+                    <span class="meeting-meta-item">
+                        <i class="bx bx-user-circle"></i>
+                        <span>@displayName</span>
+                    </span>
+                    <span class="meta-dot">•</span>
+                    <span class="meeting-meta-item" title="@roomName">
+                        <i class="bx bx-door-open"></i>
+                        <span class="room-code-text">@Localizer["Room"]: @roomName</span>
+                    </span>
+                </div>
             </div>
             <div class="meeting-status-badge">
                 <span class="status-indicator"></span>
-                @Localizer["LiveMeeting"]
+                <span>@Localizer["LiveMeeting"]</span>
             </div>
         </div>
     </div>
@@ -43,11 +49,11 @@
     <div class="status-footer">
         <div class="status-footer-content">
             <div class="status-item">
-                <i class="bi bi-shield-check"></i>
+                <i class="bx bx-shield-quarter"></i>
                 <span>@Localizer["SecureConnection"]</span>
             </div>
             <div class="status-item" id="participant-info">
-                <i class="bi bi-people"></i>
+                <i class="bx bx-group"></i>
                 <span class="participant-count" id="count">@Localizer["Connecting"]</span>
             </div>
         </div>

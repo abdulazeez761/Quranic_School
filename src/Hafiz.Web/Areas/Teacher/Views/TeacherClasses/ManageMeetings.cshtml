@@ -18,9 +18,9 @@
 
     <!-- Top Hero Header -->
     <div class="meetings-hero-banner">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-            <div>
-                <div class="d-flex align-items-center gap-2 mb-1">
+        <div class="meetings-hero-content">
+            <div class="meetings-hero-info">
+                <div class="meetings-hero-title-row">
                     <h2 class="t-section-title m-0">
                         <i class='bx bx-video'></i>
                         <span>@Localizer["PageTitle"]</span>
@@ -36,8 +36,8 @@
                 <p class="t-section-desc m-0">@Localizer["PageSubtitle"]</p>
             </div>
 
-            <div class="d-flex align-items-center gap-2">
-                <span class="t-badge t-badge-quran fs-6 py-2 px-3">
+            <div class="meetings-hero-badge">
+                <span class="t-badge t-badge-quran total-classes-badge">
                     <i class='bx bx-chalkboard'></i>
                     <span>@totalClasses @Localizer["TotalClasses"]</span>
                 </span>
@@ -151,22 +151,26 @@
                                 @if (isMatn)
                                 {
                                     <span class="t-badge t-badge-matn">
-                                        @(cls.StudyProgram?.Name ?? "متون علمية")
+                                        <i class='bx bx-bookmarks'></i>
+                                        <span>@(cls.StudyProgram?.Name ?? "متون علمية")</span>
                                     </span>
                                 }
                                 else
                                 {
                                     <span class="t-badge t-badge-quran">
-                                        @(cls.StudyProgram?.Name ?? "قرآن كريم")
+                                        <i class='bx bx-book-open'></i>
+                                        <span>@(cls.StudyProgram?.Name ?? "قرآن كريم")</span>
                                     </span>
                                 }
 
                                 <span class="gender-pill gender-@genderClass">
-                                    @cls.Gender
+                                    <i class='bx @(genderClass == "female" ? "bx-female-sign" : "bx-male-sign")'></i>
+                                    <span>@(genderClass == "female" ? "بنات" : "بنين")</span>
                                 </span>
 
                                 <span class="enrolled-pill">
-                                    <i class='bx bx-group'></i> @(cls.Students?.Count ?? 0) طالب
+                                    <i class='bx bx-group'></i>
+                                    <span>@(cls.Students?.Count ?? 0) طالب</span>
                                 </span>
                             </div>
                         </div>
@@ -227,7 +231,7 @@
                             data-live="@(isLive ? "true" : "false")">
 
                             <td>
-                                <div class="d-flex align-items-center gap-3">
+                                <div class="meeting-class-cell">
                                     <div class="meeting-avatar @(isLive ? "avatar-live" : (isMatn ? "avatar-matn" : "avatar-quran"))">
                                         <i class='bx @(isLive ? "bx-broadcast" : (isMatn ? "bx-bookmarks" : "bx-book-reader"))'></i>
                                     </div>
@@ -241,24 +245,28 @@
                                 @if (isMatn)
                                 {
                                     <span class="t-badge t-badge-matn">
-                                        <i class='bx bx-bookmarks'></i> @(cls.StudyProgram?.Name ?? "متون علمية")
+                                        <i class='bx bx-bookmarks'></i>
+                                        <span>@(cls.StudyProgram?.Name ?? "متون علمية")</span>
                                     </span>
                                 }
                                 else
                                 {
                                     <span class="t-badge t-badge-quran">
-                                        <i class='bx bx-book-open'></i> @(cls.StudyProgram?.Name ?? "قرآن كريم")
+                                        <i class='bx bx-book-open'></i>
+                                        <span>@(cls.StudyProgram?.Name ?? "قرآن كريم")</span>
                                     </span>
                                 }
                             </td>
 
                             <td>
-                                <div class="d-flex align-items-center gap-2">
+                                <div class="meeting-pills-cell">
                                     <span class="gender-pill gender-@genderClass">
-                                        @cls.Gender
+                                        <i class='bx @(genderClass == "female" ? "bx-female-sign" : "bx-male-sign")'></i>
+                                        <span>@(genderClass == "female" ? "بنات" : "بنين")</span>
                                     </span>
                                     <span class="enrolled-pill">
-                                        <i class='bx bx-group'></i> @(cls.Students?.Count ?? 0) طالب
+                                        <i class='bx bx-group'></i>
+                                        <span>@(cls.Students?.Count ?? 0) طالب</span>
                                     </span>
                                 </div>
                             </td>
@@ -274,13 +282,14 @@
                                 else
                                 {
                                     <span class="offline-status-badge">
-                                        <i class="bx bx-circle me-1"></i> غير مفعل
+                                        <i class="bx bx-circle"></i>
+                                        <span>غير مفعل</span>
                                     </span>
                                 }
                             </td>
 
                             <td class="text-center">
-                                <div class="d-flex justify-content-center gap-2">
+                                <div class="meeting-actions-cell">
                                     @if (isLive)
                                     {
                                         <a asp-area="Teacher" asp-controller="Meeting" asp-action="Room"
@@ -297,7 +306,7 @@
                                     else
                                     {
                                         <form asp-action="StartMeeting" asp-route-classId="@cls.Id" method="post"
-                                              class="d-inline">
+                                               class="d-inline">
                                             @Html.AntiForgeryToken()
                                             <button type="submit" class="t-btn t-btn-sm t-btn-primary">
                                                 <i class="bx bx-play-circle"></i>

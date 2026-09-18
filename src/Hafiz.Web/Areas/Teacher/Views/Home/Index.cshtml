@@ -130,13 +130,9 @@
                      tabindex="0"
                      aria-label="الحلقة @classItem.Name">
                     
-                    <span class="status-badge" style="display:none">
-                        <i class='bx bx-check-circle me-1'></i> @Localizer["Active"]
-                    </span>
-
                     <div class="class-card-content">
                         <div class="class-card-top">
-                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <div class="class-card-badges-start">
                                 <div class="class-program-badge">
                                     @if (isMatn)
                                     {
@@ -161,10 +157,15 @@
                                 }
                             </div>
 
-                            <span class="gender-pill gender-@genderClass">
-                                <i class='bx @(genderClass == "female" ? "bx-female-sign" : "bx-male-sign")'></i>
-                                @classItem.Gender
-                            </span>
+                            <div class="class-card-badges-end">
+                                <span class="status-badge" style="display:none">
+                                    <i class='bx bx-check-circle'></i> @Localizer["Active"]
+                                </span>
+                                <span class="gender-pill gender-@genderClass">
+                                    <i class='bx @(genderClass == "female" ? "bx-female-sign" : "bx-male-sign")'></i>
+                                    @(genderClass == "female" ? Localizer["Girls"] : Localizer["Boys"])
+                                </span>
+                            </div>
                         </div>
 
                         <h3 class="class-name">@classItem.Name</h3>
@@ -180,11 +181,11 @@
                                 </div>
                             </div>
 
-                            <div class="class-info-item align-items-start">
-                                <div class="info-icon-box mt-1">
+                            <div class="class-info-item">
+                                <div class="info-icon-box">
                                     <i class='bx bx-calendar'></i>
                                 </div>
-                                <div class="info-details flex-column align-items-start gap-1">
+                                <div class="info-details">
                                     <span class="info-label">أيام الحلقة</span>
                                     <div class="class-days-chips">
                                         @if (classItem.ClassDays != null && classItem.ClassDays.Any())

@@ -323,23 +323,22 @@
 }
 
 .status-badge {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  background: var(--t-primary);
+  background: #166534;
   color: #ffffff;
-  padding: 0.25rem 0.65rem;
+  padding: 0.2rem 0.6rem;
   border-radius: var(--t-radius-full);
   font-size: 0.72rem;
   font-weight: 700;
-  box-shadow: 0 2px 6px rgba(30, 107, 67, 0.25);
-  display: flex;
+  box-shadow: 0 2px 6px rgba(22, 101, 52, 0.2);
+  display: inline-flex;
   align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
 }
 
-[dir='ltr'] .status-badge {
-  left: auto;
-  right: 1rem;
+.class-card.is-matn-card .status-badge {
+  background: var(--t-matn);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.2);
 }
 
 /* Card Top / Badges */
@@ -349,6 +348,20 @@
   justify-content: space-between;
   gap: 0.5rem;
   margin-bottom: 0.85rem;
+}
+
+.class-card-badges-start {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.class-card-badges-end {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
 }
 
 .gender-pill {
@@ -362,6 +375,7 @@
   background: var(--t-surface-muted);
   color: var(--t-text-muted);
   border: 1px solid var(--t-border);
+  white-space: nowrap;
 }
 
 .gender-pill.gender-male {
@@ -389,10 +403,10 @@
 .class-info-list {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.75rem;
   margin-bottom: 1.25rem;
   background: var(--t-surface-subtle);
-  padding: 0.85rem;
+  padding: 0.85rem 1rem;
   border-radius: var(--t-radius-md);
   border: 1px solid var(--t-border-subtle);
 }
@@ -423,25 +437,28 @@
   justify-content: space-between;
   width: 100%;
   font-size: 0.84rem;
+  gap: 0.5rem;
 }
 
 .info-label {
   color: var(--t-text-muted);
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .info-val {
   color: var(--t-text-main);
   font-weight: 700;
+  white-space: nowrap;
 }
 
 /* Day Chips */
 .class-days-chips {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 0.3rem;
   flex-wrap: wrap;
-  margin-top: 0.25rem;
 }
 
 .day-chip {

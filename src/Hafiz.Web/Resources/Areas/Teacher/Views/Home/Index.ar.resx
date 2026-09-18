@@ -12,5 +12,11 @@
   <data name="NoDaysSet" xml:space="preserve">
     <value>لم يتم تحديد أيام</value>
   </data>
+  <data name="Boys" xml:space="preserve">
+    <value>بنين</value>
+  </data>
+  <data name="Girls" xml:space="preserve">
+    <value>بنات</value>
+  </data>
   <data name="PageTitle" xml:space="preserve"><value>حلقاتي</value></data>
 </root>

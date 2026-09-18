@@ -11,27 +11,32 @@
 @section Styles {
     <link rel="stylesheet" href="~/css/teacher/meeting.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/teacher/modal.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 }
 
 <div class="meeting-wrapper">
     <!-- Header Section -->
     <div class="meeting-header-bar">
         <div class="meeting-header-content">
-            <div>
+            <div class="meeting-header-left">
                 <h2 class="meeting-title">
-                    <i class="bi bi-camera-video"></i>
-                    @className
+                    <i class="bx bx-video"></i>
+                    <span>@className</span>
                 </h2>
-                <p class="meeting-subtitle">
-                    <i class="bi bi-person-circle me-1"></i>@displayName
-                    <span class="mx-2">•</span>
-                    <i class="bi bi-door-open me-1"></i>@Localizer["Room"] @roomName
-                </p>
+                <div class="meeting-subtitle">
+                    <span class="meeting-meta-item">
+                        <i class="bx bx-user-circle"></i>
+                        <span>@displayName</span>
+                    </span>
+                    <span class="meta-dot">•</span>
+                    <span class="meeting-meta-item" title="@roomName">
+                        <i class="bx bx-door-open"></i>
+                        <span class="room-code-text">@Localizer["Room"] @roomName</span>
+                    </span>
+                </div>
             </div>
             <div class="meeting-status-badge">
                 <span class="status-indicator"></span>
-                @Localizer["LiveMeeting"]
+                <span>@Localizer["LiveMeeting"]</span>
             </div>
         </div>
     </div>
@@ -43,11 +48,11 @@
     <div class="status-footer">
         <div class="status-footer-content">
             <div class="status-item">
-                <i class="bi bi-shield-check"></i>
+                <i class="bx bx-shield-quarter"></i>
                 <span>@Localizer["SecureConnection"]</span>
             </div>
             <div class="status-item" id="participant-info">
-                <i class="bi bi-people"></i>
+                <i class="bx bx-group"></i>
                 <span class="participant-count" id="count">@Localizer["Connecting"]</span>
             </div>
         </div>
@@ -58,29 +63,29 @@
     {
         <div class="controls-panel fade-in">
             <h3 class="controls-title">
-                <i class="bi bi-sliders"></i>
-                @Localizer["MeetingControls"]
+                <i class="bx bx-slider-alt"></i>
+                <span>@Localizer["MeetingControls"]</span>
             </h3>
             <div class="controls-grid">
-                <button onclick="muteAll()" class="control-btn control-btn-secondary">
-                    <i class="bi bi-mic-mute"></i>
-                    @Localizer["MuteAll"]
+                <button type="button" onclick="muteAll()" class="control-btn control-btn-secondary">
+                    <i class="bx bx-microphone-off"></i>
+                    <span>@Localizer["MuteAll"]</span>
                 </button>
-                <button onclick="toggleShareScreen()" class="control-btn control-btn-primary">
-                    <i class="bi bi-display"></i>
-                    @Localizer["ShareScreen"]
+                <button type="button" onclick="toggleShareScreen()" class="control-btn control-btn-primary">
+                    <i class="bx bx-desktop"></i>
+                    <span>@Localizer["ShareScreen"]</span>
                 </button>
-                <button onclick="toggleChat()" class="control-btn control-btn-secondary">
-                    <i class="bi bi-chat-dots"></i>
-                    @Localizer["ToggleChat"]
+                <button type="button" onclick="toggleChat()" class="control-btn control-btn-secondary">
+                    <i class="bx bx-message-dots"></i>
+                    <span>@Localizer["ToggleChat"]</span>
                 </button>
-                <button onclick="toggleTileView()" class="control-btn control-btn-secondary">
-                    <i class="bi bi-grid-3x3"></i>
-                    @Localizer["TileView"]
+                <button type="button" onclick="toggleTileView()" class="control-btn control-btn-secondary">
+                    <i class="bx bx-grid-alt"></i>
+                    <span>@Localizer["TileView"]</span>
                 </button>
-                <button onclick="endClass(); return false;" class="control-btn control-btn-danger" type="button">
-                    <i class="bi bi-stop-circle"></i>
-                    @Localizer["EndMeeting"]
+                <button type="button" onclick="endClass(); return false;" class="control-btn control-btn-danger">
+                    <i class="bx bx-stop-circle"></i>
+                    <span>@Localizer["EndMeeting"]</span>
                 </button>
             </div>
         </div>
@@ -91,7 +96,7 @@
 <div id="leaveModal" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-icon">
-            <i class="bi bi-exclamation-circle-fill"></i>
+            <i class="bx bx-error-circle"></i>
         </div>
         <h2 class="modal-title">@Localizer["EndMeetingQuestion"]</h2>
         <p class="modal-description">
@@ -99,12 +104,12 @@
         </p>
         <div class="modal-buttons">
             <button type="button" class="btn-modal btn-cancel" onclick="hideLeaveModal()">
-                <i class="bi bi-arrow-left"></i>
-                @Localizer["ContinueMeeting"]
+                <i class="bx bx-arrow-back"></i>
+                <span>@Localizer["ContinueMeeting"]</span>
             </button>
             <button type="button" class="btn-modal btn-end" onclick="confirmEndClass()">
-                <i class="bi bi-stop-circle"></i>
-                @Localizer["EndMeeting"]
+                <i class="bx bx-stop-circle"></i>
+                <span>@Localizer["EndMeeting"]</span>
             </button>
         </div>
     </div>

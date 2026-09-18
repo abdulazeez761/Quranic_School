@@ -5,7 +5,8 @@ if (savedClassId) {
   classes.forEach((c) => {
     if (c.dataset.classId === savedClassId) {
       c.classList.add('active');
-      c.querySelector('.status-badge').style.display = 'block';
+      const badge = c.querySelector('.status-badge');
+      if (badge) badge.style.display = 'inline-flex';
     }
   });
 }
