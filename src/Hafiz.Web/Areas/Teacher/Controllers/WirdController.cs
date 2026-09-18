@@ -70,7 +70,7 @@ namespace Hafiz.Areas.Teacher.Controllers
             string? toDate,
             string? tab = null,
             int page = 1,
-            int pageSize = 50
+            int pageSize = 10
         )
         {
             var instituteId = GetInstituteId();

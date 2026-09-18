@@ -48,7 +48,7 @@
         <span class="pagination-count-text">
             @if (isArabic)
             {
-                <text>عرض <strong><bdi>@Model.StartRecord - @Model.EndRecord</bdi></strong> من أصل <strong>@Model.TotalCount</strong></text>
+                <text>عرض من <strong>@Model.StartRecord</strong> إلى <strong>@Model.EndRecord</strong> من أصل <strong>@Model.TotalCount</strong></text>
             }
             else
             {
@@ -58,13 +58,20 @@
 
         @if (Model.TotalCount > 10)
         {
+            var availableSizes = new List<int> { 10, 12, 20, 24, 50 };
+            if (!availableSizes.Contains(Model.PageSize))
+            {
+                availableSizes.Add(Model.PageSize);
+            }
+            availableSizes.Sort();
+
             <span class="pagination-divider"></span>
             <div class="page-size-selector" title="@(isArabic ? "عدد العناصر لكل صفحة" : "Items per page")">
                 <select class="pagination-size-select" 
                         style="height: 34px; min-width: 60px; @selectPadding font-size: 0.875rem; font-weight: 600; line-height: 24px; border-radius: 6px; border: 1px solid #cbd5e1; background-color: #ffffff; color: #1e293b; cursor: pointer; text-align: center; text-align-last: center; box-sizing: border-box;"
                         onchange="window.location.href=this.value" 
                         aria-label="@(isArabic ? "عدد العناصر في الصفحة" : "Items per page")">
-                    @foreach (var size in new[] { 10, 12, 24, 48 })
+                    @foreach (var size in availableSizes)
                     {
                         <option value="@GetPageSizeUrl(size)" selected="@(Model.PageSize == size)">@size</option>
                     }
