@@ -83,20 +83,6 @@
         </div>
 
         <div class="wird-hero-actions">
-            @if (isMatnClass)
-            {
-                <button type="button" class="t-btn t-btn-matn" onclick="openAssignMatnModal('', '')">
-                    <i class='bx bx-plus'></i>
-                    <span>تسميع متن جديد</span>
-                </button>
-            }
-            else
-            {
-                <button type="button" class="t-btn t-btn-primary" onclick="openWirdModal('', '')">
-                    <i class='bx bx-plus'></i>
-                    <span>إضافة ورد قرآني</span>
-                </button>
-            }
             <a class="t-btn t-btn-outline t-btn-change-class" asp-action="Index" asp-controller="Home" title="التبديل إلى حلقة أخرى">
                 <i class='bx bx-transfer-alt'></i>
                 <span>تغيير الحلقة</span>
@@ -140,31 +126,68 @@
         }
     </div>
 
-    <!-- FILTER BAR -->
-    <div class="filter-bar">
-        <div class="filter-bar-header">
-            <div class="filter-bar-left">
-                <i class='bx bx-filter-alt'></i>
-                <div class="filter-search-wrapper">
-                    <i class='bx bx-search'></i>
-                    <input type="text" id="filterStudent" class="filter-search-input" placeholder="ابحث باسم الطالب...">
-                </div>
+    <!-- FILTER & SEARCH TOOLBAR -->
+    <div class="filter-toolbar-container">
+        <div class="filter-toolbar-main">
+            <!-- Search Box -->
+            <div class="filter-search-box">
+                <i class='bx bx-search search-icon'></i>
+                <input type="text" id="filterStudent" class="filter-search-input" placeholder="ابحث باسم الطالب..." autocomplete="off">
+                <button type="button" class="clear-search-btn" id="clearSearchBtn" title="مسح البحث" style="display: none;">
+                    <i class='bx bx-x'></i>
+                </button>
             </div>
-            <div class="filter-bar-right">
-                <div class="results-count" id="resultsCount">
+
+            <!-- Quick Date Presets -->
+            <div class="filter-date-presets" role="group" aria-label="الفترة الزمنية">
+                <button type="button" class="date-preset-chip" data-preset="today" onclick="setDatePreset('today')">
+                    <i class='bx bx-calendar-event'></i>
+                    <span>اليوم</span>
+                </button>
+                <button type="button" class="date-preset-chip" data-preset="yesterday" onclick="setDatePreset('yesterday')">
+                    <span>أمس</span>
+                </button>
+                <button type="button" class="date-preset-chip" data-preset="week" onclick="setDatePreset('week')">
+                    <span>هذا الأسبوع</span>
+                </button>
+                <button type="button" class="date-preset-chip" data-preset="all" onclick="setDatePreset('all')">
+                    <span>كل الأوقات</span>
+                </button>
+            </div>
+
+            <!-- Toolbar Right: Counter & More Filters Button -->
+            <div class="filter-toolbar-right">
+                <div class="results-count-badge" id="resultsCount">
                     <strong>@totalCount</strong> تسميع
                 </div>
-                <button class="filter-toggle" id="filterToggle" title="خيارات الفلترة">
-                    <i class='bx bx-chevron-down'></i>
+                <button type="button" class="filter-advanced-toggle" id="filterToggle" title="خيارات الفلترة الإضافية">
+                    <i class='bx bx-slider-alt'></i>
+                    <span>تصفية مخصصة</span>
+                    <span class="active-filters-count" id="activeFiltersBadge" style="display: none;">0</span>
                 </button>
             </div>
         </div>
 
-        <div class="filter-content" id="filterContent" style="display: none;">
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label class="filter-label" for="filterType">نوع التسميع</label>
-                    <select id="filterType" class="filter-select">
+        <!-- COLLAPSIBLE ADVANCED FILTER PANEL -->
+        <div class="filter-advanced-panel" id="filterContent" style="display: none;">
+            <div class="filter-panel-header">
+                <div class="filter-panel-title">
+                    <i class='bx bx-slider-alt'></i>
+                    <span>خيارات التصفية المتقدمة</span>
+                </div>
+                <button type="button" class="filter-close-btn" id="filterCloseBtn" title="إغلاق">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+
+            <div class="filter-panel-grid">
+                <!-- Type Filter -->
+                <div class="filter-field-card">
+                    <label class="filter-field-label" for="filterType">
+                        <i class='bx bx-bookmark'></i>
+                        <span>نوع التسميع</span>
+                    </label>
+                    <select id="filterType" class="filter-modern-select">
                         <option value="">كل الأنواع</option>
                         @if (isMatnClass)
                         {
@@ -174,50 +197,74 @@
                         }
                         else
                         {
-                            <option value="Hafiz">@Localizer["Hafiz"]</option>
-                            <option value="Wird">@Localizer["Wird"]</option>
-                            <option value="Revision">@Localizer["Revision"]</option>
-                            <option value="Memorization">@Localizer["Memorization"]</option>
-                            <option value="Tajwid">@Localizer["Tajwid"]</option>
+                            <option value="Hafiz">تسميع حفظ</option>
+                            <option value="Wird">ورد يومي</option>
+                            <option value="Revision">مراجعة</option>
+                            <option value="Memorization">تثبيت</option>
+                            <option value="Tajwid">تجويد</option>
                         }
                     </select>
                 </div>
 
-                <div class="filter-group">
-                    <label class="filter-label" for="filterStatus">التقييم</label>
-                    <select id="filterStatus" class="filter-select">
+                <!-- Rating / Grade Filter -->
+                <div class="filter-field-card">
+                    <label class="filter-field-label" for="filterStatus">
+                        <i class='bx bx-star'></i>
+                        <span>التقييم والدرجة</span>
+                    </label>
+                    <select id="filterStatus" class="filter-modern-select">
                         <option value="">كل التقييمات</option>
                         <option value="notset">لم يُقيّم بعد</option>
-                        <option value="poor">@Localizer["Poor"]</option>
-                        <option value="fair">@Localizer["Fair"]</option>
-                        <option value="good">@Localizer["Good"]</option>
-                        <option value="verygood">@Localizer["VeryGood"]</option>
-                        <option value="excellent">@Localizer["Excellent"]</option>
+                        <option value="excellent">ممتاز</option>
+                        <option value="verygood">جيد جداً</option>
+                        <option value="good">جيد</option>
+                        <option value="fair">مقبول</option>
+                        <option value="poor">ضعيف</option>
                     </select>
                 </div>
 
-                <div class="filter-group">
-                    <label class="filter-label" for="filterUpcoming">حالة الورد</label>
-                    <select id="filterUpcoming" class="filter-select">
+                <!-- Status Upcoming Filter -->
+                <div class="filter-field-card">
+                    <label class="filter-field-label" for="filterUpcoming">
+                        <i class='bx bx-time'></i>
+                        <span>حالة الورد</span>
+                    </label>
+                    <select id="filterUpcoming" class="filter-modern-select">
                         <option value="">الكل</option>
                         <option value="true">أوراد قادمة فقط</option>
                         <option value="false">أوراد حالية ومسجلة</option>
                     </select>
                 </div>
 
-                <div class="filter-group">
-                    <label class="filter-label" for="filterDateFrom">من تاريخ</label>
-                    <input type="date" id="filterDateFrom" class="filter-input" value="@ViewBag.FromDate">
+                <!-- Custom Date Range -->
+                <div class="filter-field-card filter-date-range-card">
+                    <label class="filter-field-label">
+                        <i class='bx bx-calendar-event'></i>
+                        <span>تاريخ مخصص</span>
+                    </label>
+                    <div class="filter-date-inputs">
+                        <div class="filter-date-item">
+                            <span class="date-tag">من:</span>
+                            <input type="date" id="filterDateFrom" class="filter-modern-date" value="@ViewBag.FromDate">
+                        </div>
+                        <div class="filter-date-item">
+                            <span class="date-tag">إلى:</span>
+                            <input type="date" id="filterDateTo" class="filter-modern-date" value="@ViewBag.ToDate">
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-                <div class="filter-group">
-                    <label class="filter-label" for="filterDateTo">إلى تاريخ</label>
-                    <input type="date" id="filterDateTo" class="filter-input" value="@ViewBag.ToDate">
-                </div>
-
-                <div class="filter-actions">
-                    <button class="t-btn t-btn-primary btn-apply" id="applyFilters">@Localizer["ApplyFilters"]</button>
-                    <button class="t-btn t-btn-outline btn-reset" id="resetFilters">@Localizer["Reset"]</button>
+            <div class="filter-panel-actions">
+                <button type="button" class="t-btn t-btn-outline btn-filter-reset" id="resetFilters">
+                    <i class='bx bx-reset'></i>
+                    <span>إعادة ضبط الفلاتر</span>
+                </button>
+                <div class="filter-actions-right">
+                    <button type="button" class="t-btn t-btn-primary btn-filter-apply" id="applyFilters">
+                        <i class='bx bx-check'></i>
+                        <span>تطبيق الفلترة</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -356,11 +403,78 @@
         }
 
         // 2. Trigger filter execution
-        const applyBtn = document.getElementById('applyFilters');
-        if (applyBtn) {
-            applyBtn.click();
+        if (window.applyClientFilters) {
+            window.applyClientFilters();
+        } else {
+            const applyBtn = document.getElementById('applyFilters');
+            if (applyBtn) {
+                applyBtn.click();
+            }
         }
     }
+
+    function setDatePreset(preset) {
+        const today = new Date();
+        const formatDate = (d) => {
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        let from = '';
+        let to = '';
+
+        if (preset === 'today') {
+            from = formatDate(today);
+            to = formatDate(today);
+        } else if (preset === 'yesterday') {
+            const y = new Date();
+            y.setDate(today.getDate() - 1);
+            from = formatDate(y);
+            to = formatDate(y);
+        } else if (preset === 'week') {
+            const w = new Date();
+            w.setDate(today.getDate() - 7);
+            from = formatDate(w);
+            to = formatDate(today);
+        } else if (preset === 'all') {
+            from = '2020-01-01';
+            to = '2030-01-01';
+        }
+
+        window.location.href = `/Teacher/Wird/Index?fromDate=${from}&toDate=${to}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const fromDate = urlParams.get('fromDate');
+        const toDate = urlParams.get('toDate');
+
+        document.querySelectorAll('.date-preset-chip').forEach(c => c.classList.remove('active'));
+
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const todayStr = `${year}-${month}-${day}`;
+
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+        const yesterdayStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+
+        if (!fromDate && !toDate) {
+            document.querySelector('[data-preset="today"]')?.classList.add('active');
+        } else if (fromDate === '2020-01-01') {
+            document.querySelector('[data-preset="all"]')?.classList.add('active');
+        } else if (fromDate === yesterdayStr && toDate === yesterdayStr) {
+            document.querySelector('[data-preset="yesterday"]')?.classList.add('active');
+        } else if (fromDate === todayStr && toDate === todayStr) {
+            document.querySelector('[data-preset="today"]')?.classList.add('active');
+        } else if (fromDate && toDate && fromDate !== toDate) {
+            document.querySelector('[data-preset="week"]')?.classList.add('active');
+        }
+    });
 </script>
 
 @section scripts {
