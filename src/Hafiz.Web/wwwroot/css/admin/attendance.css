@@ -836,6 +836,19 @@ body[dir='rtl'] .chip-closable {
   background: rgba(23, 162, 184, 0.03);
 }
 
+.table-attendance th .status-th-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.table-attendance th .status-th-pill i {
+  font-size: 1.15rem;
+}
+
 /* Save Indicator */
 .save-indicator {
   position: fixed;
