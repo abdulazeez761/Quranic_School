@@ -38,11 +38,6 @@
                 <i class='bx bx-calendar-star text-primary'></i>
                 <span>خطة الطالب المعتادة</span>
             </button>
-            <button type="button" class="t-btn t-btn-matn"
-                    onclick="openAssignMatnModal('@Model.Student.UserId', '@studentFullName')">
-                <i class='bx bx-bookmarks'></i>
-                <span>تسميع متن</span>
-            </button>
         </div>
     </div>
 
@@ -372,10 +367,7 @@
                 <span>سجل تسميع المتون العلمية</span>
                 <span class="t-badge t-badge-matn">@Model.TotalMatnAssignments</span>
             </h3>
-            <button type="button" class="t-btn t-btn-sm t-btn-matn"
-                    onclick="openAssignMatnModal('@Model.Student.UserId', '@studentFullName')">
-                <i class='bx bx-plus'></i> <span>رصد تسميع متن</span>
-            </button>
+           
         </div>
 
         @if (Model.MatnAssignments != null && Model.MatnAssignments.Any())
