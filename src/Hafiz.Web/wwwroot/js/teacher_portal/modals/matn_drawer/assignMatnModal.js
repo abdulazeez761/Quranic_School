@@ -213,9 +213,13 @@ function openAssignMatnModal(studentId, studentName, designatedMatn = '') {
 
     const backdrop = document.getElementById('matnDrawerBackdrop');
     if (panel && backdrop) {
-        panel.classList.add('is-open', 'active', 'mobile-open');
-        backdrop.classList.add('is-open', 'active');
-        document.body.style.overflow = 'hidden';
+        panel.style.visibility = 'visible';
+        backdrop.style.visibility = 'visible';
+        requestAnimationFrame(() => {
+            panel.classList.add('is-open', 'active', 'mobile-open');
+            backdrop.classList.add('is-open', 'active');
+            document.body.style.overflow = 'hidden';
+        });
     }
 }
 
@@ -410,7 +414,13 @@ function closeAssignMatnDrawer() {
     const backdrop = document.getElementById('matnDrawerBackdrop');
     if (drawer) drawer.classList.remove('is-open', 'active', 'mobile-open');
     if (backdrop) backdrop.classList.remove('is-open', 'active');
-    setTimeout(() => { document.body.style.overflow = ''; }, 260);
+    setTimeout(() => {
+        if (!drawer?.classList.contains('active') && !drawer?.classList.contains('is-open')) {
+            document.body.style.overflow = '';
+            if (drawer) drawer.style.visibility = '';
+            if (backdrop) backdrop.style.visibility = '';
+        }
+    }, 260);
 }
 
 function setMatnFilterTab(tabKey, btn) {

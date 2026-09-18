@@ -4,192 +4,246 @@
 <!-- Load dedicated styles for Edit Wird Modal -->
 <link rel="stylesheet" href="~/css/teacher/modals/editWirdModal.css" asp-append-version="true" />
 
-<div id="assignWirdModal" class="modal-overlay">
+<div id="editWirdModal" class="modal-overlay">
     <div class="modal-container">
+        <!-- Modal Header -->
         <div class="modal-header">
-            <h2 class="modal-title">@Localizer["AssignWirdTo"] <span id="studentName"></span></h2>
-            <button type="button" class="modal-close" onclick="closeWirdModal()">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+            <div class="modal-header-info">
+                <div class="modal-header-icon">
+                    <i class='bx bx-edit-alt'></i>
+                </div>
+                <div>
+                    <h2 class="modal-title">تعديل الورد القرآني</h2>
+                    <div class="modal-subtitle">
+                        <span class="edit-modal-student-tag">
+                            <i class='bx bx-user'></i>
+                            <span id="studentName"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="modal-close" onclick="closeEditWirdModal()" title="@Localizer["Cancel"]" aria-label="@Localizer["Cancel"]">
+                <i class='bx bx-x'></i>
             </button>
         </div>
+
         @Html.AntiForgeryToken()
         <form id="wirdAssignmentForm" asp-action="EditWird" asp-controller="Student" method="post">
             <input type="hidden" id="StudentId" asp-for="StudentId" />
-
             <input type="hidden" id="AssignmentId" asp-for="Id" />
 
             <div class="modal-body">
-                <!-- Assignment Type -->
-                <div class="form-group">
-                    <label class="form-label" for="Type">@Localizer["AssignmentType"]</label>
-                    <select class="form-control" id="Type" asp-for="Type" required>
-                        <option value="">@Localizer["SelectType"]</option>
-                        <option value="1">@Localizer["Memorization"]</option>
-                        <option value="2">@Localizer["Revision"]</option>
-                        <option value="3">@Localizer["Tajwid"]</option>
-                    </select>
-                    <span class="text-danger field-validation-valid" data-valmsg-for="Type"></span>
-                </div>
-
-                <!-- Quantity -->
-                <div class="form-row">
-                    <div class="form-group half-width">
-                        <label class="form-label" for="Amount">@Localizer["Quantity"]</label>
-                        <input type="number" class="form-control" id="Amount" asp-for="Amount" min="0.1" step="any"
-                               placeholder="@Localizer["Quantity"]" />
-                        <span class="text-danger field-validation-valid" data-valmsg-for="Amount"></span>
+                <!-- Section 1: Type & Amount -->
+                <div class="edit-modal-section">
+                    <div class="section-badge">
+                        <i class='bx bx-bookmark-alt'></i>
+                        <span>نوع الورد والمقدار</span>
                     </div>
-                    <div class="form-group half-width">
-                        <label class="form-label" for="AmountUnit">@Localizer["Unit"]</label>
-                        <select class="form-control" id="AmountUnit" asp-for="AmountUnit">
-                            <option value="">@Localizer["SelectUnit"]</option>
-                            <option value="0">@Localizer["Pages"]</option>
-                            <option value="1">@Localizer["Ayahs"]</option>
-                            <option value="2">@Localizer["Juzs"]</option>
+
+                    <div class="form-group">
+                        <label class="form-label" for="Type">@Localizer["AssignmentType"]</label>
+                        <select class="form-control" id="Type" asp-for="Type" required>
+                            <option value="">@Localizer["SelectType"]</option>
+                            <option value="1">@Localizer["Memorization"]</option>
+                            <option value="2">@Localizer["Revision"]</option>
+                            <option value="3">@Localizer["Tajwid"]</option>
                         </select>
-                        <span class="text-danger field-validation-valid" data-valmsg-for="AmountUnit"></span>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Type"></span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half-width">
+                            <label class="form-label" for="Amount">@Localizer["Quantity"]</label>
+                            <input type="number" class="form-control" id="Amount" asp-for="Amount" min="0.1" step="any"
+                                   placeholder="@Localizer["Quantity"]" />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="Amount"></span>
+                        </div>
+                        <div class="form-group half-width">
+                            <label class="form-label" for="AmountUnit">@Localizer["Unit"]</label>
+                            <select class="form-control" id="AmountUnit" asp-for="AmountUnit">
+                                <option value="">@Localizer["SelectUnit"]</option>
+                                <option value="0">@Localizer["Pages"]</option>
+                                <option value="1">@Localizer["Ayahs"]</option>
+                                <option value="2">@Localizer["Juzs"]</option>
+                            </select>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="AmountUnit"></span>
+                        </div>
+                    </div>
+
+                    <!-- Equivalent pages input (only when unit = Ayahs) -->
+                    <div class="form-group" id="equivalentPagesGroup" style="display:none;">
+                        <label class="form-label" for="EquivalentPages">@Localizer["EquivalentPages"]</label>
+                        <input type="number" class="form-control" id="EquivalentPages" asp-for="EquivalentPages"
+                               min="0.1" max="20" step="0.05"
+                               placeholder="@Localizer["EquivalentPagesPlaceholder"]" />
+                        <div class="equivalent-pages-chips" role="group" aria-label="@Localizer["EquivalentPagesQuickPick"]">
+                            <button type="button" class="chip" data-value="0.2">0.2</button>
+                            <button type="button" class="chip" data-value="0.25">¼</button>
+                            <button type="button" class="chip" data-value="0.5">½</button>
+                            <button type="button" class="chip" data-value="0.75">¾</button>
+                            <button type="button" class="chip" data-value="1">1</button>
+                            <button type="button" class="chip" data-value="1.5">1.5</button>
+                            <button type="button" class="chip" data-value="2">2</button>
+                            <button type="button" class="chip" data-value="2.5">2.5</button>
+                            <button type="button" class="chip" data-value="3">3</button>
+                        </div>
+                        <small class="form-hint">@Localizer["EquivalentPagesHint"]</small>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="EquivalentPages"></span>
                     </div>
                 </div>
 
-                <!-- Equivalent pages input (only when unit = Ayahs) -->
-                <div class="form-group" id="equivalentPagesGroup" style="display:none;">
-                    <label class="form-label" for="EquivalentPages">@Localizer["EquivalentPages"]</label>
-                    <input type="number" class="form-control" id="EquivalentPages" asp-for="EquivalentPages"
-                           min="0.1" max="20" step="0.05"
-                           placeholder="@Localizer["EquivalentPagesPlaceholder"]" />
-                    <div class="equivalent-pages-chips" role="group" aria-label="@Localizer["EquivalentPagesQuickPick"]">
-                        <button type="button" class="chip" data-value="0.2">0.2</button>
-                        <button type="button" class="chip" data-value="0.25">¼</button>
-                        <button type="button" class="chip" data-value="0.5">½</button>
-                        <button type="button" class="chip" data-value="0.75">¾</button>
-                        <button type="button" class="chip" data-value="1">1</button>
-                        <button type="button" class="chip" data-value="1.5">1.5</button>
-                        <button type="button" class="chip" data-value="2">2</button>
-                        <button type="button" class="chip" data-value="2.5">2.5</button>
-                        <button type="button" class="chip" data-value="3">3</button>
+                <!-- Section 2: Quran Range Flow (From -> To) -->
+                <div class="edit-modal-section range-section">
+                    <div class="section-badge">
+                        <i class='bx bx-book-open'></i>
+                        <span>نطاق الآيات والسور</span>
                     </div>
-                    <small class="form-hint">@Localizer["EquivalentPagesHint"]</small>
-                    <span class="text-danger field-validation-valid" data-valmsg-for="EquivalentPages"></span>
-                </div>
 
-                <!-- From Section -->
-                <div class="section-header">@Localizer["From"]</div>
+                    <div class="range-grid-container">
+                        <!-- From Block -->
+                        <div class="range-block">
+                            <div class="range-block-header">
+                                <span class="range-tag from-tag">@Localizer["From"]</span>
+                            </div>
 
-                <div class="form-row">
-                    <div class="form-group half-width">
-                        <label class="form-label" for="FromJuz">@Localizer["Juz"]</label>
-                        <input type="number" class="form-control" id="FromJuz" asp-for="FromJuz" min="1" max="30"
-                               placeholder="1-30" />
-                        <span class="text-danger field-validation-valid" data-valmsg-for="FromJuz"></span>
+                            <div class="form-group">
+                                <label class="form-label" for="FromSurah">@Localizer["Surah"]</label>
+                                <select class="form-control" id="FromSurah" asp-for="FromSurah">
+                                    @await Html.PartialAsync("_SurahOptions")
+                                </select>
+                                <span class="text-danger field-validation-valid" data-valmsg-for="FromSurah"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="FromAyah">@Localizer["Ayah"]</label>
+                                <input type="text" class="form-control" id="FromAyah" asp-for="FromAyah" maxlength="10"
+                                       placeholder="@Localizer["AyahNumber"]" />
+                                <span class="text-danger field-validation-valid" data-valmsg-for="FromAyah"></span>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group half-width">
+                                    <label class="form-label" for="FromJuz">@Localizer["Juz"]</label>
+                                    <input type="number" class="form-control" id="FromJuz" asp-for="FromJuz" min="1" max="30"
+                                           placeholder="1-30" />
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="FromJuz"></span>
+                                </div>
+                                <div class="form-group half-width">
+                                    <label class="form-label" for="FromPage">@Localizer["Page"]</label>
+                                    <input type="number" class="form-control" id="FromPage" asp-for="FromPage" min="1"
+                                           placeholder="@Localizer["PageNumber"]" />
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="FromPage"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Connector Icon -->
+                        <div class="range-connector">
+                            <i class='bx bx-left-arrow-alt'></i>
+                        </div>
+
+                        <!-- To Block -->
+                        <div class="range-block">
+                            <div class="range-block-header">
+                                <span class="range-tag to-tag">@Localizer["To"]</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="ToSurah">@Localizer["Surah"]</label>
+                                <select class="form-control" id="ToSurah" asp-for="ToSurah">
+                                    @await Html.PartialAsync("_SurahOptions")
+                                </select>
+                                <span class="text-danger field-validation-valid" data-valmsg-for="ToSurah"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="ToAyah">@Localizer["Ayah"]</label>
+                                <input type="number" class="form-control" id="ToAyah" asp-for="ToAyah" min="1"
+                                       placeholder="@Localizer["AyahNumber"]" />
+                                <span class="text-danger field-validation-valid" data-valmsg-for="ToAyah"></span>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group half-width">
+                                    <label class="form-label" for="ToJuz">@Localizer["Juz"]</label>
+                                    <input type="number" class="form-control" id="ToJuz" asp-for="ToJuz" min="1" max="30"
+                                           placeholder="1-30" />
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="ToJuz"></span>
+                                </div>
+                                <div class="form-group half-width">
+                                    <label class="form-label" for="ToPage">@Localizer["Page"]</label>
+                                    <input type="number" class="form-control" id="ToPage" asp-for="ToPage" min="1"
+                                           placeholder="@Localizer["PageNumber"]" />
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="ToPage"></span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group half-width">
-                        <label class="form-label" for="FromPage">@Localizer["Page"]</label>
-                        <input type="number" class="form-control" id="FromPage" asp-for="FromPage" min="1"
-                               placeholder="@Localizer["PageNumber"]" />
-                        <span class="text-danger field-validation-valid" data-valmsg-for="FromPage"></span>
+                </div>
+
+                <!-- Section 3: Grade, Notes & Options -->
+                <div class="edit-modal-section">
+                    <div class="section-badge">
+                        <i class='bx bx-slider-alt'></i>
+                        <span>التقييم والملاحظات</span>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label class="form-label" for="FromSurah">@Localizer["Surah"]</label>
-                    <select class="form-control" id="FromSurah" asp-for="FromSurah">
-                        @await Html.PartialAsync("_SurahOptions")
-                    </select>
-                    <span class="text-danger field-validation-valid" data-valmsg-for="FromSurah"></span>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="FromAyah">@Localizer["Ayah"]</label>
-                    <input type="text" class="form-control" id="FromAyah" asp-for="FromAyah" maxlength="10"
-                           placeholder="@Localizer["AyahNumber"]" />
-                    <span class="text-danger field-validation-valid" data-valmsg-for="FromAyah"></span>
-                </div>
-
-                <!-- To Section -->
-                <div class="section-header">@Localizer["To"]</div>
-
-                <div class="form-row">
-                    <div class="form-group half-width">
-                        <label class="form-label" for="ToJuz">@Localizer["Juz"]</label>
-                        <input type="number" class="form-control" id="ToJuz" asp-for="ToJuz" min="1" max="30"
-                               placeholder="1-30" />
-                        <span class="text-danger field-validation-valid" data-valmsg-for="ToJuz"></span>
+                    <!-- Assignment Grade -->
+                    <div class="form-group">
+                        <label class="form-label" for="Grade">@Localizer["Grade"]</label>
+                        <select class="form-control" id="Grade" asp-for="Status">
+                            <option value="0">@Localizer["NotGraded"]</option>
+                            <option value="1">@Localizer["Poor"]</option>
+                            <option value="2">@Localizer["Fair"]</option>
+                            <option value="3">@Localizer["Good"]</option>
+                            <option value="4">@Localizer["VeryGood"]</option>
+                            <option value="5">@Localizer["Excellent"]</option>
+                        </select>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Grade"></span>
+                        <small id="gradeUpcomingNotice" class="form-text" style="display: none; color: #7c3aed; font-weight: 600; font-size: 0.8rem; margin-top: 6px;">
+                            <i class='bx bx-calendar-star'></i> تم تجميد التقييم لأن هذا الورد محدد كـ "ورد قادم" (لم يُسمّع بعد).
+                        </small>
                     </div>
-                    <div class="form-group half-width">
-                        <label class="form-label" for="ToPage">@Localizer["Page"]</label>
-                        <input type="number" class="form-control" id="ToPage" asp-for="ToPage" min="1"
-                               placeholder="@Localizer["PageNumber"]" />
-                        <span class="text-danger field-validation-valid" data-valmsg-for="ToPage"></span>
+
+                    <!-- Note -->
+                    <div class="form-group">
+                        <label class="form-label" for="Note">@Localizer["NoteOptional"]</label>
+                        <textarea class="form-control" id="Note" asp-for="Note" rows="2" maxlength="500"
+                                  placeholder="@Localizer["NotePlaceholder"]"></textarea>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Note"></span>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label class="form-label" for="ToSurah">@Localizer["Surah"]</label>
-                    <select class="form-control" id="ToSurah" asp-for="ToSurah">
-                        @await Html.PartialAsync("_SurahOptions")
-                    </select>
-                    <span class="text-danger field-validation-valid" data-valmsg-for="ToSurah"></span>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="ToAyah">@Localizer["Ayah"]</label>
-                    <input type="number" class="form-control" id="ToAyah" asp-for="ToAyah" min="1"
-                           placeholder="@Localizer["AyahNumber"]" />
-                    <span class="text-danger field-validation-valid" data-valmsg-for="ToAyah"></span>
-                </div>
-                <!-- Assignment Grade (Optional - for completed assignments) -->
-                <div class="form-group">
-                    <label class="form-label" for="Grade">@Localizer["Grade"]</label>
-                    <select class="form-control" id="Grade" asp-for="Status">
-                        <option value="0">@Localizer["NotGraded"]</option>
-                        <option value="1">@Localizer["Poor"]</option>
-                        <option value="2">@Localizer["Fair"]</option>
-                        <option value="3">@Localizer["Good"]</option>
-                        <option value="4">@Localizer["VeryGood"]</option>
-                        <option value="5">@Localizer["Excellent"]</option>
-                    </select>
-                    <span class="text-danger field-validation-valid" data-valmsg-for="Grade"></span>
-                    <small id="gradeUpcomingNotice" class="form-text" style="display: none; color: #6b21a8; font-weight: 600; font-size: 0.78rem; margin-top: 5px;">
-                        <i class='bx bx-calendar-star'></i> تم تجميد التقييم لأن هذا الورد محدد كـ "ورد قادم" (لم يُسمّع بعد).
-                    </small>
-                </div>
-
-                <!-- Optional Note -->
-                <div class="form-group">
-                    <label class="form-label" for="Note">@Localizer["NoteOptional"]</label>
-                    <textarea class="form-control" id="Note" asp-for="Note" rows="3" maxlength="500"
-                              placeholder="@Localizer["NotePlaceholder"]"></textarea>
-                    <span class="text-danger field-validation-valid" data-valmsg-for="Note"></span>
-                </div>
-
-                <!-- Upcoming wird toggle -->
-                <div class="form-group">
-                    <div class="upcoming-toggle">
-                        <label class="upcoming-toggle-text" for="IsUpcoming">
-                            <span class="upcoming-toggle-icon"><i class='bx bx-calendar-star'></i></span>
-                            <span class="upcoming-toggle-copy">
-                                <span class="upcoming-toggle-title">@Localizer["IsUpcoming"]</span>
-                                <small class="upcoming-toggle-hint">@Localizer["IsUpcomingHint"]</small>
-                            </span>
-                        </label>
-                        <label class="switch">
-                            <input type="checkbox" id="IsUpcoming" asp-for="IsUpcoming" />
-                            <span class="switch-slider"></span>
-                        </label>
+                    <!-- Upcoming toggle -->
+                    <div class="form-group mb-0">
+                        <div class="upcoming-toggle">
+                            <label class="upcoming-toggle-text" for="IsUpcoming">
+                                <span class="upcoming-toggle-icon"><i class='bx bx-calendar-star'></i></span>
+                                <span class="upcoming-toggle-copy">
+                                    <span class="upcoming-toggle-title">@Localizer["IsUpcoming"]</span>
+                                    <small class="upcoming-toggle-hint">@Localizer["IsUpcomingHint"]</small>
+                                </span>
+                            </label>
+                            <label class="switch">
+                                <input type="checkbox" id="IsUpcoming" asp-for="IsUpcoming" />
+                                <span class="switch-slider"></span>
+                            </label>
+                        </div>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="IsUpcoming"></span>
                     </div>
-                    <span class="text-danger field-validation-valid" data-valmsg-for="IsUpcoming"></span>
                 </div>
             </div>
 
+            <!-- Modal Footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline" onclick="closeWirdModal()">@Localizer["Cancel"]</button>
-                <button type="submit" class="btn btn-primary">@Localizer["AssignWird"]</button>
+                <button type="button" class="btn btn-outline" onclick="closeEditWirdModal()">@Localizer["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class='bx bx-check-circle'></i>
+                    <span>@Localizer["AssignWird"]</span>
+                </button>
             </div>
         </form>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="~/js/teacher_portal/modals/editWirdModal.js" asp-append-version="true"></script>
+<script src="~/js/teacher_portal/modals/editWirdModal.js" asp-append-version="true"></script>

@@ -7,8 +7,8 @@
  * ============================================================================
  */
 
-function openWirdModal(studentId, studentName) {
-  const modal = document.getElementById('assignWirdModal');
+function openEditWirdModal(assignmentId, studentId, studentName) {
+  const modal = document.getElementById('editWirdModal') || document.getElementById('assignWirdModal');
   const nameSpan = document.getElementById('studentName');
   const idInput = document.getElementById('StudentId');
 
@@ -19,15 +19,22 @@ function openWirdModal(studentId, studentName) {
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
   }
-}
 
-function closeWirdModal() {
-  const modal = document.getElementById('assignWirdModal');
+  if (assignmentId) {
+    window.fetchWirdAssignmentById(assignmentId);
+  }
+}
+window.openEditWirdModal = openEditWirdModal;
+
+function closeEditWirdModal() {
+  const modal = document.getElementById('editWirdModal') || document.getElementById('assignWirdModal');
   if (modal) {
     modal.classList.remove('active');
     document.body.style.overflow = '';
   }
 }
+window.closeEditWirdModal = closeEditWirdModal;
+window.closeWirdModal = closeEditWirdModal;
 
 /**
  * Global helper to fetch and populate assignment data into the edit modal
@@ -129,22 +136,22 @@ function syncEquivalentChips(val) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  const modal = document.getElementById('assignWirdModal');
+  const getModal = () => document.getElementById('editWirdModal') || document.getElementById('assignWirdModal');
   const form = document.getElementById('wirdAssignmentForm');
 
   // Backdrop click to close
-  if (modal) {
-    modal.addEventListener('click', function (e) {
-      if (e.target === modal) {
-        closeWirdModal();
-      }
-    });
-  }
+  document.addEventListener('click', function (e) {
+    const modal = getModal();
+    if (modal && e.target === modal) {
+      closeEditWirdModal();
+    }
+  });
 
   // Escape key to close
   document.addEventListener('keydown', function (e) {
+    const modal = getModal();
     if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
-      closeWirdModal();
+      closeEditWirdModal();
     }
   });
 
@@ -203,9 +210,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
           if (oldCard && newCardHtml) {
             oldCard.outerHTML = newCardHtml;
+            const updatedCard = document.getElementById(`wird-card-${wirdId}`);
+            if (updatedCard) {
+              updatedCard.classList.add('updated');
+              setTimeout(() => updatedCard.classList.remove('updated'), 1200);
+            }
           }
 
-          closeWirdModal();
+          closeEditWirdModal();
 
           if (typeof Swal !== 'undefined') {
             Swal.fire({

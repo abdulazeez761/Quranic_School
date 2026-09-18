@@ -126,6 +126,11 @@ body {
   }
 }
 
+/* Stable scrollbar gutter to prevent full-page layout shifts when locking body scroll on drawer/modal open */
+html {
+  scrollbar-gutter: stable;
+}
+
 /* ==========================================================================
    Reusable Design System Components
    ========================================================================== */

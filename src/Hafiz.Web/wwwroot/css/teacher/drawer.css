@@ -165,7 +165,7 @@
   z-index: 2000;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.28s ease, visibility 0.28s ease;
+  transition: opacity 0.24s ease;
   pointer-events: none;
   touch-action: manipulation;
   will-change: opacity;
@@ -180,7 +180,7 @@
 
 /* Base Drawer Panel Structure */
 .drawer-panel {
-  contain: content;
+  contain: layout paint;
   background: var(--white) !important;
   display: flex !important;
   flex-direction: column !important;
@@ -241,7 +241,7 @@
     transform: translate3d(-105%, 0, 0) !important;
     opacity: 0 !important;
     visibility: hidden !important;
-    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, visibility 0.25s ease !important;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease !important;
     margin: 0 !important;
   }
 
@@ -272,7 +272,7 @@
     border: 1px solid var(--border-color) !important;
     opacity: 0 !important;
     visibility: hidden !important;
-    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, visibility 0.25s ease !important;
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.20s ease !important;
     margin: 0 !important;
   }
 

@@ -1,71 +1,109 @@
+/**
+ * Hafiz Platform - Card Status Quick Rating Handler
+ * Manages instant segmented rating buttons on Wird & Matn cards with snappy UI feedback.
+ */
 document.addEventListener('click', async function (e) {
   const btn = e.target.closest('.status-button');
+  if (!btn) return;
 
-  if (btn) {
-    e.preventDefault();
+  e.preventDefault();
 
-    let id = btn.getAttribute('data-id');
-    let status = btn.getAttribute('data-status');
-    let originalText = btn.innerText.trim();
+  const card = btn.closest('.wird-card');
+  if (!card) return;
 
-    let tokenInput = document.querySelector(
-      'input[name="__RequestVerificationToken"]',
-    );
-    let token = tokenInput ? tokenInput.value : '';
+  const id = btn.getAttribute('data-id');
+  const status = btn.getAttribute('data-status');
+  const originalText = btn.innerText.trim();
+  const lowerStatus = (status || '').toLowerCase();
 
-    try {
-      const res = await fetch('/Teacher/Wird/UpdateStatus', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          RequestVerificationToken: token,
-        },
-        body: JSON.stringify({ Id: id, Status: status }),
-      });
+  // If already active and not retrying, allow re-click or subtle feedback
+  const siblingButtons = card.querySelectorAll('.status-button');
+  const prevActiveBtn = card.querySelector('.status-button.active');
+  const cardStatusBadge = card.querySelector('.wird-status-badge');
+  const prevBadgeText = cardStatusBadge ? cardStatusBadge.innerText : '';
+  const prevBadgeClass = cardStatusBadge ? cardStatusBadge.className : '';
+  const prevCardStatus = card.dataset.status || '';
 
-      const data = await res.json();
-      const card = btn.closest('.wird-card');
+  // 1. Instant Optimistic UI Update: Toggle active button & play delight bounce effect
+  siblingButtons.forEach((b) => {
+    b.classList.remove('active');
+    b.classList.remove('seg-pop');
+  });
 
-      if (data.success) {
-        let cardStatus = card.querySelector('.wird-status-badge');
+  btn.classList.add('active', 'seg-pop');
+  setTimeout(() => btn.classList.remove('seg-pop'), 450);
 
-        cardStatus.innerText = originalText;
-        cardStatus.className = `wird-status-badge status-${status.toLowerCase()}`;
+  // 2. Update status badge immediately
+  if (cardStatusBadge) {
+    cardStatusBadge.innerText = originalText;
+    cardStatusBadge.className = `wird-status-badge status-${lowerStatus}`;
+    cardStatusBadge.classList.add('badge-pop');
+    setTimeout(() => cardStatusBadge.classList.remove('badge-pop'), 400);
+  }
 
-        const allStatuses = ['excellent', 'verygood', 'good', 'fair', 'poor', 'notset'];
-        allStatuses.forEach((s) => card.classList.remove(s));
-        card.classList.add(status.toLowerCase());
-        card.dataset.status = status.toLowerCase();
+  // 3. Update card classes
+  const allStatuses = ['excellent', 'verygood', 'good', 'fair', 'poor', 'notset'];
+  allStatuses.forEach((s) => card.classList.remove(s));
+  card.classList.add(lowerStatus);
+  card.dataset.status = lowerStatus;
 
-        // Grading clears the "upcoming" flag server-side; mirror that in the DOM.
-        if (status.toLowerCase() !== 'notset') {
-          card.classList.remove('is-upcoming');
-          card.dataset.upcoming = 'false';
-          const upcomingBadge = card.querySelector('.upcoming-badge');
-          if (upcomingBadge) upcomingBadge.remove();
-        }
+  // 4. Send AJAX Update
+  const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+  const token = tokenInput ? tokenInput.value : '';
 
-        card.classList.add('updated');
+  try {
+    const res = await fetch('/Teacher/Wird/UpdateStatus', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        RequestVerificationToken: token,
+      },
+      body: JSON.stringify({ Id: id, Status: status }),
+    });
 
-        setTimeout(() => {
-          card.classList.remove('updated');
-        }, 1000);
-      } else {
-        card.classList.add('failed-to-update');
+    const data = await res.json();
 
-        setTimeout(() => {
-          card.classList.remove('failed-to-update');
-        }, 1000);
+    if (data && data.success) {
+      // Grading clears upcoming flag
+      if (lowerStatus !== 'notset') {
+        card.classList.remove('is-upcoming');
+        card.dataset.upcoming = 'false';
+        const upcomingBadge = card.querySelector('.upcoming-badge');
+        if (upcomingBadge) upcomingBadge.remove();
       }
-    } catch (error) {
-      console.error('Error updating status:', error);
 
-      const card = btn.closest('.wird-card');
-      card.classList.add('failed-to-update');
-
+      // Success micro-glow on card
+      card.classList.add('updated');
       setTimeout(() => {
-        card.classList.remove('failed-to-update');
-      }, 1000);
+        card.classList.remove('updated');
+      }, 700);
+    } else {
+      // Server rejected -> Rollback
+      rollbackRating(siblingButtons, prevActiveBtn, cardStatusBadge, prevBadgeText, prevBadgeClass, card, prevCardStatus);
     }
+  } catch (error) {
+    console.error('Error updating status:', error);
+    // Network error -> Rollback
+    rollbackRating(siblingButtons, prevActiveBtn, cardStatusBadge, prevBadgeText, prevBadgeClass, card, prevCardStatus);
   }
 });
+
+function rollbackRating(buttons, prevActiveBtn, badge, prevText, prevClass, card, prevStatus) {
+  buttons.forEach((b) => b.classList.remove('active'));
+  if (prevActiveBtn) prevActiveBtn.classList.add('active');
+
+  if (badge) {
+    badge.innerText = prevText;
+    badge.className = prevClass;
+  }
+
+  if (card) {
+    const allStatuses = ['excellent', 'verygood', 'good', 'fair', 'poor', 'notset'];
+    allStatuses.forEach((s) => card.classList.remove(s));
+    if (prevStatus) card.classList.add(prevStatus);
+    card.dataset.status = prevStatus;
+
+    card.classList.add('failed-to-update');
+    setTimeout(() => card.classList.remove('failed-to-update'), 800);
+  }
+}

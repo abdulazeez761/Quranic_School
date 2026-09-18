@@ -190,8 +190,8 @@
             <button class="card-action-btn" data-assignment-id="@Model.Id" title="@Localizer["AddNotes"]">
                 <i class='bx bx-note'></i>
             </button>
-            <button class="card-action-btn"
-                    onclick="fetchWirdAssignmentById('@Model.Id'); openWirdModal('@Model.StudentId', '@Model.Student.StudentInfo.FirstName @Model.Student.StudentInfo.SecondName')"
+            <button type="button" class="card-action-btn"
+                    onclick="openEditWirdModal('@Model.Id', '@Model.StudentId', '@Model.Student.StudentInfo.FirstName @Model.Student.StudentInfo.SecondName')"
                     title="@Localizer["Edit"]">
                 <i class='bx bx-edit'></i>
             </button>

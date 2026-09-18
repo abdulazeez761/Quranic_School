@@ -29,10 +29,16 @@ function openWirdDrawer() {
     loadStudentIntoDrawer(window.selectedStudentIndex);
   }
 
-  // Open modal synchronously on the exact same frame (instant click response)
-  drawer.classList.add('is-open', 'active', 'mobile-open');
-  backdrop.classList.add('is-open', 'active');
-  document.body.style.overflow = 'hidden';
+  // Make visible to prepare compositing layer
+  drawer.style.visibility = 'visible';
+  backdrop.style.visibility = 'visible';
+
+  // Decouple animation from click event listener frame to eliminate LoAF delays
+  requestAnimationFrame(() => {
+    drawer.classList.add('is-open', 'active', 'mobile-open');
+    backdrop.classList.add('is-open', 'active');
+    document.body.style.overflow = 'hidden';
+  });
 }
 
 function closeWirdDrawer() {
@@ -43,13 +49,14 @@ function closeWirdDrawer() {
   drawer.classList.remove('is-open', 'active', 'mobile-open');
   if (backdrop) backdrop.classList.remove('is-open', 'active');
 
-  // Defer restoring body scroll until closing animation finishes (280ms)
-  // This completely eliminates the page scrollbar reflow that interrupts the closing animation
+  // Defer restoring body scroll until closing animation finishes (250ms)
   setTimeout(() => {
     if (!drawer.classList.contains('active') && !drawer.classList.contains('is-open')) {
       document.body.style.overflow = '';
+      drawer.style.visibility = '';
+      if (backdrop) backdrop.style.visibility = '';
     }
-  }, 280);
+  }, 250);
 }
 
 function closeWirdModal() {
