@@ -6,11 +6,20 @@
     var statusClass = Model.Status.ToString().ToLower();
     var statusKey = Model.Status.ToString();
     var localizedStatus = Localizer[char.ToUpper(statusKey[0]) + statusKey.Substring(1)];
+
+    var isToday = Model.AssignedDate.Date == DateTime.UtcNow.Date 
+        || Model.AssignedDate.ToLocalTime().Date == DateTime.Today
+        || Model.AssignedDate.Date == DateTime.Today;
+    var isUnrated = Model.Status == Hafiz.Models.AssignmentStatus.notSet && !Model.IsUpcoming;
+    var isCompleted = (Model.Status != Hafiz.Models.AssignmentStatus.notSet) || Model.IsCompleted;
 }
 <div id="wird-card-@Model.Id" class="wird-card @statusClass @(Model.IsUpcoming ? "is-upcoming" : "")"
-     data-student="@Model.Student.StudentInfo.FirstName @Model.Student.StudentInfo.SecondName" data-type="@Model.Type"
+     data-student="@Model.Student?.StudentInfo?.FirstName @Model.Student?.StudentInfo?.SecondName" data-type="@Model.Type"
      data-status="@statusClass" data-upcoming="@(Model.IsUpcoming ? "true" : "false")"
-     data-date="@Model.AssignedDate.ToString("yyyy-MM-dd")">
+     data-date="@Model.AssignedDate.ToString("yyyy-MM-dd")"
+     data-is-today="@(isToday ? "true" : "false")"
+     data-is-unrated="@(isUnrated ? "true" : "false")"
+     data-is-completed="@(isCompleted ? "true" : "false")">
 
     <div class="wird-card-top-stripe"></div>
 

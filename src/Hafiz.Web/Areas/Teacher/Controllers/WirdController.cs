@@ -13,6 +13,7 @@ using Hafiz.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Hafiz.Web.Helpers;
 
 namespace Hafiz.Areas.Teacher.Controllers
 {
@@ -69,7 +70,7 @@ namespace Hafiz.Areas.Teacher.Controllers
             string? toDate,
             string? tab = null,
             int page = 1,
-            int pageSize = 12
+            int pageSize = 50
         )
         {
             var instituteId = GetInstituteId();
@@ -160,9 +161,46 @@ namespace Hafiz.Areas.Teacher.Controllers
             ViewBag.Students = studentsList;
             ViewBag.AllClassStudents = allClassStudents;
 
+            var userToday = TimeZoneHelper.GetUserToday(HttpContext);
+            var serverToday = DateTime.Today;
+            var utcToday = DateTime.UtcNow.Date;
+
+            bool IsToday(DateTime d) =>
+                d.Date == userToday ||
+                d.ToLocalTime().Date == userToday ||
+                d.Date == serverToday ||
+                d.Date == utcToday;
+
+            int totalCount = 0;
+            int todayCount = 0;
+            int unratedCount = 0;
+            int completedCount = 0;
+            int upcomingCount = 0;
+
+            if (isMatnClass)
+            {
+                totalCount = matnList.Count;
+                todayCount = matnList.Count(m => IsToday(m.AssignedDate));
+                unratedCount = matnList.Count(m => m.Status == Hafiz.Models.AssignmentStatus.notSet && !m.IsUpcoming);
+                completedCount = matnList.Count(m => m.Status != Hafiz.Models.AssignmentStatus.notSet || m.IsCompleted);
+                upcomingCount = matnList.Count(m => m.IsUpcoming);
+            }
+            else
+            {
+                totalCount = quranList.Count;
+                todayCount = quranList.Count(w => IsToday(w.AssignedDate));
+                unratedCount = quranList.Count(w => w.Status == Hafiz.Models.AssignmentStatus.notSet && !w.IsUpcoming);
+                completedCount = quranList.Count(w => w.Status != Hafiz.Models.AssignmentStatus.notSet || w.IsCompleted);
+                upcomingCount = quranList.Count(w => w.IsUpcoming);
+            }
+
             ViewBag.TotalQuranCount = quranList.Count;
             ViewBag.TotalMatnCount = matnList.Count;
-            ViewBag.TotalCount = isMatnClass ? matnList.Count : (quranList.Count > 0 ? quranList.Count : matnList.Count);
+            ViewBag.TotalCount = totalCount;
+            ViewBag.TodayCount = todayCount;
+            ViewBag.UnratedCount = unratedCount;
+            ViewBag.CompletedCount = completedCount;
+            ViewBag.UpcomingCount = upcomingCount;
 
             // Active Tab determination
             if (!string.IsNullOrEmpty(tab))
@@ -171,7 +209,7 @@ namespace Hafiz.Areas.Teacher.Controllers
             }
             else
             {
-                ViewBag.ActiveTab = isMatnClass ? "matn" : (quranList.Count == 0 && matnList.Count > 0 ? "matn" : "quran");
+                ViewBag.ActiveTab = "all";
             }
 
             ViewBag.FromDate = fromDate;

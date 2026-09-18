@@ -36,12 +36,21 @@
         .Take(2)
         .Select(s => s[0].ToString())
         .Aggregate("", (a, b) => a + b);
+
+    var isToday = Model.AssignedDate.Date == DateTime.UtcNow.Date 
+        || Model.AssignedDate.ToLocalTime().Date == DateTime.Today
+        || Model.AssignedDate.Date == DateTime.Today;
+    var isUnrated = Model.Status == AssignmentStatus.notSet && !Model.IsUpcoming;
+    var isCompleted = (Model.Status != AssignmentStatus.notSet) || Model.IsCompleted;
 }
 
 <div id="wird-card-@Model.Id" class="wird-card matn-card @statusClass @(Model.IsUpcoming ? "is-upcoming" : "")"
      data-student="@Model.StudentName" data-type="@Model.PerformanceTypeName"
      data-status="@statusClass" data-upcoming="@(Model.IsUpcoming ? "true" : "false")"
-     data-date="@Model.AssignedDate.ToString("yyyy-MM-dd")">
+     data-date="@Model.AssignedDate.ToString("yyyy-MM-dd")"
+     data-is-today="@(isToday ? "true" : "false")"
+     data-is-unrated="@(isUnrated ? "true" : "false")"
+     data-is-completed="@(isCompleted ? "true" : "false")">
 
     <!-- Top Accent Stripe -->
     <div class="matn-card-stripe @stripeClass"></div>

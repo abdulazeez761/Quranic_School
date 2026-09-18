@@ -11,9 +11,11 @@
     var isMatnClass = (ViewBag.IsMatnClass as bool?) == true;
     var className = ViewBag.ClassName as string ?? "الشعبة";
     var studyProgramName = ViewBag.StudyProgramName as string;
-    var activeTab = (ViewBag.ActiveTab as string) ?? (isMatnClass ? "matn" : "quran");
-    var totalQuran = (int)(ViewBag.TotalQuranCount ?? 0);
-    var totalMatn = (int)(ViewBag.TotalMatnCount ?? 0);
+    var totalCount = (int)(ViewBag.TotalCount ?? 0);
+    var todayCount = (int)(ViewBag.TodayCount ?? 0);
+    var unratedCount = (int)(ViewBag.UnratedCount ?? 0);
+    var completedCount = (int)(ViewBag.CompletedCount ?? 0);
+    var upcomingCount = (int)(ViewBag.UpcomingCount ?? 0);
 
     var matnAssignments = ViewBag.MatnAssignments as Hafiz.Application.Common.PagedResult<MatnAssignmentDto>;
     var matnItems = matnAssignments?.Items ?? new List<MatnAssignmentDto>();
@@ -53,18 +55,29 @@
                     }
                 </div>
                 <div class="wird-hero-stats">
-                    <span class="wird-stat-chip total">
-                        <i class='bx bx-list-check text-primary'></i>
-                        <span>إجمالي التسميع: <strong>@(totalQuran + totalMatn)</strong></span>
+                    <span class="wird-stat-chip total" title="إجمالي التسميعات المسجلة">
+                        <i class='bx bx-list-check'></i>
+                        <span>إجمالي التسميع: <strong>@totalCount</strong></span>
                     </span>
-                    <span class="wird-stat-chip quran">
-                        <i class='bx bx-book-open text-success'></i>
-                        <span>القرآن: <strong>@totalQuran</strong></span>
+                    <span class="wird-stat-chip today @(todayCount > 0 ? "has-data" : "")" title="التسميعات المسجلة اليوم">
+                        <i class='bx bx-calendar-check'></i>
+                        <span>تسميع اليوم: <strong>@todayCount</strong></span>
                     </span>
-                    <span class="wird-stat-chip matn">
-                        <i class='bx bx-bookmarks text-info'></i>
-                        <span>المتون: <strong>@totalMatn</strong></span>
+                    <span class="wird-stat-chip unrated @(unratedCount > 0 ? "has-unrated" : "")" title="تسميعات بانتظار رصد التقييم">
+                        <i class='bx bx-time-five'></i>
+                        <span>بانتظار التقييم: <strong>@unratedCount</strong></span>
                     </span>
+                    <span class="wird-stat-chip completed" title="تسميعات تم تقييمها بنجاح">
+                        <i class='bx bx-check-circle'></i>
+                        <span>المكتملة: <strong>@completedCount</strong></span>
+                    </span>
+                    @if (upcomingCount > 0)
+                    {
+                        <span class="wird-stat-chip upcoming" title="أوراد قادمة ومجدولة">
+                            <i class='bx bx-alarm'></i>
+                            <span>قادمة: <strong>@upcomingCount</strong></span>
+                        </span>
+                    }
                 </div>
             </div>
         </div>
@@ -83,35 +96,48 @@
                     <i class='bx bx-plus'></i>
                     <span>إضافة ورد قرآني</span>
                 </button>
-                @if (totalMatn > 0 || isMatnClass)
-                {
-                    <button type="button" class="t-btn t-btn-matn" onclick="openAssignMatnModal('', '')">
-                        <i class='bx bx-bookmarks'></i>
-                        <span>تسميع متن</span>
-                    </button>
-                }
             }
-            <a class="t-btn t-btn-outline" asp-action="Index" asp-controller="Home">
+            <a class="t-btn t-btn-outline t-btn-change-class" asp-action="Index" asp-controller="Home" title="التبديل إلى حلقة أخرى">
                 <i class='bx bx-transfer-alt'></i>
-                <span>@Localizer["ChangeClass"]</span>
+                <span>تغيير الحلقة</span>
             </a>
         </div>
     </div>
 
-    <!-- MODERN SEGMENTED CAPSULE TABS -->
+    <!-- WORKFLOW QUICK-FILTER TABS -->
     <div class="wird-tabs-segmented" role="tablist">
-        <button type="button" class="wird-tab-pill tab-matn @(activeTab == "matn" ? "active" : "")"
-                id="tabMatnBtn" onclick="switchWirdTab('matn')">
-            <i class='bx bx-bookmarks'></i>
-            <span>تسميع المتون العلمية</span>
-            <span class="wird-tab-count">@totalMatn</span>
+        <button type="button" class="wird-tab-pill active" data-filter="all" onclick="filterWirdByWorkflow('all', this)">
+            <i class='bx bx-grid-alt'></i>
+            <span>الكل</span>
+            <span class="wird-tab-count">@totalCount</span>
         </button>
-        <button type="button" class="wird-tab-pill tab-quran @(activeTab == "quran" ? "active" : "")"
-                id="tabQuranBtn" onclick="switchWirdTab('quran')">
-            <i class='bx bx-book-open'></i>
-            <span>أوراد القرآن الكريم</span>
-            <span class="wird-tab-count">@totalQuran</span>
+
+        <button type="button" class="wird-tab-pill tab-unrated @(unratedCount > 0 ? "has-unrated" : "")" data-filter="unrated" onclick="filterWirdByWorkflow('unrated', this)">
+            <i class='bx bx-time-five'></i>
+            <span>بانتظار التقييم</span>
+            <span class="wird-tab-count unrated-count">@unratedCount</span>
         </button>
+
+        <button type="button" class="wird-tab-pill tab-today @(todayCount > 0 ? "has-today" : "")" data-filter="today" onclick="filterWirdByWorkflow('today', this)">
+            <i class='bx bx-calendar-check'></i>
+            <span>مسجلة اليوم</span>
+            <span class="wird-tab-count today-count">@todayCount</span>
+        </button>
+
+        <button type="button" class="wird-tab-pill tab-completed" data-filter="completed" onclick="filterWirdByWorkflow('completed', this)">
+            <i class='bx bx-check-circle'></i>
+            <span>المكتملة</span>
+            <span class="wird-tab-count completed-count">@completedCount</span>
+        </button>
+
+        @if (upcomingCount > 0)
+        {
+            <button type="button" class="wird-tab-pill tab-upcoming" data-filter="upcoming" onclick="filterWirdByWorkflow('upcoming', this)">
+                <i class='bx bx-alarm'></i>
+                <span>أوراد قادمة</span>
+                <span class="wird-tab-count upcoming-count">@upcomingCount</span>
+            </button>
+        }
     </div>
 
     <!-- FILTER BAR -->
@@ -121,12 +147,12 @@
                 <i class='bx bx-filter-alt'></i>
                 <div class="filter-search-wrapper">
                     <i class='bx bx-search'></i>
-                    <input type="text" id="filterStudent" class="filter-search-input" placeholder="@Localizer["SearchByName"]">
+                    <input type="text" id="filterStudent" class="filter-search-input" placeholder="ابحث باسم الطالب...">
                 </div>
             </div>
             <div class="filter-bar-right">
                 <div class="results-count" id="resultsCount">
-                    <strong>@(activeTab == "matn" ? totalMatn : totalQuran)</strong> @Localizer["Assignments"]
+                    <strong>@totalCount</strong> تسميع
                 </div>
                 <button class="filter-toggle" id="filterToggle" title="خيارات الفلترة">
                     <i class='bx bx-chevron-down'></i>
@@ -137,29 +163,31 @@
         <div class="filter-content" id="filterContent" style="display: none;">
             <div class="filter-row">
                 <div class="filter-group">
-                    <label class="filter-label" for="filterType">@Localizer["AssignmentType"]</label>
+                    <label class="filter-label" for="filterType">نوع التسميع</label>
                     <select id="filterType" class="filter-select">
-                        <option value="">@Localizer["AllTypes"]</option>
-                        <optgroup label="أوراد القرآن الكريم">
+                        <option value="">كل الأنواع</option>
+                        @if (isMatnClass)
+                        {
+                            <option value="حفظ جديد">حفظ جديد (متن)</option>
+                            <option value="مراجعة">مراجعة (متن)</option>
+                            <option value="مدارسة">مدارسة (متن)</option>
+                        }
+                        else
+                        {
                             <option value="Hafiz">@Localizer["Hafiz"]</option>
                             <option value="Wird">@Localizer["Wird"]</option>
                             <option value="Revision">@Localizer["Revision"]</option>
                             <option value="Memorization">@Localizer["Memorization"]</option>
                             <option value="Tajwid">@Localizer["Tajwid"]</option>
-                        </optgroup>
-                        <optgroup label="المتون العلمية">
-                            <option value="حفظ جديد">حفظ جديد (متن)</option>
-                            <option value="مراجعة">مراجعة (متن)</option>
-                            <option value="مدارسة">مدارسة (متن)</option>
-                        </optgroup>
+                        }
                     </select>
                 </div>
 
                 <div class="filter-group">
-                    <label class="filter-label" for="filterStatus">@Localizer["Status"]</label>
+                    <label class="filter-label" for="filterStatus">التقييم</label>
                     <select id="filterStatus" class="filter-select">
-                        <option value="">@Localizer["AllStatuses"]</option>
-                        <option value="notset">@Localizer["NotSet"]</option>
+                        <option value="">كل التقييمات</option>
+                        <option value="notset">لم يُقيّم بعد</option>
                         <option value="poor">@Localizer["Poor"]</option>
                         <option value="fair">@Localizer["Fair"]</option>
                         <option value="good">@Localizer["Good"]</option>
@@ -169,21 +197,21 @@
                 </div>
 
                 <div class="filter-group">
-                    <label class="filter-label" for="filterUpcoming">@Localizer["Upcoming"]</label>
+                    <label class="filter-label" for="filterUpcoming">حالة الورد</label>
                     <select id="filterUpcoming" class="filter-select">
-                        <option value="">@Localizer["AllWirds"]</option>
-                        <option value="true">@Localizer["UpcomingOnly"]</option>
-                        <option value="false">@Localizer["NotUpcoming"]</option>
+                        <option value="">الكل</option>
+                        <option value="true">أوراد قادمة فقط</option>
+                        <option value="false">أوراد حالية ومسجلة</option>
                     </select>
                 </div>
 
                 <div class="filter-group">
-                    <label class="filter-label" for="filterDateFrom">@Localizer["DateFrom"]</label>
+                    <label class="filter-label" for="filterDateFrom">من تاريخ</label>
                     <input type="date" id="filterDateFrom" class="filter-input" value="@ViewBag.FromDate">
                 </div>
 
                 <div class="filter-group">
-                    <label class="filter-label" for="filterDateTo">@Localizer["DateTo"]</label>
+                    <label class="filter-label" for="filterDateTo">إلى تاريخ</label>
                     <input type="date" id="filterDateTo" class="filter-input" value="@ViewBag.ToDate">
                 </div>
 
@@ -211,103 +239,126 @@
         </div>
     }
 
-    <!-- MATN ASSIGNMENTS TAB CONTENT -->
-    <div id="matnCardsContainer" style="display: @(activeTab == "matn" ? "block" : "none");">
-        @if (matnItems.Any())
-        {
-            <div class="wird-cards-grid">
-                @foreach (var item in matnItems)
-                {
-                    @await Html.PartialAsync("_MatnCard", item)
-                }
-            </div>
-
-            @if (matnAssignments != null)
+    @if (isMatnClass)
+    {
+        <!-- MATN ASSIGNMENTS TAB CONTENT -->
+        <div id="matnCardsContainer">
+            @if (matnItems.Any())
             {
-                @await Html.PartialAsync("_Pagination", matnAssignments)
-            }
-        }
-        else
-        {
-            <div class="t-empty-state">
-                <div class="t-empty-icon" style="background: var(--t-matn-light); color: var(--t-matn);">
-                    <i class='bx bx-bookmarks'></i>
+                <div class="wird-cards-grid" id="wirdCardsGrid">
+                    @foreach (var item in matnItems)
+                    {
+                        @await Html.PartialAsync("_MatnCard", item)
+                    }
                 </div>
-                <h4 class="t-empty-title">لا توجد تسميعات متون مسجلة لهذا التاريخ</h4>
-                <p class="t-empty-text">
-                    يمكنك استخدام زر "تسميع متن جديد" لرصد حفظ أو مراجعة المتون العلمية لطلاب هذه الحلقة بسهولة.
-                </p>
-                <button type="button" class="t-btn t-btn-matn" onclick="openAssignMatnModal('', '')">
-                    <i class='bx bx-plus'></i>
-                    <span>رصد أول تسميع متن</span>
-                </button>
-            </div>
-        }
-    </div>
 
-    <!-- QURAN ASSIGNMENTS TAB CONTENT -->
-    <div id="quranCardsContainer" style="display: @(activeTab == "quran" ? "block" : "none");">
-        @if (Model != null && Model.Items.Any())
-        {
-            <div class="wird-cards-grid">
-                @foreach (var item in Model.Items)
+                <div id="noCardsMatchFilter" class="t-empty-state" style="display: none; margin-top: 1.5rem;">
+                    <div class="t-empty-icon" style="background: var(--t-surface-muted); color: var(--t-text-muted);">
+                        <i class='bx bx-filter-alt'></i>
+                    </div>
+                    <h4 class="t-empty-title">لا توجد تسميعات تطابق هذا الفلتر</h4>
+                    <p class="t-empty-text">جرّب اختيار فلتر آخر أو إعادة ضبط خيارات البحث.</p>
+                    <button type="button" class="t-btn t-btn-outline" onclick="document.getElementById('resetFilters').click()">
+                        <i class='bx bx-reset'></i>
+                        <span>عرض الكل</span>
+                    </button>
+                </div>
+
+                @if (matnAssignments != null)
                 {
-                    @await Html.PartialAsync("_WirdCard", item)
+                    <div id="paginationWrap">
+                        @await Html.PartialAsync("_Pagination", matnAssignments)
+                    </div>
                 }
-            </div>
-
-            @await Html.PartialAsync("_Pagination", Model)
-        }
-        else
-        {
-            <div class="t-empty-state">
-                <div class="t-empty-icon">
-                    <i class='bx bx-book-open'></i>
+            }
+            else
+            {
+                <div class="t-empty-state">
+                    <div class="t-empty-icon" style="background: var(--t-matn-light); color: var(--t-matn);">
+                        <i class='bx bx-bookmarks'></i>
+                    </div>
+                    <h4 class="t-empty-title">لا توجد تسميعات متون مسجلة لهذه الحلقة</h4>
+                    <p class="t-empty-text">
+                        يمكنك استخدام زر "تسميع متن جديد" لرصد حفظ أو مراجعة المتون العلمية لطلاب هذه الحلقة بسهولة.
+                    </p>
+                    <button type="button" class="t-btn t-btn-matn" onclick="openAssignMatnModal('', '')">
+                        <i class='bx bx-plus'></i>
+                        <span>رصد أول تسميع متن</span>
+                    </button>
                 </div>
-                <h4 class="t-empty-title">لا توجد أوراد قرآنية مسجلة لهذا التاريخ</h4>
-                <p class="t-empty-text">
-                    لم يتم رصد أي أوراد حفظ أو مراجعة للقرآن الكريم في هذه الحلقة لهذا اليوم بعد.
-                </p>
-                <button type="button" class="t-btn t-btn-primary" onclick="openWirdModal('', '')">
-                    <i class='bx bx-plus'></i>
-                    <span>إضافة أول ورد قرآني</span>
-                </button>
-            </div>
-        }
-    </div>
+            }
+        </div>
+    }
+    else
+    {
+        <!-- QURAN ASSIGNMENTS TAB CONTENT -->
+        <div id="quranCardsContainer">
+            @if (Model != null && Model.Items.Any())
+            {
+                <div class="wird-cards-grid" id="wirdCardsGrid">
+                    @foreach (var item in Model.Items)
+                    {
+                        @await Html.PartialAsync("_WirdCard", item)
+                    }
+                </div>
+
+                <div id="noCardsMatchFilter" class="t-empty-state" style="display: none; margin-top: 1.5rem;">
+                    <div class="t-empty-icon" style="background: var(--t-surface-muted); color: var(--t-text-muted);">
+                        <i class='bx bx-filter-alt'></i>
+                    </div>
+                    <h4 class="t-empty-title">لا توجد أوراد تطابق هذا الفلتر</h4>
+                    <p class="t-empty-text">جرّب اختيار فلتر آخر أو إعادة ضبط خيارات البحث.</p>
+                    <button type="button" class="t-btn t-btn-outline" onclick="document.getElementById('resetFilters').click()">
+                        <i class='bx bx-reset'></i>
+                        <span>عرض الكل</span>
+                    </button>
+                </div>
+
+                <div id="paginationWrap">
+                    @await Html.PartialAsync("_Pagination", Model)
+                </div>
+            }
+            else
+            {
+                <div class="t-empty-state">
+                    <div class="t-empty-icon">
+                        <i class='bx bx-book-open'></i>
+                    </div>
+                    <h4 class="t-empty-title">لا توجد أوراد قرآنية مسجلة لهذه الحلقة</h4>
+                    <p class="t-empty-text">
+                        لم يتم رصد أي أوراد حفظ أو مراجعة للقرآن الكريم في هذه الحلقة بعد.
+                    </p>
+                    <button type="button" class="t-btn t-btn-primary" onclick="openWirdModal('', '')">
+                        <i class='bx bx-plus'></i>
+                        <span>إضافة أول ورد قرآني</span>
+                    </button>
+                </div>
+            }
+        </div>
+    }
 
 </div>
 
 <script>
     window.allClassStudents = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.AllClassStudents ?? new List<object>()));
+    window.currentWorkflowFilter = 'all';
 
-    function switchWirdTab(tab) {
-        const matnCont = document.getElementById('matnCardsContainer');
-        const quranCont = document.getElementById('quranCardsContainer');
-        const matnBtn = document.getElementById('tabMatnBtn');
-        const quranBtn = document.getElementById('tabQuranBtn');
-        const resultsCount = document.getElementById('resultsCount');
+    function filterWirdByWorkflow(filterType, pillBtn) {
+        window.currentWorkflowFilter = filterType;
 
-        if (tab === 'matn') {
-            if (matnCont) matnCont.style.display = 'block';
-            if (quranCont) quranCont.style.display = 'none';
-            if (matnBtn) matnBtn.classList.add('active');
-            if (quranBtn) quranBtn.classList.remove('active');
-
-            if (resultsCount) {
-                const matnCards = document.querySelectorAll('#matnCardsContainer .wird-card');
-                resultsCount.innerHTML = `<strong>${matnCards.length}</strong> @Localizer["Assignments"]`;
-            }
+        // 1. Update active tab UI
+        document.querySelectorAll('.wird-tabs-segmented .wird-tab-pill').forEach(btn => btn.classList.remove('active'));
+        if (pillBtn) {
+            pillBtn.classList.add('active');
         } else {
-            if (matnCont) matnCont.style.display = 'none';
-            if (quranCont) quranCont.style.display = 'block';
-            if (quranBtn) quranBtn.classList.add('active');
-            if (matnBtn) matnBtn.classList.remove('active');
+            const matchBtn = document.querySelector(`.wird-tabs-segmented [data-filter="${filterType}"]`);
+            if (matchBtn) matchBtn.classList.add('active');
+        }
 
-            if (resultsCount) {
-                const quranCards = document.querySelectorAll('#quranCardsContainer .wird-card');
-                resultsCount.innerHTML = `<strong>${quranCards.length}</strong> @Localizer["Assignments"]`;
-            }
+        // 2. Trigger filter execution
+        const applyBtn = document.getElementById('applyFilters');
+        if (applyBtn) {
+            applyBtn.click();
         }
     }
 </script>

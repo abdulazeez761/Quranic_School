@@ -40,6 +40,23 @@ document.addEventListener('click', async function (e) {
   }
   card.classList.remove('is-upcoming');
   card.dataset.upcoming = 'false';
+  card.dataset.isUnrated = 'false';
+  card.dataset.isCompleted = 'true';
+
+  // Live update counter chips and tab badges if moving from unrated (notset) to rated
+  if ((prevCardStatus === 'notset' || prevCardStatus === '') && lowerStatus !== 'notset') {
+    const unratedElements = document.querySelectorAll('.wird-tab-pill.tab-unrated .wird-tab-count, .wird-stat-chip.unrated strong');
+    unratedElements.forEach((el) => {
+      let count = parseInt(el.innerText) || 0;
+      if (count > 0) el.innerText = count - 1;
+    });
+
+    const completedElements = document.querySelectorAll('.wird-tab-pill.tab-completed .wird-tab-count, .wird-stat-chip.completed strong');
+    completedElements.forEach((el) => {
+      let count = parseInt(el.innerText) || 0;
+      el.innerText = count + 1;
+    });
+  }
 
   // 2. Update or create status badge immediately
   let badgeToUpdate = cardStatusBadge;

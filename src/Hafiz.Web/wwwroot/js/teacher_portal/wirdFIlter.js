@@ -36,14 +36,26 @@ document
       window.location.href = `/Teacher/Wird/Index?fromDate=${dateFromFilter}&toDate=${dateToFilter}`;
     }
 
+    const workflow = window.currentWorkflowFilter || 'all';
+
     cards.forEach((card) => {
-      const student = card.dataset.student.toLowerCase();
-      const type = card.dataset.type.toLowerCase();
-      const status = card.dataset.status.toLowerCase();
-      const upcoming = card.dataset.upcoming;
+      const student = (card.dataset.student || '').toLowerCase();
+      const type = (card.dataset.type || '').toLowerCase();
+      const status = (card.dataset.status || '').toLowerCase();
+      const upcoming = card.dataset.upcoming || 'false';
+      const isToday = card.dataset.isToday === 'true' || card.getAttribute('data-is-today') === 'true';
+      const isUnrated = card.dataset.isUnrated === 'true' || card.getAttribute('data-is-unrated') === 'true' || (status === 'notset' && upcoming !== 'true');
+      const isCompleted = card.dataset.isCompleted === 'true' || card.getAttribute('data-is-completed') === 'true' || (status !== '' && status !== 'notset');
 
       let showCard = true;
 
+      // 1. Workflow filter tab
+      if (workflow === 'unrated' && !isUnrated) showCard = false;
+      else if (workflow === 'today' && !isToday) showCard = false;
+      else if (workflow === 'completed' && !isCompleted) showCard = false;
+      else if (workflow === 'upcoming' && upcoming !== 'true') showCard = false;
+
+      // 2. Input filters
       if (studentFilter && !student.includes(studentFilter)) {
         showCard = false;
       }
@@ -68,26 +80,58 @@ document
       }
     });
 
-    document.getElementById('resultsCount').innerHTML =
-      `<strong>${visibleCount}</strong> of <strong>${cards.length}</strong> assignments`;
+    const resultsCount = document.getElementById('resultsCount');
+    if (resultsCount) {
+      resultsCount.innerHTML = `<strong>${visibleCount}</strong> من <strong>${cards.length}</strong> تسميع`;
+    }
+
+    const noMatch = document.getElementById('noCardsMatchFilter');
+    if (noMatch) {
+      noMatch.style.display = (visibleCount === 0 && cards.length > 0) ? 'block' : 'none';
+    }
+
+    const paginationWrap = document.getElementById('paginationWrap');
+    if (paginationWrap) {
+      const isFiltering = (workflow !== 'all' || !!studentFilter || !!typeFilter || !!statusFilter || !!upcomingFilter);
+      paginationWrap.style.display = isFiltering ? 'none' : 'block';
+    }
   });
 
 // Reset filters
 document.getElementById('resetFilters')?.addEventListener('click', function () {
-  document.getElementById('filterStudent').value = '';
-  document.getElementById('filterType').value = '';
-  document.getElementById('filterStatus').value = '';
-  document.getElementById('filterUpcoming').value = '';
-  document.getElementById('filterDateFrom').value = '';
-  document.getElementById('filterDateTo').value = '';
+  const studentInput = document.getElementById('filterStudent');
+  const typeSelect = document.getElementById('filterType');
+  const statusSelect = document.getElementById('filterStatus');
+  const upcomingSelect = document.getElementById('filterUpcoming');
+  const dateFromInput = document.getElementById('filterDateFrom');
+  const dateToInput = document.getElementById('filterDateTo');
+
+  if (studentInput) studentInput.value = '';
+  if (typeSelect) typeSelect.value = '';
+  if (statusSelect) statusSelect.value = '';
+  if (upcomingSelect) upcomingSelect.value = '';
+  if (dateFromInput) dateFromInput.value = '';
+  if (dateToInput) dateToInput.value = '';
+
+  window.currentWorkflowFilter = 'all';
+  document.querySelectorAll('.wird-tabs-segmented .wird-tab-pill').forEach(btn => btn.classList.remove('active'));
+  document.querySelector('.wird-tabs-segmented [data-filter="all"]')?.classList.add('active');
 
   const cards = document.querySelectorAll('.wird-card');
   cards.forEach((card) => {
     card.style.display = 'flex';
   });
 
-  document.getElementById('resultsCount').innerHTML =
-    `<strong>${cards.length}</strong> assignments`;
+  const resultsCount = document.getElementById('resultsCount');
+  if (resultsCount) {
+    resultsCount.innerHTML = `<strong>${cards.length}</strong> تسميع`;
+  }
+
+  const noMatch = document.getElementById('noCardsMatchFilter');
+  if (noMatch) noMatch.style.display = 'none';
+
+  const paginationWrap = document.getElementById('paginationWrap');
+  if (paginationWrap) paginationWrap.style.display = 'block';
 });
 
 // Real-time search on student name
