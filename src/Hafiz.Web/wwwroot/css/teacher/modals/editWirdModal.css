@@ -124,10 +124,12 @@
 }
 
 /* Form Layout */
-#wirdAssignmentForm {
+.modal-container form,
+#wirdAssignmentForm,
+#matnEditAssignmentForm {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
   margin: 0;
@@ -135,13 +137,33 @@
 
 .modal-body {
   padding: 1.25rem 1.6rem;
-  overflow-y: auto;
-  flex: 1;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  flex: 1 1 auto;
   min-height: 0;
+  max-height: calc(88vh - 140px);
   scroll-behavior: smooth;
   display: flex;
   flex-direction: column;
   gap: 1.15rem;
+}
+
+.modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: #f8fafc;
+  border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 /* Section Cards */

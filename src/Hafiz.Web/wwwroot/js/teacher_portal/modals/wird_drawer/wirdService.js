@@ -126,8 +126,15 @@ async function saveDrawerWirds(shouldClose = false) {
         delete window.studentContextCache[student.id];
       }
       showDrawerToast(`✔️ تم حفظ أوراد الطالب (${student.name}) بنجاح!`, 'success');
+      
+      // Update DOM row immediately in real-time
+      if (typeof updateStudentRowStatusOptimistically === 'function') {
+        updateStudentRowStatusOptimistically(student.id, wirdsList.length);
+      }
+
       if (shouldClose && typeof closeWirdDrawer === 'function') {
         closeWirdDrawer();
+        setTimeout(() => { window.location.reload(); }, 1000);
       }
     }
   } finally {
@@ -211,4 +218,21 @@ window.showDrawerToast = function showDrawerToast(message, type = 'success') {
     toast.classList.remove('show');
     setTimeout(() => toast.remove(), 300);
   }, 3500);
+};
+
+window.updateStudentRowStatusOptimistically = function updateStudentRowStatusOptimistically(studentId, count) {
+  if (!studentId) return;
+  const rows = document.querySelectorAll(`[data-id="${studentId}"]`);
+  rows.forEach((row) => {
+    row.dataset.todayRecorded = 'true';
+    row.dataset.active = 'true';
+
+    // Find the status pill in the row/card
+    const pill = row.querySelector('.record-status-pill');
+    if (pill) {
+      pill.className = 'record-status-pill status-recorded-today';
+      pill.title = `تم تسجيل ${count || 1} أوراد لهذا الطالب اليوم`;
+      pill.innerHTML = `<i class='bx bx-check-circle'></i> ${count || 1} مسجلة اليوم`;
+    }
+  });
 };

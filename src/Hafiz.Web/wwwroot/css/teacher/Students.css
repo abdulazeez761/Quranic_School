@@ -445,6 +445,53 @@
   border: 1px solid var(--t-border);
 }
 
+/* Unrated Wirds Pill (For Matn & Quran Unrated Status) */
+.unrated-wird-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 0.22rem 0.65rem;
+  border-radius: var(--t-radius-full, 9999px);
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.unrated-wird-pill.warning {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+  box-shadow: 0 1px 2px rgba(180, 83, 9, 0.05);
+}
+
+.unrated-wird-pill.warning i {
+  color: #d97706;
+  font-size: 0.95rem;
+}
+
+.unrated-wird-pill.success {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.unrated-wird-pill.success i {
+  color: #16a34a;
+  font-size: 0.95rem;
+}
+
+.unrated-wird-pill.muted {
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+.unrated-wird-pill.muted i {
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
 /* Action Buttons */
 .record-actions-block {
   display: flex;

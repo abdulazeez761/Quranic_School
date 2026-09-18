@@ -1,0 +1,155 @@
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+<!-- Load dedicated styles for Edit Modal -->
+<link rel="stylesheet" href="~/css/teacher/modals/editWirdModal.css" asp-append-version="true" />
+
+<div id="editMatnModal" class="modal-overlay">
+    <div class="modal-container">
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <div class="modal-header-info">
+                <div class="modal-header-icon" style="background: var(--t-matn-light, #eff6ff); color: var(--t-matn, #3b82f6); box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.2);">
+                    <i class='bx bx-book-bookmark'></i>
+                </div>
+                <div>
+                    <h2 class="modal-title">تعديل ورد المتن</h2>
+                    <div class="modal-subtitle">
+                        <span class="edit-modal-student-tag" style="background: rgba(59, 130, 246, 0.1); color: var(--t-matn, #2563eb);">
+                            <i class='bx bx-user'></i>
+                            <span id="matnEditStudentName"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="modal-close" onclick="closeEditMatnModal()" title="@Localizer["Cancel"]" aria-label="@Localizer["Cancel"]">
+                <i class='bx bx-x'></i>
+            </button>
+        </div>
+
+        <form id="matnEditAssignmentForm" method="post" action="/Teacher/Wird/EditMatn">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="matnEditId" name="Id" />
+            <input type="hidden" id="matnEditStudentId" name="StudentId" />
+
+            <div class="modal-body">
+                <!-- Section 1: Type & Amount -->
+                <div class="edit-modal-section">
+                    <div class="section-badge" style="color: var(--t-matn, #2563eb); border-bottom-color: rgba(37, 99, 235, 0.2);">
+                        <i class='bx bx-layer'></i>
+                        <span>نوع الأداء والمقدار</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="matnEditPerformanceType">نموذج الأداء</label>
+                        <select class="form-control" id="matnEditPerformanceType" name="PerformanceType" required>
+                            <option value="1">حفظ جديد</option>
+                            <option value="2">مراجعة</option>
+                            <option value="3">مدارسة</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half-width">
+                            <label class="form-label" for="matnEditAmount">المقدار (الكمية)</label>
+                            <input type="number" class="form-control" id="matnEditAmount" name="Amount" min="0.1" step="any"
+                                   placeholder="المقدار..." />
+                        </div>
+                        <div class="form-group half-width">
+                            <label class="form-label" for="matnEditUnit">وحدة القياس</label>
+                            <select class="form-control" id="matnEditUnit" name="Unit" required>
+                                <option value="1">أبيات</option>
+                                <option value="2">سطور</option>
+                                <option value="3">صفحات</option>
+                                <option value="4">أبواب</option>
+                                <option value="5">أحاديث</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Chapter & Range -->
+                <div class="edit-modal-section range-section">
+                    <div class="section-badge" style="color: var(--t-matn, #2563eb); border-bottom-color: rgba(37, 99, 235, 0.2);">
+                        <i class='bx bx-book-open'></i>
+                        <span>موضع التسميع والنطاق</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="matnEditChapterName">اسم المتن أو الباب</label>
+                        <input type="text" class="form-control" id="matnEditChapterName" name="ChapterName" maxlength="150"
+                               placeholder="مثال: الأربعون النووية: الحديث 1..." />
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half-width">
+                            <label class="form-label" for="matnEditFromNumber">من رقم</label>
+                            <input type="number" class="form-control" id="matnEditFromNumber" name="FromNumber" min="1"
+                                   placeholder="رقم البداية..." />
+                        </div>
+                        <div class="form-group half-width">
+                            <label class="form-label" for="matnEditToNumber">إلى رقم</label>
+                            <input type="number" class="form-control" id="matnEditToNumber" name="ToNumber" min="1"
+                                   placeholder="رقم النهاية..." />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Grade, Notes & Options -->
+                <div class="edit-modal-section">
+                    <div class="section-badge" style="color: var(--t-matn, #2563eb); border-bottom-color: rgba(37, 99, 235, 0.2);">
+                        <i class='bx bx-slider-alt'></i>
+                        <span>التقييم والملاحظات</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="matnEditGrade">التقييم</label>
+                        <select class="form-control" id="matnEditGrade" name="Status">
+                            <option value="0">لم يُحدد</option>
+                            <option value="1">ضعيف</option>
+                            <option value="2">مقبول</option>
+                            <option value="3">جيد</option>
+                            <option value="4">جيد جداً</option>
+                            <option value="5">ممتاز</option>
+                        </select>
+                        <small id="matnGradeUpcomingNotice" class="form-text" style="display: none; color: #7c3aed; font-weight: 600; font-size: 0.8rem; margin-top: 6px;">
+                            <i class='bx bx-calendar-star'></i> تم تجميد التقييم لأن هذا الورد محدد كـ "ورد قادم" (لم يُسمّع بعد).
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="matnEditNote">ملاحظة المعلم (اختياري)</label>
+                        <textarea class="form-control" id="matnEditNote" name="Note" rows="2" maxlength="500"
+                                  placeholder="أي ملاحظات للمعلم أو الطالب..."></textarea>
+                    </div>
+
+                    <div class="form-group mb-0">
+                        <div class="upcoming-toggle">
+                            <label class="upcoming-toggle-text" for="matnEditIsUpcoming">
+                                <span class="upcoming-toggle-icon"><i class='bx bx-calendar-star'></i></span>
+                                <span class="upcoming-toggle-copy">
+                                    <span class="upcoming-toggle-title">ورد قادم (لم يُسمّع بعد)</span>
+                                    <small class="upcoming-toggle-hint">تحديد هذا الخيار يحفظ الورد كتكليف قادم ويجمد التقييم مؤقتاً</small>
+                                </span>
+                            </label>
+                            <label class="switch">
+                                <input type="checkbox" id="matnEditIsUpcoming" name="IsUpcoming" value="true" />
+                                <span class="switch-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeEditMatnModal()">@Localizer["Cancel"]</button>
+                <button type="submit" class="btn btn-primary" style="background: var(--t-matn, #2563eb); border-color: var(--t-matn, #2563eb); box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);">
+                    <i class='bx bx-check-circle'></i>
+                    <span>حفظ التعديلات</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="~/js/teacher_portal/modals/editMatnModal.js" asp-append-version="true"></script>

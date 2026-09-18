@@ -33,12 +33,32 @@ document.addEventListener('click', async function (e) {
   btn.classList.add('active', 'seg-pop');
   setTimeout(() => btn.classList.remove('seg-pop'), 450);
 
-  // 2. Update status badge immediately
-  if (cardStatusBadge) {
-    cardStatusBadge.innerText = originalText;
-    cardStatusBadge.className = `wird-status-badge status-${lowerStatus}`;
-    cardStatusBadge.classList.add('badge-pop');
-    setTimeout(() => cardStatusBadge.classList.remove('badge-pop'), 400);
+  // Optimistically remove upcoming state because rating and upcoming are mutually exclusive
+  const upcomingBadge = card.querySelector('.upcoming-badge');
+  if (upcomingBadge) {
+    upcomingBadge.style.display = 'none';
+  }
+  card.classList.remove('is-upcoming');
+  card.dataset.upcoming = 'false';
+
+  // 2. Update or create status badge immediately
+  let badgeToUpdate = cardStatusBadge;
+  if (!badgeToUpdate) {
+    const badgesWrap = card.querySelector('.wird-header-title .d-flex.gap-1') ||
+                       card.querySelector('.wird-header-title .d-flex:last-child');
+    if (badgesWrap) {
+      badgeToUpdate = document.createElement('span');
+      badgeToUpdate.className = `wird-status-badge status-${lowerStatus}`;
+      badgesWrap.appendChild(badgeToUpdate);
+    }
+  }
+
+  if (badgeToUpdate) {
+    badgeToUpdate.style.display = '';
+    badgeToUpdate.innerText = originalText;
+    badgeToUpdate.className = `wird-status-badge status-${lowerStatus}`;
+    badgeToUpdate.classList.add('badge-pop');
+    setTimeout(() => badgeToUpdate.classList.remove('badge-pop'), 400);
   }
 
   // 3. Update card classes

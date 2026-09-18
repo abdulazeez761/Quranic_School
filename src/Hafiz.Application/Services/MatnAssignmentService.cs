@@ -95,6 +95,43 @@ public class MatnAssignmentService : IMatnAssignmentService
         return (true, "تم رصد التسميع بنجاح.", created.Id);
     }
 
+    public async Task<(bool Success, string Message)> UpdateAsync(EditMatnAssignmentDto dto, Guid teacherId)
+    {
+        if (dto == null)
+            return (false, "البيانات غير صالحة.");
+
+        var assignment = await _assignmentRepository.GetByIdAsync(dto.Id);
+        if (assignment == null)
+            return (false, "سجل الورد غير موجود.");
+
+        var cls = await _classRepository.GetById(assignment.ClassId);
+        if (cls != null && !cls.Teachers.Any(t => t.UserId == teacherId))
+            return (false, "غير مصرح لك بتعديل الورد في هذه الحلقة.");
+
+        assignment.PerformanceType = dto.PerformanceType;
+        assignment.Unit = dto.Unit;
+        assignment.Amount = dto.Amount;
+        assignment.ChapterName = dto.ChapterName?.Trim();
+        assignment.FromNumber = dto.FromNumber;
+        assignment.ToNumber = dto.ToNumber;
+        if (dto.IsUpcoming)
+        {
+            assignment.IsUpcoming = true;
+            assignment.Status = AssignmentStatus.notSet;
+            assignment.IsCompleted = false;
+        }
+        else
+        {
+            assignment.IsUpcoming = false;
+            assignment.Status = dto.Status;
+            assignment.IsCompleted = dto.Status != AssignmentStatus.notSet;
+        }
+        assignment.Note = dto.Note?.Trim();
+
+        var updated = await _assignmentRepository.UpdateAsync(assignment);
+        return updated ? (true, "تم تحديث ورد المتن بنجاح.") : (false, "فشل حفظ التعديلات.");
+    }
+
     public async Task<(bool Success, string Message)> UpdateStatusAsync(UpdateMatnStatusDto dto, Guid teacherId)
     {
         var assignment = await _assignmentRepository.GetByIdAsync(dto.Id);
@@ -102,7 +139,17 @@ public class MatnAssignmentService : IMatnAssignmentService
             return (false, "السجل غير موجود.");
 
         assignment.Status = dto.Status;
-        assignment.IsCompleted = dto.Status != AssignmentStatus.notSet;
+        if (dto.Status != AssignmentStatus.notSet)
+        {
+            assignment.IsCompleted = true;
+            assignment.IsUpcoming = false;
+        }
+        else
+        {
+            assignment.IsCompleted = false;
+            assignment.IsUpcoming = true;
+        }
+
         if (!string.IsNullOrWhiteSpace(dto.Note))
         {
             assignment.Note = dto.Note.Trim();

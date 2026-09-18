@@ -5,8 +5,15 @@
 
 @{
     var statusClass = Model.Status.ToString().ToLower();
-    var statusKey = Model.Status.ToString();
-    var localizedStatus = Localizer[char.ToUpper(statusKey[0]) + statusKey.Substring(1)];
+    var statusArabic = Model.Status switch
+    {
+        AssignmentStatus.excellent => "ممتاز",
+        AssignmentStatus.veryGood => "جيد جداً",
+        AssignmentStatus.good => "جيد",
+        AssignmentStatus.fair => "مقبول",
+        AssignmentStatus.poor => "ضعيف",
+        _ => "لم يُحدد"
+    };
 
     var stripeClass = Model.PerformanceType switch
     {
@@ -41,33 +48,33 @@
 
     <!-- CARD HEADER: Student Profile & Status -->
     <div class="wird-card-header">
-        <div class="d-flex align-items-center justify-content-between w-100 gap-2 flex-wrap">
+        <div class="wird-header-title">
             <div class="d-flex align-items-center gap-2">
                 <div class="matn-student-avatar">
                     @(string.IsNullOrEmpty(initials) ? "ط" : initials)
                 </div>
-                <div>
-                    <h3 class="student-name mb-0">@Model.StudentName</h3>
-                    <div class="d-flex align-items-center gap-2 mt-1">
-                        <span class="wird-type-badge matn-badge">
-                            <i class='bx @perfIcon'></i>
-                            @Model.PerformanceTypeName
-                        </span>
-                        <span class="wird-date-badge">
-                            <i class='bx bx-calendar'></i>
-                            @Model.AssignedDate.ToString("MMM dd")
-                        </span>
-                    </div>
-                </div>
+                <h3 class="student-name mb-0">@Model.StudentName</h3>
             </div>
-
             <div class="d-flex align-items-center gap-1">
                 @if (Model.IsUpcoming)
                 {
                     @await Html.PartialAsync("_UpcomingBadge")
                 }
-                <span class="wird-status-badge status-@statusClass">@localizedStatus</span>
+                else
+                {
+                    <span class="wird-status-badge status-@statusClass">@statusArabic</span>
+                }
             </div>
+        </div>
+        <div class="wird-meta">
+            <span class="wird-type-badge matn-badge">
+                <i class='bx @perfIcon'></i>
+                @Model.PerformanceTypeName
+            </span>
+            <span class="wird-date-badge">
+                <i class='bx bx-calendar'></i>
+                @Model.AssignedDate.ToString("MMM dd")
+            </span>
         </div>
     </div>
 
@@ -84,7 +91,7 @@
             {
                 <div class="matn-chapter-badge">
                     <i class='bx bx-book-bookmark'></i>
-                    <span>@Model.ChapterName</span>
+                    <span class="matn-chapter-text">@Model.ChapterName</span>
                 </div>
             }
 
@@ -92,7 +99,7 @@
                 @if (hasRange)
                 {
                     <div class="matn-range-pills">
-                        <span class="text-muted small">@Model.UnitName:</span>
+                        <span class="matn-unit-label">@Model.UnitName:</span>
                         @if (Model.FromNumber.HasValue && Model.ToNumber.HasValue)
                         {
                             <span class="matn-range-pill">@Model.FromNumber</span>
@@ -145,31 +152,36 @@
     <!-- FOOTER: Segmented Rating + Actions -->
     <div class="card-footer">
         <div class="rating-segmented">
-            <button class="seg-btn seg-excellent status-button @(Model.Status == AssignmentStatus.excellent ? "active" : "")"
-                    data-status="@AssignmentStatus.excellent" data-id="@Model.Id" title="@Localizer["Excellent"]">
-                @Localizer["Excellent"]
+            <button type="button" class="seg-btn seg-excellent status-button @(!Model.IsUpcoming && Model.Status == AssignmentStatus.excellent ? "active" : "")"
+                    data-status="@AssignmentStatus.excellent" data-id="@Model.Id" title="ممتاز">
+                ممتاز
             </button>
-            <button class="seg-btn seg-verygood status-button @(Model.Status == AssignmentStatus.veryGood ? "active" : "")"
-                    data-status="@AssignmentStatus.veryGood" data-id="@Model.Id" title="@Localizer["VeryGood"]">
-                @Localizer["VeryGood"]
+            <button type="button" class="seg-btn seg-verygood status-button @(!Model.IsUpcoming && Model.Status == AssignmentStatus.veryGood ? "active" : "")"
+                    data-status="@AssignmentStatus.veryGood" data-id="@Model.Id" title="جيد جداً">
+                جيد جداً
             </button>
-            <button class="seg-btn seg-good status-button @(Model.Status == AssignmentStatus.good ? "active" : "")"
-                    data-status="@AssignmentStatus.good" data-id="@Model.Id" title="@Localizer["Good"]">
-                @Localizer["Good"]
+            <button type="button" class="seg-btn seg-good status-button @(!Model.IsUpcoming && Model.Status == AssignmentStatus.good ? "active" : "")"
+                    data-status="@AssignmentStatus.good" data-id="@Model.Id" title="جيد">
+                جيد
             </button>
-            <button class="seg-btn seg-fair status-button @(Model.Status == AssignmentStatus.fair ? "active" : "")"
-                    data-status="@AssignmentStatus.fair" data-id="@Model.Id" title="@Localizer["Fair"]">
-                @Localizer["Fair"]
+            <button type="button" class="seg-btn seg-fair status-button @(!Model.IsUpcoming && Model.Status == AssignmentStatus.fair ? "active" : "")"
+                    data-status="@AssignmentStatus.fair" data-id="@Model.Id" title="مقبول">
+                مقبول
             </button>
-            <button class="seg-btn seg-poor status-button @(Model.Status == AssignmentStatus.poor ? "active" : "")"
-                    data-status="@AssignmentStatus.poor" data-id="@Model.Id" title="@Localizer["Poor"]">
-                @Localizer["Poor"]
+            <button type="button" class="seg-btn seg-poor status-button @(!Model.IsUpcoming && Model.Status == AssignmentStatus.poor ? "active" : "")"
+                    data-status="@AssignmentStatus.poor" data-id="@Model.Id" title="ضعيف">
+                ضعيف
             </button>
         </div>
 
         <div class="card-actions">
-            <button class="card-action-btn" data-assignment-id="@Model.Id" title="@Localizer["AddNotes"]">
+            <button type="button" class="card-action-btn" data-assignment-id="@Model.Id" title="إضافة ملاحظات">
                 <i class='bx bx-note'></i>
+            </button>
+            <button type="button" class="card-action-btn"
+                    onclick="openEditMatnModal('@Model.Id', '@Model.StudentId', '@Model.StudentName')"
+                    title="تعديل">
+                <i class='bx bx-edit'></i>
             </button>
             <form method="post" asp-controller="Wird" asp-action="Delete" asp-route-id="@Model.Id"
                   class="d-inline delete-form">

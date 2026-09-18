@@ -13,6 +13,7 @@ public interface IMatnAssignmentService
     Task<IEnumerable<MatnAssignmentDto>> GetByClassIdAsync(Guid classId, DateTime? fromDate = null, DateTime? toDate = null);
     Task<IEnumerable<MatnAssignmentDto>> GetByStudentIdAsync(Guid studentId);
     Task<(bool Success, string Message, Guid? Id)> AssignAsync(AssignMatnDto dto, Guid teacherId);
+    Task<(bool Success, string Message)> UpdateAsync(EditMatnAssignmentDto dto, Guid teacherId);
     Task<(bool Success, string Message)> UpdateStatusAsync(UpdateMatnStatusDto dto, Guid teacherId);
     Task<(bool Success, string Message)> DeleteAsync(Guid id, Guid teacherId);
 }

@@ -224,6 +224,9 @@ namespace Hafiz.Areas.Teacher.Controllers
                     new
                     {
                         matn.Id,
+                        matn.StudentId,
+                        matn.StudentName,
+                        PerformanceType = (int)matn.PerformanceType,
                         Type = (int)matn.PerformanceType,
                         matn.PerformanceTypeName,
                         matn.Amount,
@@ -232,7 +235,7 @@ namespace Hafiz.Areas.Teacher.Controllers
                         matn.ChapterName,
                         matn.FromNumber,
                         matn.ToNumber,
-                        matn.Status,
+                        Status = (int)matn.Status,
                         matn.IsUpcoming,
                         matn.Note
                     }
@@ -240,6 +243,33 @@ namespace Hafiz.Areas.Teacher.Controllers
             }
 
             return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditMatn(EditMatnAssignmentDto dto)
+        {
+            var teacherId = GetTeacherId();
+            if (teacherId == Guid.Empty)
+                return Forbid();
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("بيانات غير صالحة.");
+            }
+
+            var (success, message) = await _matnAssignmentService.UpdateAsync(dto, teacherId);
+            if (!success)
+            {
+                return BadRequest(message);
+            }
+
+            var updatedMatn = await _matnAssignmentService.GetByIdAsync(dto.Id);
+            if (updatedMatn == null)
+            {
+                return NotFound();
+            }
+
+            return PartialView("_MatnCard", updatedMatn);
         }
 
         [HttpPost]

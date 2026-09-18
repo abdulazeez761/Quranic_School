@@ -105,6 +105,12 @@ namespace Hafiz.Areas.Teacher.Controllers
             var isMatnClass = (classDto?.ProgramType == Hafiz.Domain.Enums.ProgramType.Matn);
             Dictionary<Guid, (int active, int completed)> matnCountsByStudent = new();
             Dictionary<Guid, int> matnTodayCountsByStudent = new();
+            Dictionary<Guid, int> matnUnratedCountsByStudent = new();
+
+            var userToday = TimeZoneHelper.GetUserToday(HttpContext);
+            var serverToday = DateTime.Today;
+            var utcToday = DateTime.UtcNow.Date;
+
             if (isMatnClass)
             {
                 var classMatnAssignments = await _matnAssignmentService.GetByClassIdAsync(selectedClass.Value);
@@ -119,10 +125,36 @@ namespace Hafiz.Areas.Teacher.Controllers
                     );
 
                 matnTodayCountsByStudent = classMatnAssignments
-                    .Where(m => m.AssignedDate.Date == DateTime.Today || m.AssignedDate.ToLocalTime().Date == DateTime.Today)
+                    .Where(m => m.AssignedDate.Date == userToday
+                             || m.AssignedDate.Date == serverToday
+                             || m.AssignedDate.Date == utcToday
+                             || m.AssignedDate.ToLocalTime().Date == userToday
+                             || m.AssignedDate.ToLocalTime().Date == serverToday)
+                    .GroupBy(m => m.StudentId)
+                    .ToDictionary(g => g.Key, g => g.Count());
+
+                matnUnratedCountsByStudent = classMatnAssignments
+                    .Where(m => m.Status == AssignmentStatus.notSet && !m.IsUpcoming)
                     .GroupBy(m => m.StudentId)
                     .ToDictionary(g => g.Key, g => g.Count());
             }
+
+            // Quran today counts calculated safely across all timezones
+            var quranTodayCountsByStudent = studentList.ToDictionary(
+                s => s.UserId,
+                s => s.wirds?.Count(w => 
+                    w.AssignedDate.Date == userToday 
+                    || w.AssignedDate.Date == serverToday 
+                    || w.AssignedDate.Date == utcToday 
+                    || w.AssignedDate.ToLocalTime().Date == userToday 
+                    || w.AssignedDate.ToLocalTime().Date == serverToday) ?? 0
+            );
+
+            // Quran unrated counts (status == notSet and not upcoming)
+            var quranUnratedCountsByStudent = studentList.ToDictionary(
+                s => s.UserId,
+                s => s.wirds?.Count(w => w.Status == AssignmentStatus.notSet && !w.IsUpcoming) ?? 0
+            );
 
             ViewBag.TotalStudents = totalStudents;
             ViewBag.BoysCount = boysCount;
@@ -131,6 +163,9 @@ namespace Hafiz.Areas.Teacher.Controllers
             ViewBag.IsMatnClass = isMatnClass;
             ViewBag.MatnCountsByStudent = matnCountsByStudent;
             ViewBag.MatnTodayCountsByStudent = matnTodayCountsByStudent;
+            ViewBag.MatnUnratedCountsByStudent = matnUnratedCountsByStudent;
+            ViewBag.QuranTodayCountsByStudent = quranTodayCountsByStudent;
+            ViewBag.QuranUnratedCountsByStudent = quranUnratedCountsByStudent;
             ViewBag.StudyProgramName = classDto?.StudyProgramName;
             ViewBag.AssignedMatnTitle = classDto?.MatnTitle ?? classDto?.StudyProgramName;
             ViewBag.ClassDto = classDto;

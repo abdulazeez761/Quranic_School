@@ -262,7 +262,11 @@ async function saveAndNextStudent() {
             text: `تم حفظ وتقييم أوراد جميع طلاب الحلقة (${window.classStudents.length} طالباً) بنجاح تام.`,
             confirmButtonText: 'ممتاز',
             confirmButtonColor: '#059669',
+          }).then(() => {
+            window.location.reload();
           });
+        } else {
+          setTimeout(() => { window.location.reload(); }, 1000);
         }
       }
     }

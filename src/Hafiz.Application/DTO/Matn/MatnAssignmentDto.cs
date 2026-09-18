@@ -87,3 +87,32 @@ public class UpdateMatnStatusDto
 
     public string? Note { get; set; }
 }
+
+public class EditMatnAssignmentDto
+{
+    [Required]
+    public Guid Id { get; set; }
+
+    public Guid StudentId { get; set; }
+
+    [Required]
+    public MatnPerformanceType PerformanceType { get; set; } = MatnPerformanceType.Memorization;
+
+    [Required]
+    public MatnUnit Unit { get; set; } = MatnUnit.Verses;
+
+    [Range(0.01, 9999.99, ErrorMessage = "الكمية يجب أن تكون أكبر من صفر.")]
+    public decimal? Amount { get; set; }
+
+    [StringLength(150)]
+    public string? ChapterName { get; set; }
+
+    public int? FromNumber { get; set; }
+    public int? ToNumber { get; set; }
+
+    public AssignmentStatus Status { get; set; } = AssignmentStatus.notSet;
+    public bool IsUpcoming { get; set; } = false;
+
+    [StringLength(500)]
+    public string? Note { get; set; }
+}

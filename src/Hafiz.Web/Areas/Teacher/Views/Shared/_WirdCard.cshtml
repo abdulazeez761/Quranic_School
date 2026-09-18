@@ -23,7 +23,10 @@
                 {
                     @await Html.PartialAsync("_UpcomingBadge")
                 }
-                <span class="wird-status-badge status-@statusClass">@localizedStatus</span>
+                else
+                {
+                    <span class="wird-status-badge status-@statusClass">@localizedStatus</span>
+                }
             </div>
         </div>
         <div class="wird-meta">
@@ -165,23 +168,23 @@
     <!-- FOOTER: segmented rating + actions -->
     <div class="card-footer">
         <div class="rating-segmented">
-            <button class="seg-btn seg-excellent status-button @(Model.Status == AssignmentStatus.excellent ? "active" : "")" 
+            <button class="seg-btn seg-excellent status-button @(!Model.IsUpcoming && Model.Status == AssignmentStatus.excellent ? "active" : "")" 
                     data-status="@AssignmentStatus.excellent" data-id="@Model.Id" title="@Localizer["Excellent"]">
                 @Localizer["Excellent"]
             </button>
-            <button class="seg-btn seg-verygood status-button @(Model.Status == AssignmentStatus.veryGood ? "active" : "")" 
+            <button class="seg-btn seg-verygood status-button @(!Model.IsUpcoming && Model.Status == AssignmentStatus.veryGood ? "active" : "")" 
                     data-status="@AssignmentStatus.veryGood" data-id="@Model.Id" title="@Localizer["VeryGood"]">
                 @Localizer["VeryGood"]
             </button>
-            <button class="seg-btn seg-good status-button @(Model.Status == AssignmentStatus.good ? "active" : "")" 
+            <button class="seg-btn seg-good status-button @(!Model.IsUpcoming && Model.Status == AssignmentStatus.good ? "active" : "")" 
                     data-status="@AssignmentStatus.good" data-id="@Model.Id" title="@Localizer["Good"]">
                 @Localizer["Good"]
             </button>
-            <button class="seg-btn seg-fair status-button @(Model.Status == AssignmentStatus.fair ? "active" : "")" 
+            <button class="seg-btn seg-fair status-button @(!Model.IsUpcoming && Model.Status == AssignmentStatus.fair ? "active" : "")" 
                     data-status="@AssignmentStatus.fair" data-id="@Model.Id" title="@Localizer["Fair"]">
                 @Localizer["Fair"]
             </button>
-            <button class="seg-btn seg-poor status-button @(Model.Status == AssignmentStatus.poor ? "active" : "")" 
+            <button class="seg-btn seg-poor status-button @(!Model.IsUpcoming && Model.Status == AssignmentStatus.poor ? "active" : "")" 
                     data-status="@AssignmentStatus.poor" data-id="@Model.Id" title="@Localizer["Poor"]">
                 @Localizer["Poor"]
             </button>

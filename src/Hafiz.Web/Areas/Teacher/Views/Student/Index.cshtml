@@ -18,7 +18,11 @@
     var isArabic = System.Threading.Thread.CurrentThread.CurrentCulture.Name.StartsWith("ar");
     var matnCounts = ViewBag.MatnCountsByStudent as Dictionary<Guid, (int active, int completed)>;
     var matnTodayCounts = ViewBag.MatnTodayCountsByStudent as Dictionary<Guid, int>;
+    var matnUnratedCounts = ViewBag.MatnUnratedCountsByStudent as Dictionary<Guid, int>;
+    var quranTodayCounts = ViewBag.QuranTodayCountsByStudent as Dictionary<Guid, int>;
+    var quranUnratedCounts = ViewBag.QuranUnratedCountsByStudent as Dictionary<Guid, int>;
     var isMatnClass = ViewBag.IsMatnClass == true;
+    var userToday = TimeZoneHelper.GetUserToday(Context);
 }
 
 <link rel="stylesheet" href="~/css/teacher/Students.css" asp-append-version="true" />
@@ -146,18 +150,33 @@
             if (student == null) continue;
             mobileIdx++;
             var isMatn = isMatnClass;
-            int mActive = 0, mCompleted = 0;
+            int mActive = 0, mCompleted = 0, mUnrated = 0;
             if (isMatn && matnCounts != null && matnCounts.ContainsKey(student.UserId))
             {
                 var mc = matnCounts[student.UserId];
                 mActive = mc.active;
                 mCompleted = mc.completed;
             }
+            if (isMatn && matnUnratedCounts != null && matnUnratedCounts.ContainsKey(student.UserId))
+            {
+                mUnrated = matnUnratedCounts[student.UserId];
+            }
+            else if (isMatn)
+            {
+                mUnrated = mActive;
+            }
 
-            // Calculate ONLY Today's Recorded Wirds
+            // Calculate ONLY Today's Recorded Wirds safely across timezones
             var todayWirdsCount = isMatn
                 ? (matnTodayCounts != null && matnTodayCounts.ContainsKey(student.UserId) ? matnTodayCounts[student.UserId] : 0)
-                : (student.wirds?.Count(w => w.AssignedDate.Date == DateTime.Today || w.AssignedDate.ToLocalTime().Date == DateTime.Today) ?? 0);
+                : (quranTodayCounts != null && quranTodayCounts.ContainsKey(student.UserId)
+                    ? quranTodayCounts[student.UserId]
+                    : (student.wirds?.Count(w => 
+                        w.AssignedDate.Date == userToday 
+                        || w.AssignedDate.Date == DateTime.Today 
+                        || w.AssignedDate.Date == DateTime.UtcNow.Date 
+                        || w.AssignedDate.ToLocalTime().Date == userToday 
+                        || w.AssignedDate.ToLocalTime().Date == DateTime.Today) ?? 0));
             var hasRecordedToday = todayWirdsCount > 0;
 
             var firstName = student.StudentInfo?.FirstName ?? string.Empty;
@@ -230,10 +249,24 @@
                                 }
                                 else
                                 {
-                                    <span class="record-stat-pill matn-pill" title="حالة المتون">
-                                        <i class='bx bx-bookmarks'></i>
-                                        @(mActive > 0 ? $"{mActive} متون جارية" : (mCompleted > 0 ? $"{mCompleted} منجز" : "جاهز للإسناد"))
-                                    </span>
+                                    @if (mUnrated > 0)
+                                    {
+                                        <span class="unrated-wird-pill warning" title="@mUnrated أوراد بانتظار التقييم">
+                                            <i class='bx bx-time-five'></i> @mUnrated بانتظار التقييم
+                                        </span>
+                                    }
+                                    else if (mCompleted > 0)
+                                    {
+                                        <span class="unrated-wird-pill success" title="تم تقييم جميع الأوراد (@mCompleted منجز)">
+                                            <i class='bx bx-check-double'></i> الكل مقيّم (@mCompleted)
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="unrated-wird-pill muted" title="لا توجد أوراد معلقة">
+                                            <i class='bx bx-minus'></i> لا توجد أوراد
+                                        </span>
+                                    }
                                 }
 
                                 @if (hasRecordedToday)
@@ -297,7 +330,7 @@
                 <tr>
                     <th class="col-num">#</th>
                     <th class="col-student">@Localizer["Students"]</th>
-                    <th class="col-juz">@(isMatnClass ? "المتون المقررة" : "مقدار الحفظ")</th>
+                    <th class="col-juz">@(isMatnClass ? "أوراد بانتظار التقييم" : "مقدار الحفظ")</th>
                     <th class="col-active">تسميع اليوم</th>
                     <th class="col-actions">الإجراءات المباشرة</th>
                 </tr>
@@ -311,18 +344,33 @@
                     if (student == null) continue;
                     rowIdx++;
                     var isMatnRow = isMatnClass;
-                    int rActiveCount = 0, rCompletedCount = 0;
+                    int rActiveCount = 0, rCompletedCount = 0, rUnratedCount = 0;
                     if (isMatnRow && matnCounts != null && matnCounts.ContainsKey(student.UserId))
                     {
                         var mc = matnCounts[student.UserId];
                         rActiveCount = mc.active;
                         rCompletedCount = mc.completed;
                     }
+                    if (isMatnRow && matnUnratedCounts != null && matnUnratedCounts.ContainsKey(student.UserId))
+                    {
+                        rUnratedCount = matnUnratedCounts[student.UserId];
+                    }
+                    else if (isMatnRow)
+                    {
+                        rUnratedCount = rActiveCount;
+                    }
 
-                    // Calculate ONLY Today's Recorded Wirds
+                    // Calculate ONLY Today's Recorded Wirds safely across timezones
                     var rTodayWirdsCount = isMatnRow
                         ? (matnTodayCounts != null && matnTodayCounts.ContainsKey(student.UserId) ? matnTodayCounts[student.UserId] : 0)
-                        : (student.wirds?.Count(w => w.AssignedDate.Date == DateTime.Today || w.AssignedDate.ToLocalTime().Date == DateTime.Today) ?? 0);
+                        : (quranTodayCounts != null && quranTodayCounts.ContainsKey(student.UserId)
+                            ? quranTodayCounts[student.UserId]
+                            : (student.wirds?.Count(w => 
+                                w.AssignedDate.Date == userToday 
+                                || w.AssignedDate.Date == DateTime.Today 
+                                || w.AssignedDate.Date == DateTime.UtcNow.Date 
+                                || w.AssignedDate.ToLocalTime().Date == userToday 
+                                || w.AssignedDate.ToLocalTime().Date == DateTime.Today) ?? 0));
                     var rHasRecordedToday = rTodayWirdsCount > 0;
 
                     var rFirstName = student.StudentInfo?.FirstName ?? string.Empty;
@@ -403,10 +451,24 @@
                             else
                             {
                                 <div class="row-matn-meta">
-                                    <span class="matn-status-text">
-                                        <i class='bx bx-bookmarks text-primary'></i>
-                                        @(rActiveCount > 0 ? $"{rActiveCount} متون جارية" : (rCompletedCount > 0 ? $"{rCompletedCount} منجز" : "جاهز للإسناد"))
-                                    </span>
+                                    @if (rUnratedCount > 0)
+                                    {
+                                        <span class="unrated-wird-pill warning" title="@rUnratedCount أوراد بانتظار التقييم">
+                                            <i class='bx bx-time-five'></i> @rUnratedCount بانتظار التقييم
+                                        </span>
+                                    }
+                                    else if (rCompletedCount > 0)
+                                    {
+                                        <span class="unrated-wird-pill success" title="تم تقييم جميع الأوراد (@rCompletedCount منجز)">
+                                            <i class='bx bx-check-double'></i> الكل مقيّم (@rCompletedCount)
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="unrated-wird-pill muted" title="لا توجد أوراد معلقة">
+                                            <i class='bx bx-minus'></i> لا توجد أوراد
+                                        </span>
+                                    }
                                 </div>
                             }
                         </td>
