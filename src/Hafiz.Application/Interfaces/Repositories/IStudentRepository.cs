@@ -14,6 +14,7 @@ namespace Hafiz.Repositories.Interfaces
         Task AddAsync(User user, Student ReceivedStudent);
         Task<Student?> GetByIdAsync(Guid id, Guid? instituteId = null);
         Task<Student?> GetStudentBasicByIdAsync(Guid id, Guid? instituteId = null);
+        Task<Student?> GetStudentWithClassesAsync(Guid id, Guid? instituteId = null);
         Task<Student?> GetByEmailAsync(string email);
         Task<bool> DeleteAsync(Guid id, Guid? instituteId = null);
         Task UpdateAsync(EditStudentDto student);

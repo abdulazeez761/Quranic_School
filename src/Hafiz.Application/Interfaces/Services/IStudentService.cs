@@ -29,6 +29,7 @@ namespace Hafiz.Services.Interfaces
         // Student Portal Methods
         public Task<Student?> GetStudentByUserIdAsync(Guid userId);
         public Task<Student?> GetStudentByIdAsync(Guid studentId, Guid? instituteId = null);
+        public Task<Student?> GetStudentWithClassesAsync(Guid studentId, Guid? instituteId = null);
         public Task<IEnumerable<StudentAttendance>> GetStudentAttendanceAsync(Guid studentId);
         public Task<IEnumerable<WirdAssignment>> GetStudentWirdsAsync(Guid studentId);
         public Task<Hafiz.DTOs.Wird.PaginatedWirdsResponse> GetStudentWirdsPaginatedAsync(

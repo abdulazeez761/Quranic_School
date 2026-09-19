@@ -406,7 +406,7 @@ namespace Hafiz.Areas.Teacher.Controllers
             if (!instituteId.HasValue)
                 return BadRequest(new { success = false, message = "تعذر تحديد المركز التابع له." });
 
-            var student = await _studentService.GetStudentByIdAsync(studentId, instituteId.Value);
+            var student = await _studentService.GetStudentWithClassesAsync(studentId, instituteId.Value);
             if (student == null)
             {
                 return NotFound(new { success = false, message = "تعذر العثور على بيانات الطالب في هذا المركز." });

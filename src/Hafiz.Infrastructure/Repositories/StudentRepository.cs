@@ -98,6 +98,23 @@ namespace Hafiz.Repositories
             return await query.FirstOrDefaultAsync(s => s.UserId == id);
         }
 
+        public async Task<Student?> GetStudentWithClassesAsync(Guid id, Guid? instituteId = null)
+        {
+            var query = _context
+                .Students.Include(t => t.StudentInfo)
+                .Include(s => s.Classes)
+                .ThenInclude(c => c.Teachers)
+                .AsNoTracking()
+                .AsQueryable();
+
+            if (instituteId.HasValue)
+            {
+                query = query.Where(s => s.StudentInfo.InstituteId == instituteId.Value);
+            }
+
+            return await query.FirstOrDefaultAsync(t => t.UserId == id);
+        }
+
         public async Task UpdateAsync(EditStudentDto student)
         {
             var existingStudent = await _context

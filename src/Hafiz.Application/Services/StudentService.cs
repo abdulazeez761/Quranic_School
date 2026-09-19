@@ -276,6 +276,11 @@ namespace Hafiz.Services
             return await _studentRepository.GetByIdAsync(studentId, instituteId);
         }
 
+        public async Task<Student?> GetStudentWithClassesAsync(Guid studentId, Guid? instituteId = null)
+        {
+            return await _studentRepository.GetStudentWithClassesAsync(studentId, instituteId);
+        }
+
         public async Task<IEnumerable<StudentAttendance>> GetStudentAttendanceAsync(Guid studentId)
         {
             var student = await _studentRepository.GetByIdAsync(studentId);

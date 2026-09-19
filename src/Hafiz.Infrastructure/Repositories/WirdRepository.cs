@@ -91,54 +91,57 @@ namespace Hafiz.Repositories
             WirdAssignment? recitation
         )> GetLatestWirdsForContextAsync(Guid studentId, DateTime todayDate)
         {
+            var todayStart = todayDate.Date;
+
+            // Fast single query to fetch recent assignments for this student
+            var recentWirds = await _context
+                .WirdAssignments
+                .AsNoTracking()
+                .Where(w => w.StudentId == studentId)
+                .OrderByDescending(w => w.AssignedDate)
+                .Take(40)
+                .ToListAsync();
+
             var baseQuery = _context
-                .WirdAssignments.IgnoreQueryFilters()
+                .WirdAssignments
                 .AsNoTracking()
                 .Where(w => w.StudentId == studentId);
 
-            var todayStart = todayDate.Date;
-
             // Memorization
-            var memQuery = baseQuery.Where(w => w.Type == AssignmentType.Memorization);
-            var lastMem =
-                await memQuery
-                    .Where(w => w.AssignedDate < todayStart)
-                    .OrderByDescending(w => w.AssignedDate)
-                    .FirstOrDefaultAsync()
-                ?? await memQuery.OrderByDescending(w => w.AssignedDate).FirstOrDefaultAsync();
+            var memList = recentWirds.Where(w => w.Type == AssignmentType.Memorization).ToList();
+            var lastMem = memList.FirstOrDefault(w => w.AssignedDate < todayStart) ?? memList.FirstOrDefault();
+            if (lastMem == null && !recentWirds.Any(w => w.Type == AssignmentType.Memorization))
+            {
+                var memQuery = baseQuery.Where(w => w.Type == AssignmentType.Memorization);
+                lastMem = await memQuery.OrderByDescending(w => w.AssignedDate).FirstOrDefaultAsync();
+            }
 
             // Recent Revision (AmountUnit != Juz)
-            var recentRevQuery = baseQuery.Where(w =>
-                w.Type == AssignmentType.Revision && w.AmountUnit != WirdUnit.Juz
-            );
-            var lastRecentRev =
-                await recentRevQuery
-                    .Where(w => w.AssignedDate < todayStart)
-                    .OrderByDescending(w => w.AssignedDate)
-                    .FirstOrDefaultAsync()
-                ?? await recentRevQuery
-                    .OrderByDescending(w => w.AssignedDate)
-                    .FirstOrDefaultAsync();
+            var recentRevList = recentWirds.Where(w => w.Type == AssignmentType.Revision && w.AmountUnit != WirdUnit.Juz).ToList();
+            var lastRecentRev = recentRevList.FirstOrDefault(w => w.AssignedDate < todayStart) ?? recentRevList.FirstOrDefault();
+            if (lastRecentRev == null && !recentWirds.Any(w => w.Type == AssignmentType.Revision && w.AmountUnit != WirdUnit.Juz))
+            {
+                var recentRevQuery = baseQuery.Where(w => w.Type == AssignmentType.Revision && w.AmountUnit != WirdUnit.Juz);
+                lastRecentRev = await recentRevQuery.OrderByDescending(w => w.AssignedDate).FirstOrDefaultAsync();
+            }
 
             // Old Revision (AmountUnit == Juz)
-            var oldRevQuery = baseQuery.Where(w =>
-                w.Type == AssignmentType.Revision && w.AmountUnit == WirdUnit.Juz
-            );
-            var lastOldRev =
-                await oldRevQuery
-                    .Where(w => w.AssignedDate < todayStart)
-                    .OrderByDescending(w => w.AssignedDate)
-                    .FirstOrDefaultAsync()
-                ?? await oldRevQuery.OrderByDescending(w => w.AssignedDate).FirstOrDefaultAsync();
+            var oldRevList = recentWirds.Where(w => w.Type == AssignmentType.Revision && w.AmountUnit == WirdUnit.Juz).ToList();
+            var lastOldRev = oldRevList.FirstOrDefault(w => w.AssignedDate < todayStart) ?? oldRevList.FirstOrDefault();
+            if (lastOldRev == null && !recentWirds.Any(w => w.Type == AssignmentType.Revision && w.AmountUnit == WirdUnit.Juz))
+            {
+                var oldRevQuery = baseQuery.Where(w => w.Type == AssignmentType.Revision && w.AmountUnit == WirdUnit.Juz);
+                lastOldRev = await oldRevQuery.OrderByDescending(w => w.AssignedDate).FirstOrDefaultAsync();
+            }
 
             // Recitation (Tajwid)
-            var tajwidQuery = baseQuery.Where(w => w.Type == AssignmentType.Tajwid);
-            var lastRecitation =
-                await tajwidQuery
-                    .Where(w => w.AssignedDate < todayStart)
-                    .OrderByDescending(w => w.AssignedDate)
-                    .FirstOrDefaultAsync()
-                ?? await tajwidQuery.OrderByDescending(w => w.AssignedDate).FirstOrDefaultAsync();
+            var tajwidList = recentWirds.Where(w => w.Type == AssignmentType.Tajwid).ToList();
+            var lastRecitation = tajwidList.FirstOrDefault(w => w.AssignedDate < todayStart) ?? tajwidList.FirstOrDefault();
+            if (lastRecitation == null && !recentWirds.Any(w => w.Type == AssignmentType.Tajwid))
+            {
+                var tajwidQuery = baseQuery.Where(w => w.Type == AssignmentType.Tajwid);
+                lastRecitation = await tajwidQuery.OrderByDescending(w => w.AssignedDate).FirstOrDefaultAsync();
+            }
 
             return (lastMem, lastRecentRev, lastOldRev, lastRecitation);
         }
@@ -152,7 +155,7 @@ namespace Hafiz.Repositories
             var tomorrowDate = todayStartDate.AddDays(1);
 
             return await _context
-                .WirdAssignments.IgnoreQueryFilters()
+                .WirdAssignments
                 .AsNoTracking()
                 .Where(w =>
                     w.StudentId == studentId

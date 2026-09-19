@@ -54,14 +54,16 @@ function updateUnitRadioUI(typeKey, unitVal) {
 
     const unit = parseInt(unitVal, 10);
     const targetRadio = unitGroup.querySelector(`input[type="radio"][value="${unit}"]`);
-    const targetOpt = targetRadio ? targetRadio.closest('.unit-radio-option') : null;
+    if (!targetRadio) return;
+
+    const targetOpt = targetRadio.closest('.unit-radio-option');
     const prevOpt = unitGroup.querySelector('.unit-radio-option.is-selected');
 
     if (prevOpt !== targetOpt) {
         if (prevOpt) prevOpt.classList.remove('is-selected');
         if (targetOpt) targetOpt.classList.add('is-selected');
     }
-    if (targetRadio && !targetRadio.checked) {
+    if (!targetRadio.checked) {
         targetRadio.checked = true;
     }
 }
@@ -166,13 +168,23 @@ function syncUpcomingRatingState(typeKey, isUpcoming) {
     }
 
     if (badge && isUpcoming) {
-        badge.className = 'wird-rating-badge rate-upcoming';
-        badge.innerHTML = "<i class='bx bx-calendar-star'></i> ورد قادم (مجدول ولم يُسمّع بعد)";
+        const targetClass = 'wird-rating-badge rate-upcoming';
+        if (badge.className !== targetClass) badge.className = targetClass;
+
+        let iconEl = badge.querySelector('i');
+        let textSpan = badge.querySelector('.badge-label-text');
+        if (!textSpan) {
+            badge.innerHTML = `<i class='bx bx-calendar-star'></i> <span class="badge-label-text">ورد قادم (مجدول ولم يُسمّع بعد)</span>`;
+        } else {
+            if (iconEl && iconEl.className !== 'bx bx-calendar-star') iconEl.className = 'bx bx-calendar-star';
+            if (iconEl && iconEl.style.display !== 'inline-block') iconEl.style.display = 'inline-block';
+            if (textSpan.textContent !== 'ورد قادم (مجدول ولم يُسمّع بعد)') textSpan.textContent = 'ورد قادم (مجدول ولم يُسمّع بعد)';
+        }
     }
 
     const clearBtnUpcoming = document.getElementById(`ratingClear-${typeKey}`);
     if (clearBtnUpcoming && isUpcoming) {
-        clearBtnUpcoming.style.display = 'none';
+        if (clearBtnUpcoming.style.display !== 'none') clearBtnUpcoming.style.display = 'none';
         clearBtnUpcoming.classList.add('is-hidden');
     }
 }
@@ -186,13 +198,39 @@ function updateRatingUI(typeKey, ratingKey) {
     const meta = ratingKey ? window.RATING_GRADES[ratingKey] : null;
 
     if (badge) {
-        badge.className = `wird-rating-badge ${meta ? 'rate-' + meta.classSuffix : 'rate-none'}`;
-        badge.innerHTML = meta ? `<i class='bx ${meta.icon}'></i> ${meta.label}` : 'لم يُسمّع / لم يُقيّم بعد';
+        const targetClass = `wird-rating-badge ${meta ? 'rate-' + meta.classSuffix : 'rate-none'}`;
+        if (badge.className !== targetClass) {
+            badge.className = targetClass;
+        }
+
+        let iconEl = badge.querySelector('i');
+        let textSpan = badge.querySelector('.badge-label-text');
+
+        // Setup structure once if missing
+        if (!textSpan) {
+            badge.innerHTML = `<i class='bx'></i> <span class="badge-label-text"></span>`;
+            iconEl = badge.querySelector('i');
+            textSpan = badge.querySelector('.badge-label-text');
+        }
+
+        if (meta) {
+            const iconClass = `bx ${meta.icon}`;
+            if (iconEl && iconEl.className !== iconClass) iconEl.className = iconClass;
+            if (iconEl && iconEl.style.display !== 'inline-block') iconEl.style.display = 'inline-block';
+            if (textSpan.textContent !== meta.label) textSpan.textContent = meta.label;
+        } else {
+            if (iconEl && iconEl.style.display !== 'none') iconEl.style.display = 'none';
+            if (textSpan.textContent !== 'لم يُسمّع / لم يُقيّم بعد') {
+                textSpan.textContent = 'لم يُسمّع / لم يُقيّم بعد';
+            }
+        }
     }
 
     if (clearBtn) {
-        clearBtn.style.display = meta ? 'inline-flex' : 'none';
-        clearBtn.classList.toggle('is-hidden', !meta);
+        const isVisible = !!meta;
+        const targetDisplay = isVisible ? 'inline-flex' : 'none';
+        if (clearBtn.style.display !== targetDisplay) clearBtn.style.display = targetDisplay;
+        clearBtn.classList.toggle('is-hidden', !isVisible);
     }
 
     const prevSelected = group.querySelector('.rating-pill-btn.is-selected');
