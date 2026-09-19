@@ -188,6 +188,10 @@ namespace Hafiz.Areas.Admin.Controllers
                 PendingCount = matnList.Count(m => !m.IsCompleted),
                 TotalVerses = matnList.Where(m => m.Unit == Hafiz.Domain.Enums.MatnUnit.Verses && m.Amount.HasValue).Sum(m => m.Amount!.Value),
                 CompletedVerses = matnList.Where(m => m.IsCompleted && m.Unit == Hafiz.Domain.Enums.MatnUnit.Verses && m.Amount.HasValue).Sum(m => m.Amount!.Value),
+                CompletedLines = matnList.Where(m => m.IsCompleted && m.Unit == Hafiz.Domain.Enums.MatnUnit.Lines && m.Amount.HasValue).Sum(m => m.Amount!.Value),
+                CompletedPages = matnList.Where(m => m.IsCompleted && m.Unit == Hafiz.Domain.Enums.MatnUnit.Pages && m.Amount.HasValue).Sum(m => m.Amount!.Value),
+                CompletedChapters = matnList.Where(m => m.IsCompleted && m.Unit == Hafiz.Domain.Enums.MatnUnit.Chapters && m.Amount.HasValue).Sum(m => m.Amount!.Value),
+                CompletedHadiths = matnList.Where(m => m.IsCompleted && m.Unit == Hafiz.Domain.Enums.MatnUnit.Hadiths && m.Amount.HasValue).Sum(m => m.Amount!.Value),
             };
 
             return View(vm);

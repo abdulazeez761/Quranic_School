@@ -66,7 +66,7 @@
                 <div class="form-row mb-lg" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-md);">
                     <div class="form-group">
                         <label asp-for="DefaultUnit" class="form-label" style="font-weight: 600;">الوحدة الافتراضية</label>
-                        <select asp-for="DefaultUnit" class="form-select">
+                        <select asp-for="DefaultUnit" id="defaultUnitSelect" class="form-select">
                             <option value="@((int)MatnUnit.Verses)">أبيات (للمنظومات)</option>
                             <option value="@((int)MatnUnit.Lines)">سطور</option>
                             <option value="@((int)MatnUnit.Pages)">صفحات</option>
@@ -75,8 +75,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label asp-for="TotalVerses" class="form-label" style="font-weight: 600;">إجمالي الأبيات (اختياري)</label>
-                        <input asp-for="TotalVerses" type="number" min="1" class="form-input" placeholder="مثلاً: 61" />
+                        <label asp-for="TotalVerses" id="totalCountLabel" class="form-label" style="font-weight: 600;">إجمالي الأبيات (اختياري)</label>
+                        <input asp-for="TotalVerses" id="totalCountInput" type="number" min="1" class="form-input" placeholder="مثلاً: 61" />
                         <span asp-validation-for="TotalVerses" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
                     </div>
                     <div class="form-group">
@@ -97,3 +97,32 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            const unitSelect = document.getElementById('defaultUnitSelect');
+            const label = document.getElementById('totalCountLabel');
+            const input = document.getElementById('totalCountInput');
+            if (!unitSelect || !label || !input) return;
+
+            const unitMap = {
+                '1': { label: 'إجمالي الأبيات (اختياري)', placeholder: 'مثلاً: 61' },
+                '2': { label: 'إجمالي السطور (اختياري)', placeholder: 'مثلاً: 120' },
+                '3': { label: 'إجمالي الصفحات (اختياري)', placeholder: 'مثلاً: 45' },
+                '4': { label: 'إجمالي الأبواب / الفصول (اختياري)', placeholder: 'مثلاً: 12' },
+                '5': { label: 'إجمالي الأحاديث (اختياري)', placeholder: 'مثلاً: 42' }
+            };
+
+            function updateUnit() {
+                const conf = unitMap[unitSelect.value] || unitMap['1'];
+                label.textContent = conf.label;
+                input.placeholder = conf.placeholder;
+            }
+
+            unitSelect.addEventListener('change', updateUnit);
+            updateUnit();
+        })();
+    </script>
+}

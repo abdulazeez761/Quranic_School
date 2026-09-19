@@ -143,7 +143,7 @@
             </div>
             <div>
                 <h3 class="dashboard-section-title">المتون العلمية والمنظومات</h3>
-                <p class="dashboard-section-sub">متابعة إنجاز المتون وحلقات المدارسة المحسوبة بالأبيات</p>
+                <p class="dashboard-section-sub">متابعة إنجاز المتون وحلقات المدارسة بمختلف الوحدات (أبيات، أسطر، صفحات، أحاديث، أبواب)</p>
             </div>
         </div>
         <div class="d-flex align-center gap-xs">
@@ -158,7 +158,31 @@
                 <div class="matn-metric-icon --green"><i class='bx bx-book-bookmark'></i></div>
                 <div class="matn-metric-data">
                     <span class="label">حفظ المتون</span>
-                    <div class="val">@Model.MatnMemorizationVerses.ToString("0.#") <span class="sub">بيت</span></div>
+                    @{
+                        var memActiveUnits = Model.MatnMemorizationUnits?.GetActiveUnits() ?? new List<(string Label, decimal Value)>();
+                    }
+                    @if (memActiveUnits.Count == 1)
+                    {
+                        var single = memActiveUnits[0];
+                        <div class="val">@single.Value.ToString("0.#") <span class="sub">@single.Label</span></div>
+                    }
+                    else if (memActiveUnits.Count > 1)
+                    {
+                        <div class="val-chips-wrap">
+                            @foreach (var u in memActiveUnits)
+                            {
+                                <span class="matn-unit-chip"><strong>@u.Value.ToString("0.#")</strong> @u.Label</span>
+                            }
+                        </div>
+                    }
+                    else if (Model.MatnMemorizationVerses > 0)
+                    {
+                        <div class="val">@Model.MatnMemorizationVerses.ToString("0.#") <span class="sub">بيت</span></div>
+                    }
+                    else
+                    {
+                        <div class="val">@Model.MatnMemorizationAssignments <span class="sub">ورد</span></div>
+                    }
                     <span class="hint">@Model.MatnMemorizationAssignments ورد مسند</span>
                 </div>
             </div>
@@ -167,7 +191,31 @@
                 <div class="matn-metric-icon --gold"><i class='bx bx-refresh'></i></div>
                 <div class="matn-metric-data">
                     <span class="label">مراجعة المتون</span>
-                    <div class="val">@Model.MatnRevisionVerses.ToString("0.#") <span class="sub">بيت</span></div>
+                    @{
+                        var revActiveUnits = Model.MatnRevisionUnits?.GetActiveUnits() ?? new List<(string Label, decimal Value)>();
+                    }
+                    @if (revActiveUnits.Count == 1)
+                    {
+                        var single = revActiveUnits[0];
+                        <div class="val">@single.Value.ToString("0.#") <span class="sub">@single.Label</span></div>
+                    }
+                    else if (revActiveUnits.Count > 1)
+                    {
+                        <div class="val-chips-wrap">
+                            @foreach (var u in revActiveUnits)
+                            {
+                                <span class="matn-unit-chip"><strong>@u.Value.ToString("0.#")</strong> @u.Label</span>
+                            }
+                        </div>
+                    }
+                    else if (Model.MatnRevisionVerses > 0)
+                    {
+                        <div class="val">@Model.MatnRevisionVerses.ToString("0.#") <span class="sub">بيت</span></div>
+                    }
+                    else
+                    {
+                        <div class="val">@Model.MatnRevisionAssignments <span class="sub">ورد</span></div>
+                    }
                     <span class="hint">@Model.MatnRevisionAssignments ورد مراجع</span>
                 </div>
             </div>

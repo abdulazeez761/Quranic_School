@@ -53,6 +53,12 @@ namespace Hafiz.DTOs.Dashboard
         /// <summary>إجمالي أبيات مراجعة المتون المنجزة للفترة.</summary>
         public decimal MatnRevisionVerses { get; set; }
 
+        /// <summary>تفصيل وحدات حفظ المتون المنجزة (أبيات، سطور، صفحات، أحاديث، أبواب).</summary>
+        public MatnUnitBreakdownDto MatnMemorizationUnits { get; set; } = new();
+
+        /// <summary>تفصيل وحدات مراجعة المتون المنجزة (أبيات، سطور، صفحات، أحاديث، أبواب).</summary>
+        public MatnUnitBreakdownDto MatnRevisionUnits { get; set; } = new();
+
         // ── الحفظ ─────────────────────────────────────────────────────────────
 
         /// <summary>إجمالي صفحات الحفظ (الأوراد المُسجَّلة بوحدة "صفحات").</summary>
@@ -140,5 +146,30 @@ namespace Hafiz.DTOs.Dashboard
         /// عدد الحضور الفعلي للمعلمين المسجّل اليوم (حاضر + متأخر) في الحلقات التي تدرّس اليوم.
         /// </summary>
         public int AttendedTeachersToday { get; set; }
+    }
+
+    /// <summary>
+    /// تفصيل كميات المتون المنجزة حسب وحدة القياس (أبيات، سطور، صفحات، أحاديث، أبواب).
+    /// </summary>
+    public class MatnUnitBreakdownDto
+    {
+        public decimal Verses { get; set; }
+        public decimal Lines { get; set; }
+        public decimal Pages { get; set; }
+        public decimal Chapters { get; set; }
+        public decimal Hadiths { get; set; }
+
+        public bool HasAny => Verses > 0 || Lines > 0 || Pages > 0 || Chapters > 0 || Hadiths > 0;
+
+        public List<(string Label, decimal Value)> GetActiveUnits()
+        {
+            var list = new List<(string Label, decimal Value)>();
+            if (Verses > 0) list.Add(("بيت", Verses));
+            if (Lines > 0) list.Add(("سطر", Lines));
+            if (Pages > 0) list.Add(("صفحة", Pages));
+            if (Hadiths > 0) list.Add(("حديث", Hadiths));
+            if (Chapters > 0) list.Add(("باب", Chapters));
+            return list;
+        }
     }
 }

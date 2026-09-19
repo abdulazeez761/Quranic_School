@@ -246,8 +246,29 @@
                 <i class='bx bx-bookmark-alt'></i>
             </div>
             <div class="card-stat-content">
-                <div class="card-stat-label">الأبيات المنجزة</div>
-                <div class="card-stat-value">@Model.MatnStats.CompletedVerses.ToString("0.#")</div>
+                <div class="card-stat-label">الكميات المنجزة</div>
+                @{
+                    var wrActiveUnits = Model.MatnStats.GetActiveCompletedUnits();
+                }
+                @if (wrActiveUnits.Count == 1)
+                {
+                    <div class="card-stat-value">@wrActiveUnits[0].Value.ToString("0.#") <span style="font-size: 0.8rem; font-weight: normal; color: var(--admin-text-muted);">@wrActiveUnits[0].Label</span></div>
+                }
+                else if (wrActiveUnits.Count > 1)
+                {
+                    <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px;">
+                        @foreach (var u in wrActiveUnits)
+                        {
+                            <span style="font-size: 0.78rem; background: var(--admin-border-subtle); padding: 2px 6px; border-radius: 4px; font-weight: 600; color: var(--admin-text);">
+                                @u.Value.ToString("0.#") <span style="font-weight: normal; font-size: 0.72rem; color: var(--admin-text-muted);">@u.Label</span>
+                            </span>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="card-stat-value">@Model.MatnStats.CompletedVerses.ToString("0.#") <span style="font-size: 0.8rem; font-weight: normal; color: var(--admin-text-muted);">أبيات</span></div>
+                }
             </div>
         </div>
     </div>

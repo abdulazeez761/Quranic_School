@@ -34,7 +34,7 @@ namespace Hafiz.Infrastructure.Services
             var counts = await LoadCountsAsync(instituteId, today);
             var (memPages, memJuz, memAyahs, revPages, revJuz, revAyahs, tajPages, tajJuz, tajAyahs) =
                 await AggregateWirdUnitsAsync(instituteId, period);
-            var (matnTotal, matnMem, matnRev, matnMud, matnCompleted, matnMemVerses, matnRevVerses) =
+            var (matnTotal, matnMem, matnRev, matnMud, matnCompleted, matnMemVerses, matnRevVerses, memUnits, revUnits) =
                 await AggregateMatnUnitsAsync(instituteId, period);
             var wirdsPage = await _activityQuery.GetTodaysPageAsync(
                 instituteId,
@@ -64,6 +64,8 @@ namespace Hafiz.Infrastructure.Services
                 MatnCompletedAssignments = matnCompleted,
                 MatnMemorizationVerses = matnMemVerses,
                 MatnRevisionVerses = matnRevVerses,
+                MatnMemorizationUnits = memUnits,
+                MatnRevisionUnits = revUnits,
                 MemorizationPages = Math.Round(memPages, 2),
                 MemorizationJuz = Math.Round(memJuz, 2),
                 MemorizationAyahs = memAyahs,
@@ -252,7 +254,9 @@ namespace Hafiz.Infrastructure.Services
             int mudAssignments,
             int completedAssignments,
             decimal memVerses,
-            decimal revVerses
+            decimal revVerses,
+            MatnUnitBreakdownDto memUnits,
+            MatnUnitBreakdownDto revUnits
         )> AggregateMatnUnitsAsync(Guid? instituteId, DashboardPeriod period)
         {
             var matnQuery = _context.MatnAssignments.AsNoTracking();
@@ -284,15 +288,33 @@ namespace Hafiz.Infrastructure.Services
             int mud = list.Count(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Mudarasah);
             int completed = list.Count(m => m.IsCompleted || m.Status != Hafiz.Models.AssignmentStatus.notSet);
 
-            decimal memVerses = list
+            var memUnits = new MatnUnitBreakdownDto
+            {
+                Verses = list.Where(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Memorization && m.Unit == Hafiz.Domain.Enums.MatnUnit.Verses && m.Amount.HasValue).Sum(m => m.Amount!.Value),
+                Lines = list.Where(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Memorization && m.Unit == Hafiz.Domain.Enums.MatnUnit.Lines && m.Amount.HasValue).Sum(m => m.Amount!.Value),
+                Pages = list.Where(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Memorization && m.Unit == Hafiz.Domain.Enums.MatnUnit.Pages && m.Amount.HasValue).Sum(m => m.Amount!.Value),
+                Chapters = list.Where(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Memorization && m.Unit == Hafiz.Domain.Enums.MatnUnit.Chapters && m.Amount.HasValue).Sum(m => m.Amount!.Value),
+                Hadiths = list.Where(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Memorization && m.Unit == Hafiz.Domain.Enums.MatnUnit.Hadiths && m.Amount.HasValue).Sum(m => m.Amount!.Value),
+            };
+
+            var revUnits = new MatnUnitBreakdownDto
+            {
+                Verses = list.Where(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Revision && m.Unit == Hafiz.Domain.Enums.MatnUnit.Verses && m.Amount.HasValue).Sum(m => m.Amount!.Value),
+                Lines = list.Where(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Revision && m.Unit == Hafiz.Domain.Enums.MatnUnit.Lines && m.Amount.HasValue).Sum(m => m.Amount!.Value),
+                Pages = list.Where(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Revision && m.Unit == Hafiz.Domain.Enums.MatnUnit.Pages && m.Amount.HasValue).Sum(m => m.Amount!.Value),
+                Chapters = list.Where(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Revision && m.Unit == Hafiz.Domain.Enums.MatnUnit.Chapters && m.Amount.HasValue).Sum(m => m.Amount!.Value),
+                Hadiths = list.Where(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Revision && m.Unit == Hafiz.Domain.Enums.MatnUnit.Hadiths && m.Amount.HasValue).Sum(m => m.Amount!.Value),
+            };
+
+            decimal memVerses = memUnits.Verses > 0 ? memUnits.Verses : list
                 .Where(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Memorization && m.Amount.HasValue)
                 .Sum(m => m.Amount!.Value);
 
-            decimal revVerses = list
+            decimal revVerses = revUnits.Verses > 0 ? revUnits.Verses : list
                 .Where(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Revision && m.Amount.HasValue)
                 .Sum(m => m.Amount!.Value);
 
-            return (total, mem, rev, mud, completed, Math.Round(memVerses, 1), Math.Round(revVerses, 1));
+            return (total, mem, rev, mud, completed, Math.Round(memVerses, 1), Math.Round(revVerses, 1), memUnits, revUnits);
         }
     }
 }

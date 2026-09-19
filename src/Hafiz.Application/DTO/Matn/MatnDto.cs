@@ -23,6 +23,15 @@ public class MatnDto
         MatnUnit.Hadiths => "أحاديث",
         _ => "غير محدد"
     };
+    public string DefaultUnitSingular => DefaultUnit switch
+    {
+        MatnUnit.Verses => "بيت",
+        MatnUnit.Lines => "سطر",
+        MatnUnit.Pages => "صفحة",
+        MatnUnit.Chapters => "باب",
+        MatnUnit.Hadiths => "حديث",
+        _ => "وحدة"
+    };
     public bool IsGlobal => InstituteId == null;
     public Guid? InstituteId { get; set; }
 }

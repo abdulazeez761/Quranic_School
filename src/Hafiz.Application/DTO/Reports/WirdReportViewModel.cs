@@ -19,10 +19,25 @@ namespace Hafiz.DTOs.Reports
         public int PendingCount { get; set; }
         public decimal TotalVerses { get; set; }
         public decimal CompletedVerses { get; set; }
+        public decimal CompletedLines { get; set; }
+        public decimal CompletedPages { get; set; }
+        public decimal CompletedChapters { get; set; }
+        public decimal CompletedHadiths { get; set; }
         public int CompletionRate =>
             TotalAssignments > 0
                 ? (int)Math.Round((double)CompletedCount / TotalAssignments * 100)
                 : 0;
+
+        public List<(string Label, decimal Value)> GetActiveCompletedUnits()
+        {
+            var list = new List<(string Label, decimal Value)>();
+            if (CompletedVerses > 0) list.Add(("أبيات", CompletedVerses));
+            if (CompletedLines > 0) list.Add(("سطور", CompletedLines));
+            if (CompletedPages > 0) list.Add(("صفحات", CompletedPages));
+            if (CompletedHadiths > 0) list.Add(("أحاديث", CompletedHadiths));
+            if (CompletedChapters > 0) list.Add(("أبواب", CompletedChapters));
+            return list;
+        }
     }
 
     /// <summary>

@@ -217,7 +217,7 @@
                                 <div class="matn-size-pill">
                                     @if (matn.TotalVerses.HasValue)
                                     {
-                                        <span>@matn.TotalVerses بيت</span>
+                                        <span>@matn.TotalVerses @matn.DefaultUnitSingular</span>
                                     }
                                     @if (matn.TotalChapters.HasValue)
                                     {

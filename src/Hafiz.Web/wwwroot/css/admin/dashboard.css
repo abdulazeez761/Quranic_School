@@ -496,6 +496,38 @@
   display: block;
 }
 
+.matn-metric-data .val-chips-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 3px 0 3px;
+}
+
+.matn-unit-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  background: #eef7f2;
+  color: #24583e;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-weight: 600;
+  line-height: 1.25;
+  border: 1px solid rgba(36, 88, 62, 0.12);
+}
+
+.matn-unit-chip strong {
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.matn-metric-box:nth-child(2) .matn-unit-chip {
+  background: #fdf8eb;
+  color: #b45309;
+  border-color: rgba(180, 83, 9, 0.15);
+}
+
 @media (max-width: 768px) {
   .dashboard-header {
     flex-direction: column;
