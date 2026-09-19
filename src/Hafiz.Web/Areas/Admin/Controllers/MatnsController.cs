@@ -154,6 +154,7 @@ public class MatnsController : Controller
             DefaultUnit = matn.DefaultUnit,
             StudyProgramId = matn.StudyProgramId,
             Order = matn.Order,
+            PassingGrade = matn.PassingGrade > 0 ? matn.PassingGrade : 60m,
             IsActive = matn.IsActive
         };
 

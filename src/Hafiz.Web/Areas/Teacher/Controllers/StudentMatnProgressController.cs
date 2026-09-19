@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Hafiz.Areas.Teacher.Controllers;
 
 [Area("Teacher")]
-[Authorize(Roles = "Teacher,Admin")]
+[Authorize(Roles = "Teacher,Admin,SuperAdmin")]
 public class StudentMatnProgressController : Controller
 {
     private readonly IStudentMatnProgressService _progressService;
@@ -34,6 +34,8 @@ public class StudentMatnProgressController : Controller
         return Guid.TryParse(claim, out var id) ? id : Guid.Empty;
     }
 
+    private bool IsAdminUser() => User.IsInRole("Admin") || User.IsInRole("SuperAdmin");
+
     // GET: Teacher/StudentMatnProgress/ForStudent?studentId=...
     [HttpGet]
     public async Task<IActionResult> ForStudent(Guid studentId)
@@ -47,7 +49,7 @@ public class StudentMatnProgressController : Controller
     public async Task<IActionResult> ClassProgress(Guid classId)
     {
         var teacherId = GetTeacherId();
-        if (teacherId == Guid.Empty)
+        if (!IsAdminUser() && teacherId == Guid.Empty)
             return Unauthorized();
 
         var cls = await _classService.GetClassById(classId);
@@ -61,70 +63,75 @@ public class StudentMatnProgressController : Controller
 
     // POST: Teacher/StudentMatnProgress/CompleteStudy
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [IgnoreAntiforgeryToken]
     public async Task<IActionResult> CompleteStudy(Guid id)
     {
+        var isAdmin = IsAdminUser();
         var userId = GetTeacherId();
-        if (userId == Guid.Empty)
+        if (!isAdmin && userId == Guid.Empty)
             return Json(new { success = false, message = "غير مصرح" });
 
-        var teacherIdForAuth = User.IsInRole("Admin") ? Guid.Empty : userId;
+        var teacherIdForAuth = isAdmin ? Guid.Empty : userId;
         var (success, message) = await _progressService.CompleteStudyAsync(id, teacherIdForAuth);
         return Json(new { success, message });
     }
 
     // POST: Teacher/StudentMatnProgress/CompleteMemorization
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [IgnoreAntiforgeryToken]
     public async Task<IActionResult> CompleteMemorization(Guid id)
     {
+        var isAdmin = IsAdminUser();
         var userId = GetTeacherId();
-        if (userId == Guid.Empty)
+        if (!isAdmin && userId == Guid.Empty)
             return Json(new { success = false, message = "غير مصرح" });
 
-        var teacherIdForAuth = User.IsInRole("Admin") ? Guid.Empty : userId;
+        var teacherIdForAuth = isAdmin ? Guid.Empty : userId;
         var (success, message) = await _progressService.CompleteMemorizationAsync(id, teacherIdForAuth);
         return Json(new { success, message });
     }
 
     // POST: Teacher/StudentMatnProgress/CompleteBoth
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [IgnoreAntiforgeryToken]
     public async Task<IActionResult> CompleteBoth([FromBody] CompleteBothStudyAndMemorizationDto dto)
     {
+        var isAdmin = IsAdminUser();
         var userId = GetTeacherId();
-        if (userId == Guid.Empty)
+        if (!isAdmin && userId == Guid.Empty)
             return Json(new { success = false, message = "غير مصرح" });
 
-        var teacherIdForAuth = User.IsInRole("Admin") ? Guid.Empty : userId;
+        var teacherIdForAuth = isAdmin ? Guid.Empty : userId;
         var (success, message) = await _progressService.CompleteStudyAndMemorizationAsync(dto, teacherIdForAuth);
         return Json(new { success, message });
     }
 
     // POST: Teacher/StudentMatnProgress/RecordExam
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [IgnoreAntiforgeryToken]
     public async Task<IActionResult> RecordExam([FromBody] RecordExamResultDto dto)
     {
+        var isAdmin = IsAdminUser();
         var userId = GetTeacherId();
-        if (userId == Guid.Empty)
+        if (!isAdmin && userId == Guid.Empty)
             return Json(new { success = false, message = "غير مصرح" });
 
-        var teacherIdForAuth = User.IsInRole("Admin") ? Guid.Empty : userId;
+        var teacherIdForAuth = isAdmin ? Guid.Empty : userId;
         var (success, message) = await _progressService.RecordExamResultAsync(dto, teacherIdForAuth);
         return Json(new { success, message });
     }
 
     // POST: Teacher/StudentMatnProgress/CreateOrUpdate
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [IgnoreAntiforgeryToken]
     public async Task<IActionResult> CreateOrUpdate([FromBody] CreateStudentMatnProgressDto dto)
     {
+        var isAdmin = IsAdminUser();
         var userId = GetTeacherId();
-        if (userId == Guid.Empty)
+        if (!isAdmin && userId == Guid.Empty)
             return Json(new { success = false, message = "غير مصرح" });
 
-        var teacherIdForAuth = User.IsInRole("Admin") ? Guid.Empty : userId;
+        var teacherIdForAuth = isAdmin ? Guid.Empty : userId;
         var (success, message, id) = await _progressService.CreateOrUpdateAsync(dto, teacherIdForAuth);
         return Json(new { success, message, id });
     }

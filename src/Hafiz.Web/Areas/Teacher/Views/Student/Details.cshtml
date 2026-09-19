@@ -969,7 +969,7 @@
         }
     }
 
-    window.currentStudentMatuns = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MatnProgresses.Select(p => new {
+    window.currentStudentMatuns = @Html.Raw(System.Text.Json.JsonSerializer.Serialize((Model.MatnProgresses ?? Enumerable.Empty<Hafiz.DTOs.Matn.StudentMatnProgressDto>()).Select(p => new {
         matnId = p.MatnId.ToString(),
         matnTitle = p.MatnTitle,
         matnAuthor = p.MatnAuthor ?? "",

@@ -38,6 +38,11 @@ namespace Hafiz.Web.Extensions
                         factory.Create(typeof(SharedDtoResource));
                 });
 
+            services.AddAntiforgery(options =>
+            {
+                options.HeaderName = "RequestVerificationToken";
+            });
+
             services.AddLocalization(options => options.ResourcesPath = "Resources");
 
             services.Configure<ForwardedHeadersOptions>(options =>
