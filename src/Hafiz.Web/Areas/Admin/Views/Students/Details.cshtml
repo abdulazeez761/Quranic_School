@@ -91,6 +91,10 @@
                     </button>
                 </form>
             }
+            <a href="/Certificates/Quran/@student.UserId" target="_blank" class="btn btn-outline" style="height: 38px; display: inline-flex; align-items: center; gap: 6px; padding: 0 14px; font-weight: 600; border-color: #10b981; color: #047857;" title="تصدير وطباعة شهادة إتمام القرآن الكريم أو أجزاء منه">
+                <i class='bx bx-award' style="font-size: 1.15rem;"></i>
+                <span>تصدير شهادة القرآن</span>
+            </a>
             <a href="@backUrl" class="back-btn">
                 <i class='bx bx-arrow-back'></i>
                 @Localizer["BackToList"]
@@ -889,16 +893,21 @@
                                             }
                                         </td>
                                         <td style="text-align: center;">
-                                            @if (prog.ExamStatus == ExamStatus.Passed)
+                                            @{
+                                                var passGrade = prog.PassingGrade > 0 ? prog.PassingGrade : 60m;
+                                                var isActuallyPassed = prog.ExamStatus == ExamStatus.Passed && (!prog.Score.HasValue || prog.Score.Value >= passGrade);
+                                                var isActuallyFailed = prog.ExamStatus == ExamStatus.Failed || (prog.Score.HasValue && prog.Score.Value < passGrade);
+                                            }
+                                            @if (isActuallyPassed)
                                             {
                                                 <span class="record-badge" style="background: #dcfce7; color: #166534; font-weight: 800; font-size: 12px; padding: 4px 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">
-                                                    <i class='bx bx-award'></i> ناجح @(prog.Score.HasValue ? $"({prog.Score}%)" : "")
+                                                    <i class='bx bx-award'></i> ناجح @(prog.Score.HasValue ? $"({prog.Score:0.##}%)" : "")
                                                 </span>
                                             }
-                                            else if (prog.ExamStatus == ExamStatus.Failed)
+                                            else if (isActuallyFailed)
                                             {
                                                 <span class="record-badge" style="background: #fee2e2; color: #991b1b; font-weight: 800; font-size: 12px; padding: 4px 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">
-                                                    <i class='bx bx-x'></i> راسب @(prog.Score.HasValue ? $"({prog.Score}%)" : "")
+                                                    <i class='bx bx-x'></i> راسب @(prog.Score.HasValue ? $"({prog.Score:0.##}%)" : "")
                                                 </span>
                                             }
                                             else
@@ -918,11 +927,22 @@
                                             @(string.IsNullOrEmpty(prog.TeacherNotes) ? "—" : prog.TeacherNotes)
                                         </td>
                                         <td style="text-align: center;">
-                                            <button type="button" class="btn-admin-grade"
-                                                    onclick="openAdminMatnModal('@student.UserId', '@student.StudentInfo.FirstName @student.StudentInfo.SecondName', '@prog.MatnId', '@prog.MatnTitle', @((int)prog.StudyStatus), @((int)prog.MemorizationStatus), @((int)prog.ExamStatus), '@(prog.Score?.ToString() ?? "")', '@(prog.ExamDate?.ToString("yyyy-MM-dd") ?? "")', '@((prog.TeacherNotes ?? "").Replace("'", "\\'").Replace("\n", " "))')">
-                                                <i class='bx bx-edit-alt'></i>
-                                                <span>تعديل ورصد الدرجة</span>
-                                            </button>
+                                            <div style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;">
+                                                <button type="button" class="btn-admin-grade"
+                                                        onclick="openAdminMatnModal('@student.UserId', '@student.StudentInfo.FirstName @student.StudentInfo.SecondName', '@prog.MatnId', '@prog.MatnTitle', @((int)prog.StudyStatus), @((int)prog.MemorizationStatus), @((int)prog.ExamStatus), '@(prog.Score?.ToString() ?? "")', '@(prog.ExamDate?.ToString("yyyy-MM-dd") ?? "")', '@((prog.TeacherNotes ?? "").Replace("'", "\\'").Replace("\n", " "))', @passGrade)">
+                                                    <i class='bx bx-edit-alt'></i>
+                                                    <span>تعديل ورصد</span>
+                                                </button>
+                                                @if (prog.Id != Guid.Empty && (prog.StudyStatus == StudyStatus.Completed || prog.MemorizationStatus == MemorizationStatus.Memorized || isActuallyPassed))
+                                                {
+                                                    <a href="/Certificates/Matn/@prog.Id" target="_blank" class="btn btn-sm"
+                                                       style="background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; font-weight: 700; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px; text-decoration: none;"
+                                                       title="تصدير وطباعة شهادة إتمام المتن">
+                                                        <i class='bx bx-award'></i>
+                                                        <span>تصدير الشهادة</span>
+                                                    </a>
+                                                }
+                                            </div>
                                         </td>
                                     </tr>
                                 }
@@ -954,9 +974,13 @@
                                     <span style="color: #64748b; font-size: 13px; font-weight: 600;">الطالب:</span>
                                     <strong style="color: #0f172a; font-size: 14px;" id="adminModalStudentName">-</strong>
                                 </div>
-                                <div style="display: flex; justify-content: space-between;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
                                     <span style="color: #64748b; font-size: 13px; font-weight: 600;">المتن المقرر:</span>
                                     <strong style="color: #0284c7; font-size: 14px;" id="adminModalMatnTitle">-</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: #64748b; font-size: 13px; font-weight: 600;">علامة النجاح المعتمدة:</span>
+                                    <span style="background: #e0f2fe; color: #0284c7; font-weight: 800; padding: 2px 8px; border-radius: 6px; font-size: 12px;" id="adminModalPassingGrade">60%</span>
                                 </div>
                             </div>
 
@@ -1035,40 +1059,49 @@
         </div>
 
         <script>
+            let currentAdminPassingGrade = 60;
+
             function updateAdminScoreFeedback(scoreVal) {
                 const pill = document.getElementById('adminScoreRatingPill');
                 const txt = document.getElementById('adminScoreRatingText');
+                if (!pill || !txt) return;
                 if (!scoreVal || isNaN(scoreVal)) {
                     pill.style.display = 'none';
                     return;
                 }
                 const s = parseFloat(scoreVal);
                 pill.style.display = 'inline-flex';
-                if (s >= 90) {
-                    pill.style.background = '#ecfdf5';
-                    pill.style.border = '1px solid #86efac';
-                    pill.style.color = '#065f46';
-                    txt.textContent = 'ممتاز (Excellent)';
-                } else if (s >= 80) {
-                    pill.style.background = '#eff6ff';
-                    pill.style.border = '1px solid #bfdbfe';
-                    pill.style.color = '#1e40af';
-                    txt.textContent = 'جيد جداً (Very Good)';
-                } else if (s >= 65) {
-                    pill.style.background = '#f0fdf4';
-                    pill.style.border = '1px solid #bbf7d0';
-                    pill.style.color = '#166534';
-                    txt.textContent = 'جيد (Good)';
-                } else if (s >= 50) {
-                    pill.style.background = '#fffbeb';
-                    pill.style.border = '1px solid #fde68a';
-                    pill.style.color = '#92400e';
-                    txt.textContent = 'مقبول (Fair)';
-                } else {
+                const examStatus = document.getElementById('adminModalExamStatus');
+
+                if (s < currentAdminPassingGrade) {
                     pill.style.background = '#fef2f2';
                     pill.style.border = '1px solid #fecaca';
                     pill.style.color = '#991b1b';
-                    txt.textContent = 'راسب (Failed)';
+                    txt.textContent = `راسب (أقل من درجة النجاح ${currentAdminPassingGrade}%)`;
+                    if (examStatus) examStatus.value = '2'; // Failed
+                } else {
+                    if (examStatus) examStatus.value = '1'; // Passed
+                    if (s >= 90) {
+                        pill.style.background = '#ecfdf5';
+                        pill.style.border = '1px solid #86efac';
+                        pill.style.color = '#065f46';
+                        txt.textContent = 'ناجح - ممتاز 🌟';
+                    } else if (s >= 80) {
+                        pill.style.background = '#eff6ff';
+                        pill.style.border = '1px solid #bfdbfe';
+                        pill.style.color = '#1e40af';
+                        txt.textContent = 'ناجح - جيد جداً';
+                    } else if (s >= 65) {
+                        pill.style.background = '#f0fdf4';
+                        pill.style.border = '1px solid #bbf7d0';
+                        pill.style.color = '#166534';
+                        txt.textContent = 'ناجح - جيد';
+                    } else {
+                        pill.style.background = '#fffbeb';
+                        pill.style.border = '1px solid #fde68a';
+                        pill.style.color = '#92400e';
+                        txt.textContent = 'ناجح - مقبول';
+                    }
                 }
             }
 
@@ -1076,30 +1109,28 @@
                 const input = document.getElementById('adminModalScore');
                 input.value = val;
                 updateAdminScoreFeedback(val);
-                const examStatus = document.getElementById('adminModalExamStatus');
-                if (val >= 60) {
-                    examStatus.value = '1';
-                } else {
-                    examStatus.value = '2';
-                }
             }
 
             function onAdminExamStatusChanged(statusVal) {
                 const scoreInput = document.getElementById('adminModalScore');
-                if (statusVal === '1' && (!scoreInput.value || parseFloat(scoreInput.value) < 60)) {
-                    scoreInput.value = 85;
-                    updateAdminScoreFeedback(85);
-                } else if (statusVal === '2' && (!scoreInput.value || parseFloat(scoreInput.value) >= 60)) {
-                    scoreInput.value = 45;
-                    updateAdminScoreFeedback(45);
+                if (statusVal === '1' && (!scoreInput.value || parseFloat(scoreInput.value) < currentAdminPassingGrade)) {
+                    scoreInput.value = Math.max(85, currentAdminPassingGrade);
+                    updateAdminScoreFeedback(scoreInput.value);
+                } else if (statusVal === '2' && (!scoreInput.value || parseFloat(scoreInput.value) >= currentAdminPassingGrade)) {
+                    scoreInput.value = Math.max(0, currentAdminPassingGrade - 15);
+                    updateAdminScoreFeedback(scoreInput.value);
                 }
             }
 
-            function openAdminMatnModal(studentId, studentName, matnId, matnTitle, studyStatus, memStatus, examStatus, score, examDate, notes) {
+            function openAdminMatnModal(studentId, studentName, matnId, matnTitle, studyStatus, memStatus, examStatus, score, examDate, notes, passingGrade = 60) {
+                currentAdminPassingGrade = parseFloat(passingGrade) || 60;
                 document.getElementById('adminModalStudentId').value = studentId;
                 document.getElementById('adminModalMatnId').value = matnId;
                 document.getElementById('adminModalStudentName').textContent = studentName;
                 document.getElementById('adminModalMatnTitle').textContent = matnTitle;
+                const passEl = document.getElementById('adminModalPassingGrade');
+                if (passEl) passEl.textContent = currentAdminPassingGrade + '%';
+
                 document.getElementById('adminModalStudyStatus').value = studyStatus !== undefined ? studyStatus : 0;
                 document.getElementById('adminModalMemorizationStatus').value = memStatus !== undefined ? memStatus : 0;
                 document.getElementById('adminModalExamStatus').value = examStatus !== undefined ? examStatus : 0;

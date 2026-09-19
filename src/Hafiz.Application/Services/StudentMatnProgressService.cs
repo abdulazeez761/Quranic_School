@@ -74,11 +74,18 @@ public class StudentMatnProgressService : IStudentMatnProgressService
             return (false, "المعلم غير مصرح له بتعديل بيانات هذا الطالب.", null);
 
         var existing = await _progressRepository.GetByStudentAndMatnAsync(dto.StudentId, dto.MatnId);
+        var effectivePassingGrade = matn.PassingGrade > 0 ? matn.PassingGrade : 60m;
+        var resolvedExamStatus = dto.ExamStatus;
+        if (dto.Score.HasValue)
+        {
+            resolvedExamStatus = dto.Score.Value >= effectivePassingGrade ? ExamStatus.Passed : ExamStatus.Failed;
+        }
+
         if (existing != null)
         {
             existing.StudyStatus = dto.StudyStatus;
             existing.MemorizationStatus = dto.MemorizationStatus;
-            existing.ExamStatus = dto.ExamStatus;
+            existing.ExamStatus = resolvedExamStatus;
             existing.Score = dto.Score;
             existing.ExamDate = dto.ExamDate;
             if (!string.IsNullOrWhiteSpace(dto.TeacherNotes))
@@ -98,7 +105,7 @@ public class StudentMatnProgressService : IStudentMatnProgressService
             MatnId = dto.MatnId,
             StudyStatus = dto.StudyStatus,
             MemorizationStatus = dto.MemorizationStatus,
-            ExamStatus = dto.ExamStatus,
+            ExamStatus = resolvedExamStatus,
             Score = dto.Score,
             ExamDate = dto.ExamDate,
             TeacherNotes = dto.TeacherNotes?.Trim(),
@@ -188,10 +195,15 @@ public class StudentMatnProgressService : IStudentMatnProgressService
         if (progress == null)
             return (false, "سجل الإنجاز غير موجود.");
 
-        if (teacherId != Guid.Empty && !await IsTeacherAuthorizedForStudentAsync(teacherId, progress.StudentId))
-            return (false, "المعلم غير مصرح له بتسجيل نتيجة الاختبار.");
+        var matn = progress.Matn ?? await _matnRepository.GetByIdAsync(progress.MatnId);
+        var effectivePassingGrade = (matn?.PassingGrade > 0) ? matn.PassingGrade : 60m;
+        var resolvedExamStatus = dto.ExamStatus;
+        if (dto.Score.HasValue)
+        {
+            resolvedExamStatus = dto.Score.Value >= effectivePassingGrade ? ExamStatus.Passed : ExamStatus.Failed;
+        }
 
-        progress.ExamStatus = dto.ExamStatus;
+        progress.ExamStatus = resolvedExamStatus;
         progress.Score = dto.Score;
         progress.ExamDate = dto.ExamDate ?? DateTime.UtcNow;
 
@@ -278,6 +290,7 @@ public class StudentMatnProgressService : IStudentMatnProgressService
         MatnAuthor = p.Matn?.Author,
         MatnCategory = p.Matn?.Category ?? MatnCategory.General,
         MatnOrder = p.Matn?.Order ?? 1,
+        PassingGrade = p.Matn?.PassingGrade ?? 60m,
         StudyProgramId = p.Matn?.StudyProgramId,
         StudyProgramName = p.Matn?.StudyProgram?.Name,
         StudyStatus = p.StudyStatus,

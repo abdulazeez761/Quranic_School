@@ -35,6 +35,11 @@ public class Matn : ISoftDeletable
     // ترتيب المتن داخل البرنامج العلمي (يبدأ من 1)
     public int Order { get; set; } = 1;
 
+    // علامة النجاح في الاختبار (الحد الأدنى للدرجة بالنسبة المئوية)
+    [Column(TypeName = "decimal(5,2)")]
+    [Range(0, 100, ErrorMessage = "علامة النجاح يجب أن تكون بين 0 و 100.")]
+    public decimal PassingGrade { get; set; } = 60m;
+
     // حالة تفعيل المتن للواجبات والتسميع
     public bool IsActive { get; set; } = true;
 

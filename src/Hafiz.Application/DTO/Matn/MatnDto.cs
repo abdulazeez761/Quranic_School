@@ -38,6 +38,7 @@ public class MatnDto
     public Guid? StudyProgramId { get; set; }
     public string? StudyProgramName { get; set; }
     public int Order { get; set; } = 1;
+    public decimal PassingGrade { get; set; } = 60m;
     public bool IsActive { get; set; } = true;
 }
 
@@ -63,6 +64,10 @@ public class CreateMatnDto
 
     public Guid? StudyProgramId { get; set; }
     public int Order { get; set; } = 1;
+
+    [Range(0, 100, ErrorMessage = "علامة النجاح يجب أن تكون بين 0 و 100.")]
+    public decimal PassingGrade { get; set; } = 60m;
+
     public bool IsActive { get; set; } = true;
 }
 

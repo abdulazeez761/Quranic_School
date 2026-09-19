@@ -136,12 +136,6 @@
                         <span>@Localizer["Wirds"]</span>
                     </a>
                 </li>
-                <li class="@(currentController == "Matn" || currentController == "StudentMatnProgress" ? "active" : "")">
-                    <a asp-area="Teacher" asp-controller="Matn" asp-action="Index">
-                        <i class='bx bx-bookmarks'></i>
-                        <span>المتون العلمية</span>
-                    </a>
-                </li>
                 <li class="@(currentController == "TeacherClasses" ? "active" : "")">
                     <a asp-area="Teacher" asp-controller="TeacherClasses" asp-action="ManageMeetings">
                         <i class='bx bx-video'></i>
@@ -200,11 +194,6 @@
                 <i class='bx bx-book-open'></i>
                 <span>@Localizer["Wirds"]</span>
             </a>
-            <a asp-area="Teacher" asp-controller="Matn" asp-action="Index"
-                   class="mobile-nav-item @(currentController == "Matn" || currentController == "StudentMatnProgress" ? "active" : "")">
-                <i class='bx bx-bookmarks'></i>
-                <span>المتون</span>
-            </a>
             <a asp-area="Teacher" asp-controller="TeacherClasses" asp-action="ManageMeetings"
                    class="mobile-nav-item @(currentController == "TeacherClasses" ? "active" : "")">
                 <i class='bx bx-video'></i>
@@ -219,6 +208,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/languageSwitcher.js" asp-append-version="true"></script>
     <script src="~/js/pwa-install.js" asp-append-version="true"></script>

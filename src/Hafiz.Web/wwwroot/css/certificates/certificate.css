@@ -1,0 +1,436 @@
+/* ==========================================================================
+   ISLAMIC CERTIFICATES ENGINE - STYLESHEET
+   Supports A4 Landscape, Luxury Gold & Emerald Ornaments, Screen & Print
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cairo:wght@400;600;700;800;900&family=Reem+Kufi:wght@500;700&display=swap');
+
+:root {
+    --cert-gold-1: #dfba69;
+    --cert-gold-2: #c59b27;
+    --cert-gold-3: #926f16;
+    --cert-gold-dark: #6e520d;
+    --cert-emerald-dark: #064e3b;
+    --cert-emerald-primary: #047857;
+    --cert-emerald-light: #ecfdf5;
+    --cert-blue-dark: #1e3a8a;
+    --cert-bg-parchment: #fdfbf7;
+    --cert-text-dark: #1c1917;
+    --cert-text-muted: #57534e;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body.cert-body {
+    margin: 0;
+    padding: 0;
+    background: #0f172a;
+    color: var(--cert-text-dark);
+    font-family: 'Cairo', 'Amiri', 'Traditional Arabic', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    direction: rtl;
+}
+
+/* Floating Action Toolbar */
+.cert-toolbar {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(223, 186, 105, 0.4);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    padding: 8px 18px;
+    border-radius: 40px;
+}
+
+.cert-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.cert-btn-gold {
+    background: linear-gradient(135deg, #dfba69, #c59b27);
+    color: #1c1917;
+    box-shadow: 0 4px 14px rgba(197, 155, 39, 0.4);
+}
+
+.cert-btn-gold:hover {
+    background: linear-gradient(135deg, #ebd08b, #dfba69);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(197, 155, 39, 0.5);
+}
+
+.cert-btn-dark {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f1f5f9;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.cert-btn-dark:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+/* Certificate Stage & Paper */
+.cert-stage {
+    padding: 80px 20px 40px 20px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.certificate-sheet {
+    width: 297mm;
+    min-height: 210mm;
+    background: var(--cert-bg-parchment);
+    position: relative;
+    padding: 12mm;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Luxury Islamic Ornamental Border */
+.cert-outer-border {
+    border: 3.5px solid var(--cert-gold-2);
+    height: 100%;
+    flex: 1;
+    position: relative;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+}
+
+.cert-inner-border {
+    border: 1.5px solid var(--cert-gold-dark);
+    height: 100%;
+    flex: 1;
+    position: relative;
+    padding: 24px 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: radial-gradient(circle at center, #ffffff 40%, #fdfbf7 100%);
+}
+
+/* Corner Ornaments */
+.cert-corner {
+    position: absolute;
+    width: 38px;
+    height: 38px;
+    border: 2.5px solid var(--cert-gold-2);
+    pointer-events: none;
+}
+
+.cert-corner-tl { top: 4px; left: 4px; border-right: none; border-bottom: none; }
+.cert-corner-tr { top: 4px; right: 4px; border-left: none; border-bottom: none; }
+.cert-corner-bl { bottom: 4px; left: 4px; border-right: none; border-top: none; }
+.cert-corner-br { bottom: 4px; right: 4px; border-left: none; border-top: none; }
+
+/* Watermark Background */
+.cert-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 260px;
+    color: rgba(223, 186, 105, 0.04);
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+}
+
+/* Header Section */
+.cert-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 12px;
+}
+
+.cert-institute-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--cert-emerald-dark);
+    margin: 0;
+}
+
+.cert-sub-institute {
+    font-size: 0.85rem;
+    color: var(--cert-text-muted);
+    margin-top: 2px;
+}
+
+.cert-basmalah {
+    font-family: 'Amiri', serif;
+    font-size: 1.6rem;
+    color: var(--cert-gold-3);
+    font-weight: 700;
+    text-align: center;
+}
+
+.cert-number-box {
+    text-align: left;
+    direction: ltr;
+}
+
+.cert-serial {
+    font-size: 0.76rem;
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    color: var(--cert-gold-dark);
+    background: rgba(197, 155, 39, 0.1);
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(197, 155, 39, 0.25);
+}
+
+/* Certificate Title Banner */
+.cert-title-container {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 16px;
+}
+
+.cert-title-container::before,
+.cert-title-container::after {
+    content: "❖";
+    color: var(--cert-gold-2);
+    font-size: 1.2rem;
+    margin: 0 10px;
+}
+
+.cert-main-title {
+    font-family: 'Reem Kufi', 'Cairo', sans-serif;
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: var(--cert-emerald-dark);
+    display: inline-block;
+    letter-spacing: 0.5px;
+    margin: 0;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.cert-title-line {
+    width: 140px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cert-gold-2), transparent);
+    margin: 4px auto 0 auto;
+}
+
+/* Body Content */
+.cert-body-content {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+}
+
+.cert-intro-text {
+    font-family: 'Amiri', serif;
+    font-size: 1.28rem;
+    line-height: 1.8;
+    color: #292524;
+    margin: 0 auto;
+    max-width: 820px;
+}
+
+.cert-student-name {
+    font-family: 'Amiri', serif;
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: var(--cert-blue-dark);
+    display: inline-block;
+    margin: 4px 0;
+    padding: 2px 24px;
+    border-bottom: 2px dashed rgba(197, 155, 39, 0.4);
+    letter-spacing: 0.5px;
+}
+
+.cert-achievement-box {
+    margin: 6px auto;
+    max-width: 780px;
+}
+
+.cert-subject-name {
+    font-family: 'Amiri', serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--cert-emerald-dark);
+    display: block;
+    margin: 4px 0;
+}
+
+.cert-author-name {
+    font-family: 'Amiri', serif;
+    font-size: 1.1rem;
+    color: var(--cert-gold-dark);
+    font-style: italic;
+    margin-bottom: 6px;
+}
+
+.cert-scope-text {
+    font-size: 0.95rem;
+    color: var(--cert-text-muted);
+}
+
+/* Rating / Evaluation Badge */
+.cert-rating-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, rgba(223, 186, 105, 0.15), rgba(197, 155, 39, 0.25));
+    border: 1.5px solid var(--cert-gold-2);
+    color: var(--cert-gold-dark);
+    padding: 6px 20px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 1rem;
+    margin: 4px auto;
+    box-shadow: 0 2px 8px rgba(197, 155, 39, 0.15);
+}
+
+.cert-rating-star {
+    color: #eab308;
+    font-size: 1.15rem;
+}
+
+/* Footer & Signatures */
+.cert-footer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+    margin-top: 20px;
+    padding-top: 12px;
+}
+
+.cert-sign-col {
+    text-align: center;
+    width: 220px;
+}
+
+.cert-sign-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--cert-emerald-dark);
+    margin-bottom: 6px;
+}
+
+.cert-sign-name {
+    font-family: 'Amiri', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #292524;
+    min-height: 28px;
+}
+
+.cert-sign-line {
+    width: 140px;
+    height: 1px;
+    background: #cbd5e1;
+    margin: 6px auto;
+}
+
+.cert-seal-box {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cert-official-seal {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 2px dashed var(--cert-gold-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--cert-gold-2);
+    font-size: 2rem;
+    background: rgba(223, 186, 105, 0.06);
+    margin-bottom: 4px;
+}
+
+.cert-date-text {
+    font-size: 0.85rem;
+    color: var(--cert-text-muted);
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   PRINT MEDIA OPTIMIZATIONS
+   ========================================================================== */
+@media print {
+    @page {
+        size: A4 landscape;
+        margin: 0;
+    }
+
+    html, body.cert-body {
+        background: #ffffff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 297mm !important;
+        height: 210mm !important;
+        overflow: hidden !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .cert-toolbar {
+        display: none !important;
+    }
+
+    .cert-stage {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 297mm !important;
+        height: 210mm !important;
+    }
+
+    .certificate-sheet {
+        width: 297mm !important;
+        height: 210mm !important;
+        min-height: 210mm !important;
+        max-height: 210mm !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        padding: 10mm !important;
+        page-break-after: avoid !important;
+        page-break-inside: avoid !important;
+    }
+}

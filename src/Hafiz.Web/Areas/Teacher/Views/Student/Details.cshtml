@@ -362,17 +362,22 @@
     </div>
 
     <!-- سجل إنجاز واختبارات المتون المقررة -->
-    <!-- سجل إنجاز واختبارات المتون المقررة بتصميم حديث -->
     <div class="matn-matrix-card mb-4">
-        <div class="matn-matrix-header">
-            <h4 class="matn-matrix-title">
+        <div class="matn-matrix-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <h4 class="matn-matrix-title mb-0">
                 <i class='bx bx-book-reader'></i>
                 <span>سجل إنجاز واختبارات المتون العلمية المقررة</span>
             </h4>
-            @if (Model.MatnProgresses != null && Model.MatnProgresses.Any())
-            {
-                <span class="badge bg-primary rounded-pill">@Model.MatnProgresses.Count() متون مقررة</span>
-            }
+            <div class="d-flex align-items-center gap-2">
+                @if (Model.MatnProgresses != null && Model.MatnProgresses.Any())
+                {
+                    <span class="badge bg-primary rounded-pill">@Model.MatnProgresses.Count() متون مقررة</span>
+                }
+                <button type="button" class="t-btn t-btn-primary t-btn-sm" onclick="openAssignMatnModal('@Model.Student.UserId', '@studentFullName')">
+                    <i class='bx bx-plus-circle'></i>
+                    <span>رصد تسميع متن جديد</span>
+                </button>
+            </div>
         </div>
 
         @if (Model.MatnProgresses != null && Model.MatnProgresses.Any())
@@ -452,25 +457,30 @@
                                     }
                                 </td>
                                 <td class="text-center">
-                                    @if (prog.ExamStatus == ExamStatus.Passed)
+                                    @{
+                                        var passGrade = prog.PassingGrade > 0 ? prog.PassingGrade : 60m;
+                                        var isActuallyPassed = prog.ExamStatus == ExamStatus.Passed && (!prog.Score.HasValue || prog.Score.Value >= passGrade);
+                                        var isActuallyFailed = prog.ExamStatus == ExamStatus.Failed || (prog.Score.HasValue && prog.Score.Value < passGrade);
+                                    }
+                                    @if (isActuallyPassed)
                                     {
                                         <span class="status-pill status-exam-passed @(prog.Score >= 90 ? "high-score" : "")">
                                             <i class='bx @(prog.Score >= 90 ? "bxs-star text-warning" : "bx-check")'></i>
                                             <span>ناجح</span>
                                             @if (prog.Score.HasValue)
                                             {
-                                                <span class="score-badge">@prog.Score%</span>
+                                                <span class="score-badge">@(prog.Score.Value.ToString("0.##"))%</span>
                                             }
                                         </span>
                                     }
-                                    else if (prog.ExamStatus == ExamStatus.Failed)
+                                    else if (isActuallyFailed)
                                     {
                                         <span class="status-pill status-exam-failed">
                                             <i class='bx bx-x'></i>
                                             <span>راسب</span>
                                             @if (prog.Score.HasValue)
                                             {
-                                                <span class="score-badge">@prog.Score%</span>
+                                                <span class="score-badge">@(prog.Score.Value.ToString("0.##"))%</span>
                                             }
                                         </span>
                                     }
@@ -491,11 +501,17 @@
                                     @(string.IsNullOrEmpty(prog.TeacherNotes) ? "—" : prog.TeacherNotes)
                                 </td>
                                 <td class="text-center">
-                                    <button type="button" class="btn-matn-action"
-                                            onclick="openProgressModal('@Model.Student.UserId', '@studentFullName', '@prog.MatnId', '@prog.MatnTitle', @((int)prog.StudyStatus), @((int)prog.MemorizationStatus), @((int)prog.ExamStatus), '@(prog.Score?.ToString() ?? "")', '@(prog.ExamDate?.ToString("yyyy-MM-dd") ?? "")', '@((prog.TeacherNotes ?? "").Replace("'", "\\'").Replace("\n", " "))')">
-                                        <i class='bx bx-edit-alt'></i>
-                                        <span>تحديد الحالة والدرجة</span>
-                                    </button>
+                                    <div class="d-flex align-items-center justify-content-center gap-1 flex-wrap">
+                                        <button type="button" class="btn-matn-action"
+                                                onclick="openProgressModal('@Model.Student.UserId', '@studentFullName', '@prog.MatnId', '@prog.MatnTitle', @((int)prog.StudyStatus), @((int)prog.MemorizationStatus), @((int)prog.ExamStatus), '@(prog.Score?.ToString() ?? "")', '@(prog.ExamDate?.ToString("yyyy-MM-dd") ?? "")', '@((prog.TeacherNotes ?? "").Replace("'", "\\'").Replace("\n", " "))')">
+                                            <i class='bx bx-edit-alt'></i>
+                                            <span>تحديد الحالة</span>
+                                        </button>
+                                        <button type="button" class="t-btn t-btn-sm t-btn-outline p-1" title="رصد تسميع لهذا المتن"
+                                                onclick="openAssignMatnModal('@Model.Student.UserId', '@studentFullName', '@prog.MatnTitle', '@prog.MatnId')">
+                                            <i class='bx bx-plus text-primary'></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -597,6 +613,19 @@
                         }
                     </div>
                 }
+            </div>
+
+            <!-- Matn Pagination Controls -->
+            <div id="matnPaginationControls" class="pagination-controls mt-3" style="display: none;">
+                <button type="button" class="pagination-btn" id="matnPrevBtn" onclick="changeMatnPage(-1)">
+                    <i class='bx bx-chevron-right'></i>
+                    <span>@Localizer["Previous"]</span>
+                </button>
+                <span class="pagination-info" id="matnPageInfo"></span>
+                <button type="button" class="pagination-btn" id="matnNextBtn" onclick="changeMatnPage(1)">
+                    <span>@Localizer["Next"]</span>
+                    <i class='bx bx-chevron-left'></i>
+                </button>
             </div>
         }
         else
@@ -939,4 +968,46 @@
             btn.innerHTML = '<i class="bx bx-save me-1"></i> حفظ التعديلات والدرجة';
         }
     }
+
+    window.currentStudentMatuns = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MatnProgresses.Select(p => new {
+        matnId = p.MatnId.ToString(),
+        matnTitle = p.MatnTitle,
+        matnAuthor = p.MatnAuthor ?? "",
+        matnOrder = p.MatnOrder
+    })));
+
+    (function initMatnPagination() {
+        const items = document.querySelectorAll('.matn-assignments-section .matn-item');
+        if (!items || items.length === 0) return;
+        const perPage = 5;
+        const totalPages = Math.ceil(items.length / perPage);
+        const controls = document.getElementById('matnPaginationControls');
+        const info = document.getElementById('matnPageInfo');
+        const prev = document.getElementById('matnPrevBtn');
+        const next = document.getElementById('matnNextBtn');
+
+        if (items.length > perPage && controls) {
+            controls.style.display = 'flex';
+        }
+
+        let curPage = 1;
+        window.changeMatnPage = function(delta) {
+            curPage += delta;
+            if (curPage < 1) curPage = 1;
+            if (curPage > totalPages) curPage = totalPages;
+
+            items.forEach((item, idx) => {
+                const visible = (idx >= (curPage - 1) * perPage && idx < curPage * perPage);
+                item.style.display = visible ? 'block' : 'none';
+            });
+
+            if (info) info.textContent = `صفحة ${curPage} من ${totalPages} (${items.length} تسميع)`;
+            if (prev) prev.disabled = (curPage === 1);
+            if (next) next.disabled = (curPage === totalPages);
+        };
+
+        if (items.length > perPage) {
+            window.changeMatnPage(0);
+        }
+    })();
 </script>

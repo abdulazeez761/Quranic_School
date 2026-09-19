@@ -1,3 +1,4 @@
+using Hafiz.Application.Interfaces.Services;
 using Hafiz.Application.Services;
 using Hafiz.Services;
 using Hafiz.Services.Interfaces;
@@ -25,6 +26,7 @@ namespace Hafiz.Application.Extensions
             services.AddScoped<IMatnService, MatnService>();
             services.AddScoped<IMatnAssignmentService, MatnAssignmentService>();
             services.AddScoped<IStudentMatnProgressService, StudentMatnProgressService>();
+            services.AddScoped<ICertificateService, CertificateService>();
             return services;
         }
     }

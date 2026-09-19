@@ -1,0 +1,49 @@
+@model Hafiz.Application.DTO.Certificate.CertificateModel
+@{
+    Layout = null;
+    ViewData["Title"] = $"{Model.CertificateTitle} - {Model.StudentName}";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <!-- Boxicons Icons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+    <!-- Certificate Styles -->
+    <link rel="stylesheet" href="~/css/certificates/certificate.css" asp-append-version="true" />
+</head>
+<body class="cert-body">
+
+    <!-- Floating Action Toolbar (Hidden in Print) -->
+    <div class="cert-toolbar">
+        <button type="button" class="cert-btn cert-btn-gold" onclick="window.print()">
+            <i class='bx bx-printer'></i>
+            <span>طباعة الشهادة</span>
+        </button>
+        <button type="button" class="cert-btn cert-btn-dark" onclick="window.close(); if(window.opener) window.opener.focus(); else history.back();">
+            <i class='bx bx-arrow-back'></i>
+            <span>العودة</span>
+        </button>
+    </div>
+
+    <!-- Certificate Stage -->
+    <div class="cert-stage">
+        <div class="certificate-sheet">
+            @if (Model.Type == Hafiz.Domain.Enums.CertificateType.Quran)
+            {
+                @await Html.PartialAsync("Templates/_QuranTemplate", Model)
+            }
+            else
+            {
+                @await Html.PartialAsync("Templates/_MatnTemplate", Model)
+            }
+        </div>
+    </div>
+
+</body>
+</html>

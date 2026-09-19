@@ -17,6 +17,7 @@ public class MatnSummaryDto
     public int? TotalChapters { get; set; }
     public MatnUnit DefaultUnit { get; set; }
     public int Order { get; set; } = 1;
+    public decimal PassingGrade { get; set; } = 60m;
     public bool IsActive { get; set; } = true;
     public Guid? InstituteId { get; set; }
     public Guid? StudyProgramId { get; set; }

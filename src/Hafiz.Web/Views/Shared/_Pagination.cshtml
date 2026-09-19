@@ -56,9 +56,9 @@
             }
         </span>
 
-        @if (Model.TotalCount > 10)
+        @if (Model.TotalCount > 5)
         {
-            var availableSizes = new List<int> { 10, 12, 20, 24, 50 };
+            var availableSizes = new List<int> { 5, 10, 12, 20, 50 };
             if (!availableSizes.Contains(Model.PageSize))
             {
                 availableSizes.Add(Model.PageSize);
@@ -154,6 +154,12 @@
                     </button>
                 }
             </li>
+        </ul>
+    }
+    else if (Model.TotalCount > 0)
+    {
+        <ul class="table-pagination m-0">
+            <li><span class="pagination-num-btn active" style="min-width: 34px; height: 34px;">1</span></li>
         </ul>
     }
 </div>

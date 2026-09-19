@@ -225,7 +225,7 @@ function resetAllMatnRatings() {
     });
 }
 
-function openAssignMatnModal(studentId, studentName, designatedMatn = '') {
+function openAssignMatnModal(studentId, studentName, designatedMatn = '', preselectedMatnId = '') {
     initMatnStudentsList();
 
     const selectContainer = document.getElementById('matnStudentSelectContainer');
@@ -240,6 +240,8 @@ function openAssignMatnModal(studentId, studentName, designatedMatn = '') {
 
     window.matnModalState.designatedMatn = targetDesignated;
     window.matnModalState.programName = programName;
+    window.matnModalState.preselectedMatnId = preselectedMatnId;
+    window.matnModalState.currentStudentId = studentId;
 
     const progBadgeText = document.getElementById('matnDrawerProgramBadgeText');
     if (progBadgeText && programName) progBadgeText.textContent = programName;
@@ -299,7 +301,7 @@ function openAssignMatnModal(studentId, studentName, designatedMatn = '') {
     // 2. Schedule Card Construction & Reset:
     const setupCards = () => {
         resetAllMatnRatings();
-        applyDesignatedMatnToCards(targetDesignated);
+        populateMatnDropdown(studentId, preselectedMatnId, targetDesignated);
     };
 
     if (isAlreadyOpen) {
@@ -308,6 +310,132 @@ function openAssignMatnModal(studentId, studentName, designatedMatn = '') {
         // Run during slide animation to keep 60 FPS initial response
         setTimeout(setupCards, 120);
     }
+}
+
+function getStoredMatnId(studentId) {
+    if (studentId) {
+        const byStudent = localStorage.getItem('hafiz_matn_' + studentId);
+        if (byStudent) return byStudent;
+    }
+    const globalSaved = localStorage.getItem('hafiz_last_matn');
+    if (globalSaved) return globalSaved;
+
+    const match = document.cookie.match(/(?:^|;\s*)hafiz_selected_matn=([^;]+)/);
+    return match ? decodeURIComponent(match[1]) : null;
+}
+
+function saveSelectedMatn(studentId, matnId) {
+    if (!matnId) return;
+    if (studentId) {
+        try { localStorage.setItem('hafiz_matn_' + studentId, matnId); } catch(e){}
+    }
+    try { localStorage.setItem('hafiz_last_matn', matnId); } catch(e){}
+    document.cookie = `hafiz_selected_matn=${encodeURIComponent(matnId)}; path=/; max-age=31536000; SameSite=Lax`;
+}
+
+async function populateMatnDropdown(studentId, preselectedMatnId, preselectedMatnTitle) {
+    const dropdown = document.getElementById('matnSelectDropdown');
+    const hint = document.getElementById('matnSelectorHint');
+    if (!dropdown) return;
+
+    dropdown.innerHTML = '<option value="">جارٍ تحميل المتون المقررة...</option>';
+
+    let matuns = [];
+    if (studentId) {
+        try {
+            const res = await fetch(`/Teacher/StudentMatnProgress/ForStudent?studentId=${studentId}`);
+            const json = await res.json();
+            if (json && json.success && Array.isArray(json.data) && json.data.length > 0) {
+                matuns = json.data;
+            }
+        } catch (e) {
+            console.warn('Could not fetch student matuns dynamically:', e);
+        }
+    }
+
+    if (matuns.length === 0 && window.currentStudentMatuns && Array.isArray(window.currentStudentMatuns) && window.currentStudentMatuns.length > 0) {
+        matuns = window.currentStudentMatuns;
+    }
+
+    if (matuns.length === 0 && (preselectedMatnTitle || preselectedMatnId)) {
+        matuns = [{ matnId: preselectedMatnId || '', matnTitle: preselectedMatnTitle || 'المتن المقرر' }];
+    }
+
+    if (matuns.length === 0) {
+        dropdown.innerHTML = '<option value="">-- لا توجد متون مسندة لهذا الطالب --</option>';
+        if (hint) hint.textContent = '';
+        applyDesignatedMatnToCards(preselectedMatnTitle || 'المتون العلمية');
+        return;
+    }
+
+    dropdown.innerHTML = '';
+    const storedMatnId = getStoredMatnId(studentId);
+    const targetMatnId = preselectedMatnId || storedMatnId;
+
+    let selectedOption = null;
+
+    matuns.forEach((m, idx) => {
+        const opt = document.createElement('option');
+        const mId = m.matnId || m.id || '';
+        const mTitle = m.matnTitle || m.title || '';
+        const mAuthor = m.matnAuthor || m.author || '';
+        const mOrder = m.matnOrder || m.order || (idx + 1);
+
+        opt.value = mId;
+        opt.setAttribute('data-title', mTitle);
+        opt.setAttribute('data-author', mAuthor);
+        opt.textContent = `${mOrder ? '#' + mOrder + ' ' : ''}${mTitle} ${mAuthor ? '(' + mAuthor + ')' : ''}`;
+
+        if (targetMatnId && mId.toLowerCase() === targetMatnId.toLowerCase()) {
+            opt.selected = true;
+            selectedOption = opt;
+        } else if (!selectedOption && preselectedMatnTitle && mTitle.trim().toLowerCase() === preselectedMatnTitle.trim().toLowerCase()) {
+            opt.selected = true;
+            selectedOption = opt;
+        }
+
+        dropdown.appendChild(opt);
+    });
+
+    if (!selectedOption && dropdown.options.length > 0) {
+        dropdown.options[0].selected = true;
+        selectedOption = dropdown.options[0];
+    }
+
+    if (hint) {
+        hint.textContent = `متوفر (${matuns.length}) متون مقررة`;
+    }
+
+    if (selectedOption) {
+        onMatnDropdownChange(dropdown);
+    }
+}
+
+function onMatnDropdownChange(selectEl) {
+    if (!selectEl) return;
+    const opt = selectEl.options[selectEl.selectedIndex];
+    if (!opt) return;
+
+    const matnId = opt.value;
+    const matnTitle = opt.getAttribute('data-title') || opt.text;
+
+    const hiddenId = document.getElementById('matnSelectedId');
+    if (hiddenId) hiddenId.value = matnId;
+
+    const badge = document.getElementById('matnDrawerMatnBadge');
+    const badgeText = document.getElementById('matnDrawerMatnBadgeText');
+    if (badgeText) {
+        badgeText.textContent = matnTitle;
+        if (badge) badge.style.display = 'inline-flex';
+    }
+
+    window.matnModalState.designatedMatn = matnTitle;
+    window.matnModalState.selectedMatnId = matnId;
+
+    // Save selection in localStorage and cookie
+    saveSelectedMatn(window.matnModalState.currentStudentId, matnId);
+
+    applyDesignatedMatnToCards(matnTitle);
 }
 
 function applyDesignatedMatnToCards(designatedTitle) {
@@ -758,7 +886,7 @@ async function submitMatnAssignment(navigateNext = false) {
         : allTypes.filter(t => t.key === window.matnModalState.currentTab);
 
     const payloads = [];
-    const todayDateStr = new Date().toISOString().split('T')[0];
+    const nowIso = new Date().toISOString();
 
     const matnTitle = window.matnModalState.designatedMatn
         || document.getElementById('matnDrawerPanel')?.dataset?.assignedMatn
@@ -789,9 +917,12 @@ async function submitMatnAssignment(navigateNext = false) {
         const finalStatus = isUpcoming ? 0 : (!isNaN(parsedStatus) ? parsedStatus : 0);
         const finalIsCompleted = !isUpcoming && finalStatus > 0;
 
+        const selectedMatnId = document.getElementById('matnSelectedId')?.value || document.getElementById('matnSelectDropdown')?.value || null;
+
         payloads.push({
             studentId: studentId,
             classId: classId,
+            matnId: selectedMatnId,
             performanceType: t.perfVal,
             unit: parseInt(window.matnUnits[t.key]) || 4,
             amount: parseFloat(amountVal),
@@ -801,7 +932,7 @@ async function submitMatnAssignment(navigateNext = false) {
             status: finalStatus,
             isCompleted: finalIsCompleted,
             isUpcoming: isUpcoming,
-            assignedDate: todayDateStr,
+            assignedDate: nowIso,
             note: document.getElementById(`matnNote-${t.key}`)?.value.trim() || null
         });
     }
@@ -912,3 +1043,5 @@ window.submitMatnAssignment = submitMatnAssignment;
 window.navigateMatnStudent = navigateMatnStudent;
 window.onMatnStudentDropdownChange = onMatnStudentDropdownChange;
 window.toggleUpcomingMatn = toggleUpcomingMatn;
+window.onMatnDropdownChange = onMatnDropdownChange;
+window.populateMatnDropdown = populateMatnDropdown;

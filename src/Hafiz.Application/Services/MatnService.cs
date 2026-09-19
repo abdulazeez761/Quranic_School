@@ -58,6 +58,7 @@ public class MatnService : IMatnService
             DefaultUnit = dto.DefaultUnit,
             StudyProgramId = dto.StudyProgramId,
             Order = dto.Order > 0 ? dto.Order : 1,
+            PassingGrade = dto.PassingGrade > 0 ? dto.PassingGrade : 60m,
             IsActive = dto.IsActive,
             InstituteId = instituteId // null إذا كان متناً عاماً، أو يحمل معرف المعهد إذا أضافه المعهد
         };
@@ -87,6 +88,7 @@ public class MatnService : IMatnService
             existing.StudyProgramId = dto.StudyProgramId;
         }
         existing.Order = dto.Order;
+        existing.PassingGrade = dto.PassingGrade > 0 ? dto.PassingGrade : 60m;
         existing.IsActive = dto.IsActive;
 
         var updated = await _matnRepository.UpdateAsync(existing);
@@ -124,6 +126,7 @@ public class MatnService : IMatnService
         StudyProgramId = m.StudyProgramId,
         StudyProgramName = m.StudyProgram?.Name,
         Order = m.Order,
+        PassingGrade = m.PassingGrade,
         IsActive = m.IsActive
     };
 }

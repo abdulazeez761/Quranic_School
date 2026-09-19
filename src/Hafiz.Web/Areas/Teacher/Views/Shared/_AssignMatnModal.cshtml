@@ -87,6 +87,21 @@
                 </select>
             </div>
 
+            <!-- Matn Selection Dropdown for Teacher -->
+            <div id="matnSelectorContainer" style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: var(--radius-md, 8px); padding: 10px 14px; margin-bottom: 10px;">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    <label class="compact-label mb-0 fw-bold" for="matnSelectDropdown" style="font-size: 0.85rem; color: #166534;">
+                        <i class='bx bx-bookmarks me-1 text-success'></i> المتن المقرر للتسميع: <span class="text-danger">*</span>
+                    </label>
+                    <span id="matnSelectorHint" class="small text-muted" style="font-size: 0.78rem;"></span>
+                </div>
+                <select id="matnSelectDropdown" class="form-select form-control mt-1" onchange="onMatnDropdownChange(this)"
+                        style="border-radius: var(--radius-md, 8px); font-weight: 600; border-color: #86efac;">
+                    <option value="">-- اختر المتن المراد تسميعه --</option>
+                </select>
+                <input type="hidden" id="matnSelectedId" name="MatnId" value="" />
+            </div>
+
             <!-- ===================================================================
                  CARD 1: حفظ المتن الجديد (Memorization) - Soft Sage Theme
                  =================================================================== -->

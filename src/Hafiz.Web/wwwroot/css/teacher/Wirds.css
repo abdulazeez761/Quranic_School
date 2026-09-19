@@ -779,7 +779,8 @@
 
 .wird-type-badge,
 .wird-amount-badge,
-.wird-date-badge {
+.wird-date-badge,
+.wird-time-badge {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
@@ -790,6 +791,16 @@
   background: var(--t-surface-muted);
   color: var(--t-text-muted);
   border: 1px solid var(--t-border);
+}
+
+.wird-time-badge {
+  background: rgba(100, 140, 81, 0.08);
+  color: var(--t-primary, #648c51);
+  border-color: rgba(100, 140, 81, 0.22);
+}
+
+.wird-time-badge i {
+  font-size: 0.85rem;
 }
 
 .wird-type-badge.matn-badge {

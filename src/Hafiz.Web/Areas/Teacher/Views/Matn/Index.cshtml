@@ -1,17 +1,13 @@
 @model IEnumerable<Hafiz.DTOs.Matn.MatnAssignmentDto>
 @using Hafiz.Domain.Enums
-
 @using Hafiz.Models
 @{
     var cls = ViewBag.Class as Hafiz.DTOs.ClassDto;
-    var teacherClasses = (ViewBag.TeacherClasses as IEnumerable<Hafiz.Models.Class>) ??
-Enumerable.Empty<Hafiz.Models.Class>();
+    var teacherClasses = (ViewBag.TeacherClasses as IEnumerable<Hafiz.Models.Class>) ?? Enumerable.Empty<Hafiz.Models.Class>();
     var noClasses = (ViewBag.NoClasses as bool?) == true || cls == null;
     var targetDate = (DateTime)(ViewBag.TargetDate ?? DateTime.Today);
-    var matnProgresses = (ViewBag.MatnProgresses as IEnumerable<Hafiz.DTOs.Matn.StudentMatnProgressDto>) ??
-Enumerable.Empty<Hafiz.DTOs.Matn.StudentMatnProgressDto>();
-    var classMatuns = (ViewBag.ClassMatuns as IEnumerable<Hafiz.DTOs.StudyProgram.MatnSummaryDto>) ??
-Enumerable.Empty<Hafiz.DTOs.StudyProgram.MatnSummaryDto>();
+    var matnProgresses = (ViewBag.MatnProgresses as IEnumerable<Hafiz.DTOs.Matn.StudentMatnProgressDto>) ?? Enumerable.Empty<Hafiz.DTOs.Matn.StudentMatnProgressDto>();
+    var classMatuns = (ViewBag.ClassMatuns as IEnumerable<Hafiz.DTOs.StudyProgram.MatnSummaryDto>) ?? Enumerable.Empty<Hafiz.DTOs.StudyProgram.MatnSummaryDto>();
     var studentsList = (ViewBag.Students as List<SelectListItem>) ?? new List<SelectListItem>();
 
     ViewData["Title"] = cls != null ? $"المتون العلمية - {cls.Name}" : "المتون العلمية";
@@ -29,8 +25,7 @@ Enumerable.Empty<Hafiz.DTOs.StudyProgram.MatnSummaryDto>();
             </div>
             <h4 class="t-empty-title">لا توجد حلقات مسندة إليك حالياً</h4>
             <p class="t-empty-text">
-                لم يتم إسناد أي حلقة إلى حسابك حتى الآن. يرجى مراجعة إدارة المركز لإسناد حلقة لك لتتمكن من رصد تسميع المتون
-                العلمية ومتابعة إنجاز الطلاب.
+                لم يتم إسناد أي حلقة إلى حسابك حتى الآن. يرجى مراجعة إدارة المركز لإسناد حلقة لك لتتمكن من رصد تسميع المتون العلمية ومتابعة إنجاز الطلاب.
             </p>
             <a asp-controller="Home" asp-action="Index" class="t-btn t-btn-outline mt-2">
                 <i class='bx bx-right-arrow-alt me-1'></i> العودة للرئيسية
@@ -39,50 +34,50 @@ Enumerable.Empty<Hafiz.DTOs.StudyProgram.MatnSummaryDto>();
     }
     else
     {
-        <!-- Header Banner -->
-        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-            <div>
-                <div class="d-flex align-items-center gap-2 flex-wrap">
-                    <span class="t-badge t-badge-matn">
+        <!-- Header Hub Banner -->
+        <div class="matn-hub-header">
+            <div class="matn-hub-info">
+                <div class="matn-hub-title-row">
+                    <span class="matn-program-tag">
                         <i class='bx bx-bookmarks'></i> شعبة متون علمية
                     </span>
-                    <h2 class="h4 fw-bold mb-0">@cls!.Name</h2>
+                    <h2 class="matn-hub-title">@cls!.Name</h2>
                 </div>
-                <p class="text-muted small mb-0 mt-1">
-                    البرنامج العلمي: <strong>@(cls.StudyProgramName ?? "المتون العلمية")</strong> · المتون المقررة:
-                    <strong>@classMatuns.Count()</strong> · الطلاب: <strong>@studentsList.Count</strong>
-                </p>
+                <div class="matn-hub-meta">
+                    <span>البرنامج العلمي: <strong>@(cls.StudyProgramName ?? "المتون العلمية")</strong></span>
+                    <span>·</span>
+                    <span>المتون المقررة: <strong>@classMatuns.Count()</strong></span>
+                    <span>·</span>
+                    <span>الطلاب: <strong>@studentsList.Count</strong></span>
+                </div>
             </div>
 
-            <div class="d-flex gap-2 align-items-center flex-wrap">
+            <div class="matn-hub-controls">
                 @if (teacherClasses.Count() > 1)
                 {
-                    <form method="get" class="d-flex align-items-center gap-1">
+                    <form method="get" class="d-inline-flex align-items-center">
                         <input type="hidden" name="date" value="@targetDate.ToString("yyyy-MM-dd")" />
-                        <label class="small text-muted mb-0 me-1">الحلقة:</label>
-                        <select name="classId" class="form-select form-select-sm" onchange="this.form.submit()"
-                                style="min-width: 170px; border-radius: var(--t-radius-md, 8px);">
+                        <select name="classId" class="matn-control-select" onchange="this.form.submit()">
                             @foreach (var c in teacherClasses)
                             {
                                 <option value="@c.Id" selected="@(c.Id == cls.Id ? "selected" : null)">
-                                    @c.Name @(c.StudyProgram != null ? $"({c.StudyProgram.Name})" : "")
+                                    حلقة: @c.Name @(c.StudyProgram != null ? $"({c.StudyProgram.Name})" : "")
                                 </option>
                             }
                         </select>
                     </form>
                 }
-                <form method="get" class="d-flex gap-2 align-items-center">
+                <form method="get" class="d-inline-flex">
                     <input type="hidden" name="classId" value="@cls.Id" />
-                    <input type="date" name="date" class="form-control form-control-sm"
-                           value="@targetDate.ToString("yyyy-MM-dd")" onchange="this.form.submit()"
-                           style="border-radius: var(--t-radius-md, 8px);" />
+                    <input type="date" name="date" class="matn-control-date"
+                           value="@targetDate.ToString("yyyy-MM-dd")" onchange="this.form.submit()" />
                 </form>
                 <a asp-action="ExportExcel" asp-route-classId="@cls.Id" asp-route-date="@targetDate.ToString("yyyy-MM-dd")"
-                   class="t-btn t-btn-outline t-btn-sm">
-                    <i class='bx bx-file'></i> <span>تصدير Excel</span>
+                   class="matn-control-btn">
+                    <i class='bx bx-file'></i> <span>Excel</span>
                 </a>
-                <a asp-controller="Home" asp-action="Index" class="t-btn t-btn-outline t-btn-sm">
-                    <i class='bx bx-right-arrow-alt'></i> <span>الحلقات</span>
+                <a asp-controller="Home" asp-action="Index" class="matn-control-btn">
+                    <i class='bx bx-grid-alt'></i> <span>الحلقات</span>
                 </a>
             </div>
         </div>
@@ -104,746 +99,500 @@ Enumerable.Empty<Hafiz.DTOs.StudyProgram.MatnSummaryDto>();
             </div>
         }
 
-        <!-- تبويبات الصفحة الرئيسية الحديثة -->
+        <!-- Segmented Tab Navigation -->
         <ul class="nav matn-nav-pills" id="matnTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="daily-tab" data-bs-toggle="pill" data-bs-target="#daily-content"
-                        type="button" role="tab" aria-controls="daily-content" aria-selected="true">
-                    <i class='bx bx-calendar-check'></i>
+                <button class="nav-link active" id="daily-tab" type="button"
+                        onclick="switchMatnTab('daily')">
+                    <i class='bx bx-calendar-check fs-5'></i>
                     <span>الورد والتسميع اليومي</span>
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="progress-tab" data-bs-toggle="pill" data-bs-target="#progress-content"
-                        type="button" role="tab" aria-controls="progress-content" aria-selected="false">
-                    <i class='bx bx-award'></i>
+                <button class="nav-link" id="progress-tab" type="button"
+                        onclick="switchMatnTab('progress')">
+                    <i class='bx bx-award fs-5'></i>
                     <span>متابعة إنجاز المتون وحالات الطلاب ورصد الدرجات</span>
                     @if (matnProgresses.Any())
                     {
-                        <span class="badge rounded-pill bg-primary">@matnProgresses.Count()</span>
+                        <span class="matn-tab-badge">@matnProgresses.Count()</span>
                     }
                 </button>
             </li>
         </ul>
 
-        <div class="tab-content" id="matnTabsContent">
-            <!-- التبويب الأول: التسميع والورد اليومي -->
-            <div class="tab-pane fade show active" id="daily-content" role="tabpanel" aria-labelledby="daily-tab">
-                <div class="row g-4">
-                    <!-- نموذج تسجيل تسميع جديد -->
-                    <div class="col-lg-4">
-                        <div class="t-card sticky-top" style="top: 80px;">
-                            <div class="t-card-header">
-                                <h5 class="fw-bold mb-0 fs-6 d-flex align-items-center gap-2">
-                                    <i class='bx bx-plus-circle text-primary fs-5'></i>
-                                    <span>رصد تسميع جديد للطالب</span>
-                                </h5>
-                            </div>
-                            <div class="t-card-body">
-                                <form asp-action="Assign" method="post">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="ClassId" value="@cls.Id" />
-                                    <input type="hidden" name="AssignedDate" value="@targetDate.ToString("yyyy-MM-dd")" />
-
-                                    <div class="mb-3">
-                                        <label class="form-label small fw-bold">الطالب <span
-                                            class="text-danger">*</span></label>
-                                            <select name="StudentId" class="form-select form-select-sm" required>
-                                                <option value="">-- اختر الطالب --</option>
-                                                @foreach (var s in studentsList)
-                                                {
-                                                    <option value="@s.Value">@s.Text</option>
-                                                }
-                                            </select>
-                                        </div>
-
-                                        @if (classMatuns.Any())
+        <!-- =================================================================== -->
+        <!-- TAB 1: الورد والتسميع اليومي                                        -->
+        <!-- =================================================================== -->
+        <div id="matnDailySection" style="display: block;">
+            <div class="matn-table-card">
+                <div class="matn-table-card-header">
+                    <h5 class="matn-form-card-title">
+                        <i class='bx bx-list-check text-primary fs-5'></i>
+                        <span>سجل تسميع المتون لليوم (@targetDate.ToString("yyyy-MM-dd"))</span>
+                    </h5>
+                    <span class="badge bg-primary fs-6 fw-bold">@Model.Count() تسميع</span>
+                </div>
+                        <div class="table-responsive">
+                            <table class="matn-table">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>نوع الأداء</th>
+                                        <th>المتن والموضع</th>
+                                        <th>التقييم</th>
+                                        <th>ملاحظات</th>
+                                        <th class="text-center" style="width: 70px;">حذف</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (!Model.Any())
+                                    {
+                                        <tr>
+                                            <td colspan="6" class="text-center py-5 text-muted">
+                                                <i class='bx bx-calendar-x fs-1 d-block mb-2 text-secondary'></i>
+                                                لا توجد تسميعات مسجلة لهذا اليوم (@targetDate.ToString("yyyy-MM-dd")).
+                                                <div class="small mt-1 text-muted">استخدم النموذج على اليمين لتسجيل تسميع جديد للطلاب.</div>
+                                            </td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var item in Model)
                                         {
-                                            <div class="mb-3">
-                                                <label class="form-label small fw-bold">المتن المقرر <span
-                                                    class="text-danger">*</span></label>
-                                                    <select name="MatnId" class="form-select form-select-sm" required>
-                                                        @foreach (var m in classMatuns)
-                                                        {
-                                                            <option value="@m.Id">@m.Order. @m.Title @(!string.IsNullOrEmpty(m.Author) ?
-                                                                                                                                                                            $"({m.Author})" : "")</option>
+                                            <tr>
+                                                <td>
+                                                    <div class="matn-student-cell">
+                                                        <div class="matn-student-avatar">
+                                                            @(!string.IsNullOrEmpty(item.StudentName) ? item.StudentName.Substring(0, 1) : "ط")
+                                                        </div>
+                                                        <div>
+                                                            <div class="matn-student-name">@item.StudentName</div>
+                                                            @if (item.AssignedDate != default)
+                                                            {
+                                                                <div class="text-muted small" style="font-size: 11px;">
+                                                                    <i class='bx bx-time-five'></i> @item.AssignedDate.ToLocalTime().ToString("hh:mm tt")
+                                                                </div>
                                                             }
-                                                        </select>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var pColor = item.PerformanceType switch
+                                                        {
+                                                            MatnPerformanceType.Memorization => "#2563eb",
+                                                            MatnPerformanceType.Revision => "#059669",
+                                                            _ => "#d97706"
+                                                        };
+                                                        var pBg = item.PerformanceType switch
+                                                        {
+                                                            MatnPerformanceType.Memorization => "#eff6ff",
+                                                            MatnPerformanceType.Revision => "#ecfdf5",
+                                                            _ => "#fffbeb"
+                                                        };
+                                                    }
+                                                    <span class="status-pill" style="background: @pBg; color: @pColor; border-color: @pColor;">
+                                                        @item.PerformanceTypeName
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div class="fw-bold text-dark">@item.MatnTitle</div>
+                                                    @if (item.FromNumber.HasValue && item.ToNumber.HasValue)
+                                                    {
+                                                        <span class="text-muted small">من @item.FromNumber إلى @item.ToNumber (@item.UnitName)</span>
+                                                    }
+                                                    else if (item.Amount.HasValue)
+                                                    {
+                                                        <span class="text-muted small">@item.Amount @item.UnitName</span>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(item.ChapterName))
+                                                    {
+                                                        <span class="text-muted small d-block">(@item.ChapterName)</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var (rateClass, rateText) = item.Status switch
+                                                        {
+                                                            AssignmentStatus.excellent => ("rate-excellent", "ممتاز 🌟"),
+                                                            AssignmentStatus.veryGood => ("rate-verygood", "جيد جداً"),
+                                                            AssignmentStatus.good => ("rate-good", "جيد"),
+                                                            AssignmentStatus.fair => ("rate-fair", "مقبول"),
+                                                            AssignmentStatus.poor => ("rate-poor", "ضعيف"),
+                                                            _ => ("rate-notset", "لم يحدد")
+                                                        };
+                                                    }
+                                                    <span class="rating-chip-label @rateClass d-inline-block py-1 px-2" style="pointer-events: none;">
+                                                        @rateText
+                                                    </span>
+                                                </td>
+                                                <td class="small text-muted" style="max-width: 140px;">
+                                                    @(string.IsNullOrEmpty(item.Note) ? "—" : item.Note)
+                                                </td>
+                                                <td class="text-center">
+                                                    <form asp-action="Delete" asp-route-id="@item.Id"
+                                                          asp-route-classId="@cls?.Id"
+                                                          asp-route-date="@targetDate.ToString("yyyy-MM-dd")" method="post"
+                                                          class="d-inline" onsubmit="return confirm('هل تريد بالتأكيد حذف هذا التسميع؟');">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger p-1 border-0" title="حذف">
+                                                            <i class='bx bx-trash fs-5'></i>
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+        <!-- =================================================================== -->
+        <!-- TAB 2: متابعة إنجاز المتون وحالات الطلاب ورصد الدرجات                  -->
+        <!-- =================================================================== -->
+        <div id="matnProgressSection" style="display: none;">
+            <!-- بطاقات مؤشرات الأداء الإحصائية (KPIs) -->
+            <div class="matn-kpi-grid">
+                <div class="matn-kpi-card kpi-blue">
+                    <div class="matn-kpi-icon"><i class='bx bx-bookmarks'></i></div>
+                    <div class="matn-kpi-content">
+                        <span class="matn-kpi-label">المتون المقررة في المنهج</span>
+                        <span class="matn-kpi-value">@classMatuns.Count()</span>
+                    </div>
+                </div>
+                <div class="matn-kpi-card kpi-emerald">
+                    <div class="matn-kpi-icon"><i class='bx bx-book-open'></i></div>
+                    <div class="matn-kpi-content">
+                        <span class="matn-kpi-label">سجلات المدارسة المكتملة</span>
+                        <span class="matn-kpi-value">@matnProgresses.Count(p => p.StudyStatus == StudyStatus.Completed)</span>
+                    </div>
+                </div>
+                <div class="matn-kpi-card kpi-violet">
+                    <div class="matn-kpi-icon"><i class='bx bx-check-double'></i></div>
+                    <div class="matn-kpi-content">
+                        <span class="matn-kpi-label">سجلات الحفظ التام</span>
+                        <span class="matn-kpi-value">@matnProgresses.Count(p => p.MemorizationStatus == MemorizationStatus.Memorized)</span>
+                    </div>
+                </div>
+                <div class="matn-kpi-card kpi-amber">
+                    <div class="matn-kpi-icon"><i class='bx bx-award'></i></div>
+                    <div class="matn-kpi-content">
+                        <span class="matn-kpi-label">الاختبارات المجتازة بنجاح</span>
+                        <span class="matn-kpi-value">@matnProgresses.Count(p => p.ExamStatus == ExamStatus.Passed)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- شريط الفلترة الذكي حسب المتن والبحث بالاسم -->
+            <div class="matn-filter-bar">
+                <div class="matn-pills-filter">
+                    <span class="small fw-bold text-muted me-1">عرض المتن:</span>
+                    <button type="button" class="filter-chip active" onclick="filterByMatn('all', this)">
+                        <i class='bx bx-layer'></i> جميع المتون
+                    </button>
+                    @foreach (var m in classMatuns)
+                    {
+                        <button type="button" class="filter-chip" onclick="filterByMatn('@m.Id', this)">
+                            <span>#@m.Order</span> @m.Title
+                        </button>
+                    }
+                </div>
+                <div class="filter-search-box">
+                    <i class='bx bx-search filter-search-icon'></i>
+                    <input type="text" id="studentSearchInput" placeholder="بحث باسم الطالب..." oninput="filterStudents(this.value)" />
+                </div>
+            </div>
+
+            <!-- جدول مصفوفة تقدم الطلاب في المتون بتصميم واضح ومرتب -->
+            <div class="matn-table-card">
+                <div class="table-responsive">
+                    <table class="matn-table" id="matrixTable">
+                        <thead>
+                            <tr>
+                                <th style="min-width: 170px;">الطالب</th>
+                                <th style="min-width: 160px;">المتن المقرر</th>
+                                <th class="text-center" style="min-width: 120px;">حالة المدارسة</th>
+                                <th class="text-center" style="min-width: 120px;">حالة الحفظ</th>
+                                <th class="text-center" style="min-width: 150px;">الاختبار والدرجة</th>
+                                <th style="min-width: 140px;">ملاحظات المعلم</th>
+                                <th class="text-center" style="min-width: 170px;">إجراءات ورصد الدرجة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!studentsList.Any())
+                            {
+                                <tr>
+                                    <td colspan="7" class="text-center py-5 text-muted">
+                                        <i class='bx bx-user-x fs-1 d-block mb-2 text-secondary'></i>
+                                        لا يوجد طلاب مسجلون في هذه الحلقة حالياً.
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var student in studentsList)
+                                {
+                                    var sGuid = Guid.TryParse(student.Value, out var parsedGuid) ? parsedGuid : Guid.Empty;
+                                    var firstLetter = !string.IsNullOrEmpty(student.Text) ? student.Text.Substring(0, 1) : "ط";
+                                    @foreach (var matn in classMatuns)
+                                    {
+                                        var prog = matnProgresses.FirstOrDefault(p => p.StudentId == sGuid && p.MatnId == matn.Id);
+                                        var studySt = prog?.StudyStatus ?? StudyStatus.NotStarted;
+                                        var memSt = prog?.MemorizationStatus ?? MemorizationStatus.NotStarted;
+                                        var examSt = prog?.ExamStatus ?? ExamStatus.NotTested;
+                                        var score = prog?.Score;
+                                        var notes = prog?.TeacherNotes ?? "";
+                                        var examDateStr = prog?.ExamDate?.ToString("yyyy-MM-dd") ?? "";
+
+                                        var matnPassingGrade = matn.PassingGrade > 0 ? matn.PassingGrade : (prog?.PassingGrade > 0 ? prog.PassingGrade : 60m);
+                                        var isActuallyPassed = examSt == ExamStatus.Passed && (!score.HasValue || score.Value >= matnPassingGrade);
+                                        var isActuallyFailed = examSt == ExamStatus.Failed || (score.HasValue && score.Value < matnPassingGrade);
+
+                                        <tr class="matrix-student-row"
+                                            data-student-id="@student.Value"
+                                            data-student-name="@student.Text"
+                                            data-matn-id="@matn.Id"
+                                            data-matn-title="@matn.Title"
+                                            data-study-status="@((int)studySt)"
+                                            data-mem-status="@((int)memSt)"
+                                            data-exam-status="@((int)examSt)"
+                                            data-score="@(score?.ToString() ?? "")"
+                                            data-exam-date="@examDateStr"
+                                            data-notes="@notes"
+                                            data-passing-grade="@matnPassingGrade">
+                                            <td>
+                                                <div class="matn-student-cell">
+                                                    <div class="matn-student-avatar">@firstLetter</div>
+                                                    <div>
+                                                        <a asp-controller="Student" asp-action="Details"
+                                                           asp-route-id="@student.Value" class="matn-student-name">
+                                                            @student.Text
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="matn-title-pill">
+                                                    <span class="matn-order-badge">#@matn.Order</span>
+                                                    <span>@matn.Title</span>
+                                                </div>
+                                                @if (!string.IsNullOrEmpty(matn.Author))
+                                                {
+                                                    <div class="text-muted small mt-1" style="font-size: 11px;">@matn.Author</div>
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                @if (studySt == StudyStatus.Completed)
+                                                {
+                                                    <span class="status-pill status-study-completed" style="cursor: pointer;" title="انقر لتعديل ورصد الدرجة" onclick="openRowProgressModal(this)">
+                                                        <i class='bx bx-check-circle'></i> مكتمل
+                                                    </span>
+                                                }
+                                                else if (studySt == StudyStatus.InProgress)
+                                                {
+                                                    <span class="status-pill status-study-inprogress" style="cursor: pointer;" title="انقر لتعديل ورصد الدرجة" onclick="openRowProgressModal(this)">
+                                                        <i class='bx bx-book-open'></i> قيد الدراسة
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="status-pill status-study-notstarted" style="cursor: pointer;" title="انقر لتعديل ورصد الدرجة" onclick="openRowProgressModal(this)">
+                                                        <i class='bx bx-circle'></i> لم يبدأ
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                @if (memSt == MemorizationStatus.Memorized)
+                                                {
+                                                    <span class="status-pill status-mem-done" style="cursor: pointer;" title="انقر لتعديل ورصد الدرجة" onclick="openRowProgressModal(this)">
+                                                        <i class='bx bx-check-double'></i> تم الحفظ
+                                                    </span>
+                                                }
+                                                else if (memSt == MemorizationStatus.InProgress)
+                                                {
+                                                    <span class="status-pill status-mem-inprogress" style="cursor: pointer;" title="انقر لتعديل ورصد الدرجة" onclick="openRowProgressModal(this)">
+                                                        <i class='bx bx-time'></i> قيد الحفظ
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="status-pill status-mem-notstarted" style="cursor: pointer;" title="انقر لتعديل ورصد الدرجة" onclick="openRowProgressModal(this)">
+                                                        <i class='bx bx-circle'></i> لم يبدأ
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                @if (isActuallyPassed)
+                                                {
+                                                    <span class="status-pill status-exam-pass" style="cursor: pointer;" title="انقر لتعديل ورصد الدرجة" onclick="openRowProgressModal(this)">
+                                                        <i class='bx bx-award'></i>
+                                                        <span>ناجح</span>
+                                                        @if (score.HasValue)
+                                                        {
+                                                            <span class="score-badge">@(score.Value.ToString("0.##"))%</span>
+                                                        }
+                                                    </span>
+                                                }
+                                                else if (isActuallyFailed)
+                                                {
+                                                    <span class="status-pill status-exam-fail" style="cursor: pointer;" title="انقر لتعديل ورصد الدرجة" onclick="openRowProgressModal(this)">
+                                                        <i class='bx bx-x'></i>
+                                                        <span>راسب</span>
+                                                        @if (score.HasValue)
+                                                        {
+                                                            <span class="score-badge">@(score.Value.ToString("0.##"))%</span>
+                                                        }
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="status-pill status-exam-none" style="cursor: pointer;" title="انقر لتعديل ورصد الدرجة" onclick="openRowProgressModal(this)">
+                                                        <i class='bx bx-minus'></i> لم يختبر
+                                                    </span>
+                                                }
+                                                @if (!string.IsNullOrEmpty(examDateStr))
+                                                {
+                                                    <div class="text-muted small mt-1" style="font-size: 10px;">
+                                                        <i class='bx bx-calendar'></i> @examDateStr
                                                     </div>
                                                 }
+                                            </td>
+                                            <td class="small text-muted">
+                                                @(string.IsNullOrEmpty(notes) ? "—" : (notes.Length > 25 ? notes.Substring(0, 25) + "..." : notes))
+                                            </td>
+                                            <td class="text-center">
+                                                <button type="button" class="btn-grade-action" onclick="openRowProgressModal(this)">
+                                                    <i class='bx bx-slider-alt'></i>
+                                                    <span>تحديد الحالة ورصد الدرجة</span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
-                                                <div class="mb-3">
-                                                    <label class="form-label small fw-bold">نوع الأداء <span
-                                                        class="text-danger">*</span></label>
-                                                        <select name="PerformanceType" class="form-select form-select-sm" required>
-                                                            <option value="@((int)MatnPerformanceType.Memorization)">حفظ جديد</option>
-                                                            <option value="@((int)MatnPerformanceType.Revision)">مراجعة</option>
-                                                            <option value="@((int)MatnPerformanceType.Mudarasah)">مدارسة وشرح</option>
-                                                        </select>
-                                                    </div>
+        @await Html.PartialAsync("_MatnProgressModal")
+    }
+</div>
 
-                                                    <div class="row g-2 mb-3">
-                                                        <div class="col-6">
-                                                            <label class="form-label small fw-bold">وحدة القياس</label>
-                                                            <select name="Unit" class="form-select form-select-sm">
-                                                                <option value="@((int)MatnUnit.Verses)">أبيات</option>
-                                                                <option value="@((int)MatnUnit.Lines)">أسطر</option>
-                                                                <option value="@((int)MatnUnit.Pages)">صفحات</option>
-                                                                <option value="@((int)MatnUnit.Chapters)">أبواب / فصول</option>
-                                                                <option value="@((int)MatnUnit.Hadiths)">أحاديث</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-6">
-                                                            <label class="form-label small fw-bold">الكمية</label>
-                                                            <input type="number" step="0.5" name="Amount"
-                                                                   class="form-control form-control-sm" placeholder="مثال: 10" />
-                                                        </div>
-                                                    </div>
+@section Scripts {
+    <script>
+        function switchMatnTab(tabKey) {
+            const dailyTab = document.getElementById('daily-tab');
+            const progressTab = document.getElementById('progress-tab');
+            const dailySec = document.getElementById('matnDailySection');
+            const progressSec = document.getElementById('matnProgressSection');
 
-                                                    <div class="mb-3">
-                                                        <label class="form-label small fw-bold">الباب أو الفصل (اختياري)</label>
-                                                        <input type="text" name="ChapterName" class="form-control form-control-sm"
-                                                               placeholder="مثال: باب أحكام النون الساكنة" />
-                                                    </div>
+            if (!dailyTab || !progressTab || !dailySec || !progressSec) return;
 
-                                                    <div class="row g-2 mb-3">
-                                                        <div class="col-6">
-                                                            <label class="form-label small fw-bold">من رقم</label>
-                                                            <input type="number" name="FromNumber" class="form-control form-control-sm"
-                                                                   placeholder="1" />
-                                                        </div>
-                                                        <div class="col-6">
-                                                            <label class="form-label small fw-bold">إلى رقم</label>
-                                                            <input type="number" name="ToNumber" class="form-control form-control-sm"
-                                                                   placeholder="15" />
-                                                        </div>
-                                                    </div>
+            if (tabKey === 'progress') {
+                dailyTab.classList.remove('active');
+                dailyTab.setAttribute('aria-selected', 'false');
+                progressTab.classList.add('active');
+                progressTab.setAttribute('aria-selected', 'true');
 
-                                                    <div class="mb-3">
-                                                        <label class="form-label small fw-bold">التقييم</label>
-                                                        <select name="Status" class="form-select form-select-sm">
-                                                            <option value="@((int)AssignmentStatus.excellent)">ممتاز</option>
-                                                            <option value="@((int)AssignmentStatus.veryGood)">جيد جداً</option>
-                                                            <option value="@((int)AssignmentStatus.good)">جيد</option>
-                                                            <option value="@((int)AssignmentStatus.fair)">مقبول</option>
-                                                            <option value="@((int)AssignmentStatus.poor)">ضعيف</option>
-                                                            <option value="@((int)AssignmentStatus.notSet)">لم يحدد بعد</option>
-                                                        </select>
-                                                    </div>
+                dailySec.style.setProperty('display', 'none', 'important');
+                progressSec.style.setProperty('display', 'block', 'important');
 
-                                                    <div class="mb-3">
-                                                        <label class="form-label small fw-bold">ملاحظات</label>
-                                                        <textarea name="Note" class="form-control form-control-sm" rows="2"
-                                                                  placeholder="ملاحظات حول الإتقان أو التوجيهات"></textarea>
-                                                    </div>
+                if (history.replaceState) {
+                    history.replaceState(null, '', window.location.pathname + window.location.search + '#progress');
+                }
+            } else {
+                progressTab.classList.remove('active');
+                progressTab.setAttribute('aria-selected', 'false');
+                dailyTab.classList.add('active');
+                dailyTab.setAttribute('aria-selected', 'true');
 
-                                                    <button type="submit" class="btn btn-primary w-100 fw-bold">
-                                                        <i class='bx bx-check-circle me-1'></i> حفظ التسميع
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
+                progressSec.style.setProperty('display', 'none', 'important');
+                dailySec.style.setProperty('display', 'block', 'important');
 
-                                    <!-- جدول سجل التسميع لليوم المحدد -->
-                                    <div class="col-lg-8">
-                                        <div class="t-card">
-                                            <div class="t-card-header d-flex justify-content-between align-items-center">
-                                                <h5 class="fw-bold mb-0 fs-6">
-                                                    <i class='bx bx-list-check text-primary me-1'></i>
-                                                    سجل تسميع اليوم (@targetDate.ToString("yyyy-MM-dd"))
-                                                </h5>
-                                                <span class="badge bg-secondary">@Model.Count() تسميع</span>
-                                            </div>
-                                            <div class="table-responsive">
-                                                <table class="table table-hover align-middle mb-0">
-                                                    <thead class="table-light">
-                                                        <tr>
-                                                            <th>الطالب</th>
-                                                            <th>النوع</th>
-                                                            <th>الموضع والكمية</th>
-                                                            <th>التقييم</th>
-                                                            <th>ملاحظات</th>
-                                                            <th class="text-center">إجراءات</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @if (!Model.Any())
-                                                        {
-                                                            <tr>
-                                                                <td colspan="6" class="text-center py-4 text-muted small">
-                                                                    لا توجد تسميعات مسجلة لهذا التاريخ. استخدم النموذج لإدخال تسميع جديد.
-                                                                </td>
-                                                            </tr>
-                                                        }
-                                                        @foreach (var item in Model)
-                                                        {
-                                                            <tr>
-                                                                <td class="fw-bold">@item.StudentName</td>
-                                                                <td>
-                                                                    <span
-                                                                        class="t-badge @(item.PerformanceType == MatnPerformanceType.Memorization ? "t-badge-present" : item.PerformanceType == MatnPerformanceType.Revision ? "t-badge-matn" : "t-badge-excuse")">
-                                                                        @item.PerformanceTypeName
-                                                                    </span>
-                                                                </td>
-                                                                <td class="small">
-                                                                    @if (!string.IsNullOrEmpty(item.ChapterName))
-                                                                    {
-                                                                        <div><strong>@item.ChapterName</strong></div>
-                                                                    }
-                                                                    @if (item.FromNumber.HasValue && item.ToNumber.HasValue)
-                                                                    {
-                                                                        <span>من @item.FromNumber إلى @item.ToNumber (@item.UnitName)</span>
-                                                                    }
-                                                                    else if (item.Amount.HasValue)
-                                                                    {
-                                                                        <span>@item.Amount @item.UnitName</span>
-                                                                    }
-                                                                </td>
-                                                                <td>
-                                                                    <span class="t-badge t-badge-gold">
-                                                                        @item.Status.ToString()
-                                                                    </span>
-                                                                </td>
-                                                                <td class="small text-muted">
-                                                                    @(string.IsNullOrEmpty(item.Note) ? "-" : item.Note)
-                                                                </td>
-                                                                <td class="text-center">
-                                                                    <form asp-action="Delete" asp-route-id="@item.Id"
-                                                                          asp-route-classId="@cls?.Id"
-                                                                          asp-route-date="@targetDate.ToString("yyyy-MM-dd")" method="post"
-                                                                          class="d-inline" onsubmit="return confirm('هل تريد حذف هذا السجل؟');">
-                                                                        @Html.AntiForgeryToken()
-                                                                        <button type="submit" class="t-btn t-btn-sm t-btn-danger p-1"
-                                                                                title="حذف">
-                                                                            <i class='bx bx-trash'></i>
-                                                                        </button>
-                                                                    </form>
-                                                                </td>
-                                                            </tr>
-                                                        }
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- بطاقات إحصائية سريعة للمتون بنظام حديث -->
-                                    <div class="matn-kpi-grid">
-                                        <div class="matn-kpi-card kpi-blue">
-                                            <div class="matn-kpi-icon"><i class='bx bx-bookmarks'></i></div>
-                                            <div class="matn-kpi-content">
-                                                <span class="matn-kpi-label">المتون المقررة في المنهج</span>
-                                                <span class="matn-kpi-value">@classMatuns.Count()</span>
-                                            </div>
-                                        </div>
-                                        <div class="matn-kpi-card kpi-emerald">
-                                            <div class="matn-kpi-icon"><i class='bx bx-book-open'></i></div>
-                                            <div class="matn-kpi-content">
-                                                <span class="matn-kpi-label">سجلات المدارسة المكتملة</span>
-                                                <span class="matn-kpi-value">@matnProgresses.Count(p => p.StudyStatus ==
-                                                                                                                                        StudyStatus.Completed)</span>
-                                                </div>
-                                            </div>
-                                            <div class="matn-kpi-card kpi-violet">
-                                                <div class="matn-kpi-icon"><i class='bx bx-check-double'></i></div>
-                                                <div class="matn-kpi-content">
-                                                    <span class="matn-kpi-label">سجلات الحفظ التام</span>
-                                                    <span class="matn-kpi-value">@matnProgresses.Count(p => p.MemorizationStatus ==
-                                                                                                                                                MemorizationStatus.Memorized)</span>
-                                                    </div>
-                                                </div>
-                                                <div class="matn-kpi-card kpi-amber">
-                                                    <div class="matn-kpi-icon"><i class='bx bx-award'></i></div>
-                                                    <div class="matn-kpi-content">
-                                                        <span class="matn-kpi-label">الاختبارات المجتازة بنجاح</span>
-                                                        <span class="matn-kpi-value">@matnProgresses.Count(p => p.ExamStatus ==
-                                                                                                                                                        ExamStatus.Passed)</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                if (history.replaceState) {
+                    history.replaceState(null, '', window.location.pathname + window.location.search + '#daily');
+                }
+            }
+        }
 
-                                                <!-- جدول مصفوفة تقدم الطلاب في المتون بتصميم راقٍ -->
-                                                <div class="matn-matrix-card">
-                                                    <div class="matn-matrix-header">
-                                                        <h4 class="matn-matrix-title">
-                                                            <i class='bx bx-table'></i>
-                                                            <span>سجل حالة الطلاب في المتون المقررة ورصد الدرجات</span>
-                                                        </h4>
-                                                        <span class="small text-muted">اضغط على زر <strong>"تحديد الحالة والدرجة"</strong> لرصد أو تعديل
-                                                            حالة الطالب واختباره</span>
-                                                        </div>
-                                                        <div class="table-responsive">
-                                                            <table class="matn-matrix-table">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th style="min-width: 170px;">الطالب</th>
-                                                                        <th style="min-width: 160px;">المتن المقرر</th>
-                                                                        <th class="text-center" style="min-width: 120px;">حالة المدارسة</th>
-                                                                        <th class="text-center" style="min-width: 120px;">حالة الحفظ</th>
-                                                                        <th class="text-center" style="min-width: 150px;">الاختبار والدرجة</th>
-                                                                        <th style="min-width: 140px;">ملاحظات المعلم</th>
-                                                                        <th class="text-center" style="min-width: 180px;">إجراءات ورصد الدرجة</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    @if (!studentsList.Any())
-                                                                    {
-                                                                        <tr>
-                                                                            <td colspan="7" class="text-center py-5 text-muted">
-                                                                                <i class='bx bx-user-x fs-1 d-block mb-2 text-secondary'></i>
-                                                                                لا يوجد طلاب مسجلون في هذه الحلقة حالياً.
-                                                                            </td>
-                                                                        </tr>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        @foreach (var student in studentsList)
-                                                                        {
-                                                                            var sGuid = Guid.Parse(student.Value);
-                                                                            var firstLetter = !string.IsNullOrEmpty(student.Text) ? student.Text.Substring(0, 1) :
-                                   "ط";
-                                                                            @foreach (var matn in classMatuns)
-                                                                            {
-                                                                                var prog = matnProgresses.FirstOrDefault(p => p.StudentId == sGuid && p.MatnId ==
-                                      matn.Id);
-                                                                                var studySt = prog?.StudyStatus ?? StudyStatus.NotStarted;
-                                                                                var memSt = prog?.MemorizationStatus ?? MemorizationStatus.NotStarted;
-                                                                                var examSt = prog?.ExamStatus ?? ExamStatus.NotTested;
-                                                                                var score = prog?.Score;
-                                                                                var notes = prog?.TeacherNotes ?? "";
-                                                                                var examDateStr = prog?.ExamDate?.ToString("yyyy-MM-dd") ?? "";
+        // Filter Matrix Table by Matn
+        function filterByMatn(matnId, chipEl) {
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            chipEl.classList.add('active');
 
-                                                                                <tr>
-                                                                                    <td>
-                                                                                        <div class="matn-student-cell">
-                                                                                            <div class="matn-student-avatar">@firstLetter</div>
-                                                                                            <div>
-                                                                                                <a asp-controller="Student" asp-action="Details"
-                                                                                                   asp-route-id="@student.Value" class="matn-student-name">
-                                                                                                    @student.Text
-                                                                                                </a>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        <div class="matn-title-pill">
-                                                                                            <span class="matn-order-badge">#@matn.Order</span>
-                                                                                            <span>@matn.Title</span>
-                                                                                        </div>
-                                                                                        @if (!string.IsNullOrEmpty(matn.Author))
-                                                                                        {
-                                                                                            <div class="text-muted small mt-1" style="font-size: 11px;">@matn.Author</div>
-                                                                                        }
-                                                                                    </td>
-                                                                                    <td class="text-center">
-                                                                                        @if (studySt == StudyStatus.Completed)
-                                                                                        {
-                                                                                            <span class="status-pill status-study-completed">
-                                                                                                <i class='bx bx-check-circle'></i> مكتمل
-                                                                                            </span>
-                                                                                        }
-                                                                                        else if (studySt == StudyStatus.InProgress)
-                                                                                        {
-                                                                                            <span class="status-pill status-study-inprogress">
-                                                                                                <i class='bx bx-loader-circle'></i> قيد الدراسة
-                                                                                            </span>
-                                                                                        }
-                                                                                        else
-                                                                                        {
-                                                                                            <span class="status-pill status-study-notstarted">
-                                                                                                <i class='bx bx-circle'></i> لم يبدأ
-                                                                                            </span>
-                                                                                        }
-                                                                                    </td>
-                                                                                    <td class="text-center">
-                                                                                        @if (memSt == MemorizationStatus.Memorized)
-                                                                                        {
-                                                                                            <span class="status-pill status-mem-memorized">
-                                                                                                <i class='bx bx-check-double'></i> تم الحفظ
-                                                                                            </span>
-                                                                                        }
-                                                                                        else if (memSt == MemorizationStatus.InProgress)
-                                                                                        {
-                                                                                            <span class="status-pill status-mem-inprogress">
-                                                                                                <i class='bx bx-bookmarks'></i> قيد الحفظ
-                                                                                            </span>
-                                                                                        }
-                                                                                        else
-                                                                                        {
-                                                                                            <span class="status-pill status-mem-notstarted">
-                                                                                                <i class='bx bx-circle'></i> لم يبدأ
-                                                                                            </span>
-                                                                                        }
-                                                                                    </td>
-                                                                                    <td class="text-center">
-                                                                                        @if (examSt == ExamStatus.Passed)
-                                                                                        {
-                                                                                            <span class="status-pill status-exam-passed @(score >= 90 ? "high-score" : "")">
-                                                                                                <i class='bx @(score >= 90 ? "bxs-star text-warning" : "bx-check")'></i>
-                                                                                                <span>ناجح</span>
-                                                                                                @if (score.HasValue)
-                                                                                                {
-                                                                                                    <span class="score-badge">@score%</span>
-                                                                                                }
-                                                                                            </span>
-                                                                                        }
-                                                                                        else if (examSt == ExamStatus.Failed)
-                                                                                        {
-                                                                                            <span class="status-pill status-exam-failed">
-                                                                                                <i class='bx bx-x'></i>
-                                                                                                <span>راسب</span>
-                                                                                                @if (score.HasValue)
-                                                                                                {
-                                                                                                    <span class="score-badge">@score%</span>
-                                                                                                }
-                                                                                            </span>
-                                                                                        }
-                                                                                        else
-                                                                                        {
-                                                                                            <span class="status-pill status-exam-none">
-                                                                                                <i class='bx bx-minus'></i> لم يختبر
-                                                                                            </span>
-                                                                                        }
-                                                                                        @if (!string.IsNullOrEmpty(examDateStr))
-                                                                                        {
-                                                                                            <div class="text-muted small mt-1" style="font-size: 10px;">
-                                                                                                <i class='bx bx-calendar'></i> @examDateStr
-                                                                                            </div>
-                                                                                        }
-                                                                                    </td>
-                                                                                    <td class="small text-muted">
-                                                                                        @(string.IsNullOrEmpty(notes) ? "—" : (notes.Length > 30 ? notes.Substring(0,
-                                 30) + "..." : notes))
-                                                                                    </td>
-                                                                                    <td class="text-center">
-                                                                                        <div class="d-flex justify-content-center gap-1 flex-wrap">
-                                                                                            <button type="button" class="btn-matn-action"
-                                                                                                    onclick="openProgressModal('@student.Value', '@student.Text', '@matn.Id', '@matn.Title', @((int)studySt), @((int)memSt), @((int)examSt), '@(score?.ToString() ?? "")', '@examDateStr', '@notes.Replace("'", "\\'").Replace("\n", " ")')">
-                                                                                                <i class='bx bx-edit-alt'></i>
-                                                                                                <span>تحديد الحالة والدرجة</span>
-                                                                                            </button>
+            const rows = document.querySelectorAll('.matrix-student-row');
+            rows.forEach(row => {
+                const rowMatnId = row.getAttribute('data-matn-id');
+                if (matnId === 'all' || rowMatnId === matnId) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
 
-                                                                                            @if (prog != null)
-                                                                                            {
-                                                                                                @if (studySt != StudyStatus.Completed)
-                                                                                                {
-                                                                                                    <button type="button" class="t-btn t-btn-sm t-btn-outline p-1"
-                                                                                                            title="إتمام المدارسة بنقرة واحدة"
-                                                                                                            onclick="quickCompleteStudy('@prog.Id')">
-                                                                                                        <i class='bx bx-book-open text-success'></i>
-                                                                                                    </button>
-                                                                                                }
-                                                                                                @if (memSt != MemorizationStatus.Memorized)
-                                                                                                {
-                                                                                                    <button type="button" class="t-btn t-btn-sm t-btn-outline p-1"
-                                                                                                            title="إتمام الحفظ بنقرة واحدة"
-                                                                                                            onclick="quickCompleteMemorization('@prog.Id')">
-                                                                                                        <i class='bx bx-check-double text-primary'></i>
-                                                                                                    </button>
-                                                                                                }
-                                                                                            }
-                                                                                        </div>
-                                                                                    </td>
-                                                                                </tr>
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                    }
-                                                </div>
-                                            </div>
-                                            }
-                                        </div>
+        // Live Search Filter by Student Name
+        function filterStudents(searchVal) {
+            const term = (searchVal || '').trim().toLowerCase();
+            const rows = document.querySelectorAll('.matrix-student-row');
+            const activeMatnChip = document.querySelector('.filter-chip.active');
+            const activeMatnId = activeMatnChip ? activeMatnChip.getAttribute('onclick').match(/'([^']+)'/)[1] : 'all';
 
-                                        <!-- النافذة المنبثقة: تحديد حالة الطالب مع المتن ورصد الدرجة بتصميم عصري -->
-                                        <div class="modal fade" id="matnProgressModal" tabindex="-1" aria-labelledby="matnProgressModalLabel"
-                                             aria-hidden="true" dir="rtl">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content matn-modal-content">
-                                                    <div class="modal-header matn-modal-header">
-                                                        <h5 class="modal-title" id="matnProgressModalLabel">
-                                                            <i class='bx bx-award'></i>
-                                                            <span>تحديد حالة المتن ورصد الدرجة للطالب</span>
-                                                        </h5>
-                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                                                aria-label="Close"></button>
-                                                    </div>
-                                                    <form id="matnProgressForm" onsubmit="saveMatnProgress(event)">
-                                                        <div class="modal-body matn-modal-body">
-                                                            <input type="hidden" id="modalStudentId" name="studentId" />
-                                                            <input type="hidden" id="modalMatnId" name="matnId" />
+            rows.forEach(row => {
+                const studentName = (row.getAttribute('data-student-name') || '').toLowerCase();
+                const rowMatnId = row.getAttribute('data-matn-id');
+                const matchesMatn = (activeMatnId === 'all' || rowMatnId === activeMatnId);
+                const matchesSearch = !term || studentName.indexOf(term) !== -1;
 
-                                                            <!-- بطاقة سياق الطالب والمتن -->
-                                                            <div class="matn-context-banner">
-                                                                <div class="matn-context-row">
-                                                                    <span class="matn-context-label">اسم الطالب:</span>
-                                                                    <span class="matn-context-val" id="modalStudentName">-</span>
-                                                                </div>
-                                                                <div class="matn-context-row">
-                                                                    <span class="matn-context-label">المتن المقرر:</span>
-                                                                    <span class="matn-context-val text-primary" id="modalMatnTitle">-</span>
-                                                                </div>
-                                                            </div>
+                if (matchesMatn && matchesSearch) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
 
-                                                            <div class="row g-3">
-                                                                <div class="col-md-6">
-                                                                    <label class="matn-form-label">
-                                                                        <i class='bx bx-book-open text-success'></i>
-                                                                        <span>حالة المدارسة</span>
-                                                                    </label>
-                                                                    <select id="modalStudyStatus" name="studyStatus" class="matn-form-select">
-                                                                        <option value="0">لم يبدأ</option>
-                                                                        <option value="1">قيد الدراسة</option>
-                                                                        <option value="2">مكتمل</option>
-                                                                    </select>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <label class="matn-form-label">
-                                                                        <i class='bx bx-bookmarks text-primary'></i>
-                                                                        <span>حالة الحفظ</span>
-                                                                    </label>
-                                                                    <select id="modalMemorizationStatus" name="memorizationStatus" class="matn-form-select">
-                                                                        <option value="0">لم يبدأ</option>
-                                                                        <option value="1">قيد الحفظ</option>
-                                                                        <option value="2">تم الحفظ</option>
-                                                                    </select>
-                                                                </div>
+        function openRowProgressModal(el) {
+            const row = el.closest('tr');
+            if (!row) return;
+            const studentId = row.getAttribute('data-student-id');
+            const studentName = row.getAttribute('data-student-name');
+            const matnId = row.getAttribute('data-matn-id');
+            const matnTitle = row.getAttribute('data-matn-title');
+            const studyStatus = parseInt(row.getAttribute('data-study-status')) || 0;
+            const memStatus = parseInt(row.getAttribute('data-mem-status')) || 0;
+            const examStatus = parseInt(row.getAttribute('data-exam-status')) || 0;
+            const score = row.getAttribute('data-score');
+            const examDate = row.getAttribute('data-exam-date');
+            const notes = row.getAttribute('data-notes');
+            const passingGrade = parseFloat(row.getAttribute('data-passing-grade')) || 60;
+            openProgressModal(studentId, studentName, matnId, matnTitle, studyStatus, memStatus, examStatus, score, examDate, notes, passingGrade);
+        }
 
-                                                                <div class="col-md-6">
-                                                                    <label class="matn-form-label">
-                                                                        <i class='bx bx-check-shield text-warning'></i>
-                                                                        <span>نتيجة الاختبار</span>
-                                                                    </label>
-                                                                    <select id="modalExamStatus" name="examStatus" class="matn-form-select"
-                                                                            onchange="onExamStatusChanged(this.value)">
-                                                                        <option value="0">لم يختبر بعد</option>
-                                                                        <option value="1">اجتاز بنجاح (ناجح)</option>
-                                                                        <option value="2">لم يجتز (راسب)</option>
-                                                                    </select>
-                                                                </div>
+        // Auto-activate tab based on URL hash or query parameter
+        function initMatnTabs() {
+            const hash = (window.location.hash || '').toLowerCase();
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabParam = (urlParams.get('tab') || '').toLowerCase();
 
-                                                                <div class="col-md-6">
-                                                                    <label class="matn-form-label">
-                                                                        <i class='bx bx-calendar text-secondary'></i>
-                                                                        <span>تاريخ الاختبار</span>
-                                                                    </label>
-                                                                    <input type="date" id="modalExamDate" name="examDate" class="matn-form-input" />
-                                                                </div>
+            if (hash.indexOf('progress') !== -1 || tabParam === 'progress') {
+                switchMatnTab('progress');
+            } else {
+                switchMatnTab('daily');
+            }
+        }
 
-                                                                <!-- عنصر تفاعلي لرصد درجة الاختبار -->
-                                                                <div class="col-12">
-                                                                    <div class="matn-score-widget">
-                                                                        <div class="score-widget-top">
-                                                                            <label class="matn-form-label mb-0">
-                                                                                <i class='bx bx-certification text-success'></i>
-                                                                                <span>درجة الاختبار (من 100)</span>
-                                                                            </label>
-                                                                            <span id="scoreRatingPill" class="score-rating-pill" style="display: none;">
-                                                                                <i class='bx bx-award'></i> <span id="scoreRatingText">-</span>
-                                                                            </span>
-                                                                        </div>
-                                                                        <div class="input-group">
-                                                                            <input type="number" id="modalScore" name="score" class="matn-form-input"
-                                                                                   min="0" max="100" step="0.5" placeholder="مثال: 95.5"
-                                                                                   oninput="updateScoreFeedback(this.value)" />
-                                                                            <span class="input-group-text bg-white border-start-0 fw-bold">%</span>
-                                                                        </div>
-                                                                        <div class="score-presets">
-                                                                            <span class="small text-muted me-1">درجات سريعة:</span>
-                                                                            <button type="button" class="score-preset-btn"
-                                                                                    onclick="setScorePreset(100)">100% ممتاز</button>
-                                                                            <button type="button" class="score-preset-btn" onclick="setScorePreset(95)">95%
-                                                                                ممتاز</button>
-                                                                                <button type="button" class="score-preset-btn" onclick="setScorePreset(85)">85%
-                                                                                    ج.جداً</button>
-                                                                                    <button type="button" class="score-preset-btn" onclick="setScorePreset(75)">75%
-                                                                                        جيد</button>
-                                                                                        <button type="button" class="score-preset-btn" onclick="setScorePreset(60)">60%
-                                                                                            مقبول</button>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initMatnTabs);
+        } else {
+            initMatnTabs();
+        }
 
-                                                                                <div class="col-12">
-                                                                                    <label class="matn-form-label">
-                                                                                        <i class='bx bx-comment-detail text-muted'></i>
-                                                                                        <span>ملاحظات المعلم / الإدارة</span>
-                                                                                    </label>
-                                                                                    <textarea id="modalTeacherNotes" name="teacherNotes" class="matn-form-input" rows="2"
-                                                                                              placeholder="ملاحظات حول مستوى الطالب، الإتقان، أو الاستدراك..."></textarea>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="modal-footer matn-modal-footer">
-                                                                            <button type="button" class="t-btn t-btn-outline" data-bs-dismiss="modal">إلغاء</button>
-                                                                            <button type="submit" class="btn-matn-action px-4" id="saveProgressBtn">
-                                                                                <i class='bx bx-save'></i>
-                                                                                <span>حفظ التعديلات والدرجة</span>
-                                                                            </button>
-                                                                        </div>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    }
-                                                    @section Scripts {
-                                                        <script>
-                                                                function updateScoreFeedback(scoreVal) {
-                                                                    const pill = document.getElementById('scoreRatingPill');
-                                                                    const txt = document.getElementById('scoreRatingText');
-                                                                    if (!scoreVal || isNaN(scoreVal)) {
-                                                                        pill.style.display = 'none';
-                                                                        return;
-                                                                    }
-                                                                    const s = parseFloat(scoreVal);
-                                                                    pill.style.display = 'inline-flex';
-                                                                    if (s >= 90) {
-                                                                        pill.style.background = '#ecfdf5';
-                                                                        pill.style.borderColor = '#86efac';
-                                                                        pill.style.color = '#065f46';
-                                                                        txt.textContent = 'ممتاز (Excellent)';
-                                                                    } else if (s >= 80) {
-                                                                        pill.style.background = '#eff6ff';
-                                                                        pill.style.borderColor = '#bfdbfe';
-                                                                        pill.style.color = '#1e40af';
-                                                                        txt.textContent = 'جيد جداً (Very Good)';
-                                                                    } else if (s >= 65) {
-                                                                        pill.style.background = '#f0fdf4';
-                                                                        pill.style.borderColor = '#bbf7d0';
-                                                                        pill.style.color = '#166534';
-                                                                        txt.textContent = 'جيد (Good)';
-                                                                    } else if (s >= 50) {
-                                                                        pill.style.background = '#fffbeb';
-                                                                        pill.style.borderColor = '#fde68a';
-                                                                        pill.style.color = '#92400e';
-                                                                        txt.textContent = 'مقبول (Fair)';
-                                                                    } else {
-                                                                        pill.style.background = '#fef2f2';
-                                                                        pill.style.borderColor = '#fecaca';
-                                                                        pill.style.color = '#991b1b';
-                                                                        txt.textContent = 'راسب (Failed)';
-                                                                    }
-                                                                }
-
-                                                                function setScorePreset(val) {
-                                                                    const input = document.getElementById('modalScore');
-                                                                    input.value = val;
-                                                                    updateScoreFeedback(val);
-                                                                    const examStatus = document.getElementById('modalExamStatus');
-                                                                    if (val >= 60) {
-                                                                        examStatus.value = '1'; // Passed
-                                                                    } else {
-                                                                        examStatus.value = '2'; // Failed
-                                                                    }
-                                                                }
-
-                                                                function onExamStatusChanged(statusVal) {
-                                                                    const scoreInput = document.getElementById('modalScore');
-                                                                    if (statusVal === '1' && (!scoreInput.value || parseFloat(scoreInput.value) < 60)) {
-                                                                        scoreInput.value = 85;
-                                                                        updateScoreFeedback(85);
-                                                                    } else if (statusVal === '2' && (!scoreInput.value || parseFloat(scoreInput.value) >= 60)) {
-                                                                        scoreInput.value = 45;
-                                                                        updateScoreFeedback(45);
-                                                                    }
-                                                                }
-
-                                                                function openProgressModal(studentId, studentName, matnId, matnTitle, studyStatus, memStatus, examStatus, score, examDate, notes) {
-                                                                    document.getElementById('modalStudentId').value = studentId;
-                                                                    document.getElementById('modalMatnId').value = matnId;
-                                                                    document.getElementById('modalStudentName').textContent = studentName;
-                                                                    document.getElementById('modalMatnTitle').textContent = matnTitle;
-                                                                    document.getElementById('modalStudyStatus').value = studyStatus !== undefined ? studyStatus : 0;
-                                                                    document.getElementById('modalMemorizationStatus').value = memStatus !== undefined ? memStatus : 0;
-                                                                    document.getElementById('modalExamStatus').value = examStatus !== undefined ? examStatus : 0;
-                                                                    document.getElementById('modalScore').value = score || '';
-                                                                    document.getElementById('modalExamDate').value = examDate || '';
-                                                                    document.getElementById('modalTeacherNotes').value = notes || '';
-
-                                                                    updateScoreFeedback(score);
-
-                                                                    var modalEl = document.getElementById('matnProgressModal');
-                                                                    var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
-                                                                    modal.show();
-                                                                }
-
-                                                                async function saveMatnProgress(e) {
-                                                                    e.preventDefault();
-                                                                    const btn = document.getElementById('saveProgressBtn');
-                                                                    btn.disabled = true;
-                                                                    btn.innerHTML = '<i class="bx bx-loader-alt bx-spin me-1"></i> جارٍ الحفظ...';
-
-                                                                    const payload = {
-                                                                        studentId: document.getElementById('modalStudentId').value,
-                                                                        matnId: document.getElementById('modalMatnId').value,
-                                                                        studyStatus: parseInt(document.getElementById('modalStudyStatus').value),
-                                                                        memorizationStatus: parseInt(document.getElementById('modalMemorizationStatus').value),
-                                                                        examStatus: parseInt(document.getElementById('modalExamStatus').value),
-                                                                        score: document.getElementById('modalScore').value ? parseFloat(document.getElementById('modalScore').value) : null,
-                                                                        examDate: document.getElementById('modalExamDate').value ? document.getElementById('modalExamDate').value : null,
-                                                                        teacherNotes: document.getElementById('modalTeacherNotes').value
-                                                                    };
-
-                                                                    try {
-                                                                        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
-                                                                        const res = await fetch('@Url.Action("CreateOrUpdate", "StudentMatnProgress", new { area = "Teacher" })', {
-                                                                            method: 'POST',
-                                                                            headers: {
-                                                                                'Content-Type': 'application/json',
-                                                                                'RequestVerificationToken': token
-                                                                            },
-                                                                            body: JSON.stringify(payload)
-                                                                        });
-
-                                                                        const data = await res.json();
-                                                                        if (data.success) {
-                                                                            location.reload();
-                                                                        } else {
-                                                                            alert(data.message || 'تعذر حفظ البيانات.');
-                                                                            btn.disabled = false;
-                                                                            btn.innerHTML = '<i class="bx bx-save me-1"></i> حفظ التعديلات والدرجة';
-                                                                        }
-                                                                    } catch (err) {
-                                                                        alert('حدث خطأ في الاتصال بالخادم.');
-                                                                        btn.disabled = false;
-                                                                        btn.innerHTML = '<i class="bx bx-save me-1"></i> حفظ التعديلات والدرجة';
-                                                                    }
-                                                                }
-
-                                                                async function quickCompleteStudy(id) {
-                                                                    if (!confirm('هل تريد تسجيل اكتمال دراسة هذا المتن للطالب بنجاح؟')) return;
-                                                                    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
-                                                                    const res = await fetch('@Url.Action("CompleteStudy", "StudentMatnProgress", new { area = "Teacher" })', {
-                                                                        method: 'POST',
-                                                                        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': token },
-                                                                        body: new URLSearchParams({ id: id })
-                                                                    });
-                                                                    const data = await res.json();
-                                                                    if (data.success) {
-                                                                        location.reload();
-                                                                    } else {
-                                                                        alert(data.message || 'حدث خطأ');
-                                                                    }
-                                                                }
-
-                                                                async function quickCompleteMemorization(id) {
-                                                                    if (!confirm('هل تريد تسجيل اكتمال حفظ هذا المتن للطالب بنجاح؟')) return;
-                                                                    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
-                                                                    const res = await fetch('@Url.Action("CompleteMemorization", "StudentMatnProgress", new { area = "Teacher" })', {
-                                                                        method: 'POST',
-                                                                        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': token },
-                                                                        body: new URLSearchParams({ id: id })
-                                                                    });
-                                                                    const data = await res.json();
-                                                                    if (data.success) {
-                                                                        location.reload();
-                                                                    } else {
-                                                                        alert(data.message || 'حدث خطأ');
-                                                                    }
-                                                                }
-        
-                                                        </script>
-                                                    }
+        window.addEventListener('hashchange', initMatnTabs);
+    </script>
+}

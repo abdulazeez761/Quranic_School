@@ -84,6 +84,10 @@
                 <i class='bx bx-calendar'></i>
                 @Model.AssignedDate.ToString("MMM dd")
             </span>
+            <span class="wird-time-badge" title="@Model.AssignedDate.ToLocalTime().ToString("hh:mm tt")">
+                <i class='bx bx-time-five'></i>
+                @Model.AssignedDate.ToLocalTime().ToString("hh:mm tt")
+            </span>
         </div>
     </div>
 

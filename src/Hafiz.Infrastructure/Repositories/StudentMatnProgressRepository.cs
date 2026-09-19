@@ -45,14 +45,61 @@ public class StudentMatnProgressRepository : IStudentMatnProgressRepository
 
     public async Task<IEnumerable<StudentMatnProgress>> GetByStudentAsync(Guid studentId)
     {
-        return await _context.StudentMatnProgresses
+        var existingProgresses = await _context.StudentMatnProgresses
             .Include(p => p.Matn)
                 .ThenInclude(m => m.StudyProgram)
             .Include(p => p.LastUpdatedByTeacher)
                 .ThenInclude(t => t!.TeacherInfo)
             .Where(p => p.StudentId == studentId)
-            .OrderBy(p => p.Matn.Order)
             .ToListAsync();
+
+        // Find student's enrolled classes that have a StudyProgram
+        var programIds = await _context.Classes
+            .Where(c => !c.IsDeleted && c.StudyProgramId.HasValue && c.Students.Any(s => s.UserId == studentId))
+            .Select(c => c.StudyProgramId!.Value)
+            .Distinct()
+            .ToListAsync();
+
+        // Fallback: check if existing progresses link to a StudyProgram
+        if (!programIds.Any())
+        {
+            var fallbackProgIds = existingProgresses
+                .Where(p => p.Matn != null && p.Matn.StudyProgramId.HasValue)
+                .Select(p => p.Matn!.StudyProgramId!.Value)
+                .Distinct()
+                .ToList();
+            programIds.AddRange(fallbackProgIds);
+        }
+
+        if (programIds.Any())
+        {
+            var allProgramMatuns = await _context.Matns
+                .Include(m => m.StudyProgram)
+                .Where(m => !m.IsDeleted && m.IsActive && m.StudyProgramId.HasValue && programIds.Contains(m.StudyProgramId.Value))
+                .OrderBy(m => m.Order)
+                .ToListAsync();
+
+            var existingMatnIds = existingProgresses.Select(p => p.MatnId).ToHashSet();
+
+            foreach (var m in allProgramMatuns)
+            {
+                if (!existingMatnIds.Contains(m.Id))
+                {
+                    existingProgresses.Add(new StudentMatnProgress
+                    {
+                        Id = Guid.Empty,
+                        StudentId = studentId,
+                        MatnId = m.Id,
+                        Matn = m,
+                        StudyStatus = StudyStatus.NotStarted,
+                        MemorizationStatus = MemorizationStatus.NotStarted,
+                        ExamStatus = ExamStatus.NotTested
+                    });
+                }
+            }
+        }
+
+        return existingProgresses.OrderBy(p => p.Matn?.Order ?? 0);
     }
 
     public async Task<IEnumerable<StudentMatnProgress>> GetByMatnAsync(Guid matnId)
@@ -70,12 +117,18 @@ public class StudentMatnProgressRepository : IStudentMatnProgressRepository
 
     public async Task<IEnumerable<StudentMatnProgress>> GetByClassAsync(Guid classId)
     {
-        var studentIds = await _context.Classes
-            .Where(c => c.Id == classId)
-            .SelectMany(c => c.Students.Select(s => s.UserId))
-            .ToListAsync();
+        var cls = await _context.Classes
+            .Include(c => c.Students)
+                .ThenInclude(s => s.StudentInfo)
+            .FirstOrDefaultAsync(c => c.Id == classId && !c.IsDeleted);
 
-        return await _context.StudentMatnProgresses
+        if (cls == null)
+            return Enumerable.Empty<StudentMatnProgress>();
+
+        var studentList = cls.Students.ToList();
+        var studentIds = studentList.Select(s => s.UserId).ToList();
+
+        var existing = await _context.StudentMatnProgresses
             .Include(p => p.Student)
                 .ThenInclude(s => s.StudentInfo)
             .Include(p => p.Matn)
@@ -83,10 +136,43 @@ public class StudentMatnProgressRepository : IStudentMatnProgressRepository
             .Include(p => p.LastUpdatedByTeacher)
                 .ThenInclude(t => t!.TeacherInfo)
             .Where(p => studentIds.Contains(p.StudentId))
-            .OrderBy(p => p.Student.StudentInfo.FirstName)
-            .ThenBy(p => p.Student.StudentInfo.SecondName)
-            .ThenBy(p => p.Matn.Order)
             .ToListAsync();
+
+        if (cls.StudyProgramId.HasValue)
+        {
+            var programMatuns = await _context.Matns
+                .Include(m => m.StudyProgram)
+                .Where(m => !m.IsDeleted && m.IsActive && m.StudyProgramId == cls.StudyProgramId.Value)
+                .OrderBy(m => m.Order)
+                .ToListAsync();
+
+            foreach (var st in studentList)
+            {
+                var stExistingMatnIds = existing.Where(p => p.StudentId == st.UserId).Select(p => p.MatnId).ToHashSet();
+                foreach (var matn in programMatuns)
+                {
+                    if (!stExistingMatnIds.Contains(matn.Id))
+                    {
+                        existing.Add(new StudentMatnProgress
+                        {
+                            Id = Guid.Empty,
+                            StudentId = st.UserId,
+                            Student = st,
+                            MatnId = matn.Id,
+                            Matn = matn,
+                            StudyStatus = StudyStatus.NotStarted,
+                            MemorizationStatus = MemorizationStatus.NotStarted,
+                            ExamStatus = ExamStatus.NotTested
+                        });
+                    }
+                }
+            }
+        }
+
+        return existing
+            .OrderBy(p => p.Student?.StudentInfo?.FirstName)
+            .ThenBy(p => p.Student?.StudentInfo?.SecondName)
+            .ThenBy(p => p.Matn?.Order ?? 0);
     }
 
     public async Task<StudentMatnProgress> AddAsync(StudentMatnProgress progress)

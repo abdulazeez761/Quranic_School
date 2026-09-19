@@ -485,3 +485,106 @@ html {
     display: none !important;
   }
 }
+
+/* ==========================================================================
+   Universal Pagination Styles for Teacher Area
+   ========================================================================== */
+.pagination-wrapper,
+.table-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 1rem !important;
+  padding: 1.15rem 0.75rem !important;
+  margin-top: 1.25rem !important;
+  border-top: 1px solid var(--t-border, #e2e8f0) !important;
+  background: var(--t-surface, #ffffff) !important;
+  border-radius: 0 0 var(--t-radius-md, 12px) var(--t-radius-md, 12px) !important;
+}
+
+.table-info {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.85rem !important;
+  font-size: 0.875rem !important;
+  color: var(--t-text-muted, #64748b) !important;
+  font-weight: 500 !important;
+}
+
+.pagination-count-text strong {
+  color: var(--t-text-main, #0f172a) !important;
+  font-weight: 700 !important;
+}
+
+.pagination-divider {
+  display: inline-block !important;
+  width: 1px !important;
+  height: 18px !important;
+  background-color: var(--t-border, #cbd5e1) !important;
+}
+
+.table-pagination {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.table-pagination li {
+  display: inline-block !important;
+}
+
+.pagination-nav-btn,
+.pagination-num-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 38px !important;
+  height: 38px !important;
+  padding: 0 0.65rem !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--t-border, #cbd5e1) !important;
+  background: #ffffff !important;
+  color: var(--t-text-main, #1e293b) !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+  user-select: none !important;
+}
+
+.pagination-num-btn.active {
+  background: var(--t-primary, #648c51) !important;
+  color: #ffffff !important;
+  border-color: var(--t-primary, #648c51) !important;
+  box-shadow: 0 2px 6px rgba(100, 140, 81, 0.3) !important;
+}
+
+.pagination-nav-btn:hover:not(:disabled):not(.disabled),
+.pagination-num-btn:hover:not(.active) {
+  background: var(--t-surface-muted, #f1f5f9) !important;
+  border-color: #94a3b8 !important;
+  color: #0f172a !important;
+}
+
+.pagination-nav-btn:disabled,
+.pagination-nav-btn.disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+.pagination-ellipsis {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 32px !important;
+  height: 38px !important;
+  color: var(--t-text-muted, #94a3b8) !important;
+  font-weight: 700 !important;
+}

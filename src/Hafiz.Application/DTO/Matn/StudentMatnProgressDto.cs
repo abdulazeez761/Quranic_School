@@ -17,6 +17,7 @@ public class StudentMatnProgressDto
     public MatnCategory MatnCategory { get; set; }
     public string MatnCategoryName => MatnCategory.ToArabic();
     public int MatnOrder { get; set; }
+    public decimal PassingGrade { get; set; } = 60m;
 
     public Guid? StudyProgramId { get; set; }
     public string? StudyProgramName { get; set; }

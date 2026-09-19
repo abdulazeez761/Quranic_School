@@ -290,6 +290,7 @@ namespace Hafiz.Services
                 TotalChapters = m.TotalChapters,
                 DefaultUnit = m.DefaultUnit,
                 Order = m.Order,
+                PassingGrade = m.PassingGrade,
                 IsActive = m.IsActive,
                 InstituteId = m.InstituteId,
                 StudyProgramId = m.StudyProgramId
