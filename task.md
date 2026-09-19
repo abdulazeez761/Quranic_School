@@ -1,0 +1,37 @@
+# Refactor Scientific Programs to Support Multiple Matuns - Task List
+
+- [ ] **Phase 1: Domain Model, Enums & EF Core Database Configuration**
+  - [ ] Create Enums (`StudyStatus`, `MemorizationStatus`, `ExamStatus`) in `Hafiz.Domain.Enums`
+  - [ ] Modify `Matn.cs` (add `StudyProgramId`, `StudyProgram`, `Order`, `IsActive`)
+  - [ ] Modify `StudyProgram.cs` (remove `MatnId`/`Matn`, add `Matuns` collection)
+  - [ ] Modify `MatnAssignment.cs` (add `MatnId`, `Matn` FK)
+  - [ ] Create `StudentMatnProgress.cs` entity
+  - [ ] Update `ApplicationDbContext.cs` (DbSets, relationships, indexes, filters)
+  - [ ] Create EF Core Migration with safe data migration script
+- [ ] **Phase 2: DTOs, Repositories, and Services**
+  - [ ] Update `StudyProgramDto.cs` & `MatnSummaryDto`
+  - [ ] Create `StudentMatnProgressDto.cs` and related request DTOs
+  - [ ] Update `ClassDto.cs`
+  - [ ] Update `StudyProgramRepository.cs` and `StudyProgramService.cs`
+  - [ ] Update `MatnRepository.cs` and `MatnService.cs`
+  - [ ] Update `ClassService.cs`
+  - [ ] Create `IStudentMatnProgressRepository` and `StudentMatnProgressRepository`
+  - [ ] Create `IStudentMatnProgressService` and `StudentMatnProgressService`
+  - [ ] Update DI registrations in `Application` & `Infrastructure`
+- [ ] **Phase 3: Controllers & Razor Views**
+  - [ ] Update Admin `StudyProgramsController.cs` and views (`Index`, `Create`, `Edit`, `Details`)
+  - [ ] Update Admin `MatnsController.cs` and views
+  - [ ] Update Teacher `MatnController.cs` and views
+  - [ ] Create Teacher `StudentMatnProgressController.cs` and views/modals
+  - [ ] Update Student Details ViewModel & View
+- [ ] **Phase 4: Reports, Dashboard & Statistics**
+  - [ ] Update `DashboardStatsDto.cs` and `DashboardService.cs`
+  - [ ] Update Dashboard Admin view
+  - [ ] Update `ReportsController.cs` and reports views
+- [ ] **Phase 5: Automated Testing & Verification**
+  - [ ] Create `Hafiz.Tests` xUnit project and add to solution
+  - [ ] Add unit & integration tests covering domain, migration, permissions, validations
+  - [ ] Run `dotnet test` and ensure all tests pass
+  - [ ] Run `dotnet build` and ensure zero compilation errors/warnings
+- [ ] **Phase 6: Final Walkthrough & Verification**
+  - [ ] Create walkthrough documentation

@@ -47,6 +47,7 @@ namespace Hafiz.Infrastructure.Extensions
             services.AddScoped<IStudyProgramRepository, StudyProgramRepository>();
             services.AddScoped<IMatnRepository, MatnRepository>();
             services.AddScoped<IMatnAssignmentRepository, MatnAssignmentRepository>();
+            services.AddScoped<IStudentMatnProgressRepository, StudentMatnProgressRepository>();
 
             // Infrastructure services
             services.AddScoped<IPasswordHasher, PasswordHasher>();

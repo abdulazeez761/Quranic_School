@@ -98,7 +98,8 @@ namespace Hafiz.Services
                     InstituteId = c.InstituteId,
                     StudyProgramId = c.StudyProgramId,
                     StudyProgramName = c.StudyProgram?.Name,
-                    MatnTitle = c.StudyProgram?.Matn?.Title,
+                    MatnTitle = FormatMatnTitle(c.StudyProgram?.Matuns),
+                    Matuns = MapMatuns(c.StudyProgram?.Matuns),
                     ProgramType = c.StudyProgram?.Type
                 })
                 .ToList();
@@ -152,7 +153,8 @@ namespace Hafiz.Services
                 InstituteId = classFromDb.InstituteId,
                 StudyProgramId = classFromDb.StudyProgramId,
                 StudyProgramName = classFromDb.StudyProgram?.Name,
-                MatnTitle = classFromDb.StudyProgram?.Matn?.Title,
+                MatnTitle = FormatMatnTitle(classFromDb.StudyProgram?.Matuns),
+                Matuns = MapMatuns(classFromDb.StudyProgram?.Matuns),
                 ProgramType = classFromDb.StudyProgram?.Type
             };
 
@@ -228,7 +230,8 @@ namespace Hafiz.Services
                     InstituteId = c.InstituteId,
                     StudyProgramId = c.StudyProgramId,
                     StudyProgramName = c.StudyProgram?.Name,
-                    MatnTitle = c.StudyProgram?.Matn?.Title,
+                    MatnTitle = FormatMatnTitle(c.StudyProgram?.Matuns),
+                    Matuns = MapMatuns(c.StudyProgram?.Matuns),
                     ProgramType = c.StudyProgram?.Type
                 })
                 .ToList();
@@ -264,6 +267,33 @@ namespace Hafiz.Services
         public Task<(int activeCount, int archivedCount)> GetCountsAsync(Guid? instituteId = null)
         {
             return _classRepository.GetCountsAsync(instituteId);
+        }
+
+        private static string? FormatMatnTitle(IEnumerable<Hafiz.Domain.Entities.Matn>? matuns)
+        {
+            if (matuns == null) return null;
+            var list = matuns.OrderBy(m => m.Order).ToList();
+            if (list.Count == 0) return null;
+            return list.Count == 1 ? list[0].Title : $"{list[0].Title} (+{list.Count - 1} متون)";
+        }
+
+        private static List<Hafiz.DTOs.StudyProgram.MatnSummaryDto> MapMatuns(IEnumerable<Hafiz.Domain.Entities.Matn>? matuns)
+        {
+            if (matuns == null) return new();
+            return matuns.OrderBy(m => m.Order).Select(m => new Hafiz.DTOs.StudyProgram.MatnSummaryDto
+            {
+                Id = m.Id,
+                Title = m.Title,
+                Author = m.Author,
+                Category = m.Category,
+                TotalVerses = m.TotalVerses,
+                TotalChapters = m.TotalChapters,
+                DefaultUnit = m.DefaultUnit,
+                Order = m.Order,
+                IsActive = m.IsActive,
+                InstituteId = m.InstituteId,
+                StudyProgramId = m.StudyProgramId
+            }).ToList();
         }
     }
 }

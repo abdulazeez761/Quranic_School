@@ -1,10 +1,12 @@
 using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Hafiz.DTOs.Matn;
 using Hafiz.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Hafiz.Areas.Admin.Controllers;
 
@@ -13,10 +15,12 @@ namespace Hafiz.Areas.Admin.Controllers;
 public class MatnsController : Controller
 {
     private readonly IMatnService _matnService;
+    private readonly IStudyProgramService _programService;
 
-    public MatnsController(IMatnService matnService)
+    public MatnsController(IMatnService matnService, IStudyProgramService programService)
     {
         _matnService = matnService;
+        _programService = programService;
     }
 
     private Guid? GetInstituteId()
@@ -55,10 +59,22 @@ public class MatnsController : Controller
         return View(matns);
     }
 
-    // GET: Admin/Matns/Create
-    public IActionResult Create()
+    // GET: Admin/Matns/Create?studyProgramId=...
+    public async Task<IActionResult> Create(Guid? studyProgramId = null)
     {
-        return View(new CreateMatnDto());
+        var instituteId = GetInstituteId();
+        if (instituteId.HasValue)
+        {
+            var programs = await _programService.GetAllByInstituteAsync(instituteId.Value, Hafiz.Domain.Enums.ProgramType.Matn);
+            ViewBag.Programs = programs.Select(p => new SelectListItem
+            {
+                Value = p.Id.ToString(),
+                Text = p.Name,
+                Selected = studyProgramId.HasValue && p.Id == studyProgramId.Value
+            }).ToList();
+        }
+
+        return View(new CreateMatnDto { StudyProgramId = studyProgramId });
     }
 
     // POST: Admin/Matns/Create
@@ -68,16 +84,99 @@ public class MatnsController : Controller
     {
         var instituteId = GetInstituteId();
         if (!ModelState.IsValid)
+        {
+            if (instituteId.HasValue)
+            {
+                var programs = await _programService.GetAllByInstituteAsync(instituteId.Value, Hafiz.Domain.Enums.ProgramType.Matn);
+                ViewBag.Programs = programs.Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.Name,
+                    Selected = dto.StudyProgramId.HasValue && p.Id == dto.StudyProgramId.Value
+                }).ToList();
+            }
             return View(dto);
+        }
 
         var (success, message, _) = await _matnService.CreateAsync(dto, instituteId);
+        if (!success)
+        {
+            ModelState.AddModelError(string.Empty, message);
+            if (instituteId.HasValue)
+            {
+                var programs = await _programService.GetAllByInstituteAsync(instituteId.Value, Hafiz.Domain.Enums.ProgramType.Matn);
+                ViewBag.Programs = programs.Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.Name,
+                    Selected = dto.StudyProgramId.HasValue && p.Id == dto.StudyProgramId.Value
+                }).ToList();
+            }
+            return View(dto);
+        }
+
+        TempData["SuccessMessage"] = "تمت إضافة المتن إلى مكتبة المعهد بنجاح.";
+        if (dto.StudyProgramId.HasValue)
+        {
+            return RedirectToAction("Edit", "StudyPrograms", new { id = dto.StudyProgramId.Value });
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    // GET: Admin/Matns/Edit/5
+    public async Task<IActionResult> Edit(Guid id)
+    {
+        var matn = await _matnService.GetByIdAsync(id);
+        if (matn == null)
+            return NotFound();
+
+        var instituteId = GetInstituteId();
+        if (instituteId.HasValue)
+        {
+            var programs = await _programService.GetAllByInstituteAsync(instituteId.Value, Hafiz.Domain.Enums.ProgramType.Matn);
+            ViewBag.Programs = programs.Select(p => new SelectListItem
+            {
+                Value = p.Id.ToString(),
+                Text = p.Name,
+                Selected = matn.StudyProgramId.HasValue && p.Id == matn.StudyProgramId.Value
+            }).ToList();
+        }
+
+        var dto = new UpdateMatnDto
+        {
+            Id = matn.Id,
+            Title = matn.Title,
+            Author = matn.Author,
+            Category = matn.Category,
+            TotalVerses = matn.TotalVerses,
+            TotalChapters = matn.TotalChapters,
+            DefaultUnit = matn.DefaultUnit,
+            StudyProgramId = matn.StudyProgramId,
+            Order = matn.Order,
+            IsActive = matn.IsActive
+        };
+
+        return View(dto);
+    }
+
+    // POST: Admin/Matns/Edit/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(UpdateMatnDto dto)
+    {
+        var instituteId = GetInstituteId();
+        if (!ModelState.IsValid)
+            return View(dto);
+
+        var (success, message) = await _matnService.UpdateAsync(dto.Id, dto, instituteId);
         if (!success)
         {
             ModelState.AddModelError(string.Empty, message);
             return View(dto);
         }
 
-        TempData["SuccessMessage"] = "تمت إضافة المتن إلى مكتبة المعهد بنجاح.";
+        TempData["SuccessMessage"] = message;
         return RedirectToAction(nameof(Index));
     }
 

@@ -13,6 +13,9 @@ public class MatnAssignmentDto
     public Guid ClassId { get; set; }
     public string ClassName { get; set; } = string.Empty;
 
+    public Guid? MatnId { get; set; }
+    public string? MatnTitle { get; set; }
+
     public MatnPerformanceType PerformanceType { get; set; }
     public string PerformanceTypeName => PerformanceType switch
     {
@@ -52,6 +55,8 @@ public class AssignMatnDto
 
     [Required]
     public Guid ClassId { get; set; }
+
+    public Guid? MatnId { get; set; }
 
     [Required]
     public MatnPerformanceType PerformanceType { get; set; } = MatnPerformanceType.Memorization;
@@ -94,6 +99,8 @@ public class EditMatnAssignmentDto
     public Guid Id { get; set; }
 
     public Guid StudentId { get; set; }
+
+    public Guid? MatnId { get; set; }
 
     [Required]
     public MatnPerformanceType PerformanceType { get; set; } = MatnPerformanceType.Memorization;

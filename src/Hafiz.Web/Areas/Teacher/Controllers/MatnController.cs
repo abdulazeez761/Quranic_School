@@ -24,19 +24,22 @@ public class MatnController : Controller
     private readonly IStudentService _studentService;
     private readonly ITeacherService _teacherService;
     private readonly IUserRepository _userRepository;
+    private readonly IStudentMatnProgressService _progressService;
 
     public MatnController(
         IMatnAssignmentService assignmentService,
         IClassService classService,
         IStudentService studentService,
         ITeacherService teacherService,
-        IUserRepository userRepository)
+        IUserRepository userRepository,
+        IStudentMatnProgressService progressService)
     {
         _assignmentService = assignmentService;
         _classService = classService;
         _studentService = studentService;
         _teacherService = teacherService;
         _userRepository = userRepository;
+        _progressService = progressService;
     }
 
     private Guid GetTeacherId()
@@ -145,10 +148,13 @@ public class MatnController : Controller
 
         var targetDate = date ?? DateTime.Today;
         var assignments = await _assignmentService.GetByClassAndDateAsync(selectedClass.Id, targetDate);
+        var progresses = await _progressService.GetByClassAsync(selectedClass.Id);
 
         ViewBag.Class = cls;
         ViewBag.StudyProgramName = cls.StudyProgramName;
         ViewBag.AssignedMatnTitle = cls.MatnTitle ?? cls.StudyProgramName;
+        ViewBag.ClassMatuns = cls.Matuns?.Where(m => m.IsActive).ToList() ?? new List<Hafiz.DTOs.StudyProgram.MatnSummaryDto>();
+        ViewBag.MatnProgresses = progresses.ToList();
         ViewBag.TargetDate = targetDate;
 
         return View(assignments);
@@ -170,6 +176,20 @@ public class MatnController : Controller
         var teacherClasses = await _teacherService.GetTeacherClasses(teacherId);
         if (teacherClasses == null || !teacherClasses.Any(c => c.Id == dto.ClassId))
             return Forbid();
+
+        var cls = await _classService.GetClassById(dto.ClassId);
+        if (cls != null)
+        {
+            if (!dto.MatnId.HasValue && cls.Matuns.Any())
+            {
+                dto.MatnId = cls.Matuns.First().Id;
+            }
+            else if (dto.MatnId.HasValue && cls.Matuns.Any() && !cls.Matuns.Any(m => m.Id == dto.MatnId.Value))
+            {
+                TempData["ErrorMessage"] = "المتن المحدد لا ينتمي إلى البرنامج العلمي المعتمد لهذه الحلقة.";
+                return RedirectToAction(nameof(Index), new { classId = dto.ClassId, date = dto.AssignedDate?.ToString("yyyy-MM-dd") });
+            }
+        }
 
         if (!ModelState.IsValid)
         {

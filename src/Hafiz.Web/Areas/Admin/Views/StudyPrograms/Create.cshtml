@@ -13,7 +13,7 @@
                 <i class='bx bx-book-add' style="color: var(--primary-green);"></i>
                 إضافة برنامج تعليمي جديد
             </h2>
-            <p class="text-medium">تحديد مسار ونوع البرنامج وربطه بالمتن المناسب لتنظيم الحلقات والأوراد تحته.</p>
+            <p class="text-medium">تحديد مسار ونوع البرنامج التعليمي وإمكانية إسناد المتون العلمية تحته.</p>
         </div>
         <div>
             <a asp-action="Index" class="btn btn-outline btn-sm">
@@ -37,7 +37,7 @@
 
                 <div class="form-group mb-md">
                     <label asp-for="Name" class="form-label" style="font-weight: 600;">اسم البرنامج التعليمي <span class="text-danger">*</span></label>
-                    <input asp-for="Name" class="form-input" placeholder="مثال: برنامج تحفيظ القرآن للكبار، دورة تحفة الأطفال..." required />
+                    <input asp-for="Name" class="form-input" placeholder="مثال: برنامج تحفيظ القرآن للكبار، دورة المتون والعلوم الشرعية..." required />
                     <span asp-validation-for="Name" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
                 </div>
 
@@ -53,13 +53,11 @@
                         <span asp-validation-for="Type" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
                     </div>
 
-                    <div class="form-group" id="matnSelectContainer" style="display: none;">
-                        <label asp-for="MatnId" class="form-label" style="font-weight: 600;">المتن المخصص لهذا البرنامج</label>
-                        <select asp-for="MatnId" asp-items="ViewBag.Matns" class="form-select">
-                            <option value="">-- اختر المتن من المكتبة --</option>
-                        </select>
-                        <span class="text-muted" style="font-size: 11px; display: block; margin-top: 4px;">تدرس جميع حلقات هذا البرنامج المتن المختار.</span>
-                        <span asp-validation-for="MatnId" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
+                    <div class="form-group" id="matnNoticeContainer" style="display: none;">
+                        <div class="alert alert-info d-flex align-center gap-sm" style="margin: 0; padding: 12px; font-size: 13px;">
+                            <i class='bx bx-info-circle' style="font-size: 1.25rem;"></i>
+                            <span>يدعم هذا البرنامج إضافة عدة متون علمية وترتيبها وتفعيلها بعد إنشاء البرنامج مباشرة في شاشة التعديل.</span>
+                        </div>
                     </div>
                 </div>
 
@@ -72,7 +70,7 @@
                 <div class="form-actions form-actions-right border-top pt-md mt-md">
                     <button type="submit" class="btn btn-primary">
                         <i class='bx bx-check'></i>
-                        <span>حفظ البرنامج</span>
+                        <span>حفظ البرنامج ومتابعة الإعداد</span>
                     </button>
                     <a asp-action="Index" class="btn btn-outline">إلغاء</a>
                 </div>
@@ -86,14 +84,14 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const typeSelect = document.getElementById('programTypeSelect');
-            const matnContainer = document.getElementById('matnSelectContainer');
+            const matnNotice = document.getElementById('matnNoticeContainer');
 
             function toggleMatnField() {
-                // Matn value is 2
-                if (typeSelect.value === '2') {
-                    matnContainer.style.display = 'block';
+                // ProgramType.Matn is 1 in domain enum
+                if (typeSelect.value === '1') {
+                    matnNotice.style.display = 'block';
                 } else {
-                    matnContainer.style.display = 'none';
+                    matnNotice.style.display = 'none';
                 }
             }
 

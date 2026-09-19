@@ -189,11 +189,11 @@
                     <div class="prog-card-body">
                         <h4 class="prog-title">@prog.Name</h4>
 
-                        @if (!string.IsNullOrEmpty(prog.MatnTitle))
+                        @if (prog.Type == ProgramType.Matn)
                         {
-                            <div class="prog-matn-pill">
+                            <div class="prog-matn-pill" style="display: inline-flex; align-items: center; gap: 6px; background: #f3e8ff; color: #7e22ce; padding: 3px 10px; border-radius: 9999px; font-size: 12px; margin-bottom: 8px;">
                                 <i class='bx bx-library'></i>
-                                <span>المتن: @prog.MatnTitle</span>
+                                <span>@(prog.MatunsCount > 0 ? $"المتون ({prog.MatunsCount}): {prog.MatnTitle}" : "لا توجد متون مخصصة بعد")</span>
                             </div>
                         }
 

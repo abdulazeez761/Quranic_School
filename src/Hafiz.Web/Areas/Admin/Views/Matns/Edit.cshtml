@@ -1,0 +1,154 @@
+@model Hafiz.DTOs.Matn.UpdateMatnDto
+@using Hafiz.Domain.Enums
+@{
+    ViewData["Title"] = "تعديل المتن العلمي";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var programs = ViewBag.Programs as List<SelectListItem> ?? new List<SelectListItem>();
+}
+
+<div class="admin-form-container">
+    <!-- رأس الصفحة -->
+    <div class="d-flex justify-between align-center mb-lg flex-wrap gap-md">
+        <div>
+            <h2 class="section-title mb-xs">
+                <i class='bx bx-edit' style="color: var(--primary-green);"></i>
+                تعديل المتن العلمي: @Model.Title
+            </h2>
+            <p class="text-medium">تحديث بيانات المتن، وحدات القياس، وحالة تفعيله في المنهج التعليمي.</p>
+        </div>
+        <div>
+            <a asp-action="Index" class="btn btn-outline btn-sm">
+                <i class='bx bx-arrow-back'></i>
+                <span>العودة للمكتبة</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="card card-standard">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class='bx bx-slider-alt'></i>
+                بيانات وإعدادات المتن
+            </h3>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-md" role="alert"></div>
+
+                <div class="form-group mb-md">
+                    <label asp-for="Title" class="form-label" style="font-weight: 600;">اسم المتن أو المنظومة <span class="text-danger">*</span></label>
+                    <input asp-for="Title" class="form-input" required />
+                    <span asp-validation-for="Title" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
+                </div>
+
+                <div class="form-row mb-md" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-md);">
+                    <div class="form-group">
+                        <label asp-for="Author" class="form-label" style="font-weight: 600;">المؤلف / الناظم</label>
+                        <input asp-for="Author" class="form-input" />
+                        <span asp-validation-for="Author" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Category" class="form-label" style="font-weight: 600;">الفن والتخصص <span class="text-danger">*</span></label>
+                        <select asp-for="Category" class="form-select">
+                            <option value="@((int)MatnCategory.Tajweed)">تجويد وقراءات</option>
+                            <option value="@((int)MatnCategory.Aqeedah)">عقيدة وتوحيد</option>
+                            <option value="@((int)MatnCategory.Hadith)">حديث ومصطلح</option>
+                            <option value="@((int)MatnCategory.Fiqh)">فقه وأصوله</option>
+                            <option value="@((int)MatnCategory.NahwAndLanguage)">نحو ولغة</option>
+                            <option value="@((int)MatnCategory.Seerah)">سيرة وتاريخ</option>
+                            <option value="@((int)MatnCategory.Adab)">آداب وتزكية</option>
+                            <option value="@((int)MatnCategory.General)">عام / أخرى</option>
+                        </select>
+                        <span asp-validation-for="Category" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
+                    </div>
+                </div>
+
+                <div class="form-row mb-md" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-md);">
+                    <div class="form-group">
+                        <label asp-for="DefaultUnit" class="form-label" style="font-weight: 600;">الوحدة الافتراضية</label>
+                        <select asp-for="DefaultUnit" id="defaultUnitSelect" class="form-select">
+                            <option value="@((int)MatnUnit.Verses)">أبيات (للمنظومات)</option>
+                            <option value="@((int)MatnUnit.Lines)">سطور</option>
+                            <option value="@((int)MatnUnit.Pages)">صفحات</option>
+                            <option value="@((int)MatnUnit.Chapters)">أبواب / فصول</option>
+                            <option value="@((int)MatnUnit.Hadiths)">أحاديث نبوية</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="TotalVerses" id="totalCountLabel" class="form-label" style="font-weight: 600;">إجمالي الأبيات (اختياري)</label>
+                        <input asp-for="TotalVerses" id="totalCountInput" type="number" min="1" class="form-input" />
+                        <span asp-validation-for="TotalVerses" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="TotalChapters" class="form-label" style="font-weight: 600;">عدد الأبواب (اختياري)</label>
+                        <input asp-for="TotalChapters" type="number" min="1" class="form-input" />
+                        <span asp-validation-for="TotalChapters" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
+                    </div>
+                </div>
+
+                <div class="form-row mb-md" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-md);">
+                    <div class="form-group">
+                        <label asp-for="StudyProgramId" class="form-label" style="font-weight: 600;">البرنامج التعليمي التابع له (اختياري)</label>
+                        <select asp-for="StudyProgramId" class="form-select">
+                            <option value="">-- بدون برنامج محدد (في مكتبة المعهد العامة) --</option>
+                            @foreach (var prog in programs)
+                            {
+                                <option value="@prog.Value">@prog.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Order" class="form-label" style="font-weight: 600;">الترتيب داخل البرنامج</label>
+                        <input asp-for="Order" type="number" min="1" class="form-input" />
+                    </div>
+                </div>
+
+                <div class="form-group mb-lg" style="display: flex; align-items: center; gap: var(--space-sm); background: #f8fafc; padding: var(--space-md); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                    <input type="checkbox" asp-for="IsActive" id="isActiveSwitch" style="width: 20px; height: 20px; cursor: pointer;" />
+                    <label for="isActiveSwitch" style="font-weight: 600; cursor: pointer; color: var(--text-dark); margin: 0;">
+                        المتن مفعّل ومتاح لإسناد الواجبات والتسميع والتقييم
+                    </label>
+                </div>
+
+                <div class="form-actions form-actions-right border-top pt-md mt-md">
+                    <button type="submit" class="btn btn-primary">
+                        <i class='bx bx-check'></i>
+                        <span>حفظ التعديلات</span>
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline">إلغاء</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            const unitSelect = document.getElementById('defaultUnitSelect');
+            const label = document.getElementById('totalCountLabel');
+            const input = document.getElementById('totalCountInput');
+            if (!unitSelect || !label || !input) return;
+
+            const unitMap = {
+                '1': { label: 'إجمالي الأبيات (اختياري)', placeholder: 'مثلاً: 61' },
+                '2': { label: 'إجمالي السطور (اختياري)', placeholder: 'مثلاً: 120' },
+                '3': { label: 'إجمالي الصفحات (اختياري)', placeholder: 'مثلاً: 45' },
+                '4': { label: 'إجمالي الأبواب / الفصول (اختياري)', placeholder: 'مثلاً: 12' },
+                '5': { label: 'إجمالي الأحاديث (اختياري)', placeholder: 'مثلاً: 42' }
+            };
+
+            function updateUnit() {
+                const conf = unitMap[unitSelect.value] || unitMap['1'];
+                label.textContent = conf.label;
+                input.placeholder = conf.placeholder;
+            }
+
+            unitSelect.addEventListener('change', updateUnit);
+            updateUnit();
+        })();
+    </script>
+}

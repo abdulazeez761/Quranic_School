@@ -22,7 +22,7 @@ public class StudyProgramRepository : IStudyProgramRepository
     public async Task<StudyProgram?> GetByIdAsync(Guid id, Guid? instituteId = null)
     {
         var query = _context.StudyPrograms
-            .Include(sp => sp.Matn)
+            .Include(sp => sp.Matuns.OrderBy(m => m.Order))
             .Include(sp => sp.Classes)
             .AsQueryable();
 
@@ -37,7 +37,7 @@ public class StudyProgramRepository : IStudyProgramRepository
     public async Task<IEnumerable<StudyProgram>> GetAllByInstituteAsync(Guid instituteId, ProgramType? type = null)
     {
         var query = _context.StudyPrograms
-            .Include(sp => sp.Matn)
+            .Include(sp => sp.Matuns.OrderBy(m => m.Order))
             .Include(sp => sp.Classes)
             .Where(sp => sp.InstituteId == instituteId);
 
@@ -52,7 +52,7 @@ public class StudyProgramRepository : IStudyProgramRepository
     public async Task<IEnumerable<StudyProgram>> GetActiveByInstituteAsync(Guid instituteId, ProgramType? type = null)
     {
         var query = _context.StudyPrograms
-            .Include(sp => sp.Matn)
+            .Include(sp => sp.Matuns.OrderBy(m => m.Order))
             .Where(sp => sp.InstituteId == instituteId && sp.IsActive);
 
         if (type.HasValue)

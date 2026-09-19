@@ -310,6 +310,12 @@
                                 <i class='bx bx-bookmarks'></i>
                                 <span>تسميع المتن</span>
                             </button>
+                            <a asp-controller="Matn" asp-action="Index" asp-route-classId="@classId"
+                               class="rec-btn rec-btn-plan"
+                               title="متابعة إنجاز المتون ورصد الدرجات">
+                                <i class='bx bx-award'></i>
+                                <span>إنجاز ودرجات</span>
+                            </a>
                         }
 
                         <a asp-action="Details" asp-route-id="@student.UserId"
@@ -511,6 +517,12 @@
                                         <i class='bx bx-bookmarks'></i>
                                         <span>تسميع المتن</span>
                                     </button>
+                                    <a asp-controller="Matn" asp-action="Index" asp-route-classId="@classId"
+                                       class="rec-btn rec-btn-plan rec-btn-sm"
+                                       title="متابعة إنجاز المتون ورصد الدرجات">
+                                        <i class='bx bx-award'></i>
+                                        <span>إنجاز ودرجات</span>
+                                    </a>
                                 }
                                 <a asp-action="Details" asp-route-id="@student.UserId"
                                    class="rec-btn-icon"

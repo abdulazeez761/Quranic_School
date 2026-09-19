@@ -27,6 +27,9 @@ namespace Hafiz.Models
         [StringLength(50)] // Max length for second name
         public string SecondName { get; set; }
 
+        [NotMapped]
+        public string FullName => $"{FirstName} {SecondName}".Trim();
+
         [Required]
         [Phone] // Validates phone format loosely
         [StringLength(20)] // Max length for phone number

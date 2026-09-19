@@ -1,8 +1,26 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Hafiz.Domain.Enums;
 
 namespace Hafiz.DTOs.StudyProgram;
+
+public class MatnSummaryDto
+{
+    public Guid Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string? Author { get; set; }
+    public MatnCategory Category { get; set; }
+    public string CategoryName => Category.ToArabic();
+    public int? TotalVerses { get; set; }
+    public int? TotalChapters { get; set; }
+    public MatnUnit DefaultUnit { get; set; }
+    public int Order { get; set; } = 1;
+    public bool IsActive { get; set; } = true;
+    public Guid? InstituteId { get; set; }
+    public Guid? StudyProgramId { get; set; }
+}
 
 public class StudyProgramDto
 {
@@ -20,11 +38,16 @@ public class StudyProgramDto
     };
 
     public Guid InstituteId { get; set; }
-    public Guid? MatnId { get; set; }
-    public string? MatnTitle { get; set; }
     public bool IsActive { get; set; }
     public int ClassesCount { get; set; }
+    public int MatunsCount => Matuns.Count;
+    public List<MatnSummaryDto> Matuns { get; set; } = new();
     public DateTime CreatedAt { get; set; }
+
+    // Convenient title display helper
+    public string? MatnTitle => Matuns.Count > 0 
+        ? (Matuns.Count == 1 ? Matuns[0].Title : $"{Matuns[0].Title} (+{Matuns.Count - 1} متون)") 
+        : null;
 }
 
 public class CreateStudyProgramDto
@@ -39,7 +62,8 @@ public class CreateStudyProgramDto
     [Required(ErrorMessage = "نوع البرنامج مطلوب.")]
     public ProgramType Type { get; set; } = ProgramType.Quran;
 
-    public Guid? MatnId { get; set; }
+    // متون مبدئية للإضافة (اختياري)
+    public List<Guid>? InitialMatnIds { get; set; } = new();
 }
 
 public class UpdateStudyProgramDto : CreateStudyProgramDto

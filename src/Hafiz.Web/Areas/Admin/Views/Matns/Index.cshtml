@@ -199,6 +199,14 @@
                                     </div>
                                     <div>
                                         <span class="matn-title-text">@matn.Title</span>
+                                        @if (!string.IsNullOrEmpty(matn.StudyProgramName))
+                                        {
+                                            <div style="margin-top: 4px;">
+                                                <span class="badge" style="background: #ede9fe; color: #6d28d9; font-size: 11px; padding: 2px 8px; border-radius: 4px;">
+                                                    <i class='bx bx-book-open'></i> @matn.StudyProgramName
+                                                </span>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                             </td>
@@ -249,15 +257,21 @@
                             <td data-label="إجراءات" style="text-align: center;">
                                 @if (!matn.IsGlobal)
                                 {
-                                    <form asp-action="Delete" asp-route-id="@matn.Id" method="post" style="display: inline;"
-                                          onsubmit="return confirm('هل أنت متأكد من رغبتك في حذف هذا المتن من مكتبة المركز؟');">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-outline btn-sm"
-                                                style="color: var(--danger); border-color: rgba(220,53,69,0.3); padding: 4px 10px;"
-                                                title="حذف المتن">
-                                            <i class='bx bx-trash'></i>
-                                        </button>
-                                    </form>
+                                    <div class="d-flex justify-center gap-xs align-center">
+                                        <a asp-action="Edit" asp-route-id="@matn.Id" class="btn btn-outline btn-sm"
+                                           style="padding: 4px 10px;" title="تعديل المتن">
+                                            <i class='bx bx-edit'></i>
+                                        </a>
+                                        <form asp-action="Delete" asp-route-id="@matn.Id" method="post" style="display: inline;"
+                                              onsubmit="return confirm('هل أنت متأكد من رغبتك في حذف هذا المتن من مكتبة المركز؟');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-outline btn-sm"
+                                                    style="color: var(--danger); border-color: rgba(220,53,69,0.3); padding: 4px 10px;"
+                                                    title="حذف المتن">
+                                                <i class='bx bx-trash'></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 }
                                 else
                                 {

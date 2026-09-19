@@ -25,12 +25,14 @@ public class MatnAssignmentRepository : IMatnAssignmentRepository
             .Include(ma => ma.Student)
                 .ThenInclude(s => s.StudentInfo)
             .Include(ma => ma.Class)
+            .Include(ma => ma.Matn)
             .FirstOrDefaultAsync(ma => ma.Id == id);
     }
 
     public async Task<IEnumerable<MatnAssignment>> GetByStudentAndClassAsync(Guid studentId, Guid classId)
     {
         return await _context.MatnAssignments
+            .Include(ma => ma.Matn)
             .Where(ma => ma.StudentId == studentId && ma.ClassId == classId)
             .OrderByDescending(ma => ma.AssignedDate)
             .ToListAsync();
@@ -42,6 +44,7 @@ public class MatnAssignmentRepository : IMatnAssignmentRepository
         return await _context.MatnAssignments
             .Include(ma => ma.Student)
                 .ThenInclude(s => s.StudentInfo)
+            .Include(ma => ma.Matn)
             .Where(ma => ma.ClassId == classId && ma.AssignedDate.Date == targetDate)
             .ToListAsync();
     }
@@ -53,6 +56,7 @@ public class MatnAssignmentRepository : IMatnAssignmentRepository
         return await _context.MatnAssignments
             .Include(ma => ma.Student)
                 .ThenInclude(s => s.StudentInfo)
+            .Include(ma => ma.Matn)
             .Where(ma => idsList.Contains(ma.ClassId) && ma.AssignedDate.Date == targetDate)
             .ToListAsync();
     }
@@ -63,6 +67,7 @@ public class MatnAssignmentRepository : IMatnAssignmentRepository
             .Include(ma => ma.Student)
                 .ThenInclude(s => s.StudentInfo)
             .Include(ma => ma.Class)
+            .Include(ma => ma.Matn)
             .Where(ma => ma.ClassId == classId);
 
         if (fromDate.HasValue)
@@ -84,6 +89,7 @@ public class MatnAssignmentRepository : IMatnAssignmentRepository
     {
         return await _context.MatnAssignments
             .Include(ma => ma.Class)
+            .Include(ma => ma.Matn)
             .Where(ma => ma.StudentId == studentId)
             .OrderByDescending(ma => ma.AssignedDate)
             .ToListAsync();

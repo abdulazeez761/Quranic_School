@@ -12,6 +12,7 @@ namespace Hafiz.DTOs.Student
         public PaginatedWirdsResponse PaginatedWirds { get; set; } = new();
         public List<StudentAttendance> Attendance { get; set; } = new();
         public IEnumerable<ParentNote> ParentNotes { get; set; } = new List<ParentNote>();
+        public List<Hafiz.DTOs.Matn.StudentMatnProgressDto> MatnProgresses { get; set; } = new();
 
         public double AttendanceRate { get; set; }
         public int PresentCount { get; set; }

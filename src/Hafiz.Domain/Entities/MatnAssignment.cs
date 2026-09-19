@@ -23,6 +23,12 @@ public class MatnAssignment
     [ForeignKey(nameof(ClassId))]
     public Class Class { get; set; } = null!;
 
+    // المتن المستهدف بالتسميع
+    public Guid? MatnId { get; set; }
+
+    [ForeignKey(nameof(MatnId))]
+    public Matn? Matn { get; set; }
+
     // نموذج الأداء: (حفظ = 1، مراجعة = 2، مدارسة = 3)
     [Required]
     public MatnPerformanceType PerformanceType { get; set; } = MatnPerformanceType.Memorization;

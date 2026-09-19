@@ -16,15 +16,18 @@ public class MatnAssignmentService : IMatnAssignmentService
     private readonly IMatnAssignmentRepository _assignmentRepository;
     private readonly IClassRepository _classRepository;
     private readonly IStudentRepository _studentRepository;
+    private readonly IMatnRepository _matnRepository;
 
     public MatnAssignmentService(
         IMatnAssignmentRepository assignmentRepository,
         IClassRepository classRepository,
-        IStudentRepository studentRepository)
+        IStudentRepository studentRepository,
+        IMatnRepository matnRepository)
     {
         _assignmentRepository = assignmentRepository;
         _classRepository = classRepository;
         _studentRepository = studentRepository;
+        _matnRepository = matnRepository;
     }
 
     public async Task<MatnAssignmentDto?> GetByIdAsync(Guid id)
@@ -74,10 +77,30 @@ public class MatnAssignmentService : IMatnAssignmentService
         if (!cls.Students.Any(s => s.UserId == dto.StudentId))
             return (false, "الطالب غير مسجل في هذه الحلقة.", null);
 
+        // التحقق من صحة المتن إن تم تحديده
+        if (dto.MatnId.HasValue)
+        {
+            var matn = await _matnRepository.GetByIdAsync(dto.MatnId.Value);
+            if (matn == null)
+                return (false, "المتن المحدد غير موجود.", null);
+
+            if (!matn.IsActive)
+                return (false, "المتن غير مفعّل للواجبات والتسميع.", null);
+
+            // التحقق من العزل للمعهد
+            if (matn.InstituteId != null && matn.InstituteId != cls.InstituteId)
+                return (false, "المتن لا يتبع هذا المعهد.", null);
+
+            // التحقق من تبعية المتن للبرنامج العلمي الخاص بالحلقة
+            if (cls.StudyProgramId.HasValue && matn.StudyProgramId.HasValue && matn.StudyProgramId != cls.StudyProgramId)
+                return (false, "المتن المحدد لا ينتمي إلى البرنامج العلمي المعتمد لهذه الحلقة.", null);
+        }
+
         var assignment = new MatnAssignment
         {
             StudentId = dto.StudentId,
             ClassId = dto.ClassId,
+            MatnId = dto.MatnId,
             PerformanceType = dto.PerformanceType,
             Unit = dto.Unit,
             Amount = dto.Amount,
@@ -108,6 +131,26 @@ public class MatnAssignmentService : IMatnAssignmentService
         if (cls != null && !cls.Teachers.Any(t => t.UserId == teacherId))
             return (false, "غير مصرح لك بتعديل الورد في هذه الحلقة.");
 
+        if (dto.MatnId.HasValue)
+        {
+            var matn = await _matnRepository.GetByIdAsync(dto.MatnId.Value);
+            if (matn == null)
+                return (false, "المتن المحدد غير موجود.");
+
+            if (!matn.IsActive)
+                return (false, "المتن غير مفعّل للواجبات والتسميع.");
+
+            if (cls != null)
+            {
+                if (matn.InstituteId != null && matn.InstituteId != cls.InstituteId)
+                    return (false, "المتن لا يتبع هذا المعهد.");
+
+                if (cls.StudyProgramId.HasValue && matn.StudyProgramId.HasValue && matn.StudyProgramId != cls.StudyProgramId)
+                    return (false, "المتن المحدد لا ينتمي إلى البرنامج العلمي المعتمد لهذه الحلقة.");
+            }
+        }
+
+        assignment.MatnId = dto.MatnId;
         assignment.PerformanceType = dto.PerformanceType;
         assignment.Unit = dto.Unit;
         assignment.Amount = dto.Amount;
@@ -176,6 +219,8 @@ public class MatnAssignmentService : IMatnAssignmentService
         StudentName = ma.Student?.StudentInfo != null ? $"{ma.Student.StudentInfo.FirstName} {ma.Student.StudentInfo.SecondName}" : string.Empty,
         ClassId = ma.ClassId,
         ClassName = ma.Class?.Name ?? string.Empty,
+        MatnId = ma.MatnId,
+        MatnTitle = ma.Matn?.Title,
         PerformanceType = ma.PerformanceType,
         Unit = ma.Unit,
         Amount = ma.Amount,

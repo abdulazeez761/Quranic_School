@@ -34,6 +34,11 @@ public class MatnDto
     };
     public bool IsGlobal => InstituteId == null;
     public Guid? InstituteId { get; set; }
+
+    public Guid? StudyProgramId { get; set; }
+    public string? StudyProgramName { get; set; }
+    public int Order { get; set; } = 1;
+    public bool IsActive { get; set; } = true;
 }
 
 public class CreateMatnDto
@@ -55,4 +60,14 @@ public class CreateMatnDto
     public int? TotalChapters { get; set; }
 
     public MatnUnit DefaultUnit { get; set; } = MatnUnit.Verses;
+
+    public Guid? StudyProgramId { get; set; }
+    public int Order { get; set; } = 1;
+    public bool IsActive { get; set; } = true;
+}
+
+public class UpdateMatnDto : CreateMatnDto
+{
+    [Required]
+    public Guid Id { get; set; }
 }

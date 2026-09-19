@@ -24,6 +24,7 @@ namespace Hafiz.Application.Extensions
             services.AddScoped<IStudyProgramService, StudyProgramService>();
             services.AddScoped<IMatnService, MatnService>();
             services.AddScoped<IMatnAssignmentService, MatnAssignmentService>();
+            services.AddScoped<IStudentMatnProgressService, StudentMatnProgressService>();
             return services;
         }
     }

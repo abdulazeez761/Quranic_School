@@ -29,6 +29,7 @@ namespace Hafiz.Areas.Teacher.Controllers
         private readonly IStudentWirdService _studentWirdService;
         private readonly IClassService _classService;
         private readonly IMatnAssignmentService _matnAssignmentService;
+        private readonly IStudentMatnProgressService _studentMatnProgressService;
 
         public StudentController(
             ILogger<StudentController> logger,
@@ -37,7 +38,8 @@ namespace Hafiz.Areas.Teacher.Controllers
             IParentNoteService parentNoteService,
             IStudentWirdService studentWirdService,
             IClassService classService,
-            IMatnAssignmentService matnAssignmentService
+            IMatnAssignmentService matnAssignmentService,
+            IStudentMatnProgressService studentMatnProgressService
         )
         {
             _logger = logger;
@@ -47,6 +49,7 @@ namespace Hafiz.Areas.Teacher.Controllers
             _studentWirdService = studentWirdService;
             _classService = classService;
             _matnAssignmentService = matnAssignmentService;
+            _studentMatnProgressService = studentMatnProgressService;
         }
 
         private Guid? GetInstituteId()
@@ -283,6 +286,7 @@ namespace Hafiz.Areas.Teacher.Controllers
 
                 // Get student's Matn assignments
                 var matnAssignments = (await _matnAssignmentService.GetByStudentIdAsync(id)).ToList();
+                var matnProgresses = (await _studentMatnProgressService.GetByStudentAsync(id)).ToList();
 
                 // Create view model
                 var viewModel = new StudentDetailsViewModel
@@ -290,6 +294,7 @@ namespace Hafiz.Areas.Teacher.Controllers
                     Student = student,
                     PaginatedWirds = paginatedWirds,
                     MatnAssignments = matnAssignments,
+                    MatnProgresses = matnProgresses,
                     CurrentPage = page,
                     TotalPages = totalPages,
                     TotalWirds = totalWirds,

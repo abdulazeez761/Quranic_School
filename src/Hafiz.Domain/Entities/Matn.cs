@@ -26,6 +26,18 @@ public class Matn : ISoftDeletable
 
     public MatnUnit DefaultUnit { get; set; } = MatnUnit.Verses;
 
+    // البرنامج العلمي التابع له هذا المتن (اختياري)
+    public Guid? StudyProgramId { get; set; }
+
+    [ForeignKey(nameof(StudyProgramId))]
+    public StudyProgram? StudyProgram { get; set; }
+
+    // ترتيب المتن داخل البرنامج العلمي (يبدأ من 1)
+    public int Order { get; set; } = 1;
+
+    // حالة تفعيل المتن للواجبات والتسميع
+    public bool IsActive { get; set; } = true;
+
     // إذا كان المعهد null، فهو متن عام لكل المعاهد (Global System Library)
     public Guid? InstituteId { get; set; }
 

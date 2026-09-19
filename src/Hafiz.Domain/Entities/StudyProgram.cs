@@ -23,11 +23,8 @@ public class StudyProgram : ISoftDeletable
     [Required]
     public ProgramType Type { get; set; } = ProgramType.Quran; // الافتراضي دائماً قرآن
 
-    // للمتون: يرتبط بمتن محدد إذا كان نوع البرنامج متون
-    public Guid? MatnId { get; set; }
-
-    [ForeignKey(nameof(MatnId))]
-    public Matn? Matn { get; set; }
+    // المتون التابعة لهذا البرنامج (في حال كان نوع البرنامج متون علمية)
+    public ICollection<Matn> Matuns { get; set; } = new List<Matn>();
 
     [Required]
     public Guid InstituteId { get; set; }

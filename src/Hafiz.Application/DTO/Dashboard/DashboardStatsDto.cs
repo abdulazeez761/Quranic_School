@@ -30,6 +30,21 @@ namespace Hafiz.DTOs.Dashboard
         /// <summary>البرامج التعليمية النشطة في المركز.</summary>
         public int ActiveStudyProgramsCount { get; set; }
 
+        /// <summary>إجمالي المتون التي اكتملت دراستها من الطلاب.</summary>
+        public int MatnsStudiedCount { get; set; }
+
+        /// <summary>إجمالي المتون التي تم حفظها من الطلاب.</summary>
+        public int MatnsMemorizedCount { get; set; }
+
+        /// <summary>إجمالي اختبارات المتون المجراة.</summary>
+        public int MatnsExaminedCount { get; set; }
+
+        /// <summary>عدد اختبارات المتون الناجحة.</summary>
+        public int ExamsPassedCount { get; set; }
+
+        /// <summary>عدد اختبارات المتون غير المجتازة.</summary>
+        public int ExamsFailedCount { get; set; }
+
         // ── أوراد المتون العلمية (للفترة المختارة) ──────────────────────────
 
         /// <summary>إجمالي أوراد المتون المُسندة للفترة.</summary>

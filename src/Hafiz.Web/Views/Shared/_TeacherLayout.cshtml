@@ -136,6 +136,12 @@
                         <span>@Localizer["Wirds"]</span>
                     </a>
                 </li>
+                <li class="@(currentController == "Matn" || currentController == "StudentMatnProgress" ? "active" : "")">
+                    <a asp-area="Teacher" asp-controller="Matn" asp-action="Index">
+                        <i class='bx bx-bookmarks'></i>
+                        <span>المتون العلمية</span>
+                    </a>
+                </li>
                 <li class="@(currentController == "TeacherClasses" ? "active" : "")">
                     <a asp-area="Teacher" asp-controller="TeacherClasses" asp-action="ManageMeetings">
                         <i class='bx bx-video'></i>
@@ -193,6 +199,11 @@
                    class="mobile-nav-item @(currentController == "Wird" ? "active" : "")">
                 <i class='bx bx-book-open'></i>
                 <span>@Localizer["Wirds"]</span>
+            </a>
+            <a asp-area="Teacher" asp-controller="Matn" asp-action="Index"
+                   class="mobile-nav-item @(currentController == "Matn" || currentController == "StudentMatnProgress" ? "active" : "")">
+                <i class='bx bx-bookmarks'></i>
+                <span>المتون</span>
             </a>
             <a asp-area="Teacher" asp-controller="TeacherClasses" asp-action="ManageMeetings"
                    class="mobile-nav-item @(currentController == "TeacherClasses" ? "active" : "")">

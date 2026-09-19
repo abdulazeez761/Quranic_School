@@ -28,13 +28,15 @@ namespace Hafiz.Areas.Admin.Controllers
         private readonly IClassService _classService;
         private readonly IParentService _parentService;
         private readonly IParentNoteService _parentNoteService;
+        private readonly IStudentMatnProgressService _studentMatnProgressService;
 
         public StudentsController(
             IAuthService authService,
             IStudentService studentService,
             IClassService classService,
             IParentService parentService,
-            IParentNoteService parentNoteService
+            IParentNoteService parentNoteService,
+            IStudentMatnProgressService studentMatnProgressService
         )
         {
             _authService = authService;
@@ -42,6 +44,7 @@ namespace Hafiz.Areas.Admin.Controllers
             _classService = classService;
             _parentService = parentService;
             _parentNoteService = parentNoteService;
+            _studentMatnProgressService = studentMatnProgressService;
         }
 
         private Guid? GetInstituteId()
@@ -185,6 +188,7 @@ namespace Hafiz.Areas.Admin.Controllers
                     : 0;
 
             var notes = await _parentNoteService.GetNotesByStudentIdAsync(id);
+            var matnProgresses = (await _studentMatnProgressService.GetByStudentAsync(id)).ToList();
 
             var viewModel = new AdminStudentDetailsViewModel
             {
@@ -197,6 +201,7 @@ namespace Hafiz.Areas.Admin.Controllers
                 AbsentCount = absentCount,
                 ExcusedCount = excusedCount,
                 ParentNotes = notes,
+                MatnProgresses = matnProgresses,
                 WirdStatus = status,
                 WirdType = type,
                 AttendanceFromDate = fromDate,

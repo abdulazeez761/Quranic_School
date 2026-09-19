@@ -222,7 +222,7 @@ namespace Hafiz.Repositories
                 );
             }
 
-            return await query.AsNoTracking().ToListAsync();
+            return await query.AsSplitQuery().AsNoTracking().ToListAsync();
         }
 
         public async Task ApplyProgressDeltaAsync(

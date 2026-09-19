@@ -15,4 +15,10 @@ public interface IStudyProgramService
     Task<(bool Success, string Message)> UpdateAsync(UpdateStudyProgramDto dto, Guid instituteId);
     Task<(bool Success, string Message)> DeleteAsync(Guid id, Guid instituteId);
     Task<StudyProgramDto?> GetOrCreateDefaultQuranProgramAsync(Guid instituteId);
+
+    // إدارة المتون داخل البرنامج العلمي
+    Task<(bool Success, string Message)> AddMatnToProgramAsync(Guid programId, Guid matnId, Guid instituteId);
+    Task<(bool Success, string Message)> RemoveMatnFromProgramAsync(Guid programId, Guid matnId, Guid instituteId);
+    Task<(bool Success, string Message)> ReorderMatunsAsync(Guid programId, List<Guid> orderedMatnIds, Guid instituteId);
+    Task<(bool Success, string Message)> ToggleMatnActiveAsync(Guid programId, Guid matnId, Guid instituteId);
 }

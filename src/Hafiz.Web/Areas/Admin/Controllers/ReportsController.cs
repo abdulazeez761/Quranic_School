@@ -165,6 +165,8 @@ namespace Hafiz.Areas.Admin.Controllers
                 StudentName = $"{m.Student?.StudentInfo?.FirstName} {m.Student?.StudentInfo?.SecondName}".Trim(),
                 ClassId = m.ClassId,
                 ClassName = m.Class?.Name ?? "",
+                MatnId = m.MatnId,
+                MatnTitle = m.Matn?.Title,
                 PerformanceType = m.PerformanceType,
                 Unit = m.Unit,
                 Amount = m.Amount,

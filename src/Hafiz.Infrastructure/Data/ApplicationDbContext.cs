@@ -26,6 +26,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<StudyProgram> StudyPrograms { get; set; }
     public DbSet<Matn> Matns { get; set; }
     public DbSet<MatnAssignment> MatnAssignments { get; set; }
+    public DbSet<StudentMatnProgress> StudentMatnProgresses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -40,6 +41,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<Parent>().HasQueryFilter(p => !p.IsDeleted);
         modelBuilder.Entity<StudyProgram>().HasQueryFilter(sp => !sp.IsDeleted);
         modelBuilder.Entity<Matn>().HasQueryFilter(m => !m.IsDeleted);
+        modelBuilder.Entity<StudentMatnProgress>().HasQueryFilter(smp => !smp.IsDeleted);
 
         modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique(); // Ensure unique usernames even if soft-deleted because i might return the user
         modelBuilder
@@ -211,11 +213,12 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(sp => sp.InstituteId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // One StudyProgram -> Many Matuns
         modelBuilder
             .Entity<StudyProgram>()
-            .HasOne(sp => sp.Matn)
-            .WithMany()
-            .HasForeignKey(sp => sp.MatnId)
+            .HasMany(sp => sp.Matuns)
+            .WithOne(m => m.StudyProgram)
+            .HasForeignKey(m => m.StudyProgramId)
             .OnDelete(DeleteBehavior.Restrict);
 
         // Class -> StudyProgram
@@ -241,11 +244,52 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(ma => ma.ClassId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder
+            .Entity<MatnAssignment>()
+            .HasOne(ma => ma.Matn)
+            .WithMany()
+            .HasForeignKey(ma => ma.MatnId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // StudentMatnProgress configurations
+        modelBuilder
+            .Entity<StudentMatnProgress>(entity =>
+            {
+                entity.HasOne(smp => smp.Student)
+                    .WithMany()
+                    .HasForeignKey(smp => smp.StudentId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(smp => smp.Matn)
+                    .WithMany()
+                    .HasForeignKey(smp => smp.MatnId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(smp => smp.LastUpdatedByTeacher)
+                    .WithMany()
+                    .HasForeignKey(smp => smp.LastUpdatedByTeacherId)
+                    .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasIndex(smp => new { smp.StudentId, smp.MatnId })
+                    .IsUnique()
+                    .HasDatabaseName("IX_StudentMatnProgresses_StudentId_MatnId");
+            });
+
         // Composite Performance & Multi-Tenancy Indexes
         modelBuilder
             .Entity<StudyProgram>()
             .HasIndex(sp => new { sp.InstituteId, sp.Type })
             .HasDatabaseName("IX_StudyPrograms_InstituteId_Type");
+
+        modelBuilder
+            .Entity<Matn>()
+            .HasIndex(m => m.StudyProgramId)
+            .HasDatabaseName("IX_Matns_StudyProgramId");
+
+        modelBuilder
+            .Entity<Matn>()
+            .HasIndex(m => new { m.StudyProgramId, m.Order })
+            .HasDatabaseName("IX_Matns_StudyProgramId_Order");
 
         modelBuilder
             .Entity<Class>()
@@ -256,6 +300,11 @@ public class ApplicationDbContext : DbContext
             .Entity<MatnAssignment>()
             .HasIndex(ma => new { ma.StudentId, ma.ClassId, ma.AssignedDate })
             .HasDatabaseName("IX_MatnAssignments_Student_Class_Date");
+
+        modelBuilder
+            .Entity<MatnAssignment>()
+            .HasIndex(ma => ma.MatnId)
+            .HasDatabaseName("IX_MatnAssignments_MatnId");
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

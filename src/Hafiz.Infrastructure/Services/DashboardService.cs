@@ -1,4 +1,6 @@
 using Hafiz.Data;
+using Hafiz.Domain.Entities;
+using Hafiz.Domain.Enums;
 using Hafiz.DTOs.Dashboard;
 using Hafiz.Infrastructure.Services.Dashboard;
 using Hafiz.Models;
@@ -57,6 +59,11 @@ namespace Hafiz.Infrastructure.Services
                 MatnsCount = counts.Matns,
                 StudyProgramsCount = counts.StudyPrograms,
                 ActiveStudyProgramsCount = counts.ActiveStudyPrograms,
+                MatnsStudiedCount = counts.MatnsStudied,
+                MatnsMemorizedCount = counts.MatnsMemorized,
+                MatnsExaminedCount = counts.MatnsExamined,
+                ExamsPassedCount = counts.ExamsPassed,
+                ExamsFailedCount = counts.ExamsFailed,
                 MatnTotalAssignments = matnTotal,
                 MatnMemorizationAssignments = matnMem,
                 MatnRevisionAssignments = matnRev,
@@ -93,7 +100,7 @@ namespace Hafiz.Infrastructure.Services
         /// المتوقع = مجموع أعداد الطلاب في كل حلقة تدرّس اليوم (حصص لا طلاب فريدين).
         /// الفعلي = سجلات الحضور اليوم بحالة "حاضر" أو "متأخر" ضمن هذه الحلقات.
         /// </summary>
-        private Task<DashboardCounts> LoadCountsAsync(Guid? instituteId, DateTime? todayParam)
+        private async Task<DashboardCounts> LoadCountsAsync(Guid? instituteId, DateTime? todayParam)
         {
             var today = todayParam?.Date ?? DateTime.Today;
             var tomorrow = today.AddDays(1);
@@ -104,6 +111,7 @@ namespace Hafiz.Infrastructure.Services
             IQueryable<Class> classes = _context.Classes;
             IQueryable<Hafiz.Domain.Entities.Matn> matns = _context.Matns.Where(m => !m.IsDeleted);
             IQueryable<Hafiz.Domain.Entities.StudyProgram> programs = _context.StudyPrograms.Where(p => !p.IsDeleted);
+            IQueryable<StudentMatnProgress> matnProgresses = _context.StudentMatnProgresses;
 
             if (instituteId.HasValue)
             {
@@ -112,15 +120,11 @@ namespace Hafiz.Infrastructure.Services
                 classes = classes.Where(c => c.InstituteId == instituteId);
                 matns = matns.Where(m => m.InstituteId == null || m.InstituteId == instituteId);
                 programs = programs.Where(p => p.InstituteId == instituteId);
+                matnProgresses = matnProgresses.Where(p => p.Student.StudentInfo.InstituteId == instituteId);
             }
 
-            var classesToday = classes.Where(c => c.ClassDays.Any(d => d == currentDay));
-            var teachersToday = teachers.Where(t =>
-                t.Classes.Any(c => c.ClassDays.Any(d => d == currentDay))
-            );
-
             // صفّ واحد يُستخدم كمرساة للاستعلام؛ جدول المستخدمين لا يخلو أبدًا (يُزرع SuperAdmin عند الإقلاع).
-            return _context
+            var counts = await _context
                 .Users.Take(1)
                 .Select(_ => new DashboardCounts
                 {
@@ -131,31 +135,64 @@ namespace Hafiz.Infrastructure.Services
                     Matns = matns.Count(),
                     StudyPrograms = programs.Count(),
                     ActiveStudyPrograms = programs.Count(p => p.IsActive),
-                    ExpectedStudentsToday = classesToday.Sum(c => c.Students.Count),
-                    AttendedStudentsToday = _context.StudentAttendances.Count(a =>
-                        a.Date >= today
-                        && a.Date < tomorrow
-                        && (
-                            a.Status == AttendanceStatus.Present
-                            || a.Status == AttendanceStatus.Late
-                        )
-                        && classesToday.Any(c => c.Id == a.ClassId)
-                        && a.Student.StudentInfo.IsDeleted == false
-                    ),
-                    ExpectedTeachersToday = teachersToday.Count(),
-                    AttendedTeachersToday = _context.teacherAttendances.Count(a =>
-                        a.Date >= today
-                        && a.Date < tomorrow
-                        && (
-                            a.Status == AttendanceStatus.Present
-                            || a.Status == AttendanceStatus.Late
-                        )
-                        && a.Teacher.IsDeleted == false
-                        && teachersToday.Any(t => t.UserId == a.TeacherId)
-                    ),
                 })
                 .AsNoTracking()
                 .FirstAsync();
+
+            var classesList = await classes
+                .Select(c => new { c.Id, c.ClassDays, StudentsCount = c.Students.Count })
+                .ToListAsync();
+
+            var todayClasses = classesList
+                .Where(c => c.ClassDays != null && c.ClassDays.Contains(currentDay))
+                .ToList();
+
+            var todayClassIds = todayClasses.Select(c => c.Id).ToHashSet();
+            counts.ExpectedStudentsToday = todayClasses.Sum(c => c.StudentsCount);
+
+            if (todayClassIds.Any())
+            {
+                counts.AttendedStudentsToday = await _context.StudentAttendances
+                    .CountAsync(a =>
+                        a.Date >= today
+                        && a.Date < tomorrow
+                        && (a.Status == AttendanceStatus.Present || a.Status == AttendanceStatus.Late)
+                        && todayClassIds.Contains(a.ClassId)
+                        && !a.Student.StudentInfo.IsDeleted
+                    );
+
+                var todayTeacherIds = await _context.Classes
+                    .Where(c => todayClassIds.Contains(c.Id))
+                    .SelectMany(c => c.Teachers.Select(t => t.UserId))
+                    .Distinct()
+                    .ToListAsync();
+
+                counts.ExpectedTeachersToday = todayTeacherIds.Count;
+
+                if (todayTeacherIds.Any())
+                {
+                    counts.AttendedTeachersToday = await _context.teacherAttendances
+                        .CountAsync(a =>
+                            a.Date >= today
+                            && a.Date < tomorrow
+                            && (a.Status == AttendanceStatus.Present || a.Status == AttendanceStatus.Late)
+                            && !a.Teacher.IsDeleted
+                            && todayTeacherIds.Contains(a.TeacherId)
+                        );
+                }
+            }
+
+            var progressList = await matnProgresses
+                .Select(p => new { p.StudyStatus, p.MemorizationStatus, p.ExamStatus })
+                .ToListAsync();
+
+            counts.MatnsStudied = progressList.Count(p => p.StudyStatus == StudyStatus.Completed);
+            counts.MatnsMemorized = progressList.Count(p => p.MemorizationStatus == MemorizationStatus.Memorized);
+            counts.MatnsExamined = progressList.Count(p => p.ExamStatus != ExamStatus.NotTested);
+            counts.ExamsPassed = progressList.Count(p => p.ExamStatus == ExamStatus.Passed);
+            counts.ExamsFailed = progressList.Count(p => p.ExamStatus == ExamStatus.Failed);
+
+            return counts;
         }
 
         private sealed class DashboardCounts
@@ -167,6 +204,11 @@ namespace Hafiz.Infrastructure.Services
             public int Matns { get; set; }
             public int StudyPrograms { get; set; }
             public int ActiveStudyPrograms { get; set; }
+            public int MatnsStudied { get; set; }
+            public int MatnsMemorized { get; set; }
+            public int MatnsExamined { get; set; }
+            public int ExamsPassed { get; set; }
+            public int ExamsFailed { get; set; }
             public int ExpectedStudentsToday { get; set; }
             public int AttendedStudentsToday { get; set; }
             public int ExpectedTeachersToday { get; set; }
