@@ -192,11 +192,14 @@
 }
 
 /* Kind-specific tint variables — set on the item, inherited by icon. */
-.dashboard-activity-item.--memorization { --activity-color: #a67c2e; --activity-bg: rgba(191, 145, 59, 0.14); }
-.dashboard-activity-item.--revision     { --activity-color: #138496; --activity-bg: rgba(23, 162, 184, 0.14); }
-.dashboard-activity-item.--tajwid       { --activity-color: #7c3aed; --activity-bg: rgba(124, 58, 237, 0.14); }
-.dashboard-activity-item.--attendance   { --activity-color: #2c6fad; --activity-bg: rgba(74, 144, 217, 0.14); }
-.dashboard-activity-item.--teacher      { --activity-color: #5e3b8a; --activity-bg: rgba(94, 59, 138, 0.16); }
+.dashboard-activity-item.--memorization      { --activity-color: #a67c2e; --activity-bg: rgba(191, 145, 59, 0.14); }
+.dashboard-activity-item.--revision          { --activity-color: #138496; --activity-bg: rgba(23, 162, 184, 0.14); }
+.dashboard-activity-item.--tajwid            { --activity-color: #7c3aed; --activity-bg: rgba(124, 58, 237, 0.14); }
+.dashboard-activity-item.--matn-memorization { --activity-color: #0d9488; --activity-bg: rgba(13, 148, 136, 0.14); }
+.dashboard-activity-item.--matn-revision     { --activity-color: #2563eb; --activity-bg: rgba(37, 99, 235, 0.14); }
+.dashboard-activity-item.--matn-mudarasah    { --activity-color: #d97706; --activity-bg: rgba(217, 119, 6, 0.14); }
+.dashboard-activity-item.--attendance        { --activity-color: #2c6fad; --activity-bg: rgba(74, 144, 217, 0.14); }
+.dashboard-activity-item.--teacher           { --activity-color: #5e3b8a; --activity-bg: rgba(94, 59, 138, 0.16); }
 
 @media (max-width: 480px) {
   .dashboard-activity-item { padding: var(--space-sm); }

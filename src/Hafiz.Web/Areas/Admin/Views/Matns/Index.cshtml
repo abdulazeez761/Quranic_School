@@ -4,146 +4,272 @@
     ViewData["Title"] = "مكتبة المتون العلمية";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     var selectedCategory = ViewBag.SelectedCategory as MatnCategory?;
+    var search = ViewBag.Search as string;
+
+    var totalCount = Model.Count();
+    var globalCount = Model.Count(m => m.IsGlobal);
+    var customCount = Model.Count(m => !m.IsGlobal);
+    var poeticCount = Model.Count(m => m.TotalVerses.HasValue);
 }
 
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+<link rel="stylesheet" href="~/css/admin/matns-library.css" asp-append-version="true" />
+
+<div class="matn-page">
+    <!-- رأس الصفحة -->
+    <div class="matn-header">
         <div>
-            <h2 class="h4 font-weight-bold mb-1">مكتبة المتون العلمية</h2>
-            <p class="text-muted small mb-0">المتون المتاحة للتدريس في المركز (المتون العامة + المتون الخاصة بالمعهد)</p>
+            <h2 class="matn-header-title">
+                <i class='bx bx-library'></i>
+                مكتبة المتون العلمية
+            </h2>
+            <p class="text-medium">المتون والمنظومات المعتمدة لتدريس العلوم الشرعية وإسناد أوراد الحفظ والمراجعة والمدارسة.</p>
         </div>
         <div>
-            <a asp-action="Create" class="btn btn-primary d-inline-flex align-items-center gap-1">
+            <a asp-action="Create" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px;">
                 <i class='bx bx-plus-circle'></i>
                 <span>إضافة متن جديد</span>
             </a>
         </div>
     </div>
 
+    <!-- الإشعارات -->
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class='bx bx-check-circle me-1'></i> @TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="alert alert-success d-flex align-center gap-sm">
+            <i class='bx bx-check-circle' style="font-size: 1.25rem;"></i>
+            <span>@TempData["SuccessMessage"]</span>
         </div>
     }
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class='bx bx-error-circle me-1'></i> @TempData["ErrorMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="alert alert-danger d-flex align-center gap-sm">
+            <i class='bx bx-error-circle' style="font-size: 1.25rem;"></i>
+            <span>@TempData["ErrorMessage"]</span>
         </div>
     }
 
-    <!-- شريط البحث والتصفية حسب الفن / التخصص -->
-    <div class="card border-0 shadow-sm mb-4 p-3">
-        <form method="get" class="row g-2 align-items-center">
-            <div class="col-md-4">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text bg-white"><i class='bx bx-search'></i></span>
-                    <input type="text" name="search" class="form-control" placeholder="بحث باسم المتن أو الناظم..." value="@ViewBag.Search" />
-                </div>
+    <!-- البطاقات الإحصائية السريعة -->
+    <div class="matn-kpi-grid">
+        <div class="matn-kpi-card">
+            <div class="matn-kpi-icon --teal">
+                <i class='bx bx-book'></i>
             </div>
-            <div class="col-md-4">
-                <select name="category" class="form-select form-select-sm" onchange="this.form.submit()">
-                    <option value="">-- كل الفنون والتخصصات --</option>
-                    <option value="@((int)MatnCategory.Tajweed)" selected="@(selectedCategory == MatnCategory.Tajweed)">تجويد وقراءات</option>
-                    <option value="@((int)MatnCategory.Aqeedah)" selected="@(selectedCategory == MatnCategory.Aqeedah)">عقيدة وتوحيد</option>
-                    <option value="@((int)MatnCategory.Hadith)" selected="@(selectedCategory == MatnCategory.Hadith)">حديث ومصطلح</option>
-                    <option value="@((int)MatnCategory.Fiqh)" selected="@(selectedCategory == MatnCategory.Fiqh)">فقه وأصوله</option>
-                    <option value="@((int)MatnCategory.NahwAndLanguage)" selected="@(selectedCategory == MatnCategory.NahwAndLanguage)">نحو ولغة</option>
-                    <option value="@((int)MatnCategory.Seerah)" selected="@(selectedCategory == MatnCategory.Seerah)">سيرة وتاريخ</option>
-                    <option value="@((int)MatnCategory.Adab)" selected="@(selectedCategory == MatnCategory.Adab)">آداب وتزكية</option>
-                    <option value="@((int)MatnCategory.General)" selected="@(selectedCategory == MatnCategory.General)">عام / أخرى</option>
-                </select>
+            <div class="matn-kpi-info">
+                <span class="matn-kpi-label">إجمالي المتون المتاحة</span>
+                <span class="matn-kpi-value">@totalCount</span>
             </div>
-            <div class="col-md-4 d-flex gap-2">
-                <button type="submit" class="btn btn-sm btn-primary">
-                    <i class='bx bx-filter-alt me-1'></i> تصفية
-                </button>
-                @if (selectedCategory.HasValue || !string.IsNullOrWhiteSpace(ViewBag.Search as string))
-                {
-                    <a asp-action="Index" class="btn btn-sm btn-outline-secondary">
-                        <i class='bx bx-reset me-1'></i> إلغاء التصفية
-                    </a>
-                }
+        </div>
+        <div class="matn-kpi-card">
+            <div class="matn-kpi-icon --blue">
+                <i class='bx bx-globe'></i>
             </div>
+            <div class="matn-kpi-info">
+                <span class="matn-kpi-label">متون عامة للنظام</span>
+                <span class="matn-kpi-value">@globalCount</span>
+            </div>
+        </div>
+        <div class="matn-kpi-card">
+            <div class="matn-kpi-icon --purple">
+                <i class='bx bx-building-house'></i>
+            </div>
+            <div class="matn-kpi-info">
+                <span class="matn-kpi-label">متون خاصة بالمركز</span>
+                <span class="matn-kpi-value">@customCount</span>
+            </div>
+        </div>
+        <div class="matn-kpi-card">
+            <div class="matn-kpi-icon --amber">
+                <i class='bx bx-feather'></i>
+            </div>
+            <div class="matn-kpi-info">
+                <span class="matn-kpi-label">منظومات شعرية</span>
+                <span class="matn-kpi-value">@poeticCount</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- شريط فلاتر الفنون والتخصصات -->
+    <div class="matn-categories-bar">
+        <a asp-action="Index" asp-route-search="@search" class="matn-cat-pill @(selectedCategory == null ? "active" : "")">
+            <i class='bx bx-grid-alt'></i>
+            <span>كل الفنون</span>
+        </a>
+        <a asp-action="Index" asp-route-category="@((int)MatnCategory.Tajweed)" asp-route-search="@search"
+           class="matn-cat-pill @(selectedCategory == MatnCategory.Tajweed ? "active" : "")">
+            <i class='bx bx-microphone'></i>
+            <span>تجويد وقراءات</span>
+        </a>
+        <a asp-action="Index" asp-route-category="@((int)MatnCategory.Aqeedah)" asp-route-search="@search"
+           class="matn-cat-pill @(selectedCategory == MatnCategory.Aqeedah ? "active" : "")">
+            <i class='bx bx-shield-quarter'></i>
+            <span>عقيدة وتوحيد</span>
+        </a>
+        <a asp-action="Index" asp-route-category="@((int)MatnCategory.Hadith)" asp-route-search="@search"
+           class="matn-cat-pill @(selectedCategory == MatnCategory.Hadith ? "active" : "")">
+            <i class='bx bx-bookmarks'></i>
+            <span>حديث ومصطلح</span>
+        </a>
+        <a asp-action="Index" asp-route-category="@((int)MatnCategory.Fiqh)" asp-route-search="@search"
+           class="matn-cat-pill @(selectedCategory == MatnCategory.Fiqh ? "active" : "")">
+            <i class='bx bx-check-square'></i>
+            <span>فقه وأصوله</span>
+        </a>
+        <a asp-action="Index" asp-route-category="@((int)MatnCategory.NahwAndLanguage)" asp-route-search="@search"
+           class="matn-cat-pill @(selectedCategory == MatnCategory.NahwAndLanguage ? "active" : "")">
+            <i class='bx bx-font-size'></i>
+            <span>نحو ولغة</span>
+        </a>
+        <a asp-action="Index" asp-route-category="@((int)MatnCategory.Seerah)" asp-route-search="@search"
+           class="matn-cat-pill @(selectedCategory == MatnCategory.Seerah ? "active" : "")">
+            <i class='bx bx-history'></i>
+            <span>سيرة وتاريخ</span>
+        </a>
+        <a asp-action="Index" asp-route-category="@((int)MatnCategory.Adab)" asp-route-search="@search"
+           class="matn-cat-pill @(selectedCategory == MatnCategory.Adab ? "active" : "")">
+            <i class='bx bx-heart'></i>
+            <span>آداب وتزكية</span>
+        </a>
+        <a asp-action="Index" asp-route-category="@((int)MatnCategory.General)" asp-route-search="@search"
+           class="matn-cat-pill @(selectedCategory == MatnCategory.General ? "active" : "")">
+            <i class='bx bx-collection'></i>
+            <span>عام / أخرى</span>
+        </a>
+    </div>
+
+    <!-- شريط البحث السريع -->
+    <div class="matn-toolbar">
+        <form method="get" class="matn-search-form">
+            @if (selectedCategory.HasValue)
+            {
+                <input type="hidden" name="category" value="@((int)selectedCategory.Value)" />
+            }
+            <div class="matn-search-box">
+                <i class='bx bx-search'></i>
+                <input type="text" name="search" class="matn-search-input" placeholder="بحث باسم المتن، المؤلف، أو الناظم..." value="@search" />
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
+                <i class='bx bx-filter-alt'></i>
+                <span>بحث وتصفية</span>
+            </button>
+            @if (!string.IsNullOrWhiteSpace(search) || selectedCategory.HasValue)
+            {
+                <a asp-action="Index" class="btn btn-outline btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
+                    <i class='bx bx-reset'></i>
+                    <span>إلغاء التصفية</span>
+                </a>
+            }
         </form>
     </div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
+    <!-- جدول المتون -->
+    <div class="matn-table-wrapper">
+        @if (!Model.Any())
+        {
+            <div class="matn-empty">
+                <i class='bx bx-book-open'></i>
+                <h4 style="font-weight: 700; margin: 0; color: var(--text-dark);">لا توجد متون مطابقة</h4>
+                <p class="text-medium" style="font-size: var(--font-size-sm); margin: 0;">لم يتم العثور على متون مطابقة لمعايير البحث الحالية.</p>
+                <a asp-action="Create" class="btn btn-primary btn-sm mt-sm">
+                    <i class='bx bx-plus'></i> إضافة متن جديد
+                </a>
+            </div>
+        }
+        else
+        {
+            <table class="table table-responsive-cards" style="margin-bottom: 0;">
+                <thead>
                     <tr>
-                        <th class="py-3">اسم المتن</th>
-                        <th class="py-3">المؤلف / الناظم</th>
-                        <th class="py-3">الفن والتصنيف</th>
-                        <th class="py-3">الحجم</th>
-                        <th class="py-3">وحدة القياس الافتراضية</th>
-                        <th class="py-3">النوع</th>
-                        <th class="py-3 text-center">إجراءات</th>
+                        <th>اسم المتن</th>
+                        <th>المؤلف / الناظم</th>
+                        <th>الفن والتصنيف</th>
+                        <th>الحجم والتفاصيل</th>
+                        <th>وحدة القياس</th>
+                        <th>النطاق</th>
+                        <th style="text-align: center;">إجراءات</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var matn in Model)
                     {
                         <tr>
-                            <td class="font-weight-bold">
-                                <i class='bx bx-book-bookmark text-primary me-1'></i> @matn.Title
+                            <td data-label="اسم المتن">
+                                <div class="matn-title-cell">
+                                    <div class="matn-avatar-icon">
+                                        <i class='bx bx-book-bookmark'></i>
+                                    </div>
+                                    <div>
+                                        <span class="matn-title-text">@matn.Title</span>
+                                    </div>
+                                </div>
                             </td>
-                            <td class="text-muted">@(string.IsNullOrEmpty(matn.Author) ? "-" : matn.Author)</td>
-                            <td>
-                                <span class="badge bg-light text-dark border">
+                            <td data-label="المؤلف / الناظم">
+                                <span class="matn-author-text">
+                                    <i class='bx bx-pen'></i>
+                                    @(string.IsNullOrEmpty(matn.Author) ? "غير محدد" : matn.Author)
+                                </span>
+                            </td>
+                            <td data-label="الفن والتصنيف">
+                                <span class="matn-badge-category">
                                     @matn.CategoryName
                                 </span>
                             </td>
-                            <td class="small">
-                                @if (matn.TotalVerses.HasValue)
-                                {
-                                    <span>@matn.TotalVerses بيت</span>
-                                }
-                                @if (matn.TotalChapters.HasValue)
-                                {
-                                    <span class="text-muted">(@matn.TotalChapters باب)</span>
-                                }
-                                @if (!matn.TotalVerses.HasValue && !matn.TotalChapters.HasValue)
-                                {
-                                    <span class="text-muted">-</span>
-                                }
+                            <td data-label="الحجم والتفاصيل">
+                                <div class="matn-size-pill">
+                                    @if (matn.TotalVerses.HasValue)
+                                    {
+                                        <span>@matn.TotalVerses بيت</span>
+                                    }
+                                    @if (matn.TotalChapters.HasValue)
+                                    {
+                                        <span class="text-medium" style="font-size: 11px;">(@matn.TotalChapters باب)</span>
+                                    }
+                                    @if (!matn.TotalVerses.HasValue && !matn.TotalChapters.HasValue)
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </div>
                             </td>
-                            <td>
-                                <span class="badge bg-secondary">@matn.DefaultUnitName</span>
+                            <td data-label="وحدة القياس">
+                                <span class="matn-badge-unit">@matn.DefaultUnitName</span>
                             </td>
-                            <td>
+                            <td data-label="النطاق">
                                 @if (matn.IsGlobal)
                                 {
-                                    <span class="badge bg-success-subtle text-success border border-success">عام للنظام</span>
+                                    <span class="matn-badge-scope --global">
+                                        <i class='bx bx-check-shield'></i> عام للنظام
+                                    </span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-info-subtle text-info border border-info">خاص بالمعهد</span>
+                                    <span class="matn-badge-scope --institute">
+                                        <i class='bx bx-building'></i> خاص بالمركز
+                                    </span>
                                 }
                             </td>
-                            <td class="text-center">
+                            <td data-label="إجراءات" style="text-align: center;">
                                 @if (!matn.IsGlobal)
                                 {
-                                    <form asp-action="Delete" asp-route-id="@matn.Id" method="post" class="d-inline" onsubmit="return confirm('هل أنت متأكد من رغبتك في حذف هذا المتن؟');">
+                                    <form asp-action="Delete" asp-route-id="@matn.Id" method="post" style="display: inline;"
+                                          onsubmit="return confirm('هل أنت متأكد من رغبتك في حذف هذا المتن من مكتبة المركز؟');">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="حذف">
+                                        <button type="submit" class="btn btn-outline btn-sm"
+                                                style="color: var(--danger); border-color: rgba(220,53,69,0.3); padding: 4px 10px;"
+                                                title="حذف المتن">
                                             <i class='bx bx-trash'></i>
                                         </button>
                                     </form>
                                 }
                                 else
                                 {
-                                    <span class="text-muted small" title="متن عام لا يمكن حذفه"><i class='bx bx-lock-alt'></i></span>
+                                    <span class="text-muted" title="متن عام معتمد في النظام لا يمكن حذفه" style="font-size: 1.1rem;">
+                                        <i class='bx bx-lock-alt'></i>
+                                    </span>
                                 }
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
-        </div>
+        }
     </div>
 </div>

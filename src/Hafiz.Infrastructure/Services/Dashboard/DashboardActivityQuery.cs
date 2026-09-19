@@ -79,9 +79,6 @@ namespace Hafiz.Infrastructure.Services.Dashboard
                     w.AssignedDate,
                     First = w.Student.StudentInfo.FirstName,
                     Second = w.Student.StudentInfo.SecondName,
-                    // The class the wird was assigned within. Legacy rows without a
-                    // ClassId fall back to any of the student's classes so the feed row
-                    // still has a class label.
                     ClassName = w.Class != null
                         ? w.Class.Name
                         : w
@@ -91,32 +88,109 @@ namespace Hafiz.Infrastructure.Services.Dashboard
                 })
                 .ToListAsync();
 
-            return rows.Select(r => new DashboardActivityItem
+            var wirdItems = rows.Select(r => new DashboardActivityItem
+            {
+                Kind = r.Type switch
                 {
-                    Kind = r.Type switch
-                    {
-                        AssignmentType.Memorization => DashboardActivityKind.WirdMemorization,
-                        AssignmentType.Revision => DashboardActivityKind.WirdRevision,
-                        AssignmentType.Tajwid => DashboardActivityKind.WirdTajwid,
-                        _ => DashboardActivityKind.WirdRevision,
-                    },
-                    Title = r.Type switch
-                    {
-                        AssignmentType.Memorization => "ورد حفظ جديد",
-                        AssignmentType.Revision => "ورد مراجعة جديد",
-                        AssignmentType.Tajwid => "ورد تجويد جديد",
-                        _ => "ورد جديد",
-                    },
-                    Subtitle = DashboardActivityFormatter.BuildWirdSubtitle(
-                        r.First,
-                        r.Second,
-                        r.ClassName,
-                        r.Amount,
-                        r.AmountUnit
-                    ),
-                    Timestamp = r.AssignedDate,
+                    AssignmentType.Memorization => DashboardActivityKind.WirdMemorization,
+                    AssignmentType.Revision => DashboardActivityKind.WirdRevision,
+                    AssignmentType.Tajwid => DashboardActivityKind.WirdTajwid,
+                    _ => DashboardActivityKind.WirdRevision,
+                },
+                Title = r.Type switch
+                {
+                    AssignmentType.Memorization => "ورد حفظ جديد",
+                    AssignmentType.Revision => "ورد مراجعة جديد",
+                    AssignmentType.Tajwid => "ورد تجويد جديد",
+                    _ => "ورد جديد",
+                },
+                Subtitle = DashboardActivityFormatter.BuildWirdSubtitle(
+                    r.First,
+                    r.Second,
+                    r.ClassName,
+                    r.Amount,
+                    r.AmountUnit
+                ),
+                Timestamp = r.AssignedDate,
+            });
+
+            // جلب أوراد المتون العلمية (حفظ، مراجعة، مدارسة) لليوم
+            var matnQuery = instituteId.HasValue
+                ? _context.MatnAssignments.Where(m =>
+                    m.Student.StudentInfo.InstituteId == instituteId
+                )
+                : _context.MatnAssignments.AsQueryable();
+
+            var matnRows = await matnQuery
+                .Where(m => m.AssignedDate >= from && m.AssignedDate < toExclusive)
+                .OrderByDescending(m => m.AssignedDate)
+                .Take(PerSourceCap)
+                .Select(m => new
+                {
+                    m.PerformanceType,
+                    m.Amount,
+                    m.Unit,
+                    m.ChapterName,
+                    m.FromNumber,
+                    m.ToNumber,
+                    m.AssignedDate,
+                    First = m.Student.StudentInfo.FirstName,
+                    Second = m.Student.StudentInfo.SecondName,
+                    ClassName = m.Class != null ? m.Class.Name : "",
                 })
-                .ToList();
+                .ToListAsync();
+
+            var matnItems = matnRows.Select(m =>
+            {
+                var kind = m.PerformanceType switch
+                {
+                    Hafiz.Domain.Enums.MatnPerformanceType.Memorization => DashboardActivityKind.MatnMemorization,
+                    Hafiz.Domain.Enums.MatnPerformanceType.Revision => DashboardActivityKind.MatnRevision,
+                    Hafiz.Domain.Enums.MatnPerformanceType.Mudarasah => DashboardActivityKind.MatnMudarasah,
+                    _ => DashboardActivityKind.MatnMemorization,
+                };
+                var title = m.PerformanceType switch
+                {
+                    Hafiz.Domain.Enums.MatnPerformanceType.Memorization => "ورد حفظ متن",
+                    Hafiz.Domain.Enums.MatnPerformanceType.Revision => "ورد مراجعة متن",
+                    Hafiz.Domain.Enums.MatnPerformanceType.Mudarasah => "ورد مدارسة متن",
+                    _ => "ورد متن",
+                };
+
+                string unitName = m.Unit switch
+                {
+                    Hafiz.Domain.Enums.MatnUnit.Verses => "أبيات",
+                    Hafiz.Domain.Enums.MatnUnit.Lines => "سطور",
+                    Hafiz.Domain.Enums.MatnUnit.Pages => "صفحات",
+                    Hafiz.Domain.Enums.MatnUnit.Chapters => "أبواب",
+                    Hafiz.Domain.Enums.MatnUnit.Hadiths => "أحاديث",
+                    _ => "وحدات",
+                };
+
+                var details = m.Amount.HasValue ? $"{m.Amount.Value:0.##} {unitName}" : "";
+                if (m.FromNumber.HasValue && m.ToNumber.HasValue)
+                {
+                    details = $"{details} (من {m.FromNumber} إلى {m.ToNumber})".Trim();
+                }
+                if (!string.IsNullOrWhiteSpace(m.ChapterName))
+                {
+                    details = string.IsNullOrEmpty(details) ? m.ChapterName : $"{m.ChapterName} · {details}";
+                }
+
+                var studentName = $"{m.First} {m.Second}".Trim();
+                var classPart = string.IsNullOrWhiteSpace(m.ClassName) ? "" : $" · حلقة {m.ClassName}";
+                var subtitle = $"{studentName}{classPart} · {details}".Trim(' ', '·');
+
+                return new DashboardActivityItem
+                {
+                    Kind = kind,
+                    Title = title,
+                    Subtitle = subtitle,
+                    Timestamp = m.AssignedDate,
+                };
+            });
+
+            return wirdItems.Concat(matnItems).OrderByDescending(x => x.Timestamp).ToList();
         }
 
         private async Task<List<DashboardActivityItem>> FetchAttendanceAsync(

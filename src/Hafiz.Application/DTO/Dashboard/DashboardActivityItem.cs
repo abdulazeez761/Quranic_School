@@ -11,6 +11,9 @@ namespace Hafiz.DTOs.Dashboard
         StudentAttendance = 2,
         TeacherAttendance = 3,
         WirdTajwid = 4,
+        MatnMemorization = 5,
+        MatnRevision = 6,
+        MatnMudarasah = 7,
     }
 
     /// <summary>فئة النشاط المعروض في قسم/تبويب مستقل على لوحة الإدارة.</summary>

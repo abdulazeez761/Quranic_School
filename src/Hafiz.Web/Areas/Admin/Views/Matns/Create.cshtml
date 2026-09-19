@@ -5,77 +5,95 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-transparent border-0 pt-4 pb-2">
-                    <h3 class="h5 font-weight-bold mb-1">إضافة متن جديد إلى مكتبة المعهد</h3>
-                    <p class="text-muted small">سيكون هذا المتن متاحاً للاختيار عند إنشاء برامج المتون في معهدك.</p>
+<div class="container-center" style="max-width: 800px; margin: 0 auto; padding-bottom: var(--space-2xl);">
+    <!-- رأس الصفحة -->
+    <div class="d-flex justify-between align-center mb-lg flex-wrap gap-md">
+        <div>
+            <h2 class="section-title mb-xs">
+                <i class='bx bx-book-plus' style="color: var(--primary-green);"></i>
+                إضافة متن جديد إلى المكتبة
+            </h2>
+            <p class="text-medium">سيكون هذا المتن متاحاً للاختيار عند إنشاء وتخصيص البرامج التعليمية وحلقات المتون في المركز.</p>
+        </div>
+        <div>
+            <a asp-action="Index" class="btn btn-outline btn-sm">
+                <i class='bx bx-arrow-back'></i>
+                <span>العودة للمكتبة</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="card card-standard">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class='bx bx-edit-alt'></i>
+                بيانات المتن العلمي
+            </h3>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-md" role="alert"></div>
+
+                <div class="form-group mb-md">
+                    <label asp-for="Title" class="form-label" style="font-weight: 600;">اسم المتن أو المنظومة <span class="text-danger">*</span></label>
+                    <input asp-for="Title" class="form-input" placeholder="مثال: تحفة الأطفال، متن البيقونية، الآجرومية..." required />
+                    <span asp-validation-for="Title" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
                 </div>
-                <div class="card-body">
-                    <form asp-action="Create" method="post">
-                        @Html.AntiForgeryToken()
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-                        <div class="mb-3">
-                            <label asp-for="Title" class="form-label fw-bold">اسم المتن <span class="text-danger">*</span></label>
-                            <input asp-for="Title" class="form-control" placeholder="مثال: متن البيقونية، تحفة الأطفال، عمدة الفقه" required />
-                            <span asp-validation-for="Title" class="text-danger small"></span>
-                        </div>
-
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label asp-for="Author" class="form-label fw-bold">المؤلف / الناظم</label>
-                                <input asp-for="Author" class="form-control" placeholder="مثال: ابن مالك، ابن الجزري، النووي" />
-                                <span asp-validation-for="Author" class="text-danger small"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="Category" class="form-label fw-bold">الفن / التخصص <span class="text-danger">*</span></label>
-                                <select asp-for="Category" class="form-select">
-                                    <option value="@((int)MatnCategory.Tajweed)">تجويد وقراءات</option>
-                                    <option value="@((int)MatnCategory.Aqeedah)">عقيدة وتوحيد</option>
-                                    <option value="@((int)MatnCategory.Hadith)">حديث ومصطلح</option>
-                                    <option value="@((int)MatnCategory.Fiqh)">فقه وأصوله</option>
-                                    <option value="@((int)MatnCategory.NahwAndLanguage)">نحو ولغة</option>
-                                    <option value="@((int)MatnCategory.Seerah)">سيرة وتاريخ</option>
-                                    <option value="@((int)MatnCategory.Adab)">آداب وتزكية</option>
-                                    <option value="@((int)MatnCategory.General)">عام / أخرى</option>
-                                </select>
-                                <span asp-validation-for="Category" class="text-danger small"></span>
-                            </div>
-                        </div>
-
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-4">
-                                <label asp-for="DefaultUnit" class="form-label fw-bold">الوحدة الافتراضية للتسميع</label>
-                                <select asp-for="DefaultUnit" class="form-select">
-                                    <option value="@((int)MatnUnit.Verses)">أبيات (منظومات)</option>
-                                    <option value="@((int)MatnUnit.Lines)">سطور</option>
-                                    <option value="@((int)MatnUnit.Pages)">صفحات</option>
-                                    <option value="@((int)MatnUnit.Chapters)">أبواب / فصول</option>
-                                    <option value="@((int)MatnUnit.Hadiths)">أحاديث نبوية</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label asp-for="TotalVerses" class="form-label fw-bold">إجمالي الأبيات (إن وُجد)</label>
-                                <input asp-for="TotalVerses" type="number" min="1" class="form-control" placeholder="مثلاً: 107" />
-                                <span asp-validation-for="TotalVerses" class="text-danger small"></span>
-                            </div>
-                            <div class="col-md-4">
-                                <label asp-for="TotalChapters" class="form-label fw-bold">عدد الأبواب / الفصول</label>
-                                <input asp-for="TotalChapters" type="number" min="1" class="form-control" placeholder="مثلاً: 12" />
-                                <span asp-validation-for="TotalChapters" class="text-danger small"></span>
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-end gap-2 border-top pt-3">
-                            <a asp-action="Index" class="btn btn-outline-secondary">إلغاء</a>
-                            <button type="submit" class="btn btn-primary px-4">إضافة المتن</button>
-                        </div>
-                    </form>
+                <div class="form-row mb-md" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-md);">
+                    <div class="form-group">
+                        <label asp-for="Author" class="form-label" style="font-weight: 600;">المؤلف / الناظم</label>
+                        <input asp-for="Author" class="form-input" placeholder="مثال: سليمان الجمزوري، ابن مالك..." />
+                        <span asp-validation-for="Author" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Category" class="form-label" style="font-weight: 600;">الفن والتخصص <span class="text-danger">*</span></label>
+                        <select asp-for="Category" class="form-select">
+                            <option value="@((int)MatnCategory.Tajweed)">تجويد وقراءات</option>
+                            <option value="@((int)MatnCategory.Aqeedah)">عقيدة وتوحيد</option>
+                            <option value="@((int)MatnCategory.Hadith)">حديث ومصطلح</option>
+                            <option value="@((int)MatnCategory.Fiqh)">فقه وأصوله</option>
+                            <option value="@((int)MatnCategory.NahwAndLanguage)">نحو ولغة</option>
+                            <option value="@((int)MatnCategory.Seerah)">سيرة وتاريخ</option>
+                            <option value="@((int)MatnCategory.Adab)">آداب وتزكية</option>
+                            <option value="@((int)MatnCategory.General)">عام / أخرى</option>
+                        </select>
+                        <span asp-validation-for="Category" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
+                    </div>
                 </div>
-            </div>
+
+                <div class="form-row mb-lg" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-md);">
+                    <div class="form-group">
+                        <label asp-for="DefaultUnit" class="form-label" style="font-weight: 600;">الوحدة الافتراضية</label>
+                        <select asp-for="DefaultUnit" class="form-select">
+                            <option value="@((int)MatnUnit.Verses)">أبيات (للمنظومات)</option>
+                            <option value="@((int)MatnUnit.Lines)">سطور</option>
+                            <option value="@((int)MatnUnit.Pages)">صفحات</option>
+                            <option value="@((int)MatnUnit.Chapters)">أبواب / فصول</option>
+                            <option value="@((int)MatnUnit.Hadiths)">أحاديث نبوية</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="TotalVerses" class="form-label" style="font-weight: 600;">إجمالي الأبيات (اختياري)</label>
+                        <input asp-for="TotalVerses" type="number" min="1" class="form-input" placeholder="مثلاً: 61" />
+                        <span asp-validation-for="TotalVerses" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="TotalChapters" class="form-label" style="font-weight: 600;">عدد الأبواب (اختياري)</label>
+                        <input asp-for="TotalChapters" type="number" min="1" class="form-input" placeholder="مثلاً: 10" />
+                        <span asp-validation-for="TotalChapters" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-between align-center border-top pt-md mt-md">
+                    <a asp-action="Index" class="btn btn-outline">إلغاء</a>
+                    <button type="submit" class="btn btn-primary" style="padding-inline: 28px;">
+                        <i class='bx bx-check'></i>
+                        <span>حفظ وإضافة المتن</span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

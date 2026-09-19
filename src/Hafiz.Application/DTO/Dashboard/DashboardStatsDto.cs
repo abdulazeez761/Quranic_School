@@ -19,6 +19,40 @@ namespace Hafiz.DTOs.Dashboard
         /// <summary>عدد الطلاب الإناث</summary>
         public int FemaleStudentsCount { get; set; }
 
+        // ── المتون والبرامج العلمية ──────────────────────────────────────────
+
+        /// <summary>عدد المتون المتاحة في المكتبة للمركز.</summary>
+        public int MatnsCount { get; set; }
+
+        /// <summary>إجمالي البرامج التعليمية والعلمية في المركز.</summary>
+        public int StudyProgramsCount { get; set; }
+
+        /// <summary>البرامج التعليمية النشطة في المركز.</summary>
+        public int ActiveStudyProgramsCount { get; set; }
+
+        // ── أوراد المتون العلمية (للفترة المختارة) ──────────────────────────
+
+        /// <summary>إجمالي أوراد المتون المُسندة للفترة.</summary>
+        public int MatnTotalAssignments { get; set; }
+
+        /// <summary>أوراد حفظ المتون للفترة.</summary>
+        public int MatnMemorizationAssignments { get; set; }
+
+        /// <summary>أوراد مراجعة المتون للفترة.</summary>
+        public int MatnRevisionAssignments { get; set; }
+
+        /// <summary>أوراد مدارسة وشرح المتون للفترة.</summary>
+        public int MatnMudarasahAssignments { get; set; }
+
+        /// <summary>أوراد المتون المكتملة للفترة.</summary>
+        public int MatnCompletedAssignments { get; set; }
+
+        /// <summary>إجمالي أبيات حفظ المتون المنجزة للفترة.</summary>
+        public decimal MatnMemorizationVerses { get; set; }
+
+        /// <summary>إجمالي أبيات مراجعة المتون المنجزة للفترة.</summary>
+        public decimal MatnRevisionVerses { get; set; }
+
         // ── الحفظ ─────────────────────────────────────────────────────────────
 
         /// <summary>إجمالي صفحات الحفظ (الأوراد المُسجَّلة بوحدة "صفحات").</summary>

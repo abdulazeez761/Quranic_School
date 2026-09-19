@@ -133,7 +133,7 @@ namespace Hafiz.Areas.Admin.Controllers
 
         // تقرير الأوراد: تصفية متقدّمة + إحصائيات + ترتيب الطلاب + تصدير
         [HttpGet]
-        public async Task<IActionResult> Wirds(WirdReportFilterDto filter)
+        public async Task<IActionResult> Wirds(WirdReportFilterDto filter, string tab = "quran")
         {
             var isSuperAdmin = ResolveScope(filter);
             if (isSuperAdmin is null)
@@ -143,8 +143,52 @@ namespace Hafiz.Areas.Admin.Controllers
 
             var vm = await _wirdService.GetWirdReportAsync(filter);
             vm.IsCrossCenter = isSuperAdmin.Value;
+            vm.ActiveTab = string.Equals(tab, "matn", StringComparison.OrdinalIgnoreCase) ? "matn" : "quran";
 
             await PopulateFilterOptionsAsync(vm, filter, isSuperAdmin.Value);
+
+            // جلب أوراد المتون العلمية المطابقة للفلاتر
+            var matnEntities = await _matnAssignmentRepo.GetReportAsync(
+                filter.InstituteId,
+                filter.ClassId,
+                filter.StudentId,
+                filter.FromDate,
+                filter.ToDate,
+                filter.Status
+            );
+
+            var matnList = matnEntities.ToList();
+            vm.MatnDetails = matnList.Select(m => new Hafiz.DTOs.Matn.MatnAssignmentDto
+            {
+                Id = m.Id,
+                StudentId = m.StudentId,
+                StudentName = $"{m.Student?.StudentInfo?.FirstName} {m.Student?.StudentInfo?.SecondName}".Trim(),
+                ClassId = m.ClassId,
+                ClassName = m.Class?.Name ?? "",
+                PerformanceType = m.PerformanceType,
+                Unit = m.Unit,
+                Amount = m.Amount,
+                ChapterName = m.ChapterName,
+                FromNumber = m.FromNumber,
+                ToNumber = m.ToNumber,
+                Status = m.Status,
+                IsCompleted = m.IsCompleted,
+                IsUpcoming = m.IsUpcoming,
+                AssignedDate = m.AssignedDate,
+                Note = m.Note
+            }).ToList();
+
+            vm.MatnStats = new MatnReportStatsDto
+            {
+                TotalAssignments = matnList.Count,
+                MemorizationCount = matnList.Count(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Memorization),
+                RevisionCount = matnList.Count(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Revision),
+                MudarasahCount = matnList.Count(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Mudarasah),
+                CompletedCount = matnList.Count(m => m.IsCompleted),
+                PendingCount = matnList.Count(m => !m.IsCompleted),
+                TotalVerses = matnList.Where(m => m.Unit == Hafiz.Domain.Enums.MatnUnit.Verses && m.Amount.HasValue).Sum(m => m.Amount!.Value),
+                CompletedVerses = matnList.Where(m => m.IsCompleted && m.Unit == Hafiz.Domain.Enums.MatnUnit.Verses && m.Amount.HasValue).Sum(m => m.Amount!.Value),
+            };
 
             return View(vm);
         }
@@ -161,6 +205,47 @@ namespace Hafiz.Areas.Admin.Controllers
             var bytes = WirdReportExcelExporter.Build(vm);
             var fileName = $"wird-report-{TimeZoneHelper.GetUserToday(HttpContext):yyyy-MM-dd}.xlsx";
             return File(bytes, WirdReportExcelExporter.ContentType, fileName);
+        }
+
+        // تصدير تقرير أوراد المتون العلمية كملف Excel
+        [HttpGet]
+        public async Task<IActionResult> ExportMatnExcel(WirdReportFilterDto filter)
+        {
+            if (ResolveScope(filter) is null)
+                return Forbid();
+
+            var matnList = await _matnAssignmentRepo.GetReportAsync(
+                filter.InstituteId,
+                filter.ClassId,
+                filter.StudentId,
+                filter.FromDate,
+                filter.ToDate,
+                filter.Status
+            );
+
+            var dtos = matnList.Select(m => new Hafiz.DTOs.Matn.MatnAssignmentDto
+            {
+                Id = m.Id,
+                StudentId = m.StudentId,
+                StudentName = $"{m.Student?.StudentInfo?.FirstName} {m.Student?.StudentInfo?.SecondName}".Trim(),
+                ClassId = m.ClassId,
+                ClassName = m.Class?.Name ?? "",
+                PerformanceType = m.PerformanceType,
+                Unit = m.Unit,
+                Amount = m.Amount,
+                ChapterName = m.ChapterName,
+                FromNumber = m.FromNumber,
+                ToNumber = m.ToNumber,
+                Status = m.Status,
+                IsCompleted = m.IsCompleted,
+                IsUpcoming = m.IsUpcoming,
+                AssignedDate = m.AssignedDate,
+                Note = m.Note
+            }).ToList();
+
+            var bytes = MatnReportExcelExporter.Build(dtos, "تقرير أوراد المتون العلمية");
+            var fileName = $"matn-wirds-report-{TimeZoneHelper.GetUserToday(HttpContext):yyyy-MM-dd}.xlsx";
+            return File(bytes, MatnReportExcelExporter.ContentType, fileName);
         }
 
         // يحدّد نطاق المركز ويُعيد هل المستخدم مشرف نظام.

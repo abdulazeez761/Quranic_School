@@ -23,8 +23,8 @@ namespace Hafiz.DTOs.Reports
         /// <summary>"completed" أو "pending" أو null (الكل).</summary>
         public string? Status { get; set; }
 
-        /// <summary>إظهار قسم ترتيب الطلاب (اختياري). افتراضياً مُفعّل.</summary>
-        public bool ShowRankings { get; set; } = true;
+        /// <summary>إظهار قسم ترتيب الطلاب (اختياري). افتراضياً مخفي.</summary>
+        public bool ShowRankings { get; set; } = false;
 
         public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 25;

@@ -96,4 +96,60 @@
             <div class="dashboard-stat-hint">إجمالي أجزاء التجويد (صفحات + أجزاء مستقلة)</div>
         </div>
     </div>
+
+    <!-- إحصائيات المتون والبرامج العلمية -->
+    <div class="dashboard-stat --teal">
+        <div class="dashboard-stat-icon"><i class='bx bx-library'></i></div>
+        <div class="dashboard-stat-content">
+            <div class="dashboard-stat-label">مكتبة المتون</div>
+            <div class="dashboard-stat-value">@Model.MatnsCount</div>
+            <div class="dashboard-stat-hint">متن علمي متاح للتدريس بالمعهد</div>
+        </div>
+    </div>
+
+    <div class="dashboard-stat --blue">
+        <div class="dashboard-stat-icon"><i class='bx bx-book-open'></i></div>
+        <div class="dashboard-stat-content">
+            <div class="dashboard-stat-label">البرامج التعليمية</div>
+            <div class="dashboard-stat-value">@Model.StudyProgramsCount</div>
+            <div class="dashboard-stat-hint">منها @Model.ActiveStudyProgramsCount برنامج نشط</div>
+        </div>
+    </div>
+
+    <!-- إحصائيات أوراد المتون للفترة المختارة -->
+    <div class="dashboard-stat --sage">
+        <div class="dashboard-stat-icon"><i class='bx bx-book-bookmark'></i></div>
+        <div class="dashboard-stat-content">
+            <div class="dashboard-stat-label">حفظ المتون</div>
+            <div class="dashboard-stat-value">@Model.MatnMemorizationVerses.ToString("0.#")</div>
+            <div class="dashboard-stat-hint">بيت محفوظ (@Model.MatnMemorizationAssignments ورد)</div>
+        </div>
+    </div>
+
+    <div class="dashboard-stat --gold">
+        <div class="dashboard-stat-icon"><i class='bx bx-refresh'></i></div>
+        <div class="dashboard-stat-content">
+            <div class="dashboard-stat-label">مراجعة المتون</div>
+            <div class="dashboard-stat-value">@Model.MatnRevisionVerses.ToString("0.#")</div>
+            <div class="dashboard-stat-hint">بيت مراجع (@Model.MatnRevisionAssignments ورد)</div>
+        </div>
+    </div>
+
+    <div class="dashboard-stat --purple">
+        <div class="dashboard-stat-icon"><i class='bx bx-chalkboard'></i></div>
+        <div class="dashboard-stat-content">
+            <div class="dashboard-stat-label">مدارسة المتون</div>
+            <div class="dashboard-stat-value">@Model.MatnMudarasahAssignments</div>
+            <div class="dashboard-stat-hint">جلسة مدارسة وشرح مسندة</div>
+        </div>
+    </div>
+
+    <div class="dashboard-stat --cyan">
+        <div class="dashboard-stat-icon"><i class='bx bx-check-double'></i></div>
+        <div class="dashboard-stat-content">
+            <div class="dashboard-stat-label">إجمالي أوراد المتون</div>
+            <div class="dashboard-stat-value">@Model.MatnTotalAssignments</div>
+            <div class="dashboard-stat-hint">منها @Model.MatnCompletedAssignments ورد مكتمل</div>
+        </div>
+    </div>
 </div>

@@ -4,113 +4,221 @@
     ViewData["Title"] = "البرامج التعليمية";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     var selectedType = ViewBag.SelectedType as ProgramType?;
+
+    var totalPrograms = Model.Count();
+    var activePrograms = Model.Count(p => p.IsActive);
+    var quranPrograms = Model.Count(p => p.Type == ProgramType.Quran);
+    var matnPrograms = Model.Count(p => p.Type == ProgramType.Matn);
+    var totalClasses = Model.Sum(p => p.ClassesCount);
 }
 
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+<link rel="stylesheet" href="~/css/admin/study-programs.css" asp-append-version="true" />
+
+<div class="prog-page">
+    <!-- رأس الصفحة -->
+    <div class="prog-header">
         <div>
-            <h2 class="h4 font-weight-bold mb-1">البرامج التعليمية</h2>
-            <p class="text-muted small mb-0">إدارة المسارات والمناهج الدراسية للمركز (قرآن كريم، متون، سند، إجازة)</p>
+            <h2 class="prog-header-title">
+                <i class='bx bx-book-open'></i>
+                البرامج التعليمية والعلمية
+            </h2>
+            <p class="text-medium">إدارة المسارات والمناهج الدراسية للمركز (قرآن كريم، متون علمية، إجازات وأسانيد).</p>
         </div>
         <div>
-            <a asp-action="Create" class="btn btn-primary d-inline-flex align-items-center gap-1">
+            <a asp-action="Create" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px;">
                 <i class='bx bx-plus-circle'></i>
-                <span>إضافة برنامج تعليمي</span>
+                <span>إضافة برنامج جديد</span>
             </a>
         </div>
     </div>
 
+    <!-- الإشعارات -->
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class='bx bx-check-circle me-1'></i> @TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="alert alert-success d-flex align-center gap-sm">
+            <i class='bx bx-check-circle' style="font-size: 1.25rem;"></i>
+            <span>@TempData["SuccessMessage"]</span>
         </div>
     }
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class='bx bx-error-circle me-1'></i> @TempData["ErrorMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="alert alert-danger d-flex align-center gap-sm">
+            <i class='bx bx-error-circle' style="font-size: 1.25rem;"></i>
+            <span>@TempData["ErrorMessage"]</span>
         </div>
     }
 
-    <!-- فلاتر نوع البرنامج -->
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body p-3">
-            <div class="d-flex gap-2 flex-wrap">
-                <a asp-action="Index" class="btn btn-sm @(selectedType == null ? "btn-dark" : "btn-outline-secondary")">الكل</a>
-                <a asp-action="Index" asp-route-type="@ProgramType.Quran" class="btn btn-sm @(selectedType == ProgramType.Quran ? "btn-success" : "btn-outline-success")">
-                    <i class='bx bx-book-bookmark me-1'></i> القرآن الكريم
-                </a>
-                <a asp-action="Index" asp-route-type="@ProgramType.Matn" class="btn btn-sm @(selectedType == ProgramType.Matn ? "btn-primary" : "btn-outline-primary")">
-                    <i class='bx bx-book me-1'></i> المتون العلمية
-                </a>
-                <a asp-action="Index" asp-route-type="@ProgramType.Sanad" class="btn btn-sm @(selectedType == ProgramType.Sanad ? "btn-info" : "btn-outline-info")">
-                    <i class='bx bx-award me-1'></i> السند الغيبي
-                </a>
-                <a asp-action="Index" asp-route-type="@ProgramType.Ijaza" class="btn btn-sm @(selectedType == ProgramType.Ijaza ? "btn-warning" : "btn-outline-warning")">
-                    <i class='bx bx-certification me-1'></i> الإجازة
-                </a>
+    <!-- البطاقات الإحصائية السريعة -->
+    <div class="prog-kpi-grid">
+        <div class="prog-kpi-card">
+            <div class="prog-kpi-icon --emerald">
+                <i class='bx bx-folder'></i>
+            </div>
+            <div class="prog-kpi-info">
+                <span class="prog-kpi-label">إجمالي البرامج</span>
+                <span class="prog-kpi-value">@totalPrograms</span>
+            </div>
+        </div>
+        <div class="prog-kpi-card">
+            <div class="prog-kpi-icon --teal">
+                <i class='bx bx-check-circle'></i>
+            </div>
+            <div class="prog-kpi-info">
+                <span class="prog-kpi-label">البرامج النشطة</span>
+                <span class="prog-kpi-value">@activePrograms</span>
+            </div>
+        </div>
+        <div class="prog-kpi-card">
+            <div class="prog-kpi-icon --blue">
+                <i class='bx bx-book-bookmark'></i>
+            </div>
+            <div class="prog-kpi-info">
+                <span class="prog-kpi-label">برامج القرآن</span>
+                <span class="prog-kpi-value">@quranPrograms</span>
+            </div>
+        </div>
+        <div class="prog-kpi-card">
+            <div class="prog-kpi-icon --purple">
+                <i class='bx bx-library'></i>
+            </div>
+            <div class="prog-kpi-info">
+                <span class="prog-kpi-label">برامج المتون</span>
+                <span class="prog-kpi-value">@matnPrograms</span>
+            </div>
+        </div>
+        <div class="prog-kpi-card">
+            <div class="prog-kpi-icon --gold">
+                <i class='bx bx-group'></i>
+            </div>
+            <div class="prog-kpi-info">
+                <span class="prog-kpi-label">الحلقات التابعة</span>
+                <span class="prog-kpi-value">@totalClasses</span>
             </div>
         </div>
     </div>
 
-    <!-- بطاقات البرامج -->
-    <div class="row g-3">
+    <!-- فلاتر نوع البرنامج -->
+    <div class="prog-filter-bar">
+        <a asp-action="Index" class="prog-filter-chip @(selectedType == null ? "active" : "")">
+            <i class='bx bx-grid-alt'></i>
+            <span>كل البرامج</span>
+        </a>
+        <a asp-action="Index" asp-route-type="@ProgramType.Quran" class="prog-filter-chip @(selectedType == ProgramType.Quran ? "active" : "")">
+            <i class='bx bx-book-bookmark'></i>
+            <span>القرآن الكريم</span>
+        </a>
+        <a asp-action="Index" asp-route-type="@ProgramType.Matn" class="prog-filter-chip @(selectedType == ProgramType.Matn ? "active" : "")">
+            <i class='bx bx-book'></i>
+            <span>المتون العلمية</span>
+        </a>
+        <a asp-action="Index" asp-route-type="@ProgramType.Sanad" class="prog-filter-chip @(selectedType == ProgramType.Sanad ? "active" : "")">
+            <i class='bx bx-award'></i>
+            <span>السند الغيبي</span>
+        </a>
+        <a asp-action="Index" asp-route-type="@ProgramType.Ijaza" class="prog-filter-chip @(selectedType == ProgramType.Ijaza ? "active" : "")">
+            <i class='bx bx-certification'></i>
+            <span>الإجازة بالسند</span>
+        </a>
+    </div>
+
+    <!-- شبكة بطاقات البرامج -->
+    <div class="prog-grid">
         @if (!Model.Any())
         {
-            <div class="col-12 text-center py-5">
-                <div class="text-muted">
-                    <i class='bx bx-folder-open display-4 d-block mb-3'></i>
-                    <h5>لا توجد برامج مسجلة حتى الآن</h5>
-                    <p class="small">يمكنك البدء بإنشاء برنامج تعليمي جديد لتنظيم الحلقات تحته.</p>
+            <div class="prog-empty">
+                <div class="prog-empty-icon">
+                    <i class='bx bx-folder-open'></i>
                 </div>
+                <div>
+                    <h3 style="font-weight: 700; color: var(--text-dark); margin: 0 0 var(--space-xs);">لا توجد برامج مسجلة</h3>
+                    <p class="text-medium" style="font-size: var(--font-size-sm); margin: 0;">يمكنك البدء بإنشاء برنامج تعليمي جديد لتنظيم وإسناد الحلقات تحته.</p>
+                </div>
+                <a asp-action="Create" class="btn btn-primary btn-sm mt-sm">
+                    <i class='bx bx-plus'></i> إضافة برنامج جديد
+                </a>
             </div>
         }
         else
         {
             @foreach (var prog in Model)
             {
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body d-flex flex-column">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <span class="badge @(prog.Type == ProgramType.Quran ? "bg-success" : prog.Type == ProgramType.Matn ? "bg-primary" : "bg-info")">
-                                    @prog.TypeName
-                                </span>
-                                <span class="badge @(prog.IsActive ? "bg-light text-success border border-success" : "bg-light text-danger border border-danger")">
-                                    @(prog.IsActive ? "نشط" : "معطل")
-                                </span>
-                            </div>
+                var cardTypeClass = prog.Type switch
+                {
+                    ProgramType.Quran => "--quran",
+                    ProgramType.Matn => "--matn",
+                    ProgramType.Sanad => "--sanad",
+                    ProgramType.Ijaza => "--ijaza",
+                    _ => ""
+                };
 
-                            <h5 class="card-title font-weight-bold mb-1">@prog.Name</h5>
-                            @if (!string.IsNullOrEmpty(prog.MatnTitle))
+                <div class="prog-card @cardTypeClass">
+                    <div class="prog-card-head">
+                        <span class="prog-type-badge">
+                            @if (prog.Type == ProgramType.Quran)
                             {
-                                <div class="small text-primary mb-2">
-                                    <i class='bx bx-bookmark me-1'></i> المتن: @prog.MatnTitle
-                                </div>
+                                <i class='bx bx-book-bookmark'></i>
                             }
-                            <p class="card-text text-muted small flex-grow-1">
-                                @(string.IsNullOrEmpty(prog.Description) ? "لا يوجد وصف محدد لهذا البرنامج." : prog.Description)
-                            </p>
+                            else if (prog.Type == ProgramType.Matn)
+                            {
+                                <i class='bx bx-book'></i>
+                            }
+                            else if (prog.Type == ProgramType.Sanad)
+                            {
+                                <i class='bx bx-award'></i>
+                            }
+                            else
+                            {
+                                <i class='bx bx-certification'></i>
+                            }
+                            <span>@prog.TypeName</span>
+                        </span>
 
-                            <div class="border-top pt-3 mt-3 d-flex justify-content-between align-items-center">
-                                <span class="small text-muted">
-                                    <i class='bx bx-group me-1'></i> @prog.ClassesCount شعب/حلقات
-                                </span>
-                                <div class="d-flex gap-1">
-                                    <a asp-action="Edit" asp-route-id="@prog.Id" class="btn btn-sm btn-outline-secondary" title="تعديل">
-                                        <i class='bx bx-edit'></i>
-                                    </a>
-                                    <form asp-action="Delete" asp-route-id="@prog.Id" method="post" class="d-inline" onsubmit="return confirm('هل أنت متأكد من رغبتك في حذف هذا البرنامج؟');">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="حذف">
-                                            <i class='bx bx-trash'></i>
-                                        </button>
-                                    </form>
-                                </div>
+                        <span class="prog-status-chip @(prog.IsActive ? "--active" : "--inactive")">
+                            @if (prog.IsActive)
+                            {
+                                <span class="prog-status-dot"></span>
+                                <span>نشط</span>
+                            }
+                            else
+                            {
+                                <span>معطل</span>
+                            }
+                        </span>
+                    </div>
+
+                    <div class="prog-card-body">
+                        <h4 class="prog-title">@prog.Name</h4>
+
+                        @if (!string.IsNullOrEmpty(prog.MatnTitle))
+                        {
+                            <div class="prog-matn-pill">
+                                <i class='bx bx-library'></i>
+                                <span>المتن: @prog.MatnTitle</span>
                             </div>
+                        }
+
+                        <p class="prog-desc">
+                            @(string.IsNullOrEmpty(prog.Description) ? "لا يوجد وصف محدد لهذا البرنامج." : prog.Description)
+                        </p>
+                    </div>
+
+                    <div class="prog-card-foot">
+                        <span class="prog-classes-count">
+                            <i class='bx bx-group'></i>
+                            <span>@prog.ClassesCount شعب/حلقات</span>
+                        </span>
+
+                        <div class="prog-actions">
+                            <a asp-action="Edit" asp-route-id="@prog.Id" class="prog-action-btn" title="تعديل البرنامج">
+                                <i class='bx bx-edit-alt'></i>
+                            </a>
+                            <form asp-action="Delete" asp-route-id="@prog.Id" method="post" style="display: inline;"
+                                  onsubmit="return confirm('هل أنت متأكد من رغبتك في حذف هذا البرنامج التعليمي؟');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="prog-action-btn --delete" title="حذف البرنامج">
+                                    <i class='bx bx-trash'></i>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

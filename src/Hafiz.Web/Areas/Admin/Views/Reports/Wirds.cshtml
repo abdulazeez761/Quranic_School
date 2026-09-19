@@ -11,7 +11,9 @@
     string StatusLabel(AssignmentStatus s) => Localizer[$"Status_{s}"].Value;
 
     // معطيات المسار المشتركة للفلاتر (لروابط الترقيم والتصدير)؛ نُسقط القيم الفارغة.
-    Dictionary<string, string> RouteFor(int? page)
+    Dictionary<string, string> RouteFor(int? page) => RouteForWithTab(page, Model.ActiveTab);
+
+    Dictionary<string, string> RouteForWithTab(int? page, string tab)
     {
         var d = new Dictionary<string, string>();
         if (f.InstituteId.HasValue) d["InstituteId"] = f.InstituteId.ToString()!;
@@ -21,11 +23,15 @@
         if (f.ToDate.HasValue) d["ToDate"] = f.ToDate.Value.ToString("yyyy-MM-dd");
         if (f.Type.HasValue) d["Type"] = f.Type.ToString()!;
         if (!string.IsNullOrEmpty(f.Status)) d["Status"] = f.Status!;
-        if (!f.ShowRankings) d["ShowRankings"] = "false";
+        if (f.ShowRankings) d["ShowRankings"] = "true";
         d["PageSize"] = f.PageSize.ToString();
         if (page.HasValue) d["Page"] = page.Value.ToString();
+        if (!string.IsNullOrEmpty(tab)) d["tab"] = tab;
         return d;
     }
+
+    var quranRoute = RouteForWithTab(null, "quran");
+    var matnRoute = RouteForWithTab(null, "matn");
 
     int firstRow = Model.TotalCount == 0 ? 0 : (f.Page - 1) * f.PageSize + 1;
     int lastRow = Math.Min(f.Page * f.PageSize, Model.TotalCount);
@@ -44,18 +50,46 @@
             <p class="text-medium">@Localizer["Description"]</p>
         </div>
         <div class="wr-actions">
-            <a asp-action="ExportWirdsExcel" asp-all-route-data="RouteFor(null)" class="btn btn-outline btn-sm">
-                <i class='bx bx-file'></i> @Localizer["ExportExcel"]
-            </a>
+            @if (Model.ActiveTab == "matn")
+            {
+                <a asp-action="ExportMatnExcel" asp-all-route-data="RouteFor(null)" class="btn btn-outline btn-sm">
+                    <i class='bx bx-file'></i> تصدير إكسل (المتون)
+                </a>
+            }
+            else
+            {
+                <a asp-action="ExportWirdsExcel" asp-all-route-data="RouteFor(null)" class="btn btn-outline btn-sm">
+                    <i class='bx bx-file'></i> @Localizer["ExportExcel"]
+                </a>
+            }
             <button type="button" id="wrPrintBtn" class="btn btn-outline btn-sm">
                 <i class='bx bx-printer'></i> @Localizer["ExportPdf"]
             </button>
         </div>
     </div>
 
+    <!-- تبويبات نوع الورد: القرآن الكريم / المتون العلمية -->
+    <div class="d-flex gap-sm mb-md flex-wrap">
+        <a asp-action="Wirds" asp-all-route-data="quranRoute"
+           class="btn btn-sm @(Model.ActiveTab == "quran" ? "btn-primary" : "btn-outline")"
+           style="border-radius: var(--radius-full); padding: 8px 18px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+            <i class='bx bx-book-open'></i>
+            <span>أوراد القرآن الكريم</span>
+            <span class="badge" style="background: rgba(255,255,255,0.25); border-radius: 999px; padding: 2px 8px;">@Model.Stats.TotalAssignments</span>
+        </a>
+        <a asp-action="Wirds" asp-all-route-data="matnRoute"
+           class="btn btn-sm @(Model.ActiveTab == "matn" ? "btn-primary" : "btn-outline")"
+           style="border-radius: var(--radius-full); padding: 8px 18px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+            <i class='bx bx-library'></i>
+            <span>أوراد المتون العلمية</span>
+            <span class="badge" style="background: rgba(255,255,255,0.25); border-radius: 999px; padding: 2px 8px;">@Model.MatnStats.TotalAssignments</span>
+        </a>
+    </div>
+
     <!-- بطاقة الفلاتر -->
     <div class="card card-standard wr-filters-card">
         <form method="get" asp-action="Wirds">
+            <input type="hidden" name="tab" value="@Model.ActiveTab" />
             <div class="wr-filters">
                 @if (Model.IsCrossCenter)
                 {
@@ -158,6 +192,211 @@
         </form>
     </div>
 
+@if (Model.ActiveTab == "matn")
+{
+    <!-- الإحصائيات العامة للمتون -->
+    <div class="wr-stats">
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #0d9488, #0f766e);">
+                <i class='bx bx-library'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">إجمالي أوراد المتون</div>
+                <div class="card-stat-value">@Model.MatnStats.TotalAssignments</div>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+                <i class='bx bx-book-bookmark'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">أوراد الحفظ</div>
+                <div class="card-stat-value">@Model.MatnStats.MemorizationCount</div>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+                <i class='bx bx-refresh'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">أوراد المراجعة</div>
+                <div class="card-stat-value">@Model.MatnStats.RevisionCount</div>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                <i class='bx bx-chalkboard'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">أوراد المدارسة</div>
+                <div class="card-stat-value">@Model.MatnStats.MudarasahCount</div>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);">
+                <i class='bx bx-trending-up'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">نسبة الإنجاز</div>
+                <div class="card-stat-value">@Model.MatnStats.CompletionRate%</div>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">
+                <i class='bx bx-bookmark-alt'></i>
+            </div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">الأبيات المنجزة</div>
+                <div class="card-stat-value">@Model.MatnStats.CompletedVerses.ToString("0.#")</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- جدول تفاصيل أوراد المتون -->
+    <div class="card card-standard">
+        <div class="card-header wr-toolbar">
+            <h3 class="card-title"><i class='bx bx-list-ul'></i> تفاصيل أوراد المتون</h3>
+            <div class="table-search wr-search">
+                <input type="text" id="wrSearch" placeholder="بحث باسم الطالب أو الحلقة أو المتن...">
+                <i class='bx bx-search'></i>
+            </div>
+        </div>
+        <div class="card-body">
+            @if (!Model.MatnDetails.Any())
+            {
+                <div class="wr-empty">
+                    <i class='bx bx-search-alt'></i>
+                    <p>لا توجد أوراد متون مطابقة لمعايير التصفية المختارة</p>
+                </div>
+            }
+            else
+            {
+                <p class="text-medium fs-sm" id="wrNoMatch" style="display:none;">@Localizer["NoResults"]</p>
+
+                <!-- عرض الجوال -->
+                <div class="wr-mcards">
+                    @foreach (var m in Model.MatnDetails)
+                    {
+                        var matnSearch = $"{m.StudentName} {m.ClassName} {m.ChapterName} {m.PerformanceTypeName}";
+                        <div class="wr-mcard wr-detail-row" data-search="@matnSearch">
+                            <div class="wr-mcard-head">
+                                <div class="wr-mcard-title">
+                                    <a asp-controller="Students" asp-action="Details" asp-route-id="@m.StudentId"
+                                       class="wr-mcard-name">@m.StudentName</a>
+                                    @if (!string.IsNullOrWhiteSpace(m.ClassName))
+                                    {
+                                        <span class="wr-mcard-sep">·</span>
+                                        <span class="wr-mcard-class">@m.ClassName</span>
+                                    }
+                                </div>
+                                <span class="wr-mcard-date">@m.AssignedDate.ToString("yyyy-MM-dd")</span>
+                            </div>
+                            <div class="wr-mcard-body">
+                                <div class="wr-mcard-stat">
+                                    <span class="wr-mcard-label">نوع الأداء</span>
+                                    <span class="wr-badge wr-type-badge">@m.PerformanceTypeName</span>
+                                </div>
+                                <div class="wr-mcard-stat">
+                                    <span class="wr-mcard-label">الحالة</span>
+                                    @if (m.IsCompleted)
+                                    {
+                                        <span class="wr-badge wr-badge-done">@Localizer["Completed"]</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="wr-badge wr-badge-pending">@Localizer["Pending"]</span>
+                                    }
+                                </div>
+                                <div class="wr-mcard-stat wr-mcard-desc">
+                                    <span class="wr-mcard-label">الموضع والكمية</span>
+                                    <span class="wr-mcard-value">
+                                        @(string.IsNullOrEmpty(m.ChapterName) ? "" : $"{m.ChapterName} · ")
+                                        @(m.Amount.HasValue ? $"{m.Amount.Value:0.##} {m.UnitName}" : "—")
+                                        @if (m.FromNumber.HasValue && m.ToNumber.HasValue)
+                                        {
+                                            <span>(من @m.FromNumber إلى @m.ToNumber)</span>
+                                        }
+                                    </span>
+                                    @if (!string.IsNullOrEmpty(m.Note))
+                                    {
+                                        <span class="wr-note-inline">
+                                            <i class='bx bx-note' style="color:#9c27b0;"></i>
+                                            <span class="wr-note-text">@m.Note</span>
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="wr-mcard-foot">
+                                <span class="wr-mcard-label">التقييم</span>
+                                <span class="wr-mcard-grade">@(m.Status == Hafiz.Models.AssignmentStatus.notSet ? "—" : StatusLabel(m.Status))</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- عرض الحاسوب -->
+                <div class="table-wrapper wr-details-desktop">
+                    <table class="table table-responsive-cards">
+                        <thead>
+                            <tr>
+                                <th>@Localizer["Student"]</th>
+                                <th>@Localizer["Class"]</th>
+                                <th>نوع الأداء</th>
+                                <th>الباب / المتن</th>
+                                <th>الكمية والوحدة</th>
+                                <th>النطاق</th>
+                                <th>@Localizer["Date"]</th>
+                                <th>@Localizer["Status"]</th>
+                                <th>التقييم</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var m in Model.MatnDetails)
+                            {
+                                var matnSearch = $"{m.StudentName} {m.ClassName} {m.ChapterName} {m.PerformanceTypeName}";
+                                <tr class="wr-detail-row" data-search="@matnSearch">
+                                    <td data-label="@Localizer["Student"]" class="wr-card-name">
+                                        <a asp-controller="Students" asp-action="Details" asp-route-id="@m.StudentId"
+                                           class="fw-medium">@m.StudentName</a>
+                                    </td>
+                                    <td data-label="@Localizer["Class"]">@(string.IsNullOrWhiteSpace(m.ClassName) ? "—" : m.ClassName)</td>
+                                    <td data-label="نوع الأداء">
+                                        <span class="wr-badge wr-type-badge">@m.PerformanceTypeName</span>
+                                    </td>
+                                    <td data-label="الباب / المتن">
+                                        @(string.IsNullOrEmpty(m.ChapterName) ? "—" : m.ChapterName)
+                                    </td>
+                                    <td data-label="الكمية والوحدة">
+                                        @(m.Amount.HasValue ? $"{m.Amount.Value:0.##} {m.UnitName}" : "—")
+                                    </td>
+                                    <td data-label="النطاق">
+                                        @(m.FromNumber.HasValue && m.ToNumber.HasValue ? $"{m.FromNumber} - {m.ToNumber}" : "—")
+                                    </td>
+                                    <td data-label="@Localizer["Date"]">@m.AssignedDate.ToString("yyyy-MM-dd")</td>
+                                    <td data-label="@Localizer["Status"]">
+                                        @if (m.IsCompleted)
+                                        {
+                                            <span class="wr-badge wr-badge-done">@Localizer["Completed"]</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="wr-badge wr-badge-pending">@Localizer["Pending"]</span>
+                                        }
+                                    </td>
+                                    <td data-label="التقييم">
+                                        @(m.Status == Hafiz.Models.AssignmentStatus.notSet ? "—" : StatusLabel(m.Status))
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
     <!-- الإحصائيات العامة -->
     <div class="wr-stats">
         <div class="card card-stat">
@@ -428,6 +667,7 @@
                                         }
                                     </div>
                                 </div>
+}
                             </div>
 
                             @section Scripts {

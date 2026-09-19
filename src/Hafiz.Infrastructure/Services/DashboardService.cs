@@ -34,6 +34,8 @@ namespace Hafiz.Infrastructure.Services
             var counts = await LoadCountsAsync(instituteId, today);
             var (memPages, memJuz, memAyahs, revPages, revJuz, revAyahs, tajPages, tajJuz, tajAyahs) =
                 await AggregateWirdUnitsAsync(instituteId, period);
+            var (matnTotal, matnMem, matnRev, matnMud, matnCompleted, matnMemVerses, matnRevVerses) =
+                await AggregateMatnUnitsAsync(instituteId, period);
             var wirdsPage = await _activityQuery.GetTodaysPageAsync(
                 instituteId,
                 DashboardActivityCategory.Wirds,
@@ -52,6 +54,16 @@ namespace Hafiz.Infrastructure.Services
                 TeachersCount = counts.Teachers,
                 MaleStudentsCount = counts.MaleStudents,
                 FemaleStudentsCount = counts.FemaleStudents,
+                MatnsCount = counts.Matns,
+                StudyProgramsCount = counts.StudyPrograms,
+                ActiveStudyProgramsCount = counts.ActiveStudyPrograms,
+                MatnTotalAssignments = matnTotal,
+                MatnMemorizationAssignments = matnMem,
+                MatnRevisionAssignments = matnRev,
+                MatnMudarasahAssignments = matnMud,
+                MatnCompletedAssignments = matnCompleted,
+                MatnMemorizationVerses = matnMemVerses,
+                MatnRevisionVerses = matnRevVerses,
                 MemorizationPages = Math.Round(memPages, 2),
                 MemorizationJuz = Math.Round(memJuz, 2),
                 MemorizationAyahs = memAyahs,
@@ -88,11 +100,16 @@ namespace Hafiz.Infrastructure.Services
             IQueryable<Teacher> teachers = _context.Teachers;
             IQueryable<Student> students = _context.Students;
             IQueryable<Class> classes = _context.Classes;
+            IQueryable<Hafiz.Domain.Entities.Matn> matns = _context.Matns.Where(m => !m.IsDeleted);
+            IQueryable<Hafiz.Domain.Entities.StudyProgram> programs = _context.StudyPrograms.Where(p => !p.IsDeleted);
+
             if (instituteId.HasValue)
             {
                 teachers = teachers.Where(t => t.TeacherInfo.InstituteId == instituteId);
                 students = students.Where(s => s.StudentInfo.InstituteId == instituteId);
                 classes = classes.Where(c => c.InstituteId == instituteId);
+                matns = matns.Where(m => m.InstituteId == null || m.InstituteId == instituteId);
+                programs = programs.Where(p => p.InstituteId == instituteId);
             }
 
             var classesToday = classes.Where(c => c.ClassDays.Any(d => d == currentDay));
@@ -109,6 +126,9 @@ namespace Hafiz.Infrastructure.Services
                     MaleStudents = students.Count(s => s.sex == Sex.male),
                     FemaleStudents = students.Count(s => s.sex == Sex.female),
                     Classes = classes.Count(),
+                    Matns = matns.Count(),
+                    StudyPrograms = programs.Count(),
+                    ActiveStudyPrograms = programs.Count(p => p.IsActive),
                     ExpectedStudentsToday = classesToday.Sum(c => c.Students.Count),
                     AttendedStudentsToday = _context.StudentAttendances.Count(a =>
                         a.Date >= today
@@ -142,6 +162,9 @@ namespace Hafiz.Infrastructure.Services
             public int MaleStudents { get; set; }
             public int FemaleStudents { get; set; }
             public int Classes { get; set; }
+            public int Matns { get; set; }
+            public int StudyPrograms { get; set; }
+            public int ActiveStudyPrograms { get; set; }
             public int ExpectedStudentsToday { get; set; }
             public int AttendedStudentsToday { get; set; }
             public int ExpectedTeachersToday { get; set; }
@@ -220,6 +243,56 @@ namespace Hafiz.Infrastructure.Services
             }
 
             return (memPages, memJuz, memAyahs, revPages, revJuz, revAyahs, tajPages, tajJuz, tajAyahs);
+        }
+
+        private async Task<(
+            int totalAssignments,
+            int memAssignments,
+            int revAssignments,
+            int mudAssignments,
+            int completedAssignments,
+            decimal memVerses,
+            decimal revVerses
+        )> AggregateMatnUnitsAsync(Guid? instituteId, DashboardPeriod period)
+        {
+            var matnQuery = _context.MatnAssignments.AsNoTracking();
+            if (instituteId.HasValue)
+            {
+                matnQuery = matnQuery.Where(m => m.Student.StudentInfo.InstituteId == instituteId);
+            }
+
+            var (from, toExclusive) = DashboardPeriodRange.Resolve(period);
+            if (from.HasValue)
+            {
+                matnQuery = matnQuery.Where(m => m.AssignedDate >= from.Value && m.AssignedDate < toExclusive!.Value);
+            }
+
+            var list = await matnQuery
+                .Select(m => new
+                {
+                    m.PerformanceType,
+                    m.Unit,
+                    m.Amount,
+                    m.IsCompleted,
+                    m.Status,
+                })
+                .ToListAsync();
+
+            int total = list.Count;
+            int mem = list.Count(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Memorization);
+            int rev = list.Count(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Revision);
+            int mud = list.Count(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Mudarasah);
+            int completed = list.Count(m => m.IsCompleted || m.Status != Hafiz.Models.AssignmentStatus.notSet);
+
+            decimal memVerses = list
+                .Where(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Memorization && m.Amount.HasValue)
+                .Sum(m => m.Amount!.Value);
+
+            decimal revVerses = list
+                .Where(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Revision && m.Amount.HasValue)
+                .Sum(m => m.Amount!.Value);
+
+            return (total, mem, rev, mud, completed, Math.Round(memVerses, 1), Math.Round(revVerses, 1));
         }
     }
 }

@@ -127,4 +127,63 @@ public class MatnAssignmentRepository : IMatnAssignmentRepository
             assignments.Count(t => t == MatnPerformanceType.Mudarasah)
         );
     }
+
+    public async Task<IEnumerable<MatnAssignment>> GetReportAsync(
+        Guid? instituteId,
+        Guid? classId,
+        Guid? studentId,
+        DateTime? fromDate,
+        DateTime? toDate,
+        string? status = null,
+        MatnPerformanceType? performanceType = null)
+    {
+        var query = _context.MatnAssignments
+            .Include(ma => ma.Student)
+                .ThenInclude(s => s.StudentInfo)
+            .Include(ma => ma.Class)
+            .AsNoTracking();
+
+        if (instituteId.HasValue)
+        {
+            query = query.Where(ma => ma.Student.StudentInfo.InstituteId == instituteId.Value);
+        }
+
+        if (classId.HasValue)
+        {
+            query = query.Where(ma => ma.ClassId == classId.Value);
+        }
+
+        if (studentId.HasValue)
+        {
+            query = query.Where(ma => ma.StudentId == studentId.Value);
+        }
+
+        if (fromDate.HasValue)
+        {
+            var from = fromDate.Value.Date;
+            query = query.Where(ma => ma.AssignedDate >= from);
+        }
+
+        if (toDate.HasValue)
+        {
+            var toExclusive = toDate.Value.Date.AddDays(1);
+            query = query.Where(ma => ma.AssignedDate < toExclusive);
+        }
+
+        if (performanceType.HasValue)
+        {
+            query = query.Where(ma => ma.PerformanceType == performanceType.Value);
+        }
+
+        if (string.Equals(status, "completed", StringComparison.OrdinalIgnoreCase))
+        {
+            query = query.Where(ma => ma.IsCompleted);
+        }
+        else if (string.Equals(status, "pending", StringComparison.OrdinalIgnoreCase))
+        {
+            query = query.Where(ma => !ma.IsCompleted);
+        }
+
+        return await query.OrderByDescending(ma => ma.AssignedDate).ToListAsync();
+    }
 }

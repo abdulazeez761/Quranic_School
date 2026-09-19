@@ -1,0 +1,293 @@
+/* ==========================================================================
+   Matns Library Styling — Hafiz Admin Area
+   ========================================================================== */
+
+.matn-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding: 0 0 var(--space-2xl);
+}
+
+/* Header */
+.matn-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.matn-header-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: 0 0 var(--space-xs);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.matn-header-title i {
+  color: var(--primary-green);
+  font-size: 1.4em;
+}
+
+/* KPI Grid */
+.matn-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-md);
+}
+
+.matn-kpi-card {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.matn-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.matn-kpi-icon {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: var(--white);
+}
+
+.matn-kpi-icon.--teal   { background: linear-gradient(135deg, #0d9488, #0f766e); }
+.matn-kpi-icon.--blue   { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+.matn-kpi-icon.--purple { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+.matn-kpi-icon.--amber  { background: linear-gradient(135deg, #d97706, #b45309); }
+
+.matn-kpi-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.matn-kpi-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-medium);
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.matn-kpi-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  line-height: 1.1;
+}
+
+/* Category Pills Bar */
+.matn-categories-bar {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.matn-cat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-decoration: none;
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  color: var(--text-medium);
+  transition: all var(--transition-fast);
+}
+
+.matn-cat-pill:hover {
+  border-color: var(--primary-green);
+  color: var(--dark-green);
+  background: rgba(111, 161, 90, 0.08);
+}
+
+.matn-cat-pill.active {
+  background: var(--gradient-brand);
+  color: var(--white);
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(100, 140, 81, 0.3);
+}
+
+/* Search and Filters Bar */
+.matn-toolbar {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.matn-search-form {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.matn-search-box {
+  flex: 1;
+  min-width: 260px;
+  position: relative;
+}
+
+.matn-search-box i {
+  position: absolute;
+  inset-inline-start: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+.matn-search-input {
+  width: 100%;
+  padding-inline-start: 38px;
+  padding-inline-end: 12px;
+  height: 38px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  background: #fafbfc;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.matn-search-input:focus {
+  outline: none;
+  border-color: var(--primary-green);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(100, 140, 81, 0.15);
+}
+
+/* Table Enhancements */
+.matn-table-wrapper {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.matn-title-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.matn-avatar-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: rgba(100, 140, 81, 0.12);
+  color: var(--primary-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+}
+
+.matn-title-text {
+  font-weight: 600;
+  color: var(--text-dark);
+  display: block;
+}
+
+.matn-author-text {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Badges */
+.matn-badge-category {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+}
+
+.matn-badge-scope {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.matn-badge-scope.--global {
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.matn-badge-scope.--institute {
+  background: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.matn-badge-unit {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 500;
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.matn-size-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+/* Empty State */
+.matn-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl) var(--space-md);
+  text-align: center;
+  color: var(--text-medium);
+  gap: var(--space-sm);
+}
+
+.matn-empty i {
+  font-size: 3rem;
+  color: var(--border-color);
+}

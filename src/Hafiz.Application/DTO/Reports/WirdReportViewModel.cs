@@ -9,6 +9,22 @@ namespace Hafiz.DTOs.Reports
     /// </summary>
     public record SelectOption(string Value, string Text);
 
+    public class MatnReportStatsDto
+    {
+        public int TotalAssignments { get; set; }
+        public int MemorizationCount { get; set; }
+        public int RevisionCount { get; set; }
+        public int MudarasahCount { get; set; }
+        public int CompletedCount { get; set; }
+        public int PendingCount { get; set; }
+        public decimal TotalVerses { get; set; }
+        public decimal CompletedVerses { get; set; }
+        public int CompletionRate =>
+            TotalAssignments > 0
+                ? (int)Math.Round((double)CompletedCount / TotalAssignments * 100)
+                : 0;
+    }
+
     /// <summary>
     /// النموذج الكامل لصفحة تقرير الأوراد: الفلاتر، الإحصائيات، ترتيب الطلاب،
     /// التفاصيل المُصفّحة، وخيارات القوائم المنسدلة.
@@ -20,6 +36,11 @@ namespace Hafiz.DTOs.Reports
 
         public List<StudentRankingRow> TopStudents { get; set; } = new();
         public List<WirdReportDetailRow> Details { get; set; } = new();
+
+        // ── أوراد المتون العلمية ──
+        public MatnReportStatsDto MatnStats { get; set; } = new();
+        public List<Hafiz.DTOs.Matn.MatnAssignmentDto> MatnDetails { get; set; } = new();
+        public string ActiveTab { get; set; } = "quran";
 
         // خيارات التصفية للعرض
         public List<SelectOption> ClassOptions { get; set; } = new();

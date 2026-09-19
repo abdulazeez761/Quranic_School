@@ -18,4 +18,13 @@ public interface IMatnAssignmentRepository
     Task<bool> UpdateAsync(MatnAssignment assignment);
     Task<bool> DeleteAsync(Guid id);
     Task<(int memorizedCount, int revisedCount, int mudarasahCount)> GetCountsByClassAsync(Guid classId);
+    Task<IEnumerable<MatnAssignment>> GetReportAsync(
+        Guid? instituteId,
+        Guid? classId,
+        Guid? studentId,
+        DateTime? fromDate,
+        DateTime? toDate,
+        string? status = null,
+        MatnPerformanceType? performanceType = null
+    );
 }

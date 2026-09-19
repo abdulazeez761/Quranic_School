@@ -5,60 +5,78 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-transparent border-0 pt-4 pb-2">
-                    <h3 class="h5 font-weight-bold mb-1">إضافة برنامج تعليمي جديد</h3>
-                    <p class="text-muted small">قم بتحديد مسار ونوع البرنامج وربطه بالمتن المناسب إن وُجد.</p>
+<div class="container-center" style="max-width: 800px; margin: 0 auto; padding-bottom: var(--space-2xl);">
+    <!-- رأس الصفحة -->
+    <div class="d-flex justify-between align-center mb-lg flex-wrap gap-md">
+        <div>
+            <h2 class="section-title mb-xs">
+                <i class='bx bx-book-add' style="color: var(--primary-green);"></i>
+                إضافة برنامج تعليمي جديد
+            </h2>
+            <p class="text-medium">تحديد مسار ونوع البرنامج وربطه بالمتن المناسب لتنظيم الحلقات والأوراد تحته.</p>
+        </div>
+        <div>
+            <a asp-action="Index" class="btn btn-outline btn-sm">
+                <i class='bx bx-arrow-back'></i>
+                <span>العودة للبرامج</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="card card-standard">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class='bx bx-slider-alt'></i>
+                بيانات وإعدادات البرنامج
+            </h3>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-md" role="alert"></div>
+
+                <div class="form-group mb-md">
+                    <label asp-for="Name" class="form-label" style="font-weight: 600;">اسم البرنامج التعليمي <span class="text-danger">*</span></label>
+                    <input asp-for="Name" class="form-input" placeholder="مثال: برنامج تحفيظ القرآن للكبار، دورة تحفة الأطفال..." required />
+                    <span asp-validation-for="Name" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
                 </div>
-                <div class="card-body">
-                    <form asp-action="Create" method="post">
-                        @Html.AntiForgeryToken()
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-                        <div class="mb-3">
-                            <label asp-for="Name" class="form-label fw-bold">اسم البرنامج <span class="text-danger">*</span></label>
-                            <input asp-for="Name" class="form-control" placeholder="مثال: برنامج تحفيظ القرآن للكبار، دورة متن الجزرية" required />
-                            <span asp-validation-for="Name" class="text-danger small"></span>
-                        </div>
+                <div class="form-row mb-md" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-md);">
+                    <div class="form-group">
+                        <label asp-for="Type" class="form-label" style="font-weight: 600;">نوع المسار التعليمي <span class="text-danger">*</span></label>
+                        <select asp-for="Type" id="programTypeSelect" class="form-select" required>
+                            <option value="@((int)ProgramType.Quran)">تحفيظ القرآن الكريم (الافتراضي)</option>
+                            <option value="@((int)ProgramType.Matn)">المتون والعلوم الشرعية</option>
+                            <option value="@((int)ProgramType.Sanad)">السند الغيبي</option>
+                            <option value="@((int)ProgramType.Ijaza)">الإجازة القرآنية</option>
+                        </select>
+                        <span asp-validation-for="Type" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
+                    </div>
 
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label asp-for="Type" class="form-label fw-bold">نوع المسار التعليمي <span class="text-danger">*</span></label>
-                                <select asp-for="Type" id="programTypeSelect" class="form-select" required>
-                                    <option value="@((int)ProgramType.Quran)">تحفيظ القرآن الكريم (الافتراضي)</option>
-                                    <option value="@((int)ProgramType.Matn)">المتون والعلوم الشرعية</option>
-                                    <option value="@((int)ProgramType.Sanad)">السند الغيبي</option>
-                                    <option value="@((int)ProgramType.Ijaza)">الإجازة القرآنية</option>
-                                </select>
-                                <span asp-validation-for="Type" class="text-danger small"></span>
-                            </div>
-
-                            <div class="col-md-6" id="matnSelectContainer" style="display: none;">
-                                <label asp-for="MatnId" class="form-label fw-bold">المتن المخصص لهذا البرنامج</label>
-                                <select asp-for="MatnId" asp-items="ViewBag.Matns" class="form-select">
-                                    <option value="">-- اختر المتن من المكتبة --</option>
-                                </select>
-                                <div class="form-text small">تدرس جميع حلقات هذا البرنامج المتن المختار.</div>
-                                <span asp-validation-for="MatnId" class="text-danger small"></span>
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label asp-for="Description" class="form-label fw-bold">وصف أو أهداف البرنامج</label>
-                            <textarea asp-for="Description" class="form-control" rows="3" placeholder="تفاصيل المنهج، الشريحة المستهدفة، أو الخطة الزمنية..."></textarea>
-                            <span asp-validation-for="Description" class="text-danger small"></span>
-                        </div>
-
-                        <div class="d-flex justify-content-end gap-2 border-top pt-3">
-                            <a asp-action="Index" class="btn btn-outline-secondary">إلغاء</a>
-                            <button type="submit" class="btn btn-primary px-4">حفظ البرنامج</button>
-                        </div>
-                    </form>
+                    <div class="form-group" id="matnSelectContainer" style="display: none;">
+                        <label asp-for="MatnId" class="form-label" style="font-weight: 600;">المتن المخصص لهذا البرنامج</label>
+                        <select asp-for="MatnId" asp-items="ViewBag.Matns" class="form-select">
+                            <option value="">-- اختر المتن من المكتبة --</option>
+                        </select>
+                        <span class="text-muted" style="font-size: 11px; display: block; margin-top: 4px;">تدرس جميع حلقات هذا البرنامج المتن المختار.</span>
+                        <span asp-validation-for="MatnId" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
+                    </div>
                 </div>
-            </div>
+
+                <div class="form-group mb-lg">
+                    <label asp-for="Description" class="form-label" style="font-weight: 600;">وصف البرنامج أو الأهداف والمنهج</label>
+                    <textarea asp-for="Description" class="form-input" rows="3" placeholder="تفاصيل المنهج، الشريحة المستهدفة، أو الخطة الزمنية..."></textarea>
+                    <span asp-validation-for="Description" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
+                </div>
+
+                <div class="d-flex justify-between align-center border-top pt-md mt-md">
+                    <a asp-action="Index" class="btn btn-outline">إلغاء</a>
+                    <button type="submit" class="btn btn-primary" style="padding-inline: 28px;">
+                        <i class='bx bx-check'></i>
+                        <span>حفظ البرنامج</span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
