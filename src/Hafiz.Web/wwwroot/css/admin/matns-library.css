@@ -97,15 +97,22 @@
 .matn-categories-bar {
   display: flex;
   gap: var(--space-xs);
-  flex-wrap: wrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 4px;
   align-items: center;
+}
+
+.matn-categories-bar::-webkit-scrollbar {
+  display: none;
 }
 
 .matn-cat-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 14px;
+  padding: 8px 16px;
   border-radius: var(--radius-full);
   font-size: var(--font-size-xs);
   font-weight: 600;
@@ -114,6 +121,9 @@
   border: 1px solid var(--border-color);
   color: var(--text-medium);
   transition: all var(--transition-fast);
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-height: 38px;
 }
 
 .matn-cat-pill:hover {
@@ -290,4 +300,66 @@
 .matn-empty i {
   font-size: 3rem;
   color: var(--border-color);
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+@media (max-width: 768px) {
+  .matn-header {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  .matn-header-title {
+    justify-content: center;
+  }
+  .matn-header .btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+  .matn-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+  }
+  .matn-kpi-card {
+    padding: var(--space-sm) var(--space-md);
+  }
+  .matn-search-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .matn-search-box {
+    width: 100%;
+    min-width: unset;
+  }
+  .matn-search-form .btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 42px;
+  }
+}
+
+@media (max-width: 480px) {
+  .matn-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .matn-kpi-card {
+    padding: 10px;
+    gap: 10px;
+  }
+  .matn-kpi-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    font-size: 1.2rem;
+  }
+  .matn-kpi-value {
+    font-size: 1.25rem;
+  }
+  .matn-kpi-label {
+    font-size: 11px;
+  }
 }

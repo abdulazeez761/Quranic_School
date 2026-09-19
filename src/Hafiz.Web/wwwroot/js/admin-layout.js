@@ -3,21 +3,29 @@
 // ===================================
 const sidebar = document.getElementById('sidebar');
 const sidebarToggle = document.getElementById('sidebarToggle');
+const bottomNavMenuToggle = document.getElementById('bottomNavMenuToggle');
 const sidebarOverlay = document.getElementById('sidebarOverlay');
 const languageToggle = document.getElementById('languageToggle');
 
-// Ensure elements exist before adding listeners
-if (sidebar && sidebarToggle && sidebarOverlay) {
-  // Toggle sidebar on button click
-  sidebarToggle.addEventListener('click', function (e) {
+function toggleSidebarDrawer(e) {
+  if (e) {
     e.preventDefault();
     e.stopPropagation();
-    sidebar.classList.toggle('active');
-    sidebarOverlay.classList.toggle('active');
-    document.body.style.overflow = sidebar.classList.contains('active')
-      ? 'hidden'
-      : '';
-  });
+  }
+  if (!sidebar || !sidebarOverlay) return;
+  const isActive = sidebar.classList.toggle('active');
+  sidebarOverlay.classList.toggle('active', isActive);
+  document.body.style.overflow = isActive ? 'hidden' : '';
+}
+
+// Ensure elements exist before adding listeners
+if (sidebar && sidebarOverlay) {
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', toggleSidebarDrawer);
+  }
+  if (bottomNavMenuToggle) {
+    bottomNavMenuToggle.addEventListener('click', toggleSidebarDrawer);
+  }
 
   // Close sidebar when clicking overlay
   sidebarOverlay.addEventListener('click', function (e) {

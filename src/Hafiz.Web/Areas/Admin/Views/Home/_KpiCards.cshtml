@@ -1,155 +1,194 @@
 @model Hafiz.DTOs.Dashboard.DashboardStatsDto
 
-<div class="dashboard-kpi-grid">
+@{
+    int totalStudents = Model.MaleStudentsCount + Model.FemaleStudentsCount;
+}
 
-    <div class="dashboard-stat --purple">
-        <div class="dashboard-stat-icon"><i class='bx bx-group'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">عدد الحلقات</div>
-            <div class="dashboard-stat-value">@Model.CirclesCount</div>
+<!-- الصف الأول: المؤشرات الرئيسية العليا -->
+<div class="dashboard-overview-strip">
+    <div class="dashboard-overview-card --green">
+        <div class="overview-card-icon">
+            <i class='bx bx-user'></i>
+        </div>
+        <div class="overview-card-details">
+            <span class="overview-card-title">إجمالي الطلاب</span>
+            <div class="overview-card-num">@totalStudents</div>
+            <div class="overview-card-sub">
+                <span><i class='bx bx-male'></i> @Model.MaleStudentsCount ذكور</span>
+                <span class="sep">•</span>
+                <span><i class='bx bx-female'></i> @Model.FemaleStudentsCount إناث</span>
+            </div>
         </div>
     </div>
 
-    <div class="dashboard-stat --sage">
-        <div class="dashboard-stat-icon"><i class='bx bx-chalkboard'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">عدد المعلمين</div>
-            <div class="dashboard-stat-value">@Model.TeachersCount</div>
+    <div class="dashboard-overview-card --sage">
+        <div class="overview-card-icon">
+            <i class='bx bx-chalkboard'></i>
+        </div>
+        <div class="overview-card-details">
+            <span class="overview-card-title">كادر المعلمين</span>
+            <div class="overview-card-num">@Model.TeachersCount</div>
+            <div class="overview-card-sub">معلم ومعلمة معتمدون</div>
         </div>
     </div>
 
-    <div class="dashboard-stat --blue">
-        <div class="dashboard-stat-icon"><i class='bx bx-male'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">الطلاب الذكور</div>
-            <div class="dashboard-stat-value">@Model.MaleStudentsCount</div>
+    <div class="dashboard-overview-card --purple">
+        <div class="overview-card-icon">
+            <i class='bx bx-group'></i>
+        </div>
+        <div class="overview-card-details">
+            <span class="overview-card-title">الحلقات والصفوف</span>
+            <div class="overview-card-num">@Model.CirclesCount</div>
+            <div class="overview-card-sub">حلقة قرآنية وعلمية</div>
         </div>
     </div>
 
-    <div class="dashboard-stat --pink">
-        <div class="dashboard-stat-icon"><i class='bx bx-female'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">الطالبات الإناث</div>
-            <div class="dashboard-stat-value">@Model.FemaleStudentsCount</div>
+    <div class="dashboard-overview-card --gold">
+        <div class="overview-card-icon">
+            <i class='bx bx-book-open'></i>
+        </div>
+        <div class="overview-card-details">
+            <span class="overview-card-title">البرامج التعليمية</span>
+            <div class="overview-card-num">@Model.ActiveStudyProgramsCount <span class="total-ref">/ @Model.StudyProgramsCount</span></div>
+            <div class="overview-card-sub">برنامج تعليمي نشط</div>
         </div>
     </div>
+</div>
 
-    <div class="dashboard-stat --gold">
-        <div class="dashboard-stat-icon"><i class='bx bx-book-heart'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">صفحات الحفظ</div>
-            <div class="dashboard-stat-value">@Model.MemorizationPages.ToString("0.##")</div>
-            <div class="dashboard-stat-hint">صفحة محفوظة (تشمل ما يعادل الآيات بالصفحات)</div>
+<!-- الصف الثاني: إنجازات القرآن الكريم (حفظ، مراجعة، تجويد) -->
+<div class="dashboard-section-card">
+    <div class="dashboard-section-header">
+        <div class="d-flex align-center gap-sm">
+            <div class="section-icon-box --emerald">
+                <i class='bx bx-book-heart'></i>
+            </div>
+            <div>
+                <h3 class="dashboard-section-title">إنجازات القرآن الكريم للفترة المختارة</h3>
+                <p class="dashboard-section-sub">تفاصيل الحفظ والمراجعة والتجويد بالصفحات والأجزاء المحسوبة</p>
+            </div>
         </div>
     </div>
+    <div class="dashboard-section-body">
+        <div class="quran-metrics-grid">
+            <!-- الحفظ -->
+            <div class="metric-pillar --pillar-memorization">
+                <div class="pillar-header">
+                    <span class="pillar-tag --tag-gold"><i class='bx bx-bookmark'></i> مسار الحفظ</span>
+                    <span class="pillar-badge">إتقان جديد</span>
+                </div>
+                <div class="pillar-main-val">
+                    <span class="num">@Model.MemorizationPages.ToString("0.##")</span>
+                    <span class="unit">صفحة</span>
+                </div>
+                <div class="pillar-meta">
+                    <div class="meta-row">
+                        <span>إجمالي الأجزاء المحفوظة:</span>
+                        <span class="fw-bold">@Model.MemorizationParts.ToString("0.##") جزء</span>
+                    </div>
+                    <div class="pillar-progress-track">
+                        <div class="pillar-progress-fill --gold" style="width: @(Math.Min(100, Model.MemorizationParts / 30.0 * 100))%"></div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="dashboard-stat --teal">
-        <div class="dashboard-stat-icon"><i class='bx bx-rotate-left'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">صفحات المراجعة</div>
-            <div class="dashboard-stat-value">@Model.RevisionPages.ToString("0.##")</div>
-            <div class="dashboard-stat-hint">صفحة مراجعة (تشمل ما يعادل الآيات بالصفحات)</div>
+            <!-- المراجعة -->
+            <div class="metric-pillar --pillar-revision">
+                <div class="pillar-header">
+                    <span class="pillar-tag --tag-teal"><i class='bx bx-rotate-left'></i> مسار المراجعة</span>
+                    <span class="pillar-badge">تثبيت واستذكار</span>
+                </div>
+                <div class="pillar-main-val">
+                    <span class="num">@Model.RevisionPages.ToString("0.##")</span>
+                    <span class="unit">صفحة</span>
+                </div>
+                <div class="pillar-meta">
+                    <div class="meta-row">
+                        <span>إجمالي المراجعة:</span>
+                        <span class="fw-bold">@Model.RevisionParts.ToString("0.##") جزء</span>
+                    </div>
+                    <div class="meta-row text-muted fs-xs">
+                        <span>منها أجزاء مستقلة:</span>
+                        <span>@Model.RevisionJuzParts.ToString("0.##") جزء</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- التجويد والإتقان -->
+            <div class="metric-pillar --pillar-tajwid">
+                <div class="pillar-header">
+                    <span class="pillar-tag --tag-indigo"><i class='bx bx-microphone'></i> التجويد والتلاوة</span>
+                    <span class="pillar-badge">ضبط مخارج وصفات</span>
+                </div>
+                <div class="pillar-main-val">
+                    <span class="num">@Model.TajwidPages.ToString("0.##")</span>
+                    <span class="unit">صفحة</span>
+                </div>
+                <div class="pillar-meta">
+                    <div class="meta-row">
+                        <span>إجمالي أجزاء التجويد:</span>
+                        <span class="fw-bold">@Model.TajwidParts.ToString("0.##") جزء</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+</div>
 
-    <div class="dashboard-stat --brown">
-        <div class="dashboard-stat-icon"><i class='bx bx-award'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">أجزاء الحفظ</div>
-            <div class="dashboard-stat-value">@Model.MemorizationParts.ToString("0.##")</div>
-            <div class="dashboard-stat-hint">إجمالي أجزاء الحفظ (صفحات + أجزاء مستقلة)</div>
+<!-- الصف الثالث: المتون العلمية والمناهج المصاحبة -->
+<div class="dashboard-section-card">
+    <div class="dashboard-section-header">
+        <div class="d-flex align-center gap-sm">
+            <div class="section-icon-box --teal">
+                <i class='bx bx-library'></i>
+            </div>
+            <div>
+                <h3 class="dashboard-section-title">المتون العلمية والمنظومات</h3>
+                <p class="dashboard-section-sub">متابعة إنجاز المتون وحلقات المدارسة المحسوبة بالأبيات</p>
+            </div>
+        </div>
+        <div class="d-flex align-center gap-xs">
+            <span class="badge" style="background: var(--admin-primary-surface); color: var(--admin-primary); font-weight: 600; padding: 6px 12px; border-radius: var(--admin-radius-full);">
+                @Model.MatnsCount متن متاح بالمكتبة
+            </span>
         </div>
     </div>
+    <div class="dashboard-section-body">
+        <div class="matn-metrics-grid">
+            <div class="matn-metric-box">
+                <div class="matn-metric-icon --green"><i class='bx bx-book-bookmark'></i></div>
+                <div class="matn-metric-data">
+                    <span class="label">حفظ المتون</span>
+                    <div class="val">@Model.MatnMemorizationVerses.ToString("0.#") <span class="sub">بيت</span></div>
+                    <span class="hint">@Model.MatnMemorizationAssignments ورد مسند</span>
+                </div>
+            </div>
 
-    <div class="dashboard-stat --indigo">
-        <div class="dashboard-stat-icon"><i class='bx bx-check-shield'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">الأجزاء المستقلة للمراجعة</div>
-            <div class="dashboard-stat-value">@Model.RevisionJuzParts.ToString("0.##")</div>
-            <div class="dashboard-stat-hint">من جزء إلى جزء</div>
-        </div>
-    </div>
+            <div class="matn-metric-box">
+                <div class="matn-metric-icon --gold"><i class='bx bx-refresh'></i></div>
+                <div class="matn-metric-data">
+                    <span class="label">مراجعة المتون</span>
+                    <div class="val">@Model.MatnRevisionVerses.ToString("0.#") <span class="sub">بيت</span></div>
+                    <span class="hint">@Model.MatnRevisionAssignments ورد مراجع</span>
+                </div>
+            </div>
 
-    <div class="dashboard-stat --cyan">
-        <div class="dashboard-stat-icon"><i class='bx bx-bar-chart-alt-2'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">إجمالي المراجعة</div>
-            <div class="dashboard-stat-value">@Model.RevisionParts.ToString("0.##")</div>
-            <div class="dashboard-stat-hint">أجزاء الصفحات + الأجزاء المستقلة</div>
-        </div>
-    </div>
+            <div class="matn-metric-box">
+                <div class="matn-metric-icon --purple"><i class='bx bx-chalkboard'></i></div>
+                <div class="matn-metric-data">
+                    <span class="label">مدارسة وشرح</span>
+                    <div class="val">@Model.MatnMudarasahAssignments <span class="sub">جلسة</span></div>
+                    <span class="hint">جلسات إتقان وفهم</span>
+                </div>
+            </div>
 
-    <div class="dashboard-stat --violet">
-        <div class="dashboard-stat-icon"><i class='bx bx-microphone'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">صفحات التجويد</div>
-            <div class="dashboard-stat-value">@Model.TajwidPages.ToString("0.##")</div>
-            <div class="dashboard-stat-hint">صفحة تجويد وإتقان التلاوة</div>
-        </div>
-    </div>
-
-    <div class="dashboard-stat --indigo">
-        <div class="dashboard-stat-icon"><i class='bx bx-collection'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">أجزاء التجويد</div>
-            <div class="dashboard-stat-value">@Model.TajwidParts.ToString("0.##")</div>
-            <div class="dashboard-stat-hint">إجمالي أجزاء التجويد (صفحات + أجزاء مستقلة)</div>
-        </div>
-    </div>
-
-    <!-- إحصائيات المتون والبرامج العلمية -->
-    <div class="dashboard-stat --teal">
-        <div class="dashboard-stat-icon"><i class='bx bx-library'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">مكتبة المتون</div>
-            <div class="dashboard-stat-value">@Model.MatnsCount</div>
-            <div class="dashboard-stat-hint">متن علمي متاح للتدريس بالمعهد</div>
-        </div>
-    </div>
-
-    <div class="dashboard-stat --blue">
-        <div class="dashboard-stat-icon"><i class='bx bx-book-open'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">البرامج التعليمية</div>
-            <div class="dashboard-stat-value">@Model.StudyProgramsCount</div>
-            <div class="dashboard-stat-hint">منها @Model.ActiveStudyProgramsCount برنامج نشط</div>
-        </div>
-    </div>
-
-    <!-- إحصائيات أوراد المتون للفترة المختارة -->
-    <div class="dashboard-stat --sage">
-        <div class="dashboard-stat-icon"><i class='bx bx-book-bookmark'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">حفظ المتون</div>
-            <div class="dashboard-stat-value">@Model.MatnMemorizationVerses.ToString("0.#")</div>
-            <div class="dashboard-stat-hint">بيت محفوظ (@Model.MatnMemorizationAssignments ورد)</div>
-        </div>
-    </div>
-
-    <div class="dashboard-stat --gold">
-        <div class="dashboard-stat-icon"><i class='bx bx-refresh'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">مراجعة المتون</div>
-            <div class="dashboard-stat-value">@Model.MatnRevisionVerses.ToString("0.#")</div>
-            <div class="dashboard-stat-hint">بيت مراجع (@Model.MatnRevisionAssignments ورد)</div>
-        </div>
-    </div>
-
-    <div class="dashboard-stat --purple">
-        <div class="dashboard-stat-icon"><i class='bx bx-chalkboard'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">مدارسة المتون</div>
-            <div class="dashboard-stat-value">@Model.MatnMudarasahAssignments</div>
-            <div class="dashboard-stat-hint">جلسة مدارسة وشرح مسندة</div>
-        </div>
-    </div>
-
-    <div class="dashboard-stat --cyan">
-        <div class="dashboard-stat-icon"><i class='bx bx-check-double'></i></div>
-        <div class="dashboard-stat-content">
-            <div class="dashboard-stat-label">إجمالي أوراد المتون</div>
-            <div class="dashboard-stat-value">@Model.MatnTotalAssignments</div>
-            <div class="dashboard-stat-hint">منها @Model.MatnCompletedAssignments ورد مكتمل</div>
+            <div class="matn-metric-box">
+                <div class="matn-metric-icon --blue"><i class='bx bx-check-double'></i></div>
+                <div class="matn-metric-data">
+                    <span class="label">إجمالي إنجاز المتون</span>
+                    <div class="val">@Model.MatnCompletedAssignments <span class="sub">من @Model.MatnTotalAssignments</span></div>
+                    <span class="hint">معدل إكمال @(Model.MatnTotalAssignments > 0 ? Math.Round((double)Model.MatnCompletedAssignments / Model.MatnTotalAssignments * 100, 0) : 0)%</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>

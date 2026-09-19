@@ -104,3 +104,18 @@
 .day-checkbox input[type='checkbox']:checked ~ .day-checkbox-custom {
   animation: checkBounce 0.3s ease;
 }
+
+@media (max-width: 480px) {
+  .days-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: var(--space-xs) !important;
+  }
+  .day-checkbox {
+    padding: var(--space-sm) var(--space-xs);
+    min-height: 44px;
+    justify-content: flex-start;
+  }
+  .day-label {
+    font-size: 13px;
+  }
+}

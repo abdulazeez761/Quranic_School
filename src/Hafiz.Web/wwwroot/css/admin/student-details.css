@@ -577,7 +577,6 @@
 
 /* ========== Responsive ========== */
 @media (max-width: 768px) {
-  /* .content wrapper already pads on tablets; avoid double padding */
   .admin-student-details {
     padding: 0;
   }
@@ -600,14 +599,28 @@
   .back-btn {
     width: 100%;
     justify-content: center;
+    min-height: 44px;
   }
   .tabs-header {
-    gap: 2px;
-    padding: var(--space-xs);
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 6px;
+    padding: 6px;
+    border-radius: var(--radius-lg);
+  }
+  .tabs-header::-webkit-scrollbar {
+    display: none;
   }
   .tab-btn {
-    padding: var(--space-xs) var(--space-sm);
+    flex: 0 0 auto;
+    white-space: nowrap;
+    padding: 8px 14px;
     font-size: var(--font-size-xs);
+    min-height: 42px;
+    border-radius: var(--radius-md);
   }
   .overview-cards {
     grid-template-columns: repeat(2, 1fr);
@@ -656,17 +669,15 @@
 }
 
 @media (max-width: 480px) {
-  /* .content padding drops to 0 on phones, so the page provides its own */
   .admin-student-details {
-    padding: var(--space-sm);
+    padding: 0;
   }
-  /* All 5 tabs visible: wrap into two rows instead of hidden horizontal scroll */
   .tabs-header {
-    flex-wrap: wrap;
+    margin-bottom: var(--space-sm);
   }
   .tab-btn {
-    flex: 1 1 calc(50% - 4px);
-    justify-content: center;
+    padding: 6px 12px;
+    min-height: 40px;
   }
   .overview-cards {
     grid-template-columns: 1fr 1fr;
@@ -674,7 +685,7 @@
   .overview-card {
     flex-direction: column;
     text-align: center;
-    gap: var(--space-sm);
+    gap: var(--space-xs);
     padding: var(--space-sm);
   }
   .progress-circle {
@@ -692,11 +703,12 @@
     padding: var(--space-sm) var(--space-sm) var(--space-md);
   }
   .page-num {
-    width: 30px;
-    height: 30px;
+    width: 34px;
+    height: 34px;
   }
   .pagination-btn {
     padding: var(--space-xs) var(--space-sm);
+    min-height: 40px;
   }
   .toast {
     inset-inline: 16px;

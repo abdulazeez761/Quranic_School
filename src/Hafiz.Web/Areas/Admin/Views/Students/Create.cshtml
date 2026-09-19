@@ -36,8 +36,9 @@
 }
 
 <!-- Form Card -->
-<div class="card card-standard" style="width: 70%; margin:0 auto;">
-    <form asp-action="Create" method="post" class="form" id="studentForm" data-validate>
+<div class="admin-form-container">
+    <div class="card card-standard admin-form-card">
+        <form asp-action="Create" method="post" class="form" id="studentForm" data-validate>
 
         <!-- Personal Information Section -->
         <div class="card-header">
@@ -258,7 +259,7 @@
 </div>
 
 <!-- Help Card (Optional) -->
-<div class="card card-standard" style="width: 70%; margin:0 auto;">
+<div class="card card-standard admin-form-card" style="margin-top: 16px;">
     <div class="card-body">
         <h4 class="mb-md">
             <i class='bx bx-help-circle' style="color: var(--info);"></i>
@@ -273,6 +274,7 @@
             <li>@Localizer["HelpInstruction6"]</li>
         </ul>
     </div>
+</div>
 </div>
 
 @section Scripts {

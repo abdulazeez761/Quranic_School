@@ -36,8 +36,9 @@
     </div>
 }
 
-<div class="card card-standard" style="width: 70%; margin:0 auto;">
-    <form asp-action="Edit" method="post" class="form" id="classForm" data-validate>
+<div class="admin-form-container">
+    <div class="card card-standard">
+        <form asp-action="Edit" method="post" class="form" id="classForm" data-validate>
         <input asp-for="Id" type="hidden" />
 
         <div class="card-header">
@@ -173,21 +174,22 @@
             </div>
         </div>
     </form>
-</div>
+    </div>
 
-<div class="card card-standard" style="width: 70%; margin:0 auto;">
-    <div class="card-body">
-        <h4 class="mb-md">
-            <i class='bx bx-help-circle' style="color: var(--info);"></i>
-            @Localizer["EditGuidelines"]
-        </h4>
-        <ul class="list-disc" style="margin-right: var(--space-lg); line-height: 1.8;">
-            <li>@Localizer["Guideline1"] <span class="text-danger fw-bold">*</span> @Localizer["Guideline1Suffix"]</li>
-            <li>@Localizer["Guideline2"]</li>
-            <li>@Localizer["Guideline3"]</li>
-            <li>@Localizer["Guideline4"]</li>
-            <li>@Localizer["Guideline5"]</li>
-        </ul>
+    <div class="card card-standard mt-lg">
+        <div class="card-body">
+            <h4 class="mb-md">
+                <i class='bx bx-help-circle' style="color: var(--info);"></i>
+                @Localizer["EditGuidelines"]
+            </h4>
+            <ul class="list-disc" style="margin-right: var(--space-lg); line-height: 1.8;">
+                <li>@Localizer["Guideline1"] <span class="text-danger fw-bold">*</span> @Localizer["Guideline1Suffix"]</li>
+                <li>@Localizer["Guideline2"]</li>
+                <li>@Localizer["Guideline3"]</li>
+                <li>@Localizer["Guideline4"]</li>
+                <li>@Localizer["Guideline5"]</li>
+            </ul>
+        </div>
     </div>
 </div>
 

@@ -160,15 +160,21 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  height: 42px;
+  min-height: 44px;
+  height: 44px;
   border-radius: 12px;
   border: none;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
   text-decoration: none;
-  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease, transform 150ms ease;
+  touch-action: manipulation;
+}
+
+.record-btn:active {
+  transform: scale(0.97);
 }
 
 .record-btn i {
@@ -176,20 +182,22 @@
 }
 
 .record-btn-view {
-  flex: 1;
-  background: #eaf4e2;
-  color: #3f6b30;
+  flex: 1.2;
+  background: var(--admin-primary-surface, #eef7f2);
+  color: var(--admin-primary, #24583e);
+  border: 1px solid var(--admin-primary-border, #c8e4d4);
 }
 
 .record-btn-view:hover {
   background: #dceccf;
-  color: #35591f;
+  color: #1b4530;
 }
 
 .record-btn-edit {
   flex: 1;
-  background: #f2f4f0;
-  color: #2c3e50;
+  background: var(--admin-surface-subtle, #f5f7f5);
+  color: var(--admin-text-primary, #2c3e50);
+  border: 1px solid var(--admin-border, #e3e8e4);
 }
 
 .record-btn-edit:hover {
@@ -197,18 +205,18 @@
 }
 
 .record-btn-delete {
-  width: 42px;
-  min-width: 42px;
-  height: 42px;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
   padding: 0;
   background: #fff;
-  border: 1px solid #f1dede;
-  color: #d1495b;
+  border: 1px solid #fecaca;
+  color: #dc2626;
 }
 
 .record-btn-delete:hover {
-  background: #fdf3f4;
-  border-color: #e6c4c8;
+  background: #fef2f2;
+  border-color: #fca5a5;
 }
 
 /* The delete form wrapper must not grow */
@@ -242,9 +250,9 @@
   margin: 0;
 }
 
-/* ---- RTL: keep View (start) · Edit · Delete (end) order --------- */
+/* Natural RTL layout order for actions (View on start, Edit in middle, Delete on end) */
 body[dir='rtl'] .record-actions {
-  flex-direction: row-reverse;
+  flex-direction: row;
 }
 
 /* ---- Archive Navigation Tabs ----------------------------------- */

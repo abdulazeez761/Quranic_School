@@ -10,11 +10,14 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#648c51" />
+    <meta name="theme-color" content="#24583e" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="#648c51" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="#24583e" />
     <title>@ViewData["Title"] - @Localizer["title"]</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <partial name="_AdminStyles" />
     <link rel="stylesheet" href="~/css/admin/mobile-optimization.css" asp-append-version="true" />
@@ -23,15 +26,28 @@
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     }
     <link rel="icon" type="image/svg+xml"
-          href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'><path fill='%23648c51' d='M249.6 471.5c10.8 3.8 22.4-4.1 22.4-15.5V78.6c0-4.2-1.6-8.4-5-11C247.4 52 202.4 32 144 32C93.5 32 46.3 45.3 18.1 56.2C6.5 60.9 0 71.7 0 83.8V394.1c0 11.9 12.8 20.2 24.1 16.5C55.6 399.8 95.2 384 144 384c46.6 0 80.4 11.6 105.6 23.5zM288 78.6V456c0 11.4 11.7 19.3 22.4 15.5C335.6 459.6 369.4 448 416 448c48.8 0 84.4 15.8 119.9 26.6C547.2 478.3 560 470 560 458.1V83.8c0-12.1-6.5-22.9-18.1-27.6C513.7 45.3 466.5 32 416 32c-58.4 0-103.4 20-123 35.6c-3.3 2.6-5 6.8-5 11z'/></svg>" />
+          href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'><path fill='%2324583e' d='M249.6 471.5c10.8 3.8 22.4-4.1 22.4-15.5V78.6c0-4.2-1.6-8.4-5-11C247.4 52 202.4 32 144 32C93.5 32 46.3 45.3 18.1 56.2C6.5 60.9 0 71.7 0 83.8V394.1c0 11.9 12.8 20.2 24.1 16.5C55.6 399.8 95.2 384 144 384c46.6 0 80.4 11.6 105.6 23.5zM288 78.6V456c0 11.4 11.7 19.3 22.4 15.5C335.6 459.6 369.4 448 416 448c48.8 0 84.4 15.8 119.9 26.6C547.2 478.3 560 470 560 458.1V83.8c0-12.1-6.5-22.9-18.1-27.6C513.7 45.3 466.5 32 416 32c-58.4 0-103.4 20-123 35.6c-3.3 2.6-5 6.8-5 11z'/></svg>" />
     <link rel="icon" type="image/png" sizes="96x96" href="/icons/icon-96.png" />
 </head>
 
 <body>
-    <!-- Mobile Sidebar Toggle -->
-    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
-        <i class='bx bx-menu'></i>
-    </button>
+    <!-- Mobile Top App Header -->
+    <header class="admin-mobile-header" aria-label="شريط الجوال">
+        <div class="admin-mobile-brand">
+            <div class="admin-mobile-brand-icon">
+                <i class='bx bxs-book-heart'></i>
+            </div>
+            <div>
+                <h1 class="admin-mobile-brand-title">@Localizer["title"]</h1>
+                <p class="admin-mobile-brand-subtitle">لوحة إدارة المركز</p>
+            </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="admin-mobile-toggle-btn" id="sidebarToggle" aria-label="قائمة التنقل">
+                <i class='bx bx-menu'></i>
+            </button>
+        </div>
+    </header>
 
     <!-- Sidebar Overlay for Mobile -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -41,30 +57,36 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main Navigation">
             <div class="logo">
+                <i class='bx bxs-book-heart' style="font-size: 28px; color: var(--admin-accent-gold, #c28e2e); margin-inline-end: 8px;"></i>
                 <h2>@Localizer["title"]</h2>
             </div>
 
             <nav>
                 <ul id="navigatorContainer">
+                    <!-- المجموعة 1: نظرة عامة -->
+                    <li class="sidebar-nav-group-title">نظرة عامة</li>
                     <li class="@IsActive("Home", "Index", "Admin")">
                         <a asp-area="Admin" asp-controller="Home" asp-action="Index"
                                aria-current="@(IsActive("Home", "Index", "Admin") == "active" ? "page" : "")">
-                            <i class='bx bx-home' aria-hidden="true"></i>
+                            <i class='bx bx-home-alt-2' aria-hidden="true"></i>
                             <span>@Localizer["Institute_Info"]</span>
+                        </a>
+                    </li>
+
+                    <!-- المجموعة 2: إدارة الأشخاص -->
+                    <li class="sidebar-nav-group-title">الأشخاص والمنتسبون</li>
+                    <li class="@IsActive("Students", "Index", "Admin")">
+                        <a asp-area="Admin" asp-controller="Students" asp-action="Index"
+                               aria-current="@(IsActive("Students", "Index", "Admin") == "active" ? "page" : "")">
+                            <i class='bx bx-user' aria-hidden="true"></i>
+                            <span>@Localizer["Student_Management"]</span>
                         </a>
                     </li>
                     <li class="@IsActive("Teachers", "Index", "Admin")">
                         <a asp-area="Admin" asp-controller="Teachers" asp-action="Index"
                                aria-current="@(IsActive("Teachers", "Index", "Admin") == "active" ? "page" : "")">
                             <i class='bx bx-chalkboard' aria-hidden="true"></i>
-                            <span>@Localizer["Teacher_Management"] </span>
-                        </a>
-                    </li>
-                    <li class="@IsActive("Students", "Index", "Admin")">
-                        <a asp-area="Admin" asp-controller="Students" asp-action="Index"
-                               aria-current="@(IsActive("Students", "Index", "Admin") == "active" ? "page" : "")">
-                            <i class='bx bx-user' aria-hidden="true"></i>
-                            <span>@Localizer["Student_Management"]</span>
+                            <span>@Localizer["Teacher_Management"]</span>
                         </a>
                     </li>
                     <li class="@IsActive("Parents", "Index", "Admin")">
@@ -74,18 +96,21 @@
                             <span>@Localizer["Parent_Management"]</span>
                         </a>
                     </li>
-                    <li class="@IsActive("StudyPrograms", "Index", "Admin")">
-                        <a asp-area="Admin" asp-controller="StudyPrograms" asp-action="Index"
-                               aria-current="@(IsActive("StudyPrograms", "Index", "Admin") == "active" ? "page" : "")">
-                            <i class='bx bx-book-open' aria-hidden="true"></i>
-                            <span>البرامج التعليمية</span>
-                        </a>
-                    </li>
+
+                    <!-- المجموعة 3: التعليم والحلقات -->
+                    <li class="sidebar-nav-group-title">التعليم والقرآن</li>
                     <li class="@IsActive("Classes", "Index", "Admin")">
                         <a asp-area="Admin" asp-controller="Classes" asp-action="Index"
                                aria-current="@(IsActive("Classes", "Index", "Admin") == "active" ? "page" : "")">
                             <i class='bx bx-group' aria-hidden="true"></i>
                             <span>@Localizer["Session_Management"]</span>
+                        </a>
+                    </li>
+                    <li class="@IsActive("StudyPrograms", "Index", "Admin")">
+                        <a asp-area="Admin" asp-controller="StudyPrograms" asp-action="Index"
+                               aria-current="@(IsActive("StudyPrograms", "Index", "Admin") == "active" ? "page" : "")">
+                            <i class='bx bx-book-open' aria-hidden="true"></i>
+                            <span>البرامج التعليمية</span>
                         </a>
                     </li>
                     <li class="@IsActive("Matns", "Index", "Admin")">
@@ -95,13 +120,9 @@
                             <span>مكتبة المتون</span>
                         </a>
                     </li>
-                    <li class="@IsActive("TeacherAttendance", "Index", "Admin")">
-                        <a asp-area="Admin" asp-controller="TeacherAttendance" asp-action="Index"
-                               aria-current="@(IsActive("TeacherAttendance", "Index", "Admin") == "active" ? "page" : "")">
-                            <i class='bx bx-user-check' aria-hidden="true"></i>
-                            <span>@Localizer["Teacher_Attendance"]</span>
-                        </a>
-                    </li>
+
+                    <!-- المجموعة 4: التقارير -->
+                    <li class="sidebar-nav-group-title">التقارير والمتابعة</li>
                     <li class="@IsActive("Reports", "Daily", "Admin")">
                         <a asp-area="Admin" asp-controller="Reports" asp-action="Daily"
                                aria-current="@(IsActive("Reports", "Daily", "Admin") == "active" ? "page" : "")">
@@ -116,16 +137,24 @@
                             <span>@Localizer["Wird_Reports"]</span>
                         </a>
                     </li>
-
-                    @* <li class="@IsActive("Videos", "Index", "Admin")">
-                        <a asp-area="Admin" asp-controller="Videos" asp-action="Index"
-                            aria-current="@(IsActive("Videos", "Index", "Admin") == "active" ? "page" : "")">
-                            <i class='bx bx-video' aria-hidden="true"></i>
-                            <span>@Localizer["Post"]</span>
+                    <li class="@IsActive("Students", "Reports", "Admin")">
+                        <a asp-area="Admin" asp-controller="Students" asp-action="Reports"
+                               aria-current="@(IsActive("Students", "Reports", "Admin") == "active" ? "page" : "")">
+                            <i class='bx bx-bar-chart-alt-2' aria-hidden="true"></i>
+                            <span>تقارير تقدم الطلاب</span>
                         </a>
-                    </li> *@
-                </ul>
+                    </li>
 
+                    <!-- المجموعة 5: الحضور والغياب (read-only link) -->
+                    <li class="sidebar-nav-group-title">الحضور والغياب</li>
+                    <li class="@IsActive("TeacherAttendance", "Index", "Admin")">
+                        <a asp-area="Admin" asp-controller="TeacherAttendance" asp-action="Index"
+                               aria-current="@(IsActive("TeacherAttendance", "Index", "Admin") == "active" ? "page" : "")">
+                            <i class='bx bx-user-check' aria-hidden="true"></i>
+                            <span>@Localizer["Teacher_Attendance"]</span>
+                        </a>
+                    </li>
+                </ul>
 
                 <div class="sidebar-footer">
                     <div class="language-switcher">
@@ -146,7 +175,6 @@
                                     <i class='bx bx-check'></i>
                                     <span>English</span>
                                 </a>
-
                             </li>
                         </ul>
                     </div>
@@ -166,6 +194,30 @@
             </section>
         </main>
     </div>
+
+    <!-- Mobile Bottom Navigation Bar -->
+    <nav class="admin-bottom-nav" aria-label="التنقل السريع للجوال">
+        <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="admin-bottom-nav-item @(IsActive("Home", "Index", "Admin"))">
+            <i class='bx bx-home-alt-2'></i>
+            <span>الرئيسية</span>
+        </a>
+        <a asp-area="Admin" asp-controller="Students" asp-action="Index" class="admin-bottom-nav-item @(IsActive("Students", "Index", "Admin"))">
+            <i class='bx bx-user'></i>
+            <span>الطلاب</span>
+        </a>
+        <a asp-area="Admin" asp-controller="Classes" asp-action="Index" class="admin-bottom-nav-item @(IsActive("Classes", "Index", "Admin"))">
+            <i class='bx bx-group'></i>
+            <span>الحلقات</span>
+        </a>
+        <a asp-area="Admin" asp-controller="Reports" asp-action="Daily" class="admin-bottom-nav-item @(IsActive("Reports", "Daily", "Admin"))">
+            <i class='bx bx-calendar-event'></i>
+            <span>التقارير</span>
+        </a>
+        <button type="button" class="admin-bottom-nav-item" id="bottomNavMenuToggle" aria-label="المزيد من الخيارات">
+            <i class='bx bx-grid-alt'></i>
+            <span>المزيد</span>
+        </button>
+    </nav>
 
 <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
@@ -189,10 +241,18 @@
         if (!string.Equals(controller, currentController, StringComparison.OrdinalIgnoreCase))
             return "";
 
-        // شعبة التقارير تستضيف أكثر من عنصر في القائمة (اليومي، الأوراد) فنميّز بينها بالإجراء.
-        // بقية الشعب لها عنصر واحد، فتبقى مُبرزة في كل صفحاتها الفرعية.
         if (string.Equals(controller, "Reports", StringComparison.OrdinalIgnoreCase)
             && !string.Equals(action, currentAction, StringComparison.OrdinalIgnoreCase))
+            return "";
+
+        if (string.Equals(controller, "Students", StringComparison.OrdinalIgnoreCase)
+            && string.Equals(action, "Reports", StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(currentAction, "Reports", StringComparison.OrdinalIgnoreCase))
+            return "";
+
+        if (string.Equals(controller, "Students", StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(action, "Reports", StringComparison.OrdinalIgnoreCase)
+            && string.Equals(currentAction, "Reports", StringComparison.OrdinalIgnoreCase))
             return "";
 
         return "active";

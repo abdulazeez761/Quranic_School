@@ -60,11 +60,18 @@
 .filter-tabs {
   display: flex;
   gap: var(--space-xs);
-  flex-wrap: wrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+
+.filter-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .filter-tab {
-  padding: var(--space-xs) var(--space-md);
+  padding: 6px var(--space-md);
   border-radius: var(--radius-full);
   font-size: var(--font-size-xs);
   font-weight: 600;
@@ -73,6 +80,11 @@
   background: var(--light-gray);
   border: 1px solid var(--border-color);
   transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
 }
 
 .filter-tab:hover {

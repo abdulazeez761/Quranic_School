@@ -478,6 +478,22 @@
 
 /* Responsive filters */
 @media (max-width: 768px) {
+  .admin-student-reports {
+    padding: 0;
+  }
+  .reports-header {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  .reports-header .section-title {
+    justify-content: center;
+  }
+  .reports-header .back-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
   .filters-grid {
     grid-template-columns: 1fr;
     gap: var(--space-md);
