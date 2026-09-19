@@ -574,3 +574,521 @@
     flex-direction: column;
   }
 }
+
+/* ==========================================================================
+   Prescribed Matn Matrix & Achievement Log Card
+   Modern, Clean, High-Contrast Design
+   ========================================================================== */
+
+.matn-matrix-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+  overflow: hidden;
+  margin-bottom: 1.75rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.matn-matrix-card:hover {
+  box-shadow: 0 8px 26px -4px rgba(15, 23, 42, 0.08);
+}
+
+.matn-matrix-header {
+  background: #ffffff;
+  padding: 1.25rem 1.75rem;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.matn-matrix-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.matn-title-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  color: #059669;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  border: 1px solid #a7f3d0;
+}
+
+.matn-matrix-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.matn-matrix-subtitle {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 500;
+  display: block;
+  margin-top: 0.2rem;
+}
+
+.matn-count-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #f8fafc;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+/* Table Styling */
+.matn-matrix-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: right;
+}
+
+.matn-matrix-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 1rem 1.25rem;
+  border-bottom: 2px solid #e2e8f0;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.matn-matrix-table td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+  font-size: 0.88rem;
+  background: #ffffff;
+  transition: background-color 0.15s ease;
+}
+
+.matn-matrix-table tbody tr:hover td {
+  background-color: #fafbfc;
+}
+
+.matn-matrix-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Cell content styling */
+.matn-cell-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.matn-num-tag {
+  background: #f1f5f9;
+  color: #0f172a;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  display: inline-block;
+}
+
+.matn-name-text {
+  font-weight: 800;
+  color: #1e293b;
+  font-size: 0.95rem;
+}
+
+.matn-cell-author {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Status Badges */
+.matn-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.matn-status-badge.status-done {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.matn-status-badge.status-inprogress {
+  background: #fffbeb;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.matn-status-badge.status-notstarted {
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+.matn-status-badge.status-hifz-done {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.matn-status-badge.status-hifz-inprogress {
+  background: #f5f3ff;
+  color: #6b21a8;
+  border: 1px solid #ddd6fe;
+}
+
+.matn-status-badge.status-exam-pass {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.matn-status-badge.status-exam-pass.high-score {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1.5px solid #22c55e;
+}
+
+.matn-status-badge.status-exam-fail {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+.matn-status-badge.status-exam-none {
+  background: #f8fafc;
+  color: #94a3b8;
+  border: 1px solid #e2e8f0;
+}
+
+.score-pill {
+  background: #ffffff;
+  border: 1px solid currentColor;
+  padding: 0.1rem 0.45rem;
+  border-radius: 9999px;
+  font-weight: 800;
+  font-size: 0.74rem;
+  margin-right: 0.35rem;
+}
+
+.matn-date-sub {
+  font-size: 0.72rem;
+  color: #64748b;
+  margin-top: 0.35rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.matn-notes-cell {
+  font-size: 0.84rem;
+  color: #475569;
+  line-height: 1.45;
+  max-width: 200px;
+}
+
+/* Button Quick Recite */
+.btn-quick-recite {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1.5px solid #bbf7d0;
+  padding: 0.45rem 0.95rem;
+  border-radius: 9px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-quick-recite:hover {
+  background: #16a34a;
+  color: #ffffff;
+  border-color: #16a34a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+}
+
+.btn-quick-recite:active {
+  transform: translateY(0);
+}
+
+/* Button Grade Action */
+.btn-grade-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: #16a34a;
+  color: #ffffff;
+  border: 0;
+  padding: 0.45rem 0.95rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.2);
+  white-space: nowrap;
+}
+
+.btn-grade-action:hover {
+  background: #15803d;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3);
+}
+
+.clickable-badge {
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.clickable-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================================================
+   Teacher Matn Progress & Exam Modal
+   Modern, Clean, High-Contrast Design
+   ========================================================================== */
+
+.teacher-matn-modal-overlay {
+  display: none;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 99999 !important;
+  background: rgba(15, 23, 42, 0.65) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1rem;
+}
+
+.teacher-matn-modal-overlay.show,
+.teacher-matn-modal-overlay.is-open {
+  display: flex !important;
+}
+
+.teacher-matn-modal-dialog {
+  width: 100%;
+  max-width: 620px;
+  margin: auto;
+  position: relative;
+  z-index: 100000;
+  animation: tModalSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes tModalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.teacher-matn-modal-card {
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.25);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.teacher-matn-modal-header {
+  background: linear-gradient(135deg, #15803d 0%, #16a34a 100%);
+  color: #ffffff;
+  padding: 1.15rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.teacher-matn-modal-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #ffffff;
+}
+
+.teacher-matn-modal-close {
+  background: rgba(255, 255, 255, 0.15);
+  border: 0;
+  color: #ffffff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.teacher-matn-modal-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.teacher-matn-modal-body {
+  padding: 1.5rem;
+  max-height: calc(85vh - 130px);
+  overflow-y: auto;
+}
+
+.teacher-matn-modal-footer {
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+/* Context Banner */
+.matn-context-banner {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.9rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.matn-context-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.matn-context-label {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.matn-context-val {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.btn-today-date {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-today-date:hover {
+  background: #16a34a;
+  color: #ffffff;
+  border-color: #16a34a;
+}
+
+.score-presets {
+  margin-top: 0.5rem;
+}
+
+.score-preset-btn {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #334155;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.score-preset-btn:hover {
+  background: #16a34a;
+  color: #ffffff;
+  border-color: #16a34a;
+}
+
+.score-preset-btn.preset-clear {
+  border-color: #e2e8f0;
+  color: #94a3b8;
+  background: #f8fafc;
+}
+
+.score-preset-btn.preset-clear:hover {
+  background: #64748b;
+  color: #ffffff;
+}
+
+.score-rating-pill {
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+

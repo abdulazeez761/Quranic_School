@@ -17,17 +17,20 @@ public class MatnAssignmentService : IMatnAssignmentService
     private readonly IClassRepository _classRepository;
     private readonly IStudentRepository _studentRepository;
     private readonly IMatnRepository _matnRepository;
+    private readonly IStudentMatnProgressRepository _progressRepository;
 
     public MatnAssignmentService(
         IMatnAssignmentRepository assignmentRepository,
         IClassRepository classRepository,
         IStudentRepository studentRepository,
-        IMatnRepository matnRepository)
+        IMatnRepository matnRepository,
+        IStudentMatnProgressRepository progressRepository)
     {
         _assignmentRepository = assignmentRepository;
         _classRepository = classRepository;
         _studentRepository = studentRepository;
         _matnRepository = matnRepository;
+        _progressRepository = progressRepository;
     }
 
     public async Task<MatnAssignmentDto?> GetByIdAsync(Guid id)
@@ -115,6 +118,12 @@ public class MatnAssignmentService : IMatnAssignmentService
         };
 
         var created = await _assignmentRepository.AddAsync(assignment);
+
+        if (dto.MatnId.HasValue)
+        {
+            await SyncProgressOnAssignmentAsync(dto.StudentId, dto.MatnId.Value, dto.PerformanceType);
+        }
+
         return (true, "تم رصد التسميع بنجاح.", created.Id);
     }
 
@@ -172,7 +181,61 @@ public class MatnAssignmentService : IMatnAssignmentService
         assignment.Note = dto.Note?.Trim();
 
         var updated = await _assignmentRepository.UpdateAsync(assignment);
+        if (updated && dto.MatnId.HasValue)
+        {
+            await SyncProgressOnAssignmentAsync(assignment.StudentId, dto.MatnId.Value, dto.PerformanceType);
+        }
         return updated ? (true, "تم تحديث ورد المتن بنجاح.") : (false, "فشل حفظ التعديلات.");
+    }
+
+    private async Task SyncProgressOnAssignmentAsync(Guid studentId, Guid matnId, MatnPerformanceType performanceType)
+    {
+        try
+        {
+            var existing = await _progressRepository.GetByStudentAndMatnAsync(studentId, matnId);
+            var isMudarasah = (performanceType == MatnPerformanceType.Mudarasah);
+            var isHifz = (performanceType == MatnPerformanceType.Memorization || performanceType == MatnPerformanceType.Revision);
+
+            if (existing == null)
+            {
+                var progress = new StudentMatnProgress
+                {
+                    StudentId = studentId,
+                    MatnId = matnId,
+                    StudyStatus = isMudarasah ? StudyStatus.InProgress : StudyStatus.NotStarted,
+                    StudyStartedAt = isMudarasah ? DateTime.UtcNow : null,
+                    MemorizationStatus = isHifz ? MemorizationStatus.InProgress : MemorizationStatus.NotStarted,
+                    ExamStatus = ExamStatus.NotTested,
+                    LastUpdatedAt = DateTime.UtcNow
+                };
+                await _progressRepository.AddAsync(progress);
+            }
+            else
+            {
+                bool modified = false;
+                if (isMudarasah && existing.StudyStatus == StudyStatus.NotStarted)
+                {
+                    existing.StudyStatus = StudyStatus.InProgress;
+                    existing.StudyStartedAt ??= DateTime.UtcNow;
+                    modified = true;
+                }
+                else if (isHifz && existing.MemorizationStatus == MemorizationStatus.NotStarted)
+                {
+                    existing.MemorizationStatus = MemorizationStatus.InProgress;
+                    modified = true;
+                }
+
+                if (modified)
+                {
+                    existing.LastUpdatedAt = DateTime.UtcNow;
+                    await _progressRepository.UpdateAsync(existing);
+                }
+            }
+        }
+        catch
+        {
+            // Non-blocking background sync
+        }
     }
 
     public async Task<(bool Success, string Message)> UpdateStatusAsync(UpdateMatnStatusDto dto, Guid teacherId)

@@ -1222,9 +1222,18 @@
                 }
             }
 
+            const defaultAdminStudentName = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(studentFullName));
+
+            function decodeHtmlEntities(str) {
+                if (!str) return '';
+                const txt = document.createElement('textarea');
+                txt.innerHTML = str;
+                return txt.value;
+            }
+
             function openAdminNewMatnModal() {
                 const studentId = '@student.UserId';
-                const studentName = '@studentFullName';
+                const studentName = defaultAdminStudentName;
 
                 document.getElementById('adminModalMatnTitleRow').style.display = 'none';
                 document.getElementById('adminModalMatnSelectRow').style.display = 'flex';
@@ -1258,7 +1267,7 @@
                 const row = el.closest('tr');
                 if (!row) return;
                 const studentId = row.getAttribute('data-student-id');
-                const studentName = row.getAttribute('data-student-name');
+                const studentName = decodeHtmlEntities(row.getAttribute('data-student-name')) || defaultAdminStudentName;
                 const matnId = row.getAttribute('data-matn-id');
                 const matnTitle = row.getAttribute('data-matn-title');
                 const studyStatus = parseInt(row.getAttribute('data-study-status')) || 0;
@@ -1283,7 +1292,7 @@
                 currentAdminPassingGrade = parseFloat(passingGrade) || 60;
                 document.getElementById('adminModalStudentId').value = studentId || '';
                 document.getElementById('adminModalMatnId').value = matnId || '';
-                document.getElementById('adminModalStudentName').textContent = studentName || '-';
+                document.getElementById('adminModalStudentName').textContent = decodeHtmlEntities(studentName) || defaultAdminStudentName || '-';
                 document.getElementById('adminModalMatnTitle').textContent = matnTitle || '-';
                 const passEl = document.getElementById('adminModalPassingGrade');
                 if (passEl) passEl.textContent = currentAdminPassingGrade + '%';

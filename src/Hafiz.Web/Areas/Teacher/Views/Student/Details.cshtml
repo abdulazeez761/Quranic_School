@@ -363,20 +363,24 @@
 
     <!-- سجل إنجاز واختبارات المتون المقررة -->
     <div class="matn-matrix-card mb-4">
-        <div class="matn-matrix-header d-flex align-items-center justify-content-between flex-wrap gap-2">
-            <h4 class="matn-matrix-title mb-0">
-                <i class='bx bx-book-reader'></i>
-                <span>سجل إنجاز واختبارات المتون العلمية المقررة</span>
-            </h4>
-            <div class="d-flex align-items-center gap-2">
+        <div class="matn-matrix-header">
+            <div class="matn-matrix-header-title">
+                <div class="matn-title-icon">
+                    <i class='bx bx-award'></i>
+                </div>
+                <div>
+                    <h4 class="matn-matrix-title">سجل إنجاز واختبارات المتون العلمية المقررة</h4>
+                    <span class="matn-matrix-subtitle">متابعة إتمام المدارسة والحفظ وتحديد الحالة ورصد نتائج ودرجات الاختبارات</span>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
                 @if (Model.MatnProgresses != null && Model.MatnProgresses.Any())
                 {
-                    <span class="badge bg-primary rounded-pill">@Model.MatnProgresses.Count() متون مقررة</span>
+                    <span class="matn-count-badge">
+                        <i class='bx bx-book-bookmark'></i>
+                        <span>@Model.MatnProgresses.Count() متون مقررة</span>
+                    </span>
                 }
-                <button type="button" class="t-btn t-btn-primary t-btn-sm" onclick="openAssignMatnModal('@Model.Student.UserId', '@studentFullName')">
-                    <i class='bx bx-plus-circle'></i>
-                    <span>رصد تسميع متن جديد</span>
-                </button>
             </div>
         </div>
 
@@ -386,132 +390,147 @@
                 <table class="matn-matrix-table">
                     <thead>
                         <tr>
-                            <th style="min-width: 180px;">المتن المقرر</th>
-                            <th style="min-width: 130px;" class="text-center">حالة المدارسة</th>
-                            <th style="min-width: 130px;" class="text-center">حالة الحفظ</th>
-                            <th style="min-width: 150px;" class="text-center">الاختبار والدرجة</th>
-                            <th style="min-width: 150px;">ملاحظات المعلم</th>
-                            <th style="min-width: 160px;" class="text-center">الإجراء</th>
+                            <th style="min-width: 200px;">المتن المقرر</th>
+                            <th style="min-width: 140px;" class="text-center">حالة المدارسة</th>
+                            <th style="min-width: 140px;" class="text-center">حالة الحفظ</th>
+                            <th style="min-width: 160px;" class="text-center">الاختبار والدرجة</th>
+                            <th style="min-width: 150px;">الملاحظات</th>
+                            <th style="min-width: 130px;" class="text-center">تحديد ورصد</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var prog in Model.MatnProgresses)
                         {
-                            <tr>
+                            var passGrade = prog.PassingGrade > 0 ? prog.PassingGrade : 60m;
+                            var isActuallyPassed = prog.ExamStatus == ExamStatus.Passed && (!prog.Score.HasValue || prog.Score.Value >= passGrade);
+                            var isActuallyFailed = prog.ExamStatus == ExamStatus.Failed || (prog.Score.HasValue && prog.Score.Value < passGrade);
+
+                            <tr class="teacher-matn-row"
+                                data-student-id="@Model.Student.UserId"
+                                data-student-name="@studentFullName"
+                                data-matn-id="@prog.MatnId"
+                                data-matn-title="@prog.MatnTitle"
+                                data-study-status="@((int)prog.StudyStatus)"
+                                data-mem-status="@((int)prog.MemorizationStatus)"
+                                data-exam-status="@((int)prog.ExamStatus)"
+                                data-score="@(prog.Score?.ToString() ?? "")"
+                                data-exam-date="@(prog.ExamDate?.ToString("yyyy-MM-dd") ?? "")"
+                                data-notes="@(prog.TeacherNotes ?? "")"
+                                data-passing-grade="@passGrade">
                                 <td>
-                                    <div class="matn-title-pill">
-                                        <span class="matn-order-badge">#@prog.MatnOrder</span>
-                                        <span>@prog.MatnTitle</span>
+                                    <div class="matn-cell-title">
+                                        <span class="matn-num-tag">#@prog.MatnOrder</span>
+                                        <span class="matn-name-text">@prog.MatnTitle</span>
                                     </div>
                                     @if (!string.IsNullOrEmpty(prog.MatnAuthor))
                                     {
-                                        <div class="text-muted small mt-1" style="font-size: 11px;">@prog.MatnAuthor</div>
+                                        <div class="matn-cell-author">
+                                            <i class='bx bx-feather text-muted'></i>
+                                            <span>@prog.MatnAuthor</span>
+                                        </div>
                                     }
                                 </td>
                                 <td class="text-center">
                                     @if (prog.StudyStatus == StudyStatus.Completed)
                                     {
-                                        <span class="status-pill status-study-completed">
+                                        <span class="matn-status-badge status-done clickable-badge"
+                                              onclick="openTeacherRowMatnModal(this)" title="انقر لتعديل الحالة أو الدرجة">
                                             <i class='bx bx-check-circle'></i> مكتمل
                                         </span>
                                         @if (prog.StudyCompletedAt.HasValue)
                                         {
-                                            <div class="text-muted small mt-1" style="font-size: 10px;">@prog.StudyCompletedAt.Value.ToString("yyyy-MM-dd")</div>
+                                            <div class="matn-date-sub">@prog.StudyCompletedAt.Value.ToString("yyyy-MM-dd")</div>
                                         }
                                     }
                                     else if (prog.StudyStatus == StudyStatus.InProgress)
                                     {
-                                        <span class="status-pill status-study-inprogress">
+                                        <span class="matn-status-badge status-inprogress clickable-badge"
+                                              onclick="openTeacherRowMatnModal(this)" title="انقر لتعديل الحالة أو الدرجة">
                                             <i class='bx bx-loader-circle'></i> قيد الدراسة
                                         </span>
                                     }
                                     else
                                     {
-                                        <span class="status-pill status-study-notstarted">
-                                            <i class='bx bx-circle'></i> لم يبدأ
+                                        <span class="matn-status-badge status-notstarted clickable-badge"
+                                              onclick="openTeacherRowMatnModal(this)" title="انقر لتعديل الحالة أو الدرجة">
+                                            <i class='bx bx-minus'></i> لم يبدأ
                                         </span>
                                     }
                                 </td>
                                 <td class="text-center">
                                     @if (prog.MemorizationStatus == MemorizationStatus.Memorized)
                                     {
-                                        <span class="status-pill status-mem-memorized">
+                                        <span class="matn-status-badge status-hifz-done clickable-badge"
+                                              onclick="openTeacherRowMatnModal(this)" title="انقر لتعديل الحالة أو الدرجة">
                                             <i class='bx bx-check-double'></i> تم الحفظ
                                         </span>
                                         @if (prog.MemorizationCompletedAt.HasValue)
                                         {
-                                            <div class="text-muted small mt-1" style="font-size: 10px;">@prog.MemorizationCompletedAt.Value.ToString("yyyy-MM-dd")</div>
+                                            <div class="matn-date-sub">@prog.MemorizationCompletedAt.Value.ToString("yyyy-MM-dd")</div>
                                         }
                                     }
                                     else if (prog.MemorizationStatus == MemorizationStatus.InProgress)
                                     {
-                                        <span class="status-pill status-mem-inprogress">
+                                        <span class="matn-status-badge status-hifz-inprogress clickable-badge"
+                                              onclick="openTeacherRowMatnModal(this)" title="انقر لتعديل الحالة أو الدرجة">
                                             <i class='bx bx-bookmarks'></i> قيد الحفظ
                                         </span>
                                     }
                                     else
                                     {
-                                        <span class="status-pill status-mem-notstarted">
-                                            <i class='bx bx-circle'></i> لم يبدأ
+                                        <span class="matn-status-badge status-notstarted clickable-badge"
+                                              onclick="openTeacherRowMatnModal(this)" title="انقر لتعديل الحالة أو الدرجة">
+                                            <i class='bx bx-minus'></i> لم يبدأ
                                         </span>
                                     }
                                 </td>
                                 <td class="text-center">
-                                    @{
-                                        var passGrade = prog.PassingGrade > 0 ? prog.PassingGrade : 60m;
-                                        var isActuallyPassed = prog.ExamStatus == ExamStatus.Passed && (!prog.Score.HasValue || prog.Score.Value >= passGrade);
-                                        var isActuallyFailed = prog.ExamStatus == ExamStatus.Failed || (prog.Score.HasValue && prog.Score.Value < passGrade);
-                                    }
                                     @if (isActuallyPassed)
                                     {
-                                        <span class="status-pill status-exam-passed @(prog.Score >= 90 ? "high-score" : "")">
-                                            <i class='bx @(prog.Score >= 90 ? "bxs-star text-warning" : "bx-check")'></i>
+                                        <span class="matn-status-badge status-exam-pass clickable-badge @(prog.Score >= 90 ? "high-score" : "")"
+                                              onclick="openTeacherRowMatnModal(this)" title="انقر لتعديل نتيجة أو درجة الاختبار">
+                                            <i class='bx @(prog.Score >= 90 ? "bxs-star text-warning" : "bx-award")'></i>
                                             <span>ناجح</span>
                                             @if (prog.Score.HasValue)
                                             {
-                                                <span class="score-badge">@(prog.Score.Value.ToString("0.##"))%</span>
+                                                <span class="score-pill">@(prog.Score.Value.ToString("0.##"))%</span>
                                             }
                                         </span>
                                     }
                                     else if (isActuallyFailed)
                                     {
-                                        <span class="status-pill status-exam-failed">
+                                        <span class="matn-status-badge status-exam-fail clickable-badge"
+                                              onclick="openTeacherRowMatnModal(this)" title="انقر لتعديل نتيجة أو درجة الاختبار">
                                             <i class='bx bx-x'></i>
                                             <span>راسب</span>
                                             @if (prog.Score.HasValue)
                                             {
-                                                <span class="score-badge">@(prog.Score.Value.ToString("0.##"))%</span>
+                                                <span class="score-pill">@(prog.Score.Value.ToString("0.##"))%</span>
                                             }
                                         </span>
                                     }
                                     else
                                     {
-                                        <span class="status-pill status-exam-none">
+                                        <span class="matn-status-badge status-exam-none clickable-badge"
+                                              onclick="openTeacherRowMatnModal(this)" title="انقر لرصد نتيجة الاختبار والدرجة">
                                             <i class='bx bx-minus'></i> لم يختبر
                                         </span>
                                     }
                                     @if (prog.ExamDate.HasValue)
                                     {
-                                        <div class="text-muted small mt-1" style="font-size: 10px;">
+                                        <div class="matn-date-sub">
                                             <i class='bx bx-calendar'></i> @prog.ExamDate.Value.ToString("yyyy-MM-dd")
                                         </div>
                                     }
                                 </td>
-                                <td class="small text-muted">
+                                <td class="matn-notes-cell">
                                     @(string.IsNullOrEmpty(prog.TeacherNotes) ? "—" : prog.TeacherNotes)
                                 </td>
                                 <td class="text-center">
-                                    <div class="d-flex align-items-center justify-content-center gap-1 flex-wrap">
-                                        <button type="button" class="btn-matn-action"
-                                                onclick="openProgressModal('@Model.Student.UserId', '@studentFullName', '@prog.MatnId', '@prog.MatnTitle', @((int)prog.StudyStatus), @((int)prog.MemorizationStatus), @((int)prog.ExamStatus), '@(prog.Score?.ToString() ?? "")', '@(prog.ExamDate?.ToString("yyyy-MM-dd") ?? "")', '@((prog.TeacherNotes ?? "").Replace("'", "\\'").Replace("\n", " "))')">
-                                            <i class='bx bx-edit-alt'></i>
-                                            <span>تحديد الحالة</span>
-                                        </button>
-                                        <button type="button" class="t-btn t-btn-sm t-btn-outline p-1" title="رصد تسميع لهذا المتن"
-                                                onclick="openAssignMatnModal('@Model.Student.UserId', '@studentFullName', '@prog.MatnTitle', '@prog.MatnId')">
-                                            <i class='bx bx-plus text-primary'></i>
-                                        </button>
-                                    </div>
+                                    <button type="button" class="btn-grade-action" onclick="openTeacherRowMatnModal(this)" title="تحديد حالة المتن ورصد درجة الاختبار">
+                                        <i class='bx bx-slider-alt'></i>
+                                        <span>تحديد ورصد</span>
+                                    </button>
                                 </td>
                             </tr>
                         }
@@ -521,119 +540,10 @@
         }
         else
         {
-            <div class="t-empty-state">
+            <div class="t-empty-state py-5">
                 <div class="t-empty-icon"><i class='bx bx-book-open'></i></div>
-                <h4 class="t-empty-title">لا توجد سجلات متون مسجلة لهذا الطالب</h4>
-                <p class="t-empty-text">لم يتم تسجيل حالة الطالب في أي متن بعد. يمكنك رصد تقدم الطالب وتحديد درجاته من واجهة المتون العلمية.</p>
-                <a asp-controller="Matn" asp-action="Index" class="btn btn-outline-primary btn-sm mt-2">
-                    <i class='bx bx-bookmarks me-1'></i> الانتقال لصفحة المتون
-                </a>
-            </div>
-        }
-    </div>
-
-    <!-- Matn Assignments Section -->
-    <div class="wirds-section matn-assignments-section">
-        <div class="t-section-header">
-            <h3 class="t-section-title">
-                <i class='bx bx-bookmarks text-primary'></i>
-                <span>سجل تسميع المتون العلمية</span>
-                <span class="t-badge t-badge-matn">@Model.TotalMatnAssignments</span>
-            </h3>
-           
-        </div>
-
-        @if (Model.MatnAssignments != null && Model.MatnAssignments.Any())
-        {
-            <div class="wirds-list">
-                @foreach (var matn in Model.MatnAssignments)
-                {
-                    <div class="wird-item matn-item @(matn.IsUpcoming ? "is-upcoming" : "")">
-                        <div class="wird-header">
-                            <div class="d-flex align-items-center gap-2 flex-wrap">
-                                <span class="t-badge t-badge-matn">
-                                    @matn.PerformanceTypeName
-                                </span>
-                                @if (!string.IsNullOrEmpty(matn.ClassName))
-                                {
-                                    <span class="t-chip">
-                                        <i class='bx bx-group'></i> @matn.ClassName
-                                    </span>
-                                }
-                            </div>
-                            <div class="d-flex align-items-center gap-1">
-                                @if (matn.IsUpcoming)
-                                {
-                                    @await Html.PartialAsync("_UpcomingBadge")
-                                }
-                                <span class="wird-status-badge @(matn.IsCompleted ? "status-completed" : "")">
-                                    @Localizer[matn.Status.ToString()]
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="wird-meta-row">
-                            <span><i class='bx bx-calendar'></i> @matn.AssignedDate.ToString("yyyy-MM-dd")</span>
-                            @if (matn.Amount.HasValue)
-                            {
-                                <span class="t-chip"><i class='bx bx-layer'></i> @matn.Amount.Value.ToString("0.##") @matn.UnitName</span>
-                            }
-                        </div>
-
-                        @if (!string.IsNullOrEmpty(matn.ChapterName) || matn.FromNumber.HasValue || matn.ToNumber.HasValue)
-                        {
-                            <div class="wird-range-compact matn-range-box">
-                                @if (!string.IsNullOrEmpty(matn.ChapterName))
-                                {
-                                    <div class="fw-bold mb-1">
-                                        <i class='bx bx-book-bookmark text-primary me-1'></i> @matn.ChapterName
-                                    </div>
-                                }
-                                @if (matn.FromNumber.HasValue && matn.ToNumber.HasValue)
-                                {
-                                    <div class="small text-muted">
-                                        <strong>الموضع:</strong> من @matn.UnitName @matn.FromNumber إلى @matn.ToNumber
-                                    </div>
-                                }
-                                else if (matn.FromNumber.HasValue)
-                                {
-                                    <div class="small text-muted">
-                                        <strong>الموضع:</strong> من @matn.UnitName @matn.FromNumber
-                                    </div>
-                                }
-                            </div>
-                        }
-
-                        @if (!string.IsNullOrEmpty(matn.Note))
-                        {
-                            <div class="wird-note-compact">
-                                <strong>@Localizer["Notes"]:</strong>
-                                <span>@matn.Note</span>
-                            </div>
-                        }
-                    </div>
-                }
-            </div>
-
-            <!-- Matn Pagination Controls -->
-            <div id="matnPaginationControls" class="pagination-controls mt-3" style="display: none;">
-                <button type="button" class="pagination-btn" id="matnPrevBtn" onclick="changeMatnPage(-1)">
-                    <i class='bx bx-chevron-right'></i>
-                    <span>@Localizer["Previous"]</span>
-                </button>
-                <span class="pagination-info" id="matnPageInfo"></span>
-                <button type="button" class="pagination-btn" id="matnNextBtn" onclick="changeMatnPage(1)">
-                    <span>@Localizer["Next"]</span>
-                    <i class='bx bx-chevron-left'></i>
-                </button>
-            </div>
-        }
-        else
-        {
-            <div class="t-empty-state">
-                <div class="t-empty-icon"><i class='bx bx-bookmarks'></i></div>
-                <h4 class="t-empty-title">لا توجد تسميعات متون مسجلة</h4>
-                <p class="t-empty-text">لا توجد تسميعات متون مسجلة لهذا الطالب حتى الآن.</p>
+                <h4 class="t-empty-title">لا توجد متون علمية مقررة مسجلة لهذا الطالب</h4>
+                <p class="t-empty-text">يتم اعتماد المتون المقررة ورصد نتائج الاختبارات الرسمية من قبل إدارة المعهد.</p>
             </div>
         }
     </div>
@@ -724,54 +634,62 @@
 
 <!-- Include Modals -->
 @await Html.PartialAsync("_StudentRoutinePlanModal")
-@await Html.PartialAsync("_AssignMatnModal")
 
-<!-- Modal: تحديد حالة الطالب مع المتن ورصد الدرجة بتصميم عصري -->
-<div class="modal fade" id="matnProgressModal" tabindex="-1" aria-labelledby="matnProgressModalLabel" aria-hidden="true" dir="rtl">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content matn-modal-content">
-            <div class="modal-header matn-modal-header">
-                <h5 class="modal-title" id="matnProgressModalLabel">
-                    <i class='bx bx-award'></i>
-                    <span>تحديد حالة المتن ورصد الدرجة للطالب</span>
+<!-- =================================================================== -->
+<!-- موديل الاختبار وتحديد الحالة للطالب (بتصميم أنيق وسهل الاستخدام)       -->
+<!-- =================================================================== -->
+<div class="teacher-matn-modal-overlay" id="teacherMatnModal" tabindex="-1" aria-hidden="true" dir="rtl" style="display: none;" onclick="if(event.target === this) closeTeacherMatnModal()">
+    <div class="teacher-matn-modal-dialog">
+        <div class="teacher-matn-modal-card">
+            <div class="teacher-matn-modal-header">
+                <h5 class="teacher-matn-modal-title">
+                    <i class='bx bx-award fs-5'></i>
+                    <span>تحديد حالة المتن ورصد درجة الاختبار</span>
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="teacher-matn-modal-close" aria-label="Close" onclick="closeTeacherMatnModal()">
+                    <i class='bx bx-x'></i>
+                </button>
             </div>
-            <form id="matnProgressForm" onsubmit="saveMatnProgress(event)">
-                <div class="modal-body matn-modal-body">
-                    <input type="hidden" id="modalStudentId" name="studentId" />
-                    <input type="hidden" id="modalMatnId" name="matnId" />
+            <form id="teacherMatnForm" onsubmit="saveTeacherMatnProgress(event)">
+                @Html.AntiForgeryToken()
+                <div class="teacher-matn-modal-body">
+                    <input type="hidden" id="tModalStudentId" name="studentId" value="@Model.Student.UserId" />
+                    <input type="hidden" id="tModalMatnId" name="matnId" />
 
-                    <!-- بطاقة سياق الطالب والمتن -->
-                    <div class="matn-context-banner">
+                    <!-- بطاقة سياق الطالب والمتن ودرجة النجاح -->
+                    <div class="matn-context-banner mb-3">
                         <div class="matn-context-row">
                             <span class="matn-context-label">اسم الطالب:</span>
-                            <span class="matn-context-val" id="modalStudentName">-</span>
+                            <span class="matn-context-val fw-bold" id="tModalStudentName">@studentFullName</span>
                         </div>
                         <div class="matn-context-row">
                             <span class="matn-context-label">المتن المقرر:</span>
-                            <span class="matn-context-val text-primary" id="modalMatnTitle">-</span>
+                            <span class="matn-context-val text-primary fw-bold" id="tModalMatnTitle">-</span>
+                        </div>
+                        <div class="matn-context-row">
+                            <span class="matn-context-label">علامة النجاح المعتمدة:</span>
+                            <span class="matn-context-val badge bg-info text-white" id="tModalPassingGrade">60%</span>
                         </div>
                     </div>
 
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="matn-form-label">
+                            <label class="matn-label fw-bold mb-1 d-flex align-items-center gap-1">
                                 <i class='bx bx-book-open text-success'></i>
                                 <span>حالة المدارسة</span>
                             </label>
-                            <select id="modalStudyStatus" name="studyStatus" class="matn-form-select">
+                            <select id="tModalStudyStatus" name="studyStatus" class="form-select form-select-sm">
                                 <option value="0">لم يبدأ</option>
                                 <option value="1">قيد الدراسة</option>
                                 <option value="2">مكتمل</option>
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="matn-form-label">
+                            <label class="matn-label fw-bold mb-1 d-flex align-items-center gap-1">
                                 <i class='bx bx-bookmarks text-primary'></i>
                                 <span>حالة الحفظ</span>
                             </label>
-                            <select id="modalMemorizationStatus" name="memorizationStatus" class="matn-form-select">
+                            <select id="tModalMemorizationStatus" name="memorizationStatus" class="form-select form-select-sm">
                                 <option value="0">لم يبدأ</option>
                                 <option value="1">قيد الحفظ</option>
                                 <option value="2">تم الحفظ</option>
@@ -779,11 +697,11 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label class="matn-form-label">
+                            <label class="matn-label fw-bold mb-1 d-flex align-items-center gap-1">
                                 <i class='bx bx-check-shield text-warning'></i>
                                 <span>نتيجة الاختبار</span>
                             </label>
-                            <select id="modalExamStatus" name="examStatus" class="matn-form-select" onchange="onExamStatusChanged(this.value)">
+                            <select id="tModalExamStatus" name="examStatus" class="form-select form-select-sm" onchange="onTeacherExamStatusChanged(this.value)">
                                 <option value="0">لم يختبر بعد</option>
                                 <option value="1">اجتاز بنجاح (ناجح)</option>
                                 <option value="2">لم يجتز (راسب)</option>
@@ -791,52 +709,60 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label class="matn-form-label">
-                                <i class='bx bx-calendar text-secondary'></i>
-                                <span>تاريخ الاختبار</span>
-                            </label>
-                            <input type="date" id="modalExamDate" name="examDate" class="matn-form-input" />
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="matn-label fw-bold mb-0 d-flex align-items-center gap-1">
+                                    <i class='bx bx-calendar-event text-secondary'></i>
+                                    <span>تاريخ الاختبار</span>
+                                </label>
+                                <button type="button" class="btn-today-date" onclick="setTeacherExamToday()">اليوم</button>
+                            </div>
+                            <input type="date" id="tModalExamDate" name="examDate" class="form-control form-control-sm" />
                         </div>
 
                         <!-- عنصر تفاعلي لرصد درجة الاختبار -->
                         <div class="col-12">
-                            <div class="matn-score-widget">
-                                <div class="score-widget-top">
-                                    <label class="matn-form-label mb-0">
-                                        <i class='bx bx-certification text-success'></i>
+                            <div class="p-3 bg-light rounded-3 border">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label class="matn-label fw-bold mb-0 d-flex align-items-center gap-1">
+                                        <i class='bx bx-award text-primary'></i>
                                         <span>درجة الاختبار (من 100)</span>
                                     </label>
-                                    <span id="scoreRatingPill" class="score-rating-pill" style="display: none;">
-                                        <i class='bx bx-award'></i> <span id="scoreRatingText">-</span>
+                                    <span id="tScoreRatingPill" class="score-rating-pill" style="display: none;">
+                                        <i class='bx bx-award'></i> <span id="tScoreRatingText">-</span>
                                     </span>
                                 </div>
                                 <div class="input-group">
-                                    <input type="number" id="modalScore" name="score" class="matn-form-input" min="0" max="100" step="0.5" placeholder="مثال: 95.5" oninput="updateScoreFeedback(this.value)" />
-                                    <span class="input-group-text bg-white border-start-0 fw-bold">%</span>
+                                    <input type="number" id="tModalScore" name="score" class="form-control"
+                                           min="0" max="100" step="0.5" placeholder="مثال: 95.5"
+                                           oninput="updateTeacherScoreFeedback(this.value)" />
+                                    <span class="input-group-text bg-white fw-bold">%</span>
                                 </div>
-                                <div class="score-presets">
+                                <div class="score-presets mt-2 d-flex flex-wrap gap-1 align-items-center">
                                     <span class="small text-muted me-1">درجات سريعة:</span>
-                                    <button type="button" class="score-preset-btn" onclick="setScorePreset(100)">100% ممتاز</button>
-                                    <button type="button" class="score-preset-btn" onclick="setScorePreset(95)">95% ممتاز</button>
-                                    <button type="button" class="score-preset-btn" onclick="setScorePreset(85)">85% ج.جداً</button>
-                                    <button type="button" class="score-preset-btn" onclick="setScorePreset(75)">75% جيد</button>
-                                    <button type="button" class="score-preset-btn" onclick="setScorePreset(60)">60% مقبول</button>
+                                    <button type="button" class="score-preset-btn" onclick="setTeacherScorePreset(100)">100% ممتاز</button>
+                                    <button type="button" class="score-preset-btn" onclick="setTeacherScorePreset(95)">95% ممتاز</button>
+                                    <button type="button" class="score-preset-btn" onclick="setTeacherScorePreset(85)">85% ج.جداً</button>
+                                    <button type="button" class="score-preset-btn" onclick="setTeacherScorePreset(75)">75% جيد</button>
+                                    <button type="button" class="score-preset-btn" onclick="setTeacherScorePreset(60)">60% مقبول</button>
+                                    <button type="button" class="score-preset-btn" style="border-color: #fca5a5; color: #b91c1c; background: #fff5f5;" onclick="setTeacherScorePreset(40)">40% راسب</button>
+                                    <button type="button" class="score-preset-btn preset-clear" onclick="clearTeacherScore()">مسح الدرجة</button>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col-12">
-                            <label class="matn-form-label">
+                            <label class="matn-label fw-bold mb-1 d-flex align-items-center gap-1">
                                 <i class='bx bx-comment-detail text-muted'></i>
                                 <span>ملاحظات المعلم / الإدارة</span>
                             </label>
-                            <textarea id="modalTeacherNotes" name="teacherNotes" class="matn-form-input" rows="2" placeholder="ملاحظات حول مستوى الطالب، الإتقان، أو الاستدراك..."></textarea>
+                            <textarea id="tModalTeacherNotes" name="teacherNotes" class="form-control form-control-sm" rows="2"
+                                      placeholder="ملاحظات حول مستوى الطالب، الإتقان، أو الاستدراك..."></textarea>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer matn-modal-footer">
-                    <button type="button" class="t-btn t-btn-outline" data-bs-dismiss="modal">إلغاء</button>
-                    <button type="submit" class="btn-matn-action px-4" id="saveProgressBtn">
+                <div class="teacher-matn-modal-footer">
+                    <button type="button" class="matn-control-btn" onclick="closeTeacherMatnModal()">إلغاء</button>
+                    <button type="submit" class="btn-grade-action px-4" id="saveTeacherProgressBtn" style="background: #16a34a;">
                         <i class='bx bx-save'></i>
                         <span>حفظ التعديلات والدرجة</span>
                     </button>
@@ -847,100 +773,170 @@
 </div>
 
 <script>
-    function updateScoreFeedback(scoreVal) {
-        const pill = document.getElementById('scoreRatingPill');
-        const txt = document.getElementById('scoreRatingText');
-        if (!scoreVal || isNaN(scoreVal)) {
+    let currentTeacherPassingGrade = 60;
+    const defaultStudentName = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(studentFullName));
+
+    function decodeHtmlEntities(str) {
+        if (!str) return '';
+        const txt = document.createElement('textarea');
+        txt.innerHTML = str;
+        return txt.value;
+    }
+
+    function setTeacherExamToday() {
+        const today = new Date().toISOString().split('T')[0];
+        const dateInput = document.getElementById('tModalExamDate');
+        if (dateInput) dateInput.value = today;
+    }
+
+    function clearTeacherScore() {
+        const scoreInput = document.getElementById('tModalScore');
+        if (scoreInput) scoreInput.value = '';
+        updateTeacherScoreFeedback('');
+    }
+
+    function updateTeacherScoreFeedback(val) {
+        const pill = document.getElementById('tScoreRatingPill');
+        const txt = document.getElementById('tScoreRatingText');
+        const examStatus = document.getElementById('tModalExamStatus');
+        if (!pill || !txt) return;
+
+        if (!val || isNaN(val) || val === '') {
             pill.style.display = 'none';
             return;
         }
-        const s = parseFloat(scoreVal);
+
+        const s = parseFloat(val);
         pill.style.display = 'inline-flex';
-        if (s >= 90) {
-            pill.style.background = '#ecfdf5';
-            pill.style.borderColor = '#86efac';
-            pill.style.color = '#065f46';
-            txt.textContent = 'ممتاز (Excellent)';
-        } else if (s >= 80) {
-            pill.style.background = '#eff6ff';
-            pill.style.borderColor = '#bfdbfe';
-            pill.style.color = '#1e40af';
-            txt.textContent = 'جيد جداً (Very Good)';
-        } else if (s >= 65) {
-            pill.style.background = '#f0fdf4';
-            pill.style.borderColor = '#bbf7d0';
-            pill.style.color = '#166534';
-            txt.textContent = 'جيد (Good)';
-        } else if (s >= 50) {
-            pill.style.background = '#fffbeb';
-            pill.style.borderColor = '#fde68a';
-            pill.style.color = '#92400e';
-            txt.textContent = 'مقبول (Fair)';
-        } else {
+
+        if (s < currentTeacherPassingGrade) {
             pill.style.background = '#fef2f2';
             pill.style.borderColor = '#fecaca';
             pill.style.color = '#991b1b';
-            txt.textContent = 'راسب (Failed)';
-        }
-    }
-
-    function setScorePreset(val) {
-        const input = document.getElementById('modalScore');
-        input.value = val;
-        updateScoreFeedback(val);
-        const examStatus = document.getElementById('modalExamStatus');
-        if (val >= 60) {
-            examStatus.value = '1';
+            txt.textContent = `راسب (${s}%)`;
+            if (examStatus) examStatus.value = '2';
         } else {
-            examStatus.value = '2';
+            if (examStatus && examStatus.value !== '1') examStatus.value = '1';
+
+            if (s >= 90) {
+                pill.style.background = '#ecfdf5';
+                pill.style.borderColor = '#86efac';
+                pill.style.color = '#065f46';
+                txt.textContent = `ممتاز 🌟 (${s}%)`;
+            } else if (s >= 80) {
+                pill.style.background = '#eff6ff';
+                pill.style.borderColor = '#bfdbfe';
+                pill.style.color = '#1e40af';
+                txt.textContent = `جيد جداً (${s}%)`;
+            } else if (s >= 70) {
+                pill.style.background = '#f0fdf4';
+                pill.style.borderColor = '#bbf7d0';
+                pill.style.color = '#166534';
+                txt.textContent = `جيد (${s}%)`;
+            } else {
+                pill.style.background = '#fffbeb';
+                pill.style.borderColor = '#fde68a';
+                pill.style.color = '#92400e';
+                txt.textContent = `مقبول (${s}%)`;
+            }
         }
     }
 
-    function onExamStatusChanged(statusVal) {
-        const scoreInput = document.getElementById('modalScore');
-        if (statusVal === '1' && (!scoreInput.value || parseFloat(scoreInput.value) < 60)) {
-            scoreInput.value = 85;
-            updateScoreFeedback(85);
-        } else if (statusVal === '2' && (!scoreInput.value || parseFloat(scoreInput.value) >= 60)) {
-            scoreInput.value = 45;
-            updateScoreFeedback(45);
+    function setTeacherScorePreset(val) {
+        const scoreInput = document.getElementById('tModalScore');
+        if (scoreInput) {
+            scoreInput.value = val;
+            updateTeacherScoreFeedback(val);
         }
     }
 
-    function openProgressModal(studentId, studentName, matnId, matnTitle, studyStatus, memStatus, examStatus, score, examDate, notes) {
-        document.getElementById('modalStudentId').value = studentId;
-        document.getElementById('modalMatnId').value = matnId;
-        document.getElementById('modalStudentName').textContent = studentName;
-        document.getElementById('modalMatnTitle').textContent = matnTitle;
-        document.getElementById('modalStudyStatus').value = studyStatus !== undefined ? studyStatus : 0;
-        document.getElementById('modalMemorizationStatus').value = memStatus !== undefined ? memStatus : 0;
-        document.getElementById('modalExamStatus').value = examStatus !== undefined ? examStatus : 0;
-        document.getElementById('modalScore').value = score || '';
-        document.getElementById('modalExamDate').value = examDate || '';
-        document.getElementById('modalTeacherNotes').value = notes || '';
-
-        updateScoreFeedback(score);
-
-        var modalEl = document.getElementById('matnProgressModal');
-        var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
-        modal.show();
+    function onTeacherExamStatusChanged(statusVal) {
+        const scoreInput = document.getElementById('tModalScore');
+        if (!scoreInput) return;
+        if (statusVal === '1' && (!scoreInput.value || parseFloat(scoreInput.value) < currentTeacherPassingGrade)) {
+            scoreInput.value = Math.max(85, currentTeacherPassingGrade);
+            updateTeacherScoreFeedback(scoreInput.value);
+        } else if (statusVal === '2' && (!scoreInput.value || parseFloat(scoreInput.value) >= currentTeacherPassingGrade)) {
+            scoreInput.value = Math.max(0, currentTeacherPassingGrade - 15);
+            updateTeacherScoreFeedback(scoreInput.value);
+        }
     }
 
-    async function saveMatnProgress(e) {
+    function openTeacherRowMatnModal(el) {
+        const row = el.closest('tr');
+        if (!row) return;
+
+        const studentId = row.getAttribute('data-student-id');
+        const studentName = decodeHtmlEntities(row.getAttribute('data-student-name')) || defaultStudentName;
+        const matnId = row.getAttribute('data-matn-id');
+        const matnTitle = row.getAttribute('data-matn-title');
+        const studyStatus = parseInt(row.getAttribute('data-study-status')) || 0;
+        const memStatus = parseInt(row.getAttribute('data-mem-status')) || 0;
+        const examStatus = parseInt(row.getAttribute('data-exam-status')) || 0;
+        const score = row.getAttribute('data-score');
+        const examDate = row.getAttribute('data-exam-date');
+        const notes = row.getAttribute('data-notes');
+        const passingGrade = parseFloat(row.getAttribute('data-passing-grade')) || 60;
+
+        openTeacherMatnModal(studentId, studentName, matnId, matnTitle, studyStatus, memStatus, examStatus, score, examDate, notes, passingGrade);
+    }
+
+    function openTeacherMatnModal(studentId, studentName, matnId, matnTitle, studyStatus, memStatus, examStatus, score, examDate, notes, passingGrade = 60) {
+        const modalEl = document.getElementById('teacherMatnModal');
+        if (!modalEl) return;
+
+        currentTeacherPassingGrade = parseFloat(passingGrade) || 60;
+        document.getElementById('tModalStudentId').value = studentId || '';
+        document.getElementById('tModalMatnId').value = matnId || '';
+        document.getElementById('tModalStudentName').textContent = decodeHtmlEntities(studentName) || defaultStudentName || '-';
+        document.getElementById('tModalMatnTitle').textContent = matnTitle || '-';
+        const passEl = document.getElementById('tModalPassingGrade');
+        if (passEl) passEl.textContent = currentTeacherPassingGrade + '%';
+
+        document.getElementById('tModalStudyStatus').value = (studyStatus !== undefined && studyStatus !== null) ? studyStatus : 0;
+        document.getElementById('tModalMemorizationStatus').value = (memStatus !== undefined && memStatus !== null) ? memStatus : 0;
+        document.getElementById('tModalExamStatus').value = (examStatus !== undefined && examStatus !== null) ? examStatus : 0;
+        document.getElementById('tModalScore').value = score || '';
+        document.getElementById('tModalExamDate').value = examDate || '';
+        document.getElementById('tModalTeacherNotes').value = notes || '';
+
+        updateTeacherScoreFeedback(score);
+
+        modalEl.classList.add('show', 'is-open');
+        modalEl.style.setProperty('display', 'flex', 'important');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeTeacherMatnModal() {
+        const modalEl = document.getElementById('teacherMatnModal');
+        if (!modalEl) return;
+
+        modalEl.classList.remove('show', 'is-open');
+        modalEl.style.setProperty('display', 'none', 'important');
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            closeTeacherMatnModal();
+        }
+    });
+
+    async function saveTeacherMatnProgress(e) {
         e.preventDefault();
-        const btn = document.getElementById('saveProgressBtn');
+        const btn = document.getElementById('saveTeacherProgressBtn');
         btn.disabled = true;
-        btn.innerHTML = '<i class="bx bx-loader-alt bx-spin me-1"></i> جارٍ الحفظ...';
+        btn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> جارٍ الحفظ...';
 
         const payload = {
-            studentId: document.getElementById('modalStudentId').value,
-            matnId: document.getElementById('modalMatnId').value,
-            studyStatus: parseInt(document.getElementById('modalStudyStatus').value),
-            memorizationStatus: parseInt(document.getElementById('modalMemorizationStatus').value),
-            examStatus: parseInt(document.getElementById('modalExamStatus').value),
-            score: document.getElementById('modalScore').value ? parseFloat(document.getElementById('modalScore').value) : null,
-            examDate: document.getElementById('modalExamDate').value ? document.getElementById('modalExamDate').value : null,
-            teacherNotes: document.getElementById('modalTeacherNotes').value
+            studentId: document.getElementById('tModalStudentId').value,
+            matnId: document.getElementById('tModalMatnId').value,
+            studyStatus: parseInt(document.getElementById('tModalStudyStatus').value),
+            memorizationStatus: parseInt(document.getElementById('tModalMemorizationStatus').value),
+            examStatus: parseInt(document.getElementById('tModalExamStatus').value),
+            score: document.getElementById('tModalScore').value ? parseFloat(document.getElementById('tModalScore').value) : null,
+            examDate: document.getElementById('tModalExamDate').value ? document.getElementById('tModalExamDate').value : null,
+            teacherNotes: document.getElementById('tModalTeacherNotes').value
         };
 
         try {
@@ -960,54 +956,12 @@
             } else {
                 alert(data.message || 'تعذر حفظ البيانات.');
                 btn.disabled = false;
-                btn.innerHTML = '<i class="bx bx-save me-1"></i> حفظ التعديلات والدرجة';
+                btn.innerHTML = '<i class="bx bx-save"></i> <span>حفظ التعديلات والدرجة</span>';
             }
         } catch (err) {
             alert('حدث خطأ في الاتصال بالخادم.');
             btn.disabled = false;
-            btn.innerHTML = '<i class="bx bx-save me-1"></i> حفظ التعديلات والدرجة';
+            btn.innerHTML = '<i class="bx bx-save"></i> <span>حفظ التعديلات والدرجة</span>';
         }
     }
-
-    window.currentStudentMatuns = @Html.Raw(System.Text.Json.JsonSerializer.Serialize((Model.MatnProgresses ?? Enumerable.Empty<Hafiz.DTOs.Matn.StudentMatnProgressDto>()).Select(p => new {
-        matnId = p.MatnId.ToString(),
-        matnTitle = p.MatnTitle,
-        matnAuthor = p.MatnAuthor ?? "",
-        matnOrder = p.MatnOrder
-    })));
-
-    (function initMatnPagination() {
-        const items = document.querySelectorAll('.matn-assignments-section .matn-item');
-        if (!items || items.length === 0) return;
-        const perPage = 5;
-        const totalPages = Math.ceil(items.length / perPage);
-        const controls = document.getElementById('matnPaginationControls');
-        const info = document.getElementById('matnPageInfo');
-        const prev = document.getElementById('matnPrevBtn');
-        const next = document.getElementById('matnNextBtn');
-
-        if (items.length > perPage && controls) {
-            controls.style.display = 'flex';
-        }
-
-        let curPage = 1;
-        window.changeMatnPage = function(delta) {
-            curPage += delta;
-            if (curPage < 1) curPage = 1;
-            if (curPage > totalPages) curPage = totalPages;
-
-            items.forEach((item, idx) => {
-                const visible = (idx >= (curPage - 1) * perPage && idx < curPage * perPage);
-                item.style.display = visible ? 'block' : 'none';
-            });
-
-            if (info) info.textContent = `صفحة ${curPage} من ${totalPages} (${items.length} تسميع)`;
-            if (prev) prev.disabled = (curPage === 1);
-            if (next) next.disabled = (curPage === totalPages);
-        };
-
-        if (items.length > perPage) {
-            window.changeMatnPage(0);
-        }
-    })();
 </script>
