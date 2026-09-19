@@ -88,6 +88,18 @@ const MATN_ALIASES = [
     { key: "الأصول الثلاثة (محمد بن عبد الوهاب) - العقيدة", terms: ["اصول", "ثلاثه", "عقيده", "توحيد"] }
 ];
 
+const matnChaptersCache = new Map();
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 function normalizeArabicText(text) {
     if (!text) return '';
     return text
@@ -104,25 +116,39 @@ function normalizeArabicText(text) {
 
 function findMatchingMatnChapters(designatedTitle, programName) {
     const combined = `${designatedTitle || ''} ${programName || ''}`.trim();
+    if (matnChaptersCache.has(combined)) {
+        return matnChaptersCache.get(combined);
+    }
+
     const cleanTarget = normalizeArabicText(combined);
-    if (!cleanTarget) return { chapters: [], matchedKey: '' };
+    if (!cleanTarget) {
+        const res = { chapters: [], matchedKey: '' };
+        matnChaptersCache.set(combined, res);
+        return res;
+    }
 
     for (const key of Object.keys(MATN_CHAPTERS_MAP)) {
         const cleanKey = normalizeArabicText(key);
         if (cleanTarget.includes(cleanKey) || cleanKey.includes(cleanTarget)) {
-            return { chapters: MATN_CHAPTERS_MAP[key], matchedKey: key };
+            const res = { chapters: MATN_CHAPTERS_MAP[key], matchedKey: key };
+            matnChaptersCache.set(combined, res);
+            return res;
         }
     }
 
     for (const alias of MATN_ALIASES) {
         for (const term of alias.terms) {
             if (cleanTarget.includes(normalizeArabicText(term))) {
-                return { chapters: MATN_CHAPTERS_MAP[alias.key] || [], matchedKey: alias.key };
+                const res = { chapters: MATN_CHAPTERS_MAP[alias.key] || [], matchedKey: alias.key };
+                matnChaptersCache.set(combined, res);
+                return res;
             }
         }
     }
 
-    return { chapters: [], matchedKey: '' };
+    const res = { chapters: [], matchedKey: '' };
+    matnChaptersCache.set(combined, res);
+    return res;
 }
 
 function initMatnStudentsList() {
@@ -137,6 +163,68 @@ function initMatnStudentsList() {
     }
 }
 
+function updateStudentHeaderOnly(index, fallbackId, fallbackName) {
+    let stId = fallbackId;
+    let stName = fallbackName;
+
+    const list = window.matnModalState.studentsList;
+    if (list.length > 0 && index >= 0 && index < list.length) {
+        stId = list[index].id;
+        stName = list[index].name;
+    }
+
+    const idInput = document.getElementById('matnStudentId');
+    if (idInput) idInput.value = stId || '';
+
+    const nameEl = document.getElementById('matnDrawerStudentName');
+    if (nameEl) nameEl.textContent = stName || 'اسم الطالب';
+
+    const totalCount = list.length || 1;
+    const currentDisplay = (index >= 0 ? index + 1 : 1);
+    const subEl = document.getElementById('matnDrawerSubtitle');
+    if (subEl) subEl.textContent = `طالب ${currentDisplay} من ${totalCount}`;
+
+    const initials = (stName || '').split(' ').filter(Boolean).slice(0, 2).map(n => n[0]).join('');
+    const avatar = document.getElementById('matnDrawerAvatar');
+    if (avatar) {
+        avatar.innerHTML = initials ? `<span>${initials}</span>` : `<i class='bx bxs-book-reader'></i>`;
+    }
+
+    const prevBtn = document.getElementById('matnPrevBtn');
+    const saveNextBtnText = document.getElementById('matnSaveNextBtnText');
+
+    if (prevBtn) prevBtn.disabled = (index <= 0);
+    if (saveNextBtnText) {
+        saveNextBtnText.textContent = (index >= 0 && index < totalCount - 1) ? 'حفظ والتالي' : 'حفظ وإنهاء';
+    }
+}
+
+function resetAllMatnRatings() {
+    ['memorization', 'revision', 'mudarasah'].forEach(t => {
+        const upToggle = document.getElementById(`matn-isUpcoming-${t}`);
+        if (upToggle) upToggle.checked = false;
+        toggleUpcomingMatn(t, false, true);
+
+        window.matnRatings[t] = 0;
+        const group = document.getElementById(`matn-ratingGroup-${t}`);
+        if (group) {
+            group.querySelectorAll('.rating-pill-btn').forEach(btn => {
+                btn.classList.remove('is-selected');
+            });
+        }
+        const badge = document.getElementById(`matn-ratingBadge-${t}`);
+        if (badge) {
+            badge.className = 'wird-rating-badge rate-none';
+            badge.textContent = 'لم يُسمّع بعد';
+        }
+        const clearBtn = document.getElementById(`matn-ratingClear-${t}`);
+        if (clearBtn) {
+            clearBtn.style.display = 'none';
+            clearBtn.classList.add('is-hidden');
+        }
+    });
+}
+
 function openAssignMatnModal(studentId, studentName, designatedMatn = '') {
     initMatnStudentsList();
 
@@ -145,6 +233,7 @@ function openAssignMatnModal(studentId, studentName, designatedMatn = '') {
     const prevBtn = document.getElementById('matnPrevBtn');
     const saveNextBtnText = document.getElementById('matnSaveNextBtnText');
     const panel = document.getElementById('matnDrawerPanel');
+    const backdrop = document.getElementById('matnDrawerBackdrop');
 
     const targetDesignated = (designatedMatn || panel?.dataset?.assignedMatn || window.classDesignatedMatn || '').trim();
     const programName = (panel?.dataset?.programName || '').trim();
@@ -166,13 +255,17 @@ function openAssignMatnModal(studentId, studentName, designatedMatn = '') {
         window.matnModalState.currentIndex = -1;
         if (selectContainer && selectDropdown) {
             selectContainer.style.display = 'block';
-            selectDropdown.innerHTML = '<option value="">-- اختر الطالب من الحلقة --</option>';
-            window.matnModalState.studentsList.forEach((st, idx) => {
-                const opt = document.createElement('option');
-                opt.value = st.id;
-                opt.textContent = `${idx + 1}. ${st.name}`;
-                selectDropdown.appendChild(opt);
-            });
+            if (selectDropdown.options.length <= 1) {
+                selectDropdown.innerHTML = '<option value="">-- اختر الطالب من الحلقة --</option>';
+                const frag = document.createDocumentFragment();
+                window.matnModalState.studentsList.forEach((st, idx) => {
+                    const opt = document.createElement('option');
+                    opt.value = st.id;
+                    opt.textContent = `${idx + 1}. ${st.name}`;
+                    frag.appendChild(opt);
+                });
+                selectDropdown.appendChild(frag);
+            }
         }
         document.getElementById('matnStudentId').value = '';
         document.getElementById('matnDrawerStudentName').textContent = 'تسميع أوراد المتون';
@@ -180,38 +273,19 @@ function openAssignMatnModal(studentId, studentName, designatedMatn = '') {
         document.getElementById('matnDrawerAvatar').innerHTML = `<i class='bx bxs-book-reader'></i>`;
         if (prevBtn) prevBtn.disabled = true;
         if (saveNextBtnText) saveNextBtnText.textContent = 'اعتماد ورصد التسميع';
-
-        ['memorization', 'revision', 'mudarasah'].forEach(t => {
-            window.matnRatings[t] = 0;
-            const group = document.getElementById(`matn-ratingGroup-${t}`);
-            if (group) {
-                group.querySelectorAll('.rating-pill-btn').forEach(btn => btn.classList.remove('is-selected'));
-            }
-            const badge = document.getElementById(`matn-ratingBadge-${t}`);
-            if (badge) {
-                badge.className = 'wird-rating-badge rate-none';
-                badge.textContent = 'لم يُسمّع بعد';
-            }
-            const clearBtn = document.getElementById(`matn-ratingClear-${t}`);
-            if (clearBtn) {
-                clearBtn.style.display = 'none';
-                clearBtn.classList.add('is-hidden');
-            }
-        });
     } else {
         if (selectContainer) selectContainer.style.display = 'none';
         const cleanId = studentId.toString();
         const foundIndex = window.matnModalState.studentsList.findIndex(s => s.id.toLowerCase() === cleanId.toLowerCase());
         window.matnModalState.currentIndex = foundIndex >= 0 ? foundIndex : 0;
-        loadMatnStudentDataByIndex(window.matnModalState.currentIndex, studentId, studentName);
+        updateStudentHeaderOnly(window.matnModalState.currentIndex, studentId, studentName);
     }
-
-    applyDesignatedMatnToCards(targetDesignated);
 
     const allTabBtn = document.querySelector('#matnSegmentedNav .segmented-btn[data-tab="all"]');
     setMatnFilterTab('all', allTabBtn);
 
-    const backdrop = document.getElementById('matnDrawerBackdrop');
+    // 1. ANIMATION-FIRST: Trigger slide transition immediately (< 1ms execution time)
+    const isAlreadyOpen = panel && panel.classList.contains('is-open');
     if (panel && backdrop) {
         panel.style.visibility = 'visible';
         backdrop.style.visibility = 'visible';
@@ -221,19 +295,59 @@ function openAssignMatnModal(studentId, studentName, designatedMatn = '') {
             document.body.style.overflow = 'hidden';
         });
     }
+
+    // 2. Schedule Card Construction & Reset:
+    const setupCards = () => {
+        resetAllMatnRatings();
+        applyDesignatedMatnToCards(targetDesignated);
+    };
+
+    if (isAlreadyOpen) {
+        setupCards();
+    } else {
+        // Run during slide animation to keep 60 FPS initial response
+        setTimeout(setupCards, 120);
+    }
 }
 
 function applyDesignatedMatnToCards(designatedTitle) {
     const cardTypes = ['memorization', 'revision', 'mudarasah'];
     const finalMatnName = designatedTitle || 'المتون العلمية';
+    const currentProg = window.matnModalState.programName || '';
     window.matnModalState.designatedMatn = finalMatnName;
 
     cardTypes.forEach(type => {
         const hiddenInput = document.getElementById(`matnTitle-${type}`);
-        if (hiddenInput) hiddenInput.value = finalMatnName;
+        if (hiddenInput && hiddenInput.value !== finalMatnName) {
+            hiddenInput.value = finalMatnName;
+        }
     });
 
-    const { chapters, matchedKey } = findMatchingMatnChapters(designatedTitle, window.matnModalState.programName);
+    // CACHING CHECK: If chapters are already rendered for this matn & program, skip rebuilding options & DOM!
+    if (window.matnModalState.hasRenderedChapters &&
+        window.matnModalState.lastRenderedMatn === finalMatnName &&
+        window.matnModalState.lastRenderedProgram === currentProg) {
+        // Fast path: Only sync current select values if needed
+        cardTypes.forEach(type => {
+            const chapterSelect = document.getElementById(`matnChapterSelect-${type}`);
+            const chapterInput = document.getElementById(`matnChapterName-${type}`);
+            if (chapterSelect && chapterInput && !chapterInput.value && chapterSelect.value) {
+                chapterInput.value = chapterSelect.value;
+            }
+            updateRangeTotalBadge(type);
+        });
+        return;
+    }
+
+    const { chapters, matchedKey } = findMatchingMatnChapters(designatedTitle, currentProg);
+
+    // Build the options HTML string once and reuse across cards (instead of 90 separate createElement & appendChild calls!)
+    let chaptersHtml = '';
+    if (chapters.length > 0) {
+        chaptersHtml = chapters.map((ch, idx) =>
+            `<option value="${escapeHtml(ch)}"${idx === 0 ? ' selected' : ''}>${escapeHtml(ch)}</option>`
+        ).join('');
+    }
 
     cardTypes.forEach(type => {
         const chapterSelect = document.getElementById(`matnChapterSelect-${type}`);
@@ -243,14 +357,7 @@ function applyDesignatedMatnToCards(designatedTitle) {
         if (chapters.length > 0) {
             if (modeToggle) modeToggle.style.display = 'inline-flex';
             if (chapterSelect) {
-                chapterSelect.innerHTML = '';
-                chapters.forEach((ch, idx) => {
-                    const opt = document.createElement('option');
-                    opt.value = ch;
-                    opt.textContent = ch;
-                    if (idx === 0) opt.selected = true;
-                    chapterSelect.appendChild(opt);
-                });
+                chapterSelect.innerHTML = chaptersHtml;
             }
             if (chapterInput) chapterInput.value = chapters[0];
             setChapterInputMode(type, 'select');
@@ -263,7 +370,7 @@ function applyDesignatedMatnToCards(designatedTitle) {
             setChapterInputMode(type, 'manual');
         }
 
-        const refName = (matchedKey || designatedTitle || window.matnModalState.programName || '').toLowerCase();
+        const refName = (matchedKey || designatedTitle || currentProg || '').toLowerCase();
         if (refName.includes('النووية') || refName.includes('الحديث') || refName.includes('أحاديث') || refName.includes('اربعون')) {
             setMatnUnit(type, 5, 'أحاديث', 'حديث');
         } else if (refName.includes('الآجرومية') || refName.includes('عمدة الأحكام') || refName.includes('الأصول') || refName.includes('اجروم')) {
@@ -274,6 +381,10 @@ function applyDesignatedMatnToCards(designatedTitle) {
 
         updateRangeTotalBadge(type);
     });
+
+    window.matnModalState.lastRenderedMatn = finalMatnName;
+    window.matnModalState.lastRenderedProgram = currentProg;
+    window.matnModalState.hasRenderedChapters = true;
 }
 
 /**
@@ -315,65 +426,8 @@ function onMatnChapterSelectChange(type, val) {
 }
 
 function loadMatnStudentDataByIndex(index, fallbackId, fallbackName) {
-    let stId = fallbackId;
-    let stName = fallbackName;
-
-    const list = window.matnModalState.studentsList;
-    if (list.length > 0 && index >= 0 && index < list.length) {
-        stId = list[index].id;
-        stName = list[index].name;
-    }
-
-    const idInput = document.getElementById('matnStudentId');
-    if (idInput) idInput.value = stId || '';
-
-    const nameEl = document.getElementById('matnDrawerStudentName');
-    if (nameEl) nameEl.textContent = stName || 'اسم الطالب';
-
-    const totalCount = list.length || 1;
-    const currentDisplay = (index >= 0 ? index + 1 : 1);
-    const subEl = document.getElementById('matnDrawerSubtitle');
-    if (subEl) subEl.textContent = `طالب ${currentDisplay} من ${totalCount}`;
-
-    const initials = (stName || '').split(' ').filter(Boolean).slice(0, 2).map(n => n[0]).join('');
-    const avatar = document.getElementById('matnDrawerAvatar');
-    if (avatar) {
-        avatar.innerHTML = initials ? `<span>${initials}</span>` : `<i class='bx bxs-book-reader'></i>`;
-    }
-
-    const prevBtn = document.getElementById('matnPrevBtn');
-    const saveNextBtnText = document.getElementById('matnSaveNextBtnText');
-
-    if (prevBtn) prevBtn.disabled = (index <= 0);
-    if (saveNextBtnText) {
-        saveNextBtnText.textContent = (index >= 0 && index < totalCount - 1) ? 'حفظ والتالي' : 'حفظ وإنهاء';
-    }
-
-    // Reset upcoming state and rating for all cards on student load
-    ['memorization', 'revision', 'mudarasah'].forEach(t => {
-        const upToggle = document.getElementById(`matn-isUpcoming-${t}`);
-        if (upToggle) upToggle.checked = false;
-        toggleUpcomingMatn(t, false, true);
-
-        // Reset rating to unrated ("لم يُسمّع بعد") with clear button hidden
-        window.matnRatings[t] = 0;
-        const group = document.getElementById(`matn-ratingGroup-${t}`);
-        if (group) {
-            group.querySelectorAll('.rating-pill-btn').forEach(btn => {
-                btn.classList.remove('is-selected');
-            });
-        }
-        const badge = document.getElementById(`matn-ratingBadge-${t}`);
-        if (badge) {
-            badge.className = 'wird-rating-badge rate-none';
-            badge.textContent = 'لم يُسمّع بعد';
-        }
-        const clearBtn = document.getElementById(`matn-ratingClear-${t}`);
-        if (clearBtn) {
-            clearBtn.style.display = 'none';
-            clearBtn.classList.add('is-hidden');
-        }
-    });
+    updateStudentHeaderOnly(index, fallbackId, fallbackName);
+    resetAllMatnRatings();
 }
 
 function onMatnStudentDropdownChange(select) {
@@ -537,23 +591,34 @@ function updateRangeTotalBadge(type) {
 
     const count = Math.max(1, toVal - fromVal + 1);
     const unit = window.matnUnits[type] || 1;
-    badge.textContent = getUnitPluralTag(unit, count);
+    const text = getUnitPluralTag(unit, count);
+    if (badge.textContent !== text) {
+        badge.textContent = text;
+    }
 }
 
 function updateAmountPresetChipsForUnit(type, unitVal) {
     const container = document.getElementById(`matn-amountChips-${type}`);
     if (!container) return;
 
+    const unitStr = String(unitVal);
+    if (container.dataset.renderedUnit === unitStr) {
+        return;
+    }
+    container.dataset.renderedUnit = unitStr;
+
     const presets = (unitVal === 1) ? [1, 5, 10, 15] : [1, 2, 3, 5];
-    container.innerHTML = '';
+    const frag = document.createDocumentFragment();
     presets.forEach(p => {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'amount-chip';
         btn.textContent = p;
         btn.onclick = () => setQuickAmount(type, p);
-        container.appendChild(btn);
+        frag.appendChild(btn);
     });
+    container.innerHTML = '';
+    container.appendChild(frag);
 }
 
 function setMatnRating(type, status, grade, hintText) {

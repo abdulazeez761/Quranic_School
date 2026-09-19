@@ -20,7 +20,8 @@ function openWirdDrawer() {
     window.selectedStudentIndex = 0;
   }
 
-  const isAlreadyOpen = drawer.classList.contains('active') || drawer.classList.contains('is-open');
+  const isAlreadyOpen =
+    drawer.classList.contains('active') || drawer.classList.contains('is-open');
   const student = window.classStudents?.[window.selectedStudentIndex];
 
   // Render header immediately (extremely fast < 1ms)
@@ -62,7 +63,10 @@ function closeWirdDrawer() {
 
   // Defer restoring body scroll until closing animation finishes (250ms)
   setTimeout(() => {
-    if (!drawer.classList.contains('active') && !drawer.classList.contains('is-open')) {
+    if (
+      !drawer.classList.contains('active') &&
+      !drawer.classList.contains('is-open')
+    ) {
       document.body.style.overflow = '';
       drawer.style.visibility = '';
       if (backdrop) backdrop.style.visibility = '';
@@ -76,9 +80,12 @@ function closeWirdModal() {
 
 function openWirdModal(studentId, studentName) {
   if (!window.classStudents || window.classStudents.length === 0) {
-    if (Array.isArray(window.allClassStudents) && window.allClassStudents.length > 0) {
-      window.classStudents = window.allClassStudents.map(s =>
-        createStudentState(s.id, s.name, s.initials, s.level)
+    if (
+      Array.isArray(window.allClassStudents) &&
+      window.allClassStudents.length > 0
+    ) {
+      window.classStudents = window.allClassStudents.map((s) =>
+        createStudentState(s.id, s.name, s.initials, s.level),
       );
     }
   }
@@ -90,7 +97,9 @@ function openWirdModal(studentId, studentName) {
     return;
   }
 
-  let index = window.classStudents ? window.classStudents.findIndex((s) => s.id === studentId) : -1;
+  let index = window.classStudents
+    ? window.classStudents.findIndex((s) => s.id === studentId)
+    : -1;
 
   if (index === -1) {
     if (typeof createStudentState === 'function') {
@@ -106,7 +115,12 @@ function openWirdModal(studentId, studentName) {
 }
 
 function loadStudentIntoDrawer(index) {
-  if (!window.classStudents || index < 0 || index >= window.classStudents.length) return;
+  if (
+    !window.classStudents ||
+    index < 0 ||
+    index >= window.classStudents.length
+  )
+    return;
   const student = window.classStudents[index];
 
   // Update header in case it wasn't rendered yet
@@ -128,18 +142,25 @@ function loadStudentIntoDrawer(index) {
 
   const nextBtnText = document.getElementById('drawerNextBtnText');
   if (nextBtnText) {
-    const targetText = (index === window.classStudents.length - 1)
-      ? '🎉 حفظ وإنهاء الحلقة'
-      : 'حفظ والتالي';
-    if (nextBtnText.textContent !== targetText) nextBtnText.textContent = targetText;
+    const targetText =
+      index === window.classStudents.length - 1
+        ? '🎉 حفظ وإنهاء الحلقة'
+        : 'حفظ والتالي';
+    if (nextBtnText.textContent !== targetText)
+      nextBtnText.textContent = targetText;
   }
 
   // Auto-fetch student complete database context (plan, last wirds, today wirds)
-  if (typeof ensureStudentContextLoaded === 'function' && !student.isContextLoaded) {
+  if (
+    typeof ensureStudentContextLoaded === 'function' &&
+    !student.isContextLoaded
+  ) {
     ensureStudentContextLoaded(student)
       .then(() => {
         // Only update fields if this student is still the currently selected one
-        if (window.classStudents[window.selectedStudentIndex]?.id === student.id) {
+        if (
+          window.classStudents[window.selectedStudentIndex]?.id === student.id
+        ) {
           if (typeof renderStudentWirdsFields === 'function') {
             renderStudentWirdsFields(student);
           }
