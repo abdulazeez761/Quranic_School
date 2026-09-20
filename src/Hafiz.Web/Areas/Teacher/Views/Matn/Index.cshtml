@@ -72,6 +72,9 @@
                     <input type="date" name="date" class="matn-control-date"
                            value="@targetDate.ToString("yyyy-MM-dd")" onchange="this.form.submit()" />
                 </form>
+                <button type="button" onclick="openAssignMatnModal('', '')" class="matn-control-btn" style="background: var(--t-matn, #0284c7); color: #fff; border-color: var(--t-matn, #0284c7);" title="تسجيل وتسميع متن جديد">
+                    <i class='bx bx-plus-circle'></i> <span>تسميع متن جديد</span>
+                </button>
                 <a asp-action="ExportExcel" asp-route-classId="@cls.Id" asp-route-date="@targetDate.ToString("yyyy-MM-dd")"
                    class="matn-control-btn">
                     <i class='bx bx-file'></i> <span>Excel</span>
@@ -131,7 +134,13 @@
                         <i class='bx bx-list-check text-primary fs-5'></i>
                         <span>سجل تسميع المتون لليوم (@targetDate.ToString("yyyy-MM-dd"))</span>
                     </h5>
-                    <span class="badge bg-primary fs-6 fw-bold">@Model.Count() تسميع</span>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-primary fs-6 fw-bold">@Model.Count() تسميع</span>
+                        <button type="button" class="btn btn-sm btn-primary d-inline-flex align-items-center gap-1"
+                                onclick="openAssignMatnModal('', '')" title="تسجيل تسميع جديد">
+                            <i class='bx bx-plus-circle'></i> <span>تسجيل تسميع</span>
+                        </button>
+                    </div>
                 </div>
                         <div class="table-responsive">
                             <table class="matn-table">
@@ -290,12 +299,12 @@
             <div class="matn-filter-bar">
                 <div class="matn-pills-filter">
                     <span class="small fw-bold text-muted me-1">عرض المتن:</span>
-                    <button type="button" class="filter-chip active" onclick="filterByMatn('all', this)">
+                    <button type="button" class="filter-chip active" onclick="filterByMatn('all', this, '')">
                         <i class='bx bx-layer'></i> جميع المتون
                     </button>
                     @foreach (var m in classMatuns)
                     {
-                        <button type="button" class="filter-chip" onclick="filterByMatn('@m.Id', this)">
+                        <button type="button" class="filter-chip" onclick="filterByMatn('@m.Id', this, '@m.Title')">
                             <span>#@m.Order</span> @m.Title
                         </button>
                     }
@@ -303,6 +312,46 @@
                 <div class="filter-search-box">
                     <i class='bx bx-search filter-search-icon'></i>
                     <input type="text" id="studentSearchInput" placeholder="بحث باسم الطالب..." oninput="filterStudents(this.value)" />
+                </div>
+            </div>
+
+            <!-- بطاقة تفاصيل المتن المرجعية التفاعلية (أبواب ووحدات المتن المختار ديناميكياً) -->
+            <div id="matnReferenceCard" class="matn-ref-card" style="display: none;">
+                <div class="matn-ref-header">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="matn-ref-icon"><i class='bx bx-book-bookmark'></i></div>
+                        <div>
+                            <h6 class="matn-ref-title mb-0" id="matnRefTitle">-</h6>
+                            <span class="matn-ref-author text-muted small" id="matnRefAuthor"></span>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="btnAssignThisMatn" onclick="assignActiveMatn()">
+                            <i class='bx bx-plus'></i> <span>تسميع هذا المتن</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="matn-ref-body">
+                    <!-- الوحدات المقررة -->
+                    <div class="matn-ref-section">
+                        <div class="matn-ref-section-label">
+                            <i class='bx bx-layer text-primary'></i>
+                            <span>الوحدات المقررة:</span>
+                        </div>
+                        <div class="matn-ref-badges" id="matnRefUnits">
+                            <span class="text-muted small">جارٍ التحميل...</span>
+                        </div>
+                    </div>
+                    <!-- الأبواب المسجلة -->
+                    <div class="matn-ref-section">
+                        <div class="matn-ref-section-label">
+                            <i class='bx bx-list-ul text-success'></i>
+                            <span>الأبواب المسجلة:</span>
+                        </div>
+                        <div class="matn-ref-chapters-wrap" id="matnRefChapters">
+                            <span class="text-muted small">جارٍ التحميل...</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -480,6 +529,7 @@
         </div>
 
         @await Html.PartialAsync("_MatnProgressModal")
+        @await Html.PartialAsync("_AssignMatnModal")
     }
 </div>
 
@@ -520,8 +570,10 @@
             }
         }
 
-        // Filter Matrix Table by Matn
-        function filterByMatn(matnId, chipEl) {
+        let currentActiveFilterMatn = null;
+
+        // Filter Matrix Table by Matn + Load Reference Details Card dynamically
+        async function filterByMatn(matnId, chipEl, matnTitle = '') {
             document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
             chipEl.classList.add('active');
 
@@ -534,6 +586,71 @@
                     row.style.display = 'none';
                 }
             });
+
+            const refCard = document.getElementById('matnReferenceCard');
+            if (!refCard) return;
+
+            if (matnId === 'all') {
+                refCard.style.display = 'none';
+                currentActiveFilterMatn = null;
+                return;
+            }
+
+            currentActiveFilterMatn = { id: matnId, title: matnTitle };
+            refCard.style.display = 'block';
+
+            const titleEl = document.getElementById('matnRefTitle');
+            const authorEl = document.getElementById('matnRefAuthor');
+            const unitsEl = document.getElementById('matnRefUnits');
+            const chaptersEl = document.getElementById('matnRefChapters');
+
+            if (titleEl) titleEl.textContent = matnTitle || 'بيانات المتن';
+            if (authorEl) authorEl.textContent = '';
+            if (unitsEl) unitsEl.innerHTML = '<span class="text-muted small"><i class="bx bx-loader-alt bx-spin me-1"></i> جارٍ تحميل الوحدات...</span>';
+            if (chaptersEl) chaptersEl.innerHTML = '<span class="text-muted small"><i class="bx bx-loader-alt bx-spin me-1"></i> جارٍ تحميل الأبواب...</span>';
+
+            try {
+                if (typeof fetchMatnReferenceData === 'function') {
+                    const data = await fetchMatnReferenceData(matnId || matnTitle);
+                    if (!data || currentActiveFilterMatn?.id !== matnId) return; // Prevent race condition
+
+                    if (titleEl) titleEl.textContent = data.name || matnTitle;
+                    if (authorEl) authorEl.textContent = data.author ? `المؤلف / الناظم: ${data.author}` : '';
+
+                    // Render Units (with Empty State)
+                    if (unitsEl) {
+                        if (data.units && data.units.length > 0) {
+                            unitsEl.innerHTML = data.units.map(u => 
+                                `<span class="matn-pill-badge unit-pill"><i class='bx bx-check'></i> ${escapeHtml(u.name)}</span>`
+                            ).join('');
+                        } else {
+                            unitsEl.innerHTML = '<span class="text-muted small"><i class="bx bx-info-circle me-1"></i> لا توجد وحدات مقررة مسجلة لهذا المتن</span>';
+                        }
+                    }
+
+                    // Render Chapters (with Empty State)
+                    if (chaptersEl) {
+                        if (data.chapters && data.chapters.length > 0) {
+                            chaptersEl.innerHTML = data.chapters.map(ch => 
+                                `<span class="matn-chapter-pill"><span class="ch-num">${ch.number}</span> ${escapeHtml(ch.name || ch)}</span>`
+                            ).join('');
+                        } else {
+                            chaptersEl.innerHTML = '<span class="text-muted small"><i class="bx bx-info-circle me-1"></i> لا يوجد أبواب مسجلة لهذا المتن</span>';
+                        }
+                    }
+                }
+            } catch (err) {
+                if (unitsEl) unitsEl.innerHTML = '<span class="text-danger small"><i class="bx bx-error-circle me-1"></i> تعذر تحميل بيانات المتن، يرجى المحاولة مرة أخرى.</span>';
+                if (chaptersEl) chaptersEl.innerHTML = '<span class="text-danger small"><i class="bx bx-error-circle me-1"></i> تعذر تحميل بيانات المتن، يرجى المحاولة مرة أخرى.</span>';
+            }
+        }
+
+        function assignActiveMatn() {
+            if (currentActiveFilterMatn) {
+                openAssignMatnModal('', '', currentActiveFilterMatn.title, currentActiveFilterMatn.id);
+            } else {
+                openAssignMatnModal('', '');
+            }
         }
 
         // Live Search Filter by Student Name
@@ -595,4 +712,13 @@
 
         window.addEventListener('hashchange', initMatnTabs);
     </script>
+    <script>
+        window.allClassStudents = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            studentsList.Select(s => new { id = s.Value, name = s.Text })
+        ));
+        window.currentStudentMatuns = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            classMatuns.Select(m => new { id = m.Id, matnId = m.Id, title = m.Title, matnTitle = m.Title, author = m.Author, order = m.Order })
+        ));
+    </script>
+    <script src="~/js/teacher_portal/modals/matn_drawer/assignMatnModal.js" asp-append-version="true"></script>
 }

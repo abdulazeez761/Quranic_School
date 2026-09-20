@@ -1,7 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\Hafiz.Application\Hafiz.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Data\Matns\matns.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <EmbeddedResource Include="Data\Matns\matns.json" />
   </ItemGroup>
 
   <ItemGroup>

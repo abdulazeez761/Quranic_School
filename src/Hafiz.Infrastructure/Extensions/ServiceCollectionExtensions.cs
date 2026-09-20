@@ -56,6 +56,9 @@ namespace Hafiz.Infrastructure.Extensions
             services.AddScoped<IGoogleDriveUploader, GoogleDriveUploader>();
             services.AddScoped<IBackupService, BackupService>();
 
+            // Static Reference Data Provider (Singleton in-memory cache)
+            services.AddSingleton<Hafiz.Application.Interfaces.Data.IMatnDataProvider, MatnDataProvider>();
+
             return services;
         }
     }

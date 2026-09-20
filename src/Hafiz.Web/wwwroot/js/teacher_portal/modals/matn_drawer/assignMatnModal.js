@@ -30,65 +30,12 @@ window.matnRatings = {
     mudarasah: 0
 };
 
-// Chapters database for standard Mutun (API /Teacher/Matn/GetChapters can be plugged here in future)
-const MATN_CHAPTERS_MAP = {
-    "الآجرومية (ابن آجروم) - النحو": [
-        "المقدمة والكلام وما يتألف منه", "باب الإعراب وعلاماته", "باب الأفعال وأحكامها",
-        "باب مرفوعات الأسماء (الفاعل ونائبه)", "باب المبتدأ والخبر ونواسخهما",
-        "باب منصوبات الأسماء (المفاعيل والحال والتمييز)", "باب الاستثناء ولا والمنادى",
-        "باب مخفوضات الأسماء (بالحرف وبالإضافة)"
-    ],
-    "تحفة الأطفال (الجمزوري) - التجويد": [
-        "المقدمة", "باب أحكام النون الساكنة والتنوين", "باب حكم النون والميم المشددتين",
-        "باب أحكام الميم الساكنة", "باب حكم لام أل ولام الفعل",
-        "باب في المِثْلين والمتقاربين والمتجانسين", "باب أقسام المد وأحكامه",
-        "باب أقسام المد اللازم وأحكامه", "الخاتمة"
-    ],
-    "المقدمة الجزرية (ابن الجزري) - التجويد": [
-        "المقدمة", "باب مخارج الحروف", "باب صفات الحروف", "باب التجويد واستعمال الحروف",
-        "باب التفخيم والترقيق وأحكام الراءات", "باب اللامات وأحكام النون والميم",
-        "باب المد والقصر", "باب معرفة الوقف والابتداء", "باب المقطوع والموصول والتاءات",
-        "باب همز الوصل والخاتمة"
-    ],
-    "المنظومة البيقونية (البيقوني) - مصطلح الحديث": [
-        "المقدمة والحديث الصحيح", "الحديث الحسن والضعيف", "المرفوع والمقطوع والمسند والمتصل",
-        "المسلسل والعزيز والمشهور", "المعنعن والمبهم والعالي والنازل",
-        "الموقوف والمقطوع والمرسل والغريب", "المدرج والمدبج والمتفق والمفترق",
-        "المتروك والموضوع والخاتمة"
-    ],
-    "الأربعون النووية (النووي) - الحديث الشريف": [
-        "الحديث 1: إنما الأعمال بالنيات", "الحديث 2: مراتب الدين والإسلام والإيمان والإحسان",
-        "الحديث 3: بني الإسلام على خمس", "الحديث 4: خلق الإنسان وشقاوته وسعادته",
-        "الحديث 5: من أحدث في أمرنا هذا ما ليس منه فهو رد", "الحديث 6: الحلال بيّن والحرام بيّن",
-        "الحديث 7: الدين النصيحة", "الحديث 8: أمرت أن أقاتل الناس حتى يشهدوا",
-        "الحديث 9: ما نهيتكم عنه فاجتنبوه", "الحديث 10: إن الله طيب لا يقبل إلا طيبا"
-    ],
-    "عمدة الأحكام (المقدسي) - أحاديث الأحكام": [
-        "كتاب الطهارة", "كتاب الصلاة", "كتاب الجنائز", "كتاب الزكاة",
-        "كتاب الصيام", "كتاب الحج", "كتاب البيوع", "كتاب النكاح والطلاق"
-    ],
-    "نخبة الفكر (ابن حجر) - مصطلح الحديث": [
-        "تقسيم الخبر إلى متواتر وآحاد", "المشهور والعزيز والغريب",
-        "المقبول: الصحيح والحسن", "المردود وأسباب الرد", "الجرح والتعديل والصفات"
-    ],
-    "الأصول الثلاثة (محمد بن عبد الوهاب) - العقيدة": [
-        "المقدمة والمسائل الأربع", "الأصل الأول: معرفة العبد ربه وأنواع العبادة",
-        "الأصل الثاني: معرفة دين الإسلام بمراتبه الثلاث", "الأصل الثالث: معرفة نبيكم محمد صلى الله عليه وسلم"
-    ]
-};
-
-const MATN_ALIASES = [
-    { key: "الأربعون النووية (النووي) - الحديث الشريف", terms: ["نوويه", "نووي", "اربعون", "حديث", "الحديث", "احاديث", "اربعين"] },
-    { key: "الآجرومية (ابن آجروم) - النحو", terms: ["اجروميه", "اجروم", "نحو", "اعراب", "قواعد"] },
-    { key: "تحفة الأطفال (الجمزوري) - التجويد", terms: ["تحفه", "اطفال", "جمزوري", "تجويد"] },
-    { key: "المقدمة الجزرية (ابن الجزري) - التجويد", terms: ["جزريه", "جزري", "مقدمه جزريه", "مخارج"] },
-    { key: "المنظومة البيقونية (البيقوني) - مصطلح الحديث", terms: ["بيقونيه", "بيقوني", "مصطلح"] },
-    { key: "عمدة الأحكام (المقدسي) - أحاديث الأحكام", terms: ["عمده", "احكام", "مقدسي"] },
-    { key: "نخبة الفكر (ابن حجر) - مصطلح الحديث", terms: ["نخبه", "فكر", "ابن حجر"] },
-    { key: "الأصول الثلاثة (محمد بن عبد الوهاب) - العقيدة", terms: ["اصول", "ثلاثه", "عقيده", "توحيد"] }
-];
-
-const matnChaptersCache = new Map();
+// ==========================================================================
+// Matn Static Reference Data API Client & In-Memory Cache
+// ==========================================================================
+const matnMemoryCache = new Map();
+let currentMatnFetchController = null;
+let matnCatalogPreloaded = false;
 
 function escapeHtml(str) {
     if (!str) return '';
@@ -114,41 +61,114 @@ function normalizeArabicText(text) {
         .toLowerCase();
 }
 
-function findMatchingMatnChapters(designatedTitle, programName) {
-    const combined = `${designatedTitle || ''} ${programName || ''}`.trim();
-    if (matnChaptersCache.has(combined)) {
-        return matnChaptersCache.get(combined);
-    }
-
-    const cleanTarget = normalizeArabicText(combined);
-    if (!cleanTarget) {
-        const res = { chapters: [], matchedKey: '' };
-        matnChaptersCache.set(combined, res);
-        return res;
-    }
-
-    for (const key of Object.keys(MATN_CHAPTERS_MAP)) {
-        const cleanKey = normalizeArabicText(key);
-        if (cleanTarget.includes(cleanKey) || cleanKey.includes(cleanTarget)) {
-            const res = { chapters: MATN_CHAPTERS_MAP[key], matchedKey: key };
-            matnChaptersCache.set(combined, res);
-            return res;
-        }
-    }
-
-    for (const alias of MATN_ALIASES) {
-        for (const term of alias.terms) {
-            if (cleanTarget.includes(normalizeArabicText(term))) {
-                const res = { chapters: MATN_CHAPTERS_MAP[alias.key] || [], matchedKey: alias.key };
-                matnChaptersCache.set(combined, res);
-                return res;
+/**
+ * Prefetch all static mutun catalog once on startup (lightweight < 4KB)
+ */
+async function prefetchMatnCatalog() {
+    if (matnCatalogPreloaded) return;
+    try {
+        const res = await fetch('/api/matns', { headers: { 'Accept': 'application/json' } });
+        if (res.ok) {
+            const list = await res.json();
+            if (Array.isArray(list)) {
+                list.forEach(item => {
+                    if (item.id) matnMemoryCache.set(item.id.toLowerCase(), item);
+                    if (item.name) {
+                        matnMemoryCache.set(item.name.toLowerCase(), item);
+                        matnMemoryCache.set(normalizeArabicText(item.name), item);
+                    }
+                    if (Array.isArray(item.aliases)) {
+                        item.aliases.forEach(a => matnMemoryCache.set(normalizeArabicText(a), item));
+                    }
+                });
+                matnCatalogPreloaded = true;
             }
         }
+    } catch (e) {
+        console.warn('Could not preload matn catalog:', e);
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', prefetchMatnCatalog);
+} else {
+    prefetchMatnCatalog();
+}
+
+/**
+ * Fetches Matn reference data with memory caching and AbortController to prevent race conditions
+ */
+async function fetchMatnReferenceData(identifier) {
+    if (!identifier) return null;
+    const cleanKey = identifier.trim();
+    const normalizedKey = normalizeArabicText(cleanKey);
+
+    // 1. Memory Cache Lookup (0ms, 0 Network calls)
+    if (matnMemoryCache.has(cleanKey.toLowerCase())) {
+        return matnMemoryCache.get(cleanKey.toLowerCase());
+    }
+    if (matnMemoryCache.has(normalizedKey)) {
+        return matnMemoryCache.get(normalizedKey);
     }
 
-    const res = { chapters: [], matchedKey: '' };
-    matnChaptersCache.set(combined, res);
-    return res;
+    // Check fuzzy match in cache
+    for (const [key, value] of matnMemoryCache.entries()) {
+        if (normalizedKey.includes(key) || key.includes(normalizedKey)) {
+            return value;
+        }
+    }
+
+    // 2. Abort previous pending fetch to prevent race conditions (A -> B -> C)
+    if (currentMatnFetchController) {
+        currentMatnFetchController.abort();
+    }
+    currentMatnFetchController = new AbortController();
+
+    try {
+        const res = await fetch(`/api/matns/${encodeURIComponent(cleanKey)}`, {
+            signal: currentMatnFetchController.signal,
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (!res.ok) {
+            if (res.status === 404) {
+                // Return clean empty definition - never invent data!
+                const emptyDef = {
+                    id: cleanKey,
+                    name: cleanKey,
+                    chapters: [],
+                    units: []
+                };
+                matnMemoryCache.set(cleanKey.toLowerCase(), emptyDef);
+                matnMemoryCache.set(normalizedKey, emptyDef);
+                return emptyDef;
+            }
+            throw new Error(`HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        data.chapters = Array.isArray(data.chapters) ? data.chapters : [];
+        data.units = Array.isArray(data.units) ? data.units : [];
+
+        // Store in cache
+        if (data.id) matnMemoryCache.set(data.id.toLowerCase(), data);
+        if (data.name) {
+            matnMemoryCache.set(data.name.toLowerCase(), data);
+            matnMemoryCache.set(normalizeArabicText(data.name), data);
+        }
+        matnMemoryCache.set(cleanKey.toLowerCase(), data);
+        matnMemoryCache.set(normalizedKey, data);
+
+        return data;
+    } catch (err) {
+        if (err.name === 'AbortError') {
+            return null; // A newer request superseded this one
+        }
+        console.error('Error fetching matn reference data:', err);
+        throw err;
+    } finally {
+        currentMatnFetchController = null;
+    }
 }
 
 function initMatnStudentsList() {
@@ -435,13 +455,13 @@ function onMatnDropdownChange(selectEl) {
     // Save selection in localStorage and cookie
     saveSelectedMatn(window.matnModalState.currentStudentId, matnId);
 
-    applyDesignatedMatnToCards(matnTitle);
+    applyDesignatedMatnToCards(matnTitle, matnId);
 }
 
-function applyDesignatedMatnToCards(designatedTitle) {
+async function applyDesignatedMatnToCards(designatedTitle, matnId = '') {
     const cardTypes = ['memorization', 'revision', 'mudarasah'];
-    const finalMatnName = designatedTitle || 'المتون العلمية';
-    const currentProg = window.matnModalState.programName || '';
+    const finalMatnName = (designatedTitle || 'المتون العلمية').trim();
+    const queryKey = (matnId || finalMatnName).trim();
     window.matnModalState.designatedMatn = finalMatnName;
 
     cardTypes.forEach(type => {
@@ -451,67 +471,114 @@ function applyDesignatedMatnToCards(designatedTitle) {
         }
     });
 
-    // CACHING CHECK: If chapters are already rendered for this matn & program, skip rebuilding options & DOM!
+    // CACHING CHECK: If already rendered for this exact matn, skip re-render
     if (window.matnModalState.hasRenderedChapters &&
-        window.matnModalState.lastRenderedMatn === finalMatnName &&
-        window.matnModalState.lastRenderedProgram === currentProg) {
-        // Fast path: Only sync current select values if needed
+        window.matnModalState.lastRenderedMatnKey === queryKey) {
+        return;
+    }
+
+    // 1. Lightweight loading state (no heavy animations or layout shifts)
+    const normalizedKey = normalizeArabicText(queryKey);
+    const isCached = matnMemoryCache.has(queryKey.toLowerCase()) || matnMemoryCache.has(normalizedKey);
+    if (!isCached) {
         cardTypes.forEach(type => {
             const chapterSelect = document.getElementById(`matnChapterSelect-${type}`);
-            const chapterInput = document.getElementById(`matnChapterName-${type}`);
-            if (chapterSelect && chapterInput && !chapterInput.value && chapterSelect.value) {
-                chapterInput.value = chapterSelect.value;
+            if (chapterSelect) {
+                chapterSelect.innerHTML = '<option value="" disabled selected>جارٍ تحميل الأبواب...</option>';
             }
-            updateRangeTotalBadge(type);
+            const unitGroup = document.getElementById(`matn-unitGroup-${type}`);
+            if (unitGroup) {
+                unitGroup.innerHTML = '<span class="text-muted small py-1 px-2"><i class="bx bx-loader-alt bx-spin me-1"></i> جارٍ تحميل الوحدات...</span>';
+            }
+        });
+    }
+
+    // 2. Fetch data (Memory cache -> Instant 0ms, or Network API with AbortController)
+    let matnData = null;
+    try {
+        matnData = await fetchMatnReferenceData(queryKey);
+    } catch (err) {
+        console.error('Failed to load matn definition:', err);
+        // Error state: Show gentle message without destroying existing inputs
+        cardTypes.forEach(type => {
+            const chapterSelect = document.getElementById(`matnChapterSelect-${type}`);
+            if (chapterSelect) {
+                chapterSelect.innerHTML = '<option value="" disabled selected>تعذر تحميل بيانات المتن، يرجى المحاولة مرة أخرى.</option>';
+            }
+            const unitGroup = document.getElementById(`matn-unitGroup-${type}`);
+            if (unitGroup) {
+                unitGroup.innerHTML = '<span class="text-danger small py-1 px-2"><i class="bx bx-error-circle me-1"></i> تعذر تحميل بيانات المتن، يرجى المحاولة مرة أخرى.</span>';
+            }
         });
         return;
     }
 
-    const { chapters, matchedKey } = findMatchingMatnChapters(designatedTitle, currentProg);
+    // If request was superseded by a newer selection, exit cleanly
+    if (!matnData) return;
 
-    // Build the options HTML string once and reuse across cards (instead of 90 separate createElement & appendChild calls!)
+    const chapters = Array.isArray(matnData.chapters) ? matnData.chapters : [];
+    const units = Array.isArray(matnData.units) ? matnData.units : [];
+
+    // Build the chapters options HTML once
     let chaptersHtml = '';
     if (chapters.length > 0) {
-        chaptersHtml = chapters.map((ch, idx) =>
-            `<option value="${escapeHtml(ch)}"${idx === 0 ? ' selected' : ''}>${escapeHtml(ch)}</option>`
-        ).join('');
+        chaptersHtml = chapters.map((ch, idx) => {
+            const chName = ch.name || ch;
+            return `<option value="${escapeHtml(chName)}"${idx === 0 ? ' selected' : ''}>${escapeHtml(chName)}</option>`;
+        }).join('');
     }
 
     cardTypes.forEach(type => {
         const chapterSelect = document.getElementById(`matnChapterSelect-${type}`);
         const chapterInput = document.getElementById(`matnChapterName-${type}`);
         const modeToggle = document.getElementById(`matnChapterModeToggle-${type}`);
+        const unitGroup = document.getElementById(`matn-unitGroup-${type}`);
 
+        // Update Chapters (with Empty State support)
         if (chapters.length > 0) {
             if (modeToggle) modeToggle.style.display = 'inline-flex';
-            if (chapterSelect) {
-                chapterSelect.innerHTML = chaptersHtml;
-            }
-            if (chapterInput) chapterInput.value = chapters[0];
+            if (chapterSelect) chapterSelect.innerHTML = chaptersHtml;
+            const firstChapter = chapters[0].name || chapters[0];
+            if (chapterInput) chapterInput.value = firstChapter;
             setChapterInputMode(type, 'select');
         } else {
+            // Rule 6 & 11: Empty State
             if (modeToggle) modeToggle.style.display = 'none';
+            if (chapterSelect) {
+                chapterSelect.innerHTML = '<option value="" disabled selected>لا يوجد أبواب مسجلة لهذا المتن</option>';
+            }
             if (chapterInput) {
                 chapterInput.value = '';
-                chapterInput.placeholder = 'اكتب اسم الباب أو موضع التسميع...';
+                chapterInput.placeholder = 'لا يوجد أبواب مسجلة لهذا المتن - اكتب الموضع يدوياً...';
             }
             setChapterInputMode(type, 'manual');
         }
 
-        const refName = (matchedKey || designatedTitle || currentProg || '').toLowerCase();
-        if (refName.includes('النووية') || refName.includes('الحديث') || refName.includes('أحاديث') || refName.includes('اربعون')) {
-            setMatnUnit(type, 5, 'أحاديث', 'حديث');
-        } else if (refName.includes('الآجرومية') || refName.includes('عمدة الأحكام') || refName.includes('الأصول') || refName.includes('اجروم')) {
-            setMatnUnit(type, 4, 'أبواب', 'باب');
-        } else {
-            setMatnUnit(type, 1, 'أبيات', 'بيت');
+        // Update Units (with Empty State support)
+        if (unitGroup) {
+            if (units.length > 0) {
+                unitGroup.innerHTML = units.map((u, idx) => `
+                    <label class="unit-radio-option ${idx === 0 ? 'is-selected' : ''}" id="matn-unitOpt-${type}-${u.number}"
+                           onclick="setMatnUnit('${type}', ${u.number}, '${escapeHtml(u.name)}', '${escapeHtml(u.singular || u.name)}')">
+                        <input type="radio" name="matn-unit-${type}" value="${u.number}" ${idx === 0 ? 'checked' : ''}>
+                        <span>${escapeHtml(u.name)}</span>
+                    </label>
+                `).join('');
+
+                const defaultUnit = units[0];
+                setMatnUnit(type, defaultUnit.number, defaultUnit.name, defaultUnit.singular || defaultUnit.name);
+            } else {
+                // Empty State for units
+                unitGroup.innerHTML = `<span class="text-muted small py-1 px-2"><i class='bx bx-info-circle me-1'></i> لا توجد وحدات مقررة مسجلة لهذا المتن</span>`;
+                setMatnUnit(type, 1, 'أبيات', 'بيت');
+            }
         }
 
         updateRangeTotalBadge(type);
     });
 
+    window.matnModalState.lastRenderedMatnKey = queryKey;
     window.matnModalState.lastRenderedMatn = finalMatnName;
-    window.matnModalState.lastRenderedProgram = currentProg;
     window.matnModalState.hasRenderedChapters = true;
 }
 
