@@ -120,6 +120,18 @@
                             <span>مكتبة المتون</span>
                         </a>
                     </li>
+                    <li class="@IsActive("CertificateTemplates", "Index", "Admin")">
+                        <a asp-area="Admin" asp-controller="CertificateTemplates" asp-action="Index">
+                            <i class='bx bx-palette' aria-hidden="true"></i>
+                            <span>قوالب الشهادات</span>
+                        </a>
+                    </li>
+                    <li class="@IsActive("CertificatesManagement", "Index", "Admin")">
+                        <a asp-area="Admin" asp-controller="CertificatesManagement" asp-action="Index">
+                            <i class='bx bx-certification' aria-hidden="true"></i>
+                            <span>إدارة الشهادات</span>
+                        </a>
+                    </li>
 
                     <!-- المجموعة 4: التقارير -->
                     <li class="sidebar-nav-group-title">التقارير والمتابعة</li>

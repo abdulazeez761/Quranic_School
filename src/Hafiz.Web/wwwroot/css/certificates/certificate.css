@@ -6,6 +6,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cairo:wght@400;600;700;800;900&family=Reem+Kufi:wght@500;700&display=swap');
 
 :root {
+    --cert-paper-w: 297mm;
+    --cert-paper-h: 210mm;
     --cert-gold-1: #dfba69;
     --cert-gold-2: #c59b27;
     --cert-gold-3: #926f16;
@@ -101,8 +103,8 @@ body.cert-body {
 }
 
 .certificate-sheet {
-    width: 297mm;
-    min-height: 210mm;
+    width: var(--cert-paper-w);
+    min-height: var(--cert-paper-h);
     background: var(--cert-bg-parchment);
     position: relative;
     padding: 12mm;
@@ -133,7 +135,6 @@ body.cert-body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background: radial-gradient(circle at center, #ffffff 40%, #fdfbf7 100%);
 }
 
 /* Corner Ornaments */
@@ -168,9 +169,23 @@ body.cert-body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 14px;
     position: relative;
     z-index: 1;
     margin-bottom: 12px;
+}
+
+.cert-header-side {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cert-logo {
+    width: 54px;
+    height: 54px;
+    object-fit: contain;
+    flex: none;
 }
 
 .cert-institute-title {
@@ -226,9 +241,14 @@ body.cert-body {
     margin: 0 10px;
 }
 
+.cert-title-container.no-decorators::before,
+.cert-title-container.no-decorators::after {
+    content: none;
+}
+
 .cert-main-title {
-    font-family: 'Reem Kufi', 'Cairo', sans-serif;
-    font-size: 2.1rem;
+    font-family: var(--tpl-title-font, 'Reem Kufi'), 'Cairo', sans-serif;
+    font-size: var(--tpl-title-size, 2.1rem);
     font-weight: 700;
     color: var(--cert-emerald-dark);
     display: inline-block;
@@ -257,17 +277,17 @@ body.cert-body {
 }
 
 .cert-intro-text {
-    font-family: 'Amiri', serif;
-    font-size: 1.28rem;
-    line-height: 1.8;
-    color: #292524;
+    font-family: var(--tpl-body-font, 'Amiri'), serif;
+    font-size: var(--tpl-body-size, 1.28rem);
+    line-height: var(--tpl-line-height, 1.8);
+    color: var(--cert-text-dark);
     margin: 0 auto;
     max-width: 820px;
 }
 
 .cert-student-name {
-    font-family: 'Amiri', serif;
-    font-size: 2.6rem;
+    font-family: var(--tpl-title-font, 'Amiri'), serif;
+    font-size: var(--tpl-student-size, 2.6rem);
     font-weight: 700;
     color: var(--cert-blue-dark);
     display: inline-block;
@@ -302,6 +322,122 @@ body.cert-body {
 .cert-scope-text {
     font-size: 0.95rem;
     color: var(--cert-text-muted);
+}
+
+/* Closing line under the achievement statement */
+.cert-closing-text {
+    font-family: var(--tpl-body-font, 'Amiri'), serif;
+    font-size: calc(var(--tpl-body-size, 1.28rem) * 0.85);
+    line-height: var(--tpl-line-height, 1.8);
+    color: var(--cert-text-muted);
+    margin: 4px auto 0;
+    max-width: 760px;
+}
+
+/* Quranic Verse Banner */
+.cert-verse {
+    text-align: center;
+    font-family: var(--tpl-arabic-font, 'Amiri'), serif;
+    font-size: 1.15rem;
+    color: var(--cert-emerald-primary);
+    line-height: var(--tpl-line-height, 1.9);
+    margin: 6px auto 10px;
+    max-width: 860px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Memorization Scope (juz range, count, completion, riwayah) */
+.cert-scope {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    margin: 8px auto 0;
+    max-width: 780px;
+}
+
+.cert-scope-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.cert-scope-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(223, 186, 105, 0.1);
+    border: 1px solid rgba(197, 155, 39, 0.25);
+    border-radius: 8px;
+    padding: 5px 13px;
+    font-size: var(--tpl-body-size, 0.95rem);
+}
+
+.cert-scope-label {
+    color: var(--cert-text-muted);
+}
+
+.cert-scope-value {
+    font-weight: 800;
+    color: var(--cert-gold-dark);
+}
+
+.cert-riwayah {
+    margin-top: 8px;
+    font-family: var(--tpl-arabic-font, 'Amiri'), serif;
+    font-size: var(--tpl-body-size, 1rem);
+    color: var(--cert-text-muted);
+}
+
+/* Score & rating row */
+.cert-evaluation {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 6px auto;
+    position: relative;
+    z-index: 1;
+}
+
+.cert-evaluation-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid rgba(197, 155, 39, 0.3);
+    border-radius: 8px;
+    padding: 5px 14px;
+    font-size: var(--tpl-body-size, 0.95rem);
+}
+
+.cert-evaluation-label {
+    color: var(--cert-text-muted);
+}
+
+.cert-evaluation-value {
+    font-weight: 800;
+    color: var(--cert-emerald-dark);
+}
+
+/* QR verification block */
+.cert-qr {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    margin-top: 10px;
+}
+
+.cert-qr img {
+    display: inline-block;
+    border-radius: 6px;
+    background: #fff;
+    padding: 4px;
+}
+
+.cert-qr-label {
+    font-size: 0.78rem;
+    color: var(--cert-text-muted);
+    margin-top: 4px;
 }
 
 /* Rating / Evaluation Badge */
@@ -393,19 +529,16 @@ body.cert-body {
 
 /* ==========================================================================
    PRINT MEDIA OPTIMIZATIONS
+   The @page size is emitted per template by _CertificateDynamic.cshtml,
+   and --cert-paper-w/h carry the same dimensions into these rules.
    ========================================================================== */
 @media print {
-    @page {
-        size: A4 landscape;
-        margin: 0;
-    }
-
     html, body.cert-body {
         background: #ffffff !important;
         margin: 0 !important;
         padding: 0 !important;
-        width: 297mm !important;
-        height: 210mm !important;
+        width: var(--cert-paper-w, 297mm) !important;
+        height: var(--cert-paper-h, 210mm) !important;
         overflow: hidden !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
@@ -418,18 +551,17 @@ body.cert-body {
     .cert-stage {
         padding: 0 !important;
         margin: 0 !important;
-        width: 297mm !important;
-        height: 210mm !important;
+        width: var(--cert-paper-w, 297mm) !important;
+        height: var(--cert-paper-h, 210mm) !important;
     }
 
     .certificate-sheet {
-        width: 297mm !important;
-        height: 210mm !important;
-        min-height: 210mm !important;
-        max-height: 210mm !important;
+        width: var(--cert-paper-w, 297mm) !important;
+        height: var(--cert-paper-h, 210mm) !important;
+        min-height: var(--cert-paper-h, 210mm) !important;
+        max-height: var(--cert-paper-h, 210mm) !important;
         box-shadow: none !important;
         border-radius: 0 !important;
-        padding: 10mm !important;
         page-break-after: avoid !important;
         page-break-inside: avoid !important;
     }

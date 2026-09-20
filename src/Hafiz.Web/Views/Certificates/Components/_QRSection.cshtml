@@ -1,2 +1,20 @@
+@using Hafiz.Application.DTO.Certificate.TemplateConfiguration
+@using Hafiz.Application.Services
 @model Hafiz.Application.DTO.Certificate.CertificateModel
-<div class="text-center mt-2"><img src="@Model.QrCodeDataUrl" alt="رمز التحقق الإلكتروني" width="72" height="72" /><div class="small">رمز التحقق الإلكتروني</div></div>
+@{
+    var section = ViewData["Section"] as SectionConfig;
+    var config = section?.GetConfig<QrVerificationSectionConfig>();
+
+    var size = config?.Size is > 0 ? config.Size : 80;
+    var showLabel = config?.ShowLabel ?? true;
+    var label = string.IsNullOrWhiteSpace(config?.LabelText)
+        ? "رمز التحقق الإلكتروني"
+        : CertificateTokenResolver.Resolve(config!.LabelText, Model);
+}
+<div class="cert-qr">
+    <img src="@Model.QrCodeDataUrl" alt="@label" width="@size" height="@size" />
+    @if (showLabel)
+    {
+        <div class="cert-qr-label">@label</div>
+    }
+</div>

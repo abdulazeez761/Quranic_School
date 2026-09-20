@@ -1,2 +1,47 @@
+@using Hafiz.Application.DTO.Certificate.TemplateConfiguration
+@using Hafiz.Application.Services
 @model Hafiz.Application.DTO.Certificate.CertificateModel
-<div class="cert-header"><div><h2 class="cert-institute-title">@Model.InstituteName</h2><div class="cert-sub-institute">@(string.IsNullOrEmpty(Model.ClassName) ? "شؤون حلقات القرآن الكريم" : $"حلقة: {Model.ClassName}")</div></div><div class="cert-basmalah">بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ</div><div class="cert-number-box"><span class="cert-serial">@Model.CertificateNumber</span></div></div>
+@{
+    var section = ViewData["Section"] as SectionConfig;
+    var config = section?.GetConfig<HeaderSectionConfig>();
+    var showLogo = config?.ShowInstituteLogo ?? true;
+    var showName = config?.ShowInstituteName ?? true;
+    var showSubInstitute = config?.ShowSubInstitute ?? true;
+    var showBasmalah = config?.ShowBasmalah ?? true;
+    var showNumber = config?.ShowCertificateNumber ?? true;
+
+    var subInstitute = string.IsNullOrWhiteSpace(config?.SubInstituteText)
+        ? (string.IsNullOrEmpty(Model.ClassName) ? "شؤون حلقات القرآن الكريم" : $"حلقة: {Model.ClassName}")
+        : CertificateTokenResolver.Resolve(config!.SubInstituteText, Model);
+}
+<div class="cert-header">
+    @if ((showLogo && !string.IsNullOrEmpty(Model.InstituteLogoUrl)) || showName || showSubInstitute)
+    {
+        <div class="cert-header-side">
+            @if (showLogo && !string.IsNullOrEmpty(Model.InstituteLogoUrl))
+            {
+                <img src="@Model.InstituteLogoUrl" alt="شعار المركز" class="cert-logo" />
+            }
+            <div>
+                @if (showName)
+                {
+                    <h2 class="cert-institute-title">@Model.InstituteName</h2>
+                }
+                @if (showSubInstitute)
+                {
+                    <div class="cert-sub-institute">@subInstitute</div>
+                }
+            </div>
+        </div>
+    }
+    @if (showBasmalah)
+    {
+        <div class="cert-basmalah">بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ</div>
+    }
+    @if (showNumber)
+    {
+        <div class="cert-number-box">
+            <span class="cert-serial">@Model.CertificateNumber</span>
+        </div>
+    }
+</div>

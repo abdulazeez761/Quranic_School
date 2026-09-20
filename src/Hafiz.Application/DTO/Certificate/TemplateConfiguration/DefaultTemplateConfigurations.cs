@@ -49,7 +49,7 @@ public static class DefaultTemplateConfigurations
                 BodyFont = "Cairo",
                 ArabicFont = "Amiri",
                 TitleSize = "2.1rem",
-                BodySize = "1rem",
+                BodySize = "1.28rem",
                 StudentNameSize = "2.6rem",
                 LineHeight = 1.8
             },
@@ -204,7 +204,7 @@ public static class DefaultTemplateConfigurations
                 BodyFont = "Cairo",
                 ArabicFont = "Amiri",
                 TitleSize = "2.1rem",
-                BodySize = "1rem",
+                BodySize = "1.28rem",
                 StudentNameSize = "2.6rem",
                 LineHeight = 1.8
             },

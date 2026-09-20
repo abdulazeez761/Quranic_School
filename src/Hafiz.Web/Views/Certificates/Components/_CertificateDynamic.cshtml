@@ -1,25 +1,153 @@
+@using System.Globalization
+@using Hafiz.Application.DTO.Certificate.TemplateConfiguration
+@using Hafiz.Application.Services
 @model Hafiz.Application.DTO.Certificate.CertificateModel
 @{
-    var theme = Model.Configuration.Theme;
-    var typography = Model.Configuration.Typography;
-    var sections = Model.Configuration.Sections.Where(s => s.Enabled).OrderBy(s => s.Order).ToList();
+    var configuration = Model.Configuration ?? new TemplateConfiguration();
+    var theme = configuration.Theme;
+    var typography = configuration.Typography;
+    var layout = configuration.Layout;
+    var sections = configuration.Sections.Where(s => s.Enabled).OrderBy(s => s.Order).ToList();
     var hasSections = sections.Count > 0;
+
+    var isPortrait = string.Equals(layout.Orientation, "portrait", StringComparison.OrdinalIgnoreCase);
+    var isLetter = string.Equals(layout.PageSize, "Letter", StringComparison.OrdinalIgnoreCase);
+    var paperWidth = (isPortrait, isLetter) switch
+    {
+        (true, true) => "216mm",
+        (true, false) => "210mm",
+        (false, true) => "279mm",
+        _ => "297mm"
+    };
+    var paperHeight = (isPortrait, isLetter) switch
+    {
+        (true, true) => "279mm",
+        (true, false) => "297mm",
+        (false, true) => "216mm",
+        _ => "210mm"
+    };
+    var margins = layout.Margins ?? new MarginsConfig();
+
+    // The stylesheet is written against its own --cert-* palette, so the template theme is mapped onto it here.
+    var mutedText = Mix(theme.TextColor, theme.BackgroundColor, 0.42);
 }
 <style>
-    .certificate-sheet { --tpl-primary: @theme.PrimaryColor; --tpl-secondary: @theme.SecondaryColor; --tpl-accent: @theme.AccentColor; --tpl-text: @theme.TextColor; --tpl-bg: @theme.BackgroundColor; --tpl-border: @theme.BorderColor; --tpl-title-font: '@typography.TitleFont'; --tpl-body-font: '@typography.BodyFont'; --tpl-arabic-font: '@typography.ArabicFont'; }
-</style>
+    @@page {
+        size: @paperWidth @paperHeight;
+        margin: 0;
+    }
+
+    /* Paper size lives on :root so the print rules below can size html/body/stage from it. */
+    :root {
+        --cert-paper-w: @paperWidth;
+        --cert-paper-h: @paperHeight;
+    }
+
+    .certificate-sheet {
+        --cert-bg-parchment: @theme.BackgroundColor;
+        --cert-gold-1: @theme.AccentColor;
+        --cert-gold-2: @theme.PrimaryColor;
+        --cert-gold-3: @Darken(theme.AccentColor, 0.72);
+        --cert-gold-dark: @Darken(theme.PrimaryColor, 0.62);
+        --cert-emerald-dark: @theme.SecondaryColor;
+        --cert-emerald-primary: @theme.SecondaryColor;
+        --cert-blue-dark: @theme.SecondaryColor;
+        --cert-text-dark: @theme.TextColor;
+        --cert-text-muted: @mutedText;
+        --tpl-title-font: '@typography.TitleFont';
+        --tpl-body-font: '@typography.BodyFont';
+        --tpl-arabic-font: '@typography.ArabicFont';
+        --tpl-title-size: @typography.TitleSize;
+        --tpl-body-size: @typography.BodySize;
+        --tpl-student-size: @typography.StudentNameSize;
+        --tpl-line-height: @typography.LineHeight;
+        padding: @(margins.Top)mm @(margins.Right)mm @(margins.Bottom)mm @(margins.Left)mm;
+    }</style>
 <div class="certificate-sheet">
-    <div class="cert-outer-border" style="border-style:@theme.BorderStyle; border-width:@(theme.BorderWidth)px">
+    <div class="cert-outer-border" style="border-style:@theme.BorderStyle; border-width:@(theme.BorderWidth)px; border-color:@theme.BorderColor">
         <div class="cert-inner-border">
-            @if (theme.CornerDecorations) { <div class="cert-corner cert-corner-tl"></div><div class="cert-corner cert-corner-tr"></div><div class="cert-corner cert-corner-bl"></div><div class="cert-corner cert-corner-br"></div> }
-            @if (theme.WatermarkEnabled) { <div class="cert-watermark" style="opacity:@theme.WatermarkOpacity"><i class='bx @theme.WatermarkIcon'></i></div> }
-            @if (!hasSections || sections.Any(s => s.Type == "header")) { @await Html.PartialAsync("Components/_HeaderSection", Model) }
-            @if (!hasSections || sections.Any(s => s.Type == "title")) { @await Html.PartialAsync("Components/_TitleSection", Model) }
-            @if (!hasSections || sections.Any(s => s.Type == "verse")) { @await Html.PartialAsync("Components/_VerseSection", Model) }
-            @if (!hasSections || sections.Any(s => s.Type == "statement")) { @await Html.PartialAsync("Components/_StatementSection", Model) }
-            @if (!hasSections || sections.Any(s => s.Type == "evaluation")) { @await Html.PartialAsync("Components/_EvaluationSection", Model) }
-            @if (!hasSections || sections.Any(s => s.Type == "signatures")) { @await Html.PartialAsync("Components/_SignaturesSection", Model) }
-            @if ((!hasSections || sections.Any(s => s.Type == "qrVerification")) && !string.IsNullOrEmpty(Model.QrCodeDataUrl)) { @await Html.PartialAsync("Components/_QRSection", Model) }
+            @if (theme.CornerDecorations)
+            {
+                <div class="cert-corner cert-corner-tl"></div>
+                <div class="cert-corner cert-corner-tr"></div>
+                <div class="cert-corner cert-corner-bl"></div>
+                <div class="cert-corner cert-corner-br"></div>
+            }
+            @if (theme.WatermarkEnabled)
+            {
+                <div class="cert-watermark" style="opacity:@theme.WatermarkOpacity"><i class='bx @theme.WatermarkIcon'></i></div>
+            }
+            @if (!hasSections)
+            {
+                @await Html.PartialAsync("Components/_HeaderSection", Model)
+                @await Html.PartialAsync("Components/_TitleSection", Model)
+                @await Html.PartialAsync("Components/_VerseSection", Model)
+                @await Html.PartialAsync("Components/_StatementSection", Model)
+                @await Html.PartialAsync("Components/_EvaluationSection", Model)
+                @await Html.PartialAsync("Components/_SignaturesSection", Model)
+            }
+            @foreach (var section in sections)
+            {
+                var sectionData = new ViewDataDictionary(ViewData) { ["Section"] = section };
+                switch (section.Type)
+                {
+                    case "header":
+                        @await Html.PartialAsync("Components/_HeaderSection", Model, sectionData)
+                        break;
+                    case "title":
+                        @await Html.PartialAsync("Components/_TitleSection", Model, sectionData)
+                        break;
+                    case "verse":
+                        @await Html.PartialAsync("Components/_VerseSection", Model, sectionData)
+                        break;
+                    case "statement":
+                        @await Html.PartialAsync("Components/_StatementSection", Model, sectionData)
+                        break;
+                    case "quranScope":
+                        @await Html.PartialAsync("Components/_QuranScopeSection", Model, sectionData)
+                        break;
+                    case "evaluation":
+                        @await Html.PartialAsync("Components/_EvaluationSection", Model, sectionData)
+                        break;
+                    case "signatures":
+                        @await Html.PartialAsync("Components/_SignaturesSection", Model, sectionData)
+                        break;
+                    case "qrVerification" when !string.IsNullOrEmpty(Model.QrCodeDataUrl):
+                        @await Html.PartialAsync("Components/_QRSection", Model, sectionData)
+                        break;
+                }
+            }
         </div>
     </div>
 </div>
+
+@functions {
+    private static (int R, int G, int B) ParseColor(string? hex)
+    {
+        var value = (hex ?? string.Empty).Trim().TrimStart('#');
+        if (value.Length == 3)
+            value = string.Concat(value.Select(c => new string(c, 2)));
+        if (value.Length == 6 && int.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var parsed))
+            return ((parsed >> 16) & 0xFF, (parsed >> 8) & 0xFF, parsed & 0xFF);
+        return (197, 155, 39); // classic gold
+    }
+
+    private static string ToHex((int R, int G, int B) color) =>
+        $"#{Math.Clamp(color.R, 0, 255):X2}{Math.Clamp(color.G, 0, 255):X2}{Math.Clamp(color.B, 0, 255):X2}";
+
+    private static string Darken(string? hex, double factor)
+    {
+        var (r, g, b) = ParseColor(hex);
+        return ToHex(((int)(r * factor), (int)(g * factor), (int)(b * factor)));
+    }
+
+    private static string Mix(string? hex, string? other, double ratio)
+    {
+        var (r1, g1, b1) = ParseColor(hex);
+        var (r2, g2, b2) = ParseColor(other);
+        return ToHex((
+            (int)(r1 * (1 - ratio) + r2 * ratio),
+            (int)(g1 * (1 - ratio) + g2 * ratio),
+            (int)(b1 * (1 - ratio) + b2 * ratio)));
+    }
+}

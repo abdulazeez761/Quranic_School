@@ -27,7 +27,13 @@ public static class CertificateTokenResolver
             ["{SubjectName}"] = certificate.SubjectName,
             ["{AuthorName}"] = certificate.SubtitleOrAuthor ?? string.Empty,
             ["{Score}"] = certificate.Score?.ToString("0.##") ?? string.Empty,
-            ["{Rating}"] = certificate.Rating ?? string.Empty
+            ["{Rating}"] = certificate.Rating ?? string.Empty,
+            ["{FromJuz}"] = certificate.FromJuz?.ToString() ?? string.Empty,
+            ["{ToJuz}"] = certificate.ToJuz?.ToString() ?? string.Empty,
+            ["{JuzCount}"] = certificate.JuzCount?.ToString() ?? string.Empty,
+            ["{CompletionPercentage}"] = certificate.CompletionPercentage?.ToString() ?? string.Empty,
+            ["{Riwayah}"] = certificate.Riwayah ?? string.Empty,
+            ["{ScopeDetails}"] = certificate.ScopeDetails ?? string.Empty
         };
         foreach (var item in certificate.ExtraData) tokens["{" + item.Key + "}"] = item.Value;
         foreach (var item in tokens) value = value.Replace(item.Key, item.Value, StringComparison.OrdinalIgnoreCase);

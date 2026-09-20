@@ -1,0 +1,220 @@
+@model IEnumerable<Hafiz.Application.DTO.Certificate.CertificateListItemDto>
+@using Hafiz.Domain.Enums
+@{
+    ViewData["Title"] = "إدارة الشهادات";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    var selectedType = ViewBag.SelectedType as CertificateType?;
+    var selectedStatus = ViewBag.SelectedStatus as CertificateStatus?;
+    var search = ViewBag.Search as string;
+    var currentPage = ViewBag.Page is int p && p > 0 ? p : 1;
+    var total = ViewBag.Total is int t ? t : 0;
+
+    const int pageSize = 50;
+    var totalPages = (int)Math.Ceiling(total / (double)pageSize);
+    var certificates = Model.ToList();
+
+    var typeList = new SelectList(
+        new[]
+        {
+            new { Value = CertificateType.Quran, Text = "قرآن كريم" },
+            new { Value = CertificateType.Matn, Text = "متن علمي" },
+            new { Value = CertificateType.Sanad, Text = "إجازة بسند" },
+            new { Value = CertificateType.General, Text = "تقديرية عامة" }
+        }, "Value", "Text", selectedType);
+
+    var statusList = new SelectList(
+        new[]
+        {
+            new { Value = CertificateStatus.Active, Text = "معتمدة وسارية" },
+            new { Value = CertificateStatus.Revoked, Text = "ملغاة" },
+            new { Value = CertificateStatus.Expired, Text = "منتهية" }
+        }, "Value", "Text", selectedStatus);
+}
+
+<link rel="stylesheet" href="~/css/admin/certificate-builder.css" asp-append-version="true" />
+
+<div class="cert-admin-page" dir="rtl">
+    <header class="cert-admin-header">
+        <div>
+            <h1><span class="cert-icon"><i class='bx bx-certification'></i></span>إدارة الشهادات</h1>
+            <p>تابع الشهادات الصادرة من المركز، وتحقق منها، وألغِ اعتماد ما يحتاج إلى إلغاء.</p>
+        </div>
+        <a asp-controller="CertificateTemplates" asp-action="Index" class="btn btn-outline-primary">
+            <i class='bx bx-palette'></i> قوالب الشهادات
+        </a>
+    </header>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success"><i class='bx bx-check-circle'></i> @TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger"><i class='bx bx-error-circle'></i> @TempData["ErrorMessage"]</div>
+    }
+
+    <form method="get" class="builder-panel mb-3" style="padding:16px;">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="cb-label">بحث</label>
+                <input name="search" value="@search" class="form-control" placeholder="رقم الشهادة أو اسم الطالب" />
+            </div>
+            <div class="col-md-3">
+                <label class="cb-label">نوع الشهادة</label>
+                @Html.DropDownList("type", typeList, "كل الأنواع", new { @class = "form-select" })
+            </div>
+            <div class="col-md-3">
+                <label class="cb-label">الحالة</label>
+                @Html.DropDownList("status", statusList, "كل الحالات", new { @class = "form-select" })
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button class="btn btn-primary flex-fill"><i class='bx bx-search'></i> بحث</button>
+                <a asp-action="Index" class="btn btn-light" title="تصفير الفلاتر"><i class='bx bx-reset'></i></a>
+            </div>
+        </div>
+    </form>
+
+    <div class="builder-panel" style="padding:0; overflow:hidden;">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" style="vertical-align:middle;">
+                <thead>
+                    <tr>
+                        <th>رقم الشهادة</th>
+                        <th>الطالب</th>
+                        <th>النوع</th>
+                        <th>الموضوع</th>
+                        <th>القالب</th>
+                        <th>تاريخ الإصدار</th>
+                        <th>الحالة</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in certificates)
+                    {
+                        <tr>
+                            <td style="direction:ltr; text-align:right; font-weight:700;">@item.CertificateNumber</td>
+                            <td>@item.StudentName</td>
+                            <td>@item.TypeDisplayName</td>
+                            <td>@item.SubjectTitle</td>
+                            <td>@item.TemplateName</td>
+                            <td>@item.IssuedAtDisplay</td>
+                            <td>
+                                <span class="badge @(item.Status == CertificateStatus.Active ? "bg-success" : "bg-danger")"
+                                      title="@item.RevokeReason">
+                                    @item.StatusDisplayName
+                                </span>
+                            </td>
+                            <td class="text-nowrap">
+                                <a href="/Certificates/View/@item.Id" target="_blank" rel="noopener"
+                                   class="btn btn-outline-primary btn-sm" title="عرض الشهادة">
+                                    <i class='bx bx-show'></i>
+                                </a>
+                                <a href="/Certificates/Verify/@item.VerificationToken" target="_blank" rel="noopener"
+                                   class="btn btn-outline-secondary btn-sm" title="صفحة التحقق">
+                                    <i class='bx bx-link-external'></i>
+                                </a>
+                                @if (item.Status == CertificateStatus.Active)
+                                {
+                                    <button type="button" class="btn btn-outline-danger btn-sm js-revoke"
+                                            data-id="@item.Id"
+                                            data-number="@item.CertificateNumber"
+                                            data-student="@item.StudentName"
+                                            title="إلغاء الاعتماد">
+                                        <i class='bx bx-block'></i>
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    @if (certificates.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <i class='bx bx-folder-open' style="font-size:30px; display:block; margin-bottom:8px;"></i>
+                                لا توجد شهادات مطابقة للبحث أو الفلاتر المحددة.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @if (totalPages > 1)
+    {
+        <nav class="mt-3" aria-label="تصفح الصفحات">
+            <ul class="pagination justify-content-center mb-1">
+                <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(currentPage - 1)"
+                       asp-route-type="@selectedType" asp-route-status="@selectedStatus" asp-route-search="@search">السابق</a>
+                </li>
+                @for (var i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@i"
+                           asp-route-type="@selectedType" asp-route-status="@selectedStatus" asp-route-search="@search">@i</a>
+                    </li>
+                }
+                <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(currentPage + 1)"
+                       asp-route-type="@selectedType" asp-route-status="@selectedStatus" asp-route-search="@search">التالي</a>
+                </li>
+            </ul>
+        </nav>
+        <p class="text-center text-muted small">
+            إجمالي @total شهادة — الصفحة @currentPage من @totalPages
+        </p>
+    }
+    else if (total > 0)
+    {
+        <p class="text-muted small mt-3 mb-0">إجمالي @total شهادة.</p>
+    }
+</div>
+
+<!-- نافذة إلغاء الاعتماد -->
+<div class="modal fade" id="revokeModal" tabindex="-1" aria-labelledby="revokeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="post" asp-action="Revoke" class="modal-content" dir="rtl">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="revokeId" />
+            <div class="modal-header">
+                <h5 class="modal-title" id="revokeModalLabel">إلغاء اعتماد الشهادة</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">
+                    سيتم إلغاء اعتماد الشهادة <strong id="revokeNumber" style="direction:ltr;"></strong>
+                    الصادرة للطالب <strong id="revokeStudent"></strong>، ولن تظهر بعد ذلك كشهادة سارية عند التحقق.
+                </p>
+                <label class="cb-label" for="revokeReason">سبب الإلغاء</label>
+                <textarea class="form-control" id="revokeReason" name="reason" rows="3" required
+                          placeholder="مثال: خطأ في بيانات الطالب، أو إعادة إصدار الشهادة."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">تراجع</button>
+                <button class="btn btn-danger"><i class='bx bx-block'></i> تأكيد الإلغاء</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (() => {
+            const modalEl = document.getElementById('revokeModal');
+            if (!modalEl) return;
+            const modal = new bootstrap.Modal(modalEl);
+            document.querySelectorAll('.js-revoke').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('revokeId').value = btn.dataset.id;
+                    document.getElementById('revokeNumber').textContent = btn.dataset.number;
+                    document.getElementById('revokeStudent').textContent = btn.dataset.student;
+                    document.getElementById('revokeReason').value = '';
+                    modal.show();
+                });
+            });
+        })();
+    </script>
+}

@@ -150,11 +150,15 @@ public class CertificateTemplateService : ICertificateTemplateService
 
     private static TemplateConfiguration ParseConfiguration(string? json, CertificateType type)
     {
-        if (string.IsNullOrWhiteSpace(json)) return DefaultTemplateConfigurations.GetDefault(type);
+        var fallback = DefaultTemplateConfigurations.GetDefault(type);
+        if (string.IsNullOrWhiteSpace(json)) return fallback;
         try
         {
             using var document = JsonDocument.Parse(json);
             var configuration = TemplateConfiguration.FromJson(document.RootElement.GetRawText());
+            // A configuration with no sections would print an empty certificate, so keep the built-in ones.
+            if (configuration.Sections.Count == 0)
+                configuration.Sections = fallback.Sections;
             return configuration;
         }
         catch (JsonException ex)
@@ -168,8 +172,14 @@ public class CertificateTemplateService : ICertificateTemplateService
         var result = new List<CertificateTemplateSummaryDto>();
         foreach (var template in templates)
         {
+            var theme = TemplateConfiguration.FromJson(
+                template.Versions.OrderByDescending(v => v.VersionNumber).FirstOrDefault()?.ConfigurationJson).Theme;
             result.Add(new CertificateTemplateSummaryDto
             {
+                PrimaryColor = theme.PrimaryColor,
+                SecondaryColor = theme.SecondaryColor,
+                AccentColor = theme.AccentColor,
+                BackgroundColor = theme.BackgroundColor,
                 Id = template.Id,
                 InstituteId = template.InstituteId,
                 InstituteName = template.Institute?.Name ?? string.Empty,

@@ -32,7 +32,8 @@ public class MatnsController : Controller
         var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (Guid.TryParse(userIdStr, out var userId))
         {
-            var userRepo = HttpContext.RequestServices.GetService<Hafiz.Repositories.Interfaces.IUserRepository>();
+            var userRepo =
+                HttpContext.RequestServices.GetService<Hafiz.Repositories.Interfaces.IUserRepository>();
             var user = userRepo?.GetByIdAsync(userId).GetAwaiter().GetResult();
             return user?.InstituteId;
         }
@@ -41,7 +42,10 @@ public class MatnsController : Controller
     }
 
     // GET: Admin/Matns?category=...&search=...
-    public async Task<IActionResult> Index(Hafiz.Domain.Enums.MatnCategory? category = null, string? search = null)
+    public async Task<IActionResult> Index(
+        Hafiz.Domain.Enums.MatnCategory? category = null,
+        string? search = null
+    )
     {
         var instituteId = GetInstituteId();
         var matns = await _matnService.GetAllAvailableAsync(instituteId, category);
@@ -50,8 +54,9 @@ public class MatnsController : Controller
         {
             var term = search.Trim();
             matns = matns.Where(m =>
-                m.Title.Contains(term, StringComparison.OrdinalIgnoreCase) ||
-                (m.Author != null && m.Author.Contains(term, StringComparison.OrdinalIgnoreCase)));
+                m.Title.Contains(term, StringComparison.OrdinalIgnoreCase)
+                || (m.Author != null && m.Author.Contains(term, StringComparison.OrdinalIgnoreCase))
+            );
         }
 
         ViewBag.SelectedCategory = category;
@@ -65,13 +70,18 @@ public class MatnsController : Controller
         var instituteId = GetInstituteId();
         if (instituteId.HasValue)
         {
-            var programs = await _programService.GetAllByInstituteAsync(instituteId.Value, Hafiz.Domain.Enums.ProgramType.Matn);
-            ViewBag.Programs = programs.Select(p => new SelectListItem
-            {
-                Value = p.Id.ToString(),
-                Text = p.Name,
-                Selected = studyProgramId.HasValue && p.Id == studyProgramId.Value
-            }).ToList();
+            var programs = await _programService.GetAllByInstituteAsync(
+                instituteId.Value,
+                Hafiz.Domain.Enums.ProgramType.Matn
+            );
+            ViewBag.Programs = programs
+                .Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.Name,
+                    Selected = studyProgramId.HasValue && p.Id == studyProgramId.Value,
+                })
+                .ToList();
         }
 
         return View(new CreateMatnDto { StudyProgramId = studyProgramId });
@@ -87,13 +97,18 @@ public class MatnsController : Controller
         {
             if (instituteId.HasValue)
             {
-                var programs = await _programService.GetAllByInstituteAsync(instituteId.Value, Hafiz.Domain.Enums.ProgramType.Matn);
-                ViewBag.Programs = programs.Select(p => new SelectListItem
-                {
-                    Value = p.Id.ToString(),
-                    Text = p.Name,
-                    Selected = dto.StudyProgramId.HasValue && p.Id == dto.StudyProgramId.Value
-                }).ToList();
+                var programs = await _programService.GetAllByInstituteAsync(
+                    instituteId.Value,
+                    Hafiz.Domain.Enums.ProgramType.Matn
+                );
+                ViewBag.Programs = programs
+                    .Select(p => new SelectListItem
+                    {
+                        Value = p.Id.ToString(),
+                        Text = p.Name,
+                        Selected = dto.StudyProgramId.HasValue && p.Id == dto.StudyProgramId.Value,
+                    })
+                    .ToList();
             }
             return View(dto);
         }
@@ -104,13 +119,18 @@ public class MatnsController : Controller
             ModelState.AddModelError(string.Empty, message);
             if (instituteId.HasValue)
             {
-                var programs = await _programService.GetAllByInstituteAsync(instituteId.Value, Hafiz.Domain.Enums.ProgramType.Matn);
-                ViewBag.Programs = programs.Select(p => new SelectListItem
-                {
-                    Value = p.Id.ToString(),
-                    Text = p.Name,
-                    Selected = dto.StudyProgramId.HasValue && p.Id == dto.StudyProgramId.Value
-                }).ToList();
+                var programs = await _programService.GetAllByInstituteAsync(
+                    instituteId.Value,
+                    Hafiz.Domain.Enums.ProgramType.Matn
+                );
+                ViewBag.Programs = programs
+                    .Select(p => new SelectListItem
+                    {
+                        Value = p.Id.ToString(),
+                        Text = p.Name,
+                        Selected = dto.StudyProgramId.HasValue && p.Id == dto.StudyProgramId.Value,
+                    })
+                    .ToList();
             }
             return View(dto);
         }
@@ -134,13 +154,18 @@ public class MatnsController : Controller
         var instituteId = GetInstituteId();
         if (instituteId.HasValue)
         {
-            var programs = await _programService.GetAllByInstituteAsync(instituteId.Value, Hafiz.Domain.Enums.ProgramType.Matn);
-            ViewBag.Programs = programs.Select(p => new SelectListItem
-            {
-                Value = p.Id.ToString(),
-                Text = p.Name,
-                Selected = matn.StudyProgramId.HasValue && p.Id == matn.StudyProgramId.Value
-            }).ToList();
+            var programs = await _programService.GetAllByInstituteAsync(
+                instituteId.Value,
+                Hafiz.Domain.Enums.ProgramType.Matn
+            );
+            ViewBag.Programs = programs
+                .Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.Name,
+                    Selected = matn.StudyProgramId.HasValue && p.Id == matn.StudyProgramId.Value,
+                })
+                .ToList();
         }
 
         var dto = new UpdateMatnDto
@@ -155,7 +180,7 @@ public class MatnsController : Controller
             StudyProgramId = matn.StudyProgramId,
             Order = matn.Order,
             PassingGrade = matn.PassingGrade > 0 ? matn.PassingGrade : 60m,
-            IsActive = matn.IsActive
+            IsActive = matn.IsActive,
         };
 
         return View(dto);

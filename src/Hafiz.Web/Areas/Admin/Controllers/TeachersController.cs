@@ -72,7 +72,11 @@ namespace Hafiz.Areas.Admin.Controllers
 
             var teachersList = list.ToList();
             var totalTeachers = teachersList.Count;
-            var totalClasses = teachersList.SelectMany(t => t.Classes).Select(c => c.Id).Distinct().Count();
+            var totalClasses = teachersList
+                .SelectMany(t => t.Classes)
+                .Select(c => c.Id)
+                .Distinct()
+                .Count();
             var teachersWithClasses = teachersList.Count(t => t.Classes.Any());
             var teachersWithoutClasses = totalTeachers - teachersWithClasses;
 
@@ -94,16 +98,41 @@ namespace Hafiz.Areas.Admin.Controllers
             {
                 var term = search.Trim();
                 filtered = filtered.Where(t =>
-                    (t.TeacherInfo.FirstName != null && t.TeacherInfo.FirstName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
-                    (t.TeacherInfo.SecondName != null && t.TeacherInfo.SecondName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
-                    (t.TeacherInfo.Username != null && t.TeacherInfo.Username.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
-                    (t.TeacherInfo.PhoneNumber != null && t.TeacherInfo.PhoneNumber.Contains(term, StringComparison.OrdinalIgnoreCase))
+                    (
+                        t.TeacherInfo.FirstName != null
+                        && t.TeacherInfo.FirstName.Contains(
+                            term,
+                            StringComparison.OrdinalIgnoreCase
+                        )
+                    )
+                    || (
+                        t.TeacherInfo.SecondName != null
+                        && t.TeacherInfo.SecondName.Contains(
+                            term,
+                            StringComparison.OrdinalIgnoreCase
+                        )
+                    )
+                    || (
+                        t.TeacherInfo.Username != null
+                        && t.TeacherInfo.Username.Contains(term, StringComparison.OrdinalIgnoreCase)
+                    )
+                    || (
+                        t.TeacherInfo.PhoneNumber != null
+                        && t.TeacherInfo.PhoneNumber.Contains(
+                            term,
+                            StringComparison.OrdinalIgnoreCase
+                        )
+                    )
                 );
             }
 
             if (!string.IsNullOrWhiteSpace(className))
             {
-                filtered = filtered.Where(t => t.Classes.Any(c => string.Equals(c.Name, className, StringComparison.OrdinalIgnoreCase)));
+                filtered = filtered.Where(t =>
+                    t.Classes.Any(c =>
+                        string.Equals(c.Name, className, StringComparison.OrdinalIgnoreCase)
+                    )
+                );
             }
 
             var pagedTeachers = filtered.ToPagedResult(page, pageSize);
@@ -183,7 +212,8 @@ namespace Hafiz.Areas.Admin.Controllers
             }
             else
             {
-                TempData["SuccessMessage"] = "تمت أرشفة المعلم بنجاح، ويمكنك استعادته في أي وقت من قسم الأرشيف.";
+                TempData["SuccessMessage"] =
+                    "تمت أرشفة المعلم بنجاح، ويمكنك استعادته في أي وقت من قسم الأرشيف.";
             }
             return RedirectToAction(nameof(Index));
         }

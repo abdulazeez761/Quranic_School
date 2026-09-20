@@ -1,0 +1,68 @@
+@model Hafiz.Application.DTO.Certificate.CreateTemplateDto
+@using Hafiz.Domain.Enums
+@{
+    ViewData["Title"] = "قالب شهادة جديد";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    var typeOptions = new List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>
+    {
+        new("قرآن كريم", CertificateType.Quran.ToString()),
+        new("متن علمي", CertificateType.Matn.ToString()),
+        new("إجازة بسند", CertificateType.Sanad.ToString()),
+        new("تقديرية عامة", CertificateType.General.ToString())
+    };
+}
+
+<link rel="stylesheet" href="~/css/admin/certificate-builder.css" asp-append-version="true" />
+
+<div class="cert-admin-page" dir="rtl">
+    <header class="cert-admin-header">
+        <div>
+            <h1><span class="cert-icon"><i class='bx bx-plus-circle'></i></span>قالب شهادة جديد</h1>
+            <p>اختر اسماً ونوعاً للقالب، ثم أكمل التصميم في محرر الشهادة.</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary"><i class='bx bx-arrow-back'></i> كل القوالب</a>
+    </header>
+
+    <form method="post" class="builder-panel" style="max-width:720px;">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+        <div class="builder-section">
+            <h3><i class='bx bx-file'></i> بيانات القالب</h3>
+            <div class="field-grid">
+                <div class="cb-field full">
+                    <label asp-for="Name">اسم القالب</label>
+                    <input asp-for="Name" placeholder="مثال: الشهادة الذهبية لخاتم القرآن" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="cb-field full">
+                    <label asp-for="Description">وصف مختصر</label>
+                    <input asp-for="Description" placeholder="وصف يساعد فريقك على اختيار القالب المناسب" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="cb-field full">
+                    <label asp-for="Type">نوع الشهادة</label>
+                    <select asp-for="Type" asp-items="typeOptions"></select>
+                    <small style="color:var(--cb-muted); font-size:12px;">
+                        يُصدر القالب لشهادات هذا النوع فقط، ويُستخدم تلقائياً عند الإصدار إن كان افتراضياً.
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="builder-section">
+            <h3><i class='bx bx-check-shield'></i> الاعتماد</h3>
+            <div class="section-row">
+                <i class='bx bx-star'></i>
+                <span>القالب الافتراضي</span>
+                <small>يُستخدم تلقائياً عند إصدار شهادات هذا النوع</small>
+                <input asp-for="IsDefault" class="toggle" />
+            </div>
+        </div>
+
+        <div class="builder-actions">
+            <a asp-action="Index" class="btn btn-light">إلغاء</a>
+            <button class="btn btn-success"><i class='bx bx-palette'></i> إنشاء وفتح محرر التصميم</button>
+        </div>
+    </form>
+</div>

@@ -77,7 +77,9 @@ namespace Hafiz.Areas.Admin.Controllers
             var studentList = students.ToList();
             var classList = classes.ToList();
             var classIds = classList.Select(c => c.Id).ToList();
-            var matnAssignments = (await _matnAssignmentRepo.GetByClassIdsAndDateAsync(classIds, selectedDate)).ToList();
+            var matnAssignments = (
+                await _matnAssignmentRepo.GetByClassIdsAndDateAsync(classIds, selectedDate)
+            ).ToList();
 
             var classReports = classList
                 .OrderBy(c => c.Name)
@@ -143,7 +145,9 @@ namespace Hafiz.Areas.Admin.Controllers
 
             var vm = await _wirdService.GetWirdReportAsync(filter);
             vm.IsCrossCenter = isSuperAdmin.Value;
-            vm.ActiveTab = string.Equals(tab, "matn", StringComparison.OrdinalIgnoreCase) ? "matn" : "quran";
+            vm.ActiveTab = string.Equals(tab, "matn", StringComparison.OrdinalIgnoreCase)
+                ? "matn"
+                : "quran";
 
             await PopulateFilterOptionsAsync(vm, filter, isSuperAdmin.Value);
 
@@ -158,42 +162,83 @@ namespace Hafiz.Areas.Admin.Controllers
             );
 
             var matnList = matnEntities.ToList();
-            vm.MatnDetails = matnList.Select(m => new Hafiz.DTOs.Matn.MatnAssignmentDto
-            {
-                Id = m.Id,
-                StudentId = m.StudentId,
-                StudentName = $"{m.Student?.StudentInfo?.FirstName} {m.Student?.StudentInfo?.SecondName}".Trim(),
-                ClassId = m.ClassId,
-                ClassName = m.Class?.Name ?? "",
-                MatnId = m.MatnId,
-                MatnTitle = m.Matn?.Title,
-                PerformanceType = m.PerformanceType,
-                Unit = m.Unit,
-                Amount = m.Amount,
-                ChapterName = m.ChapterName,
-                FromNumber = m.FromNumber,
-                ToNumber = m.ToNumber,
-                Status = m.Status,
-                IsCompleted = m.IsCompleted,
-                IsUpcoming = m.IsUpcoming,
-                AssignedDate = m.AssignedDate,
-                Note = m.Note
-            }).ToList();
+            vm.MatnDetails = matnList
+                .Select(m => new Hafiz.DTOs.Matn.MatnAssignmentDto
+                {
+                    Id = m.Id,
+                    StudentId = m.StudentId,
+                    StudentName =
+                        $"{m.Student?.StudentInfo?.FirstName} {m.Student?.StudentInfo?.SecondName}".Trim(),
+                    ClassId = m.ClassId,
+                    ClassName = m.Class?.Name ?? "",
+                    MatnId = m.MatnId,
+                    MatnTitle = m.Matn?.Title,
+                    PerformanceType = m.PerformanceType,
+                    Unit = m.Unit,
+                    Amount = m.Amount,
+                    ChapterName = m.ChapterName,
+                    FromNumber = m.FromNumber,
+                    ToNumber = m.ToNumber,
+                    Status = m.Status,
+                    IsCompleted = m.IsCompleted,
+                    IsUpcoming = m.IsUpcoming,
+                    AssignedDate = m.AssignedDate,
+                    Note = m.Note,
+                })
+                .ToList();
 
             vm.MatnStats = new MatnReportStatsDto
             {
                 TotalAssignments = matnList.Count,
-                MemorizationCount = matnList.Count(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Memorization),
-                RevisionCount = matnList.Count(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Revision),
-                MudarasahCount = matnList.Count(m => m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Mudarasah),
+                MemorizationCount = matnList.Count(m =>
+                    m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Memorization
+                ),
+                RevisionCount = matnList.Count(m =>
+                    m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Revision
+                ),
+                MudarasahCount = matnList.Count(m =>
+                    m.PerformanceType == Hafiz.Domain.Enums.MatnPerformanceType.Mudarasah
+                ),
                 CompletedCount = matnList.Count(m => m.IsCompleted),
                 PendingCount = matnList.Count(m => !m.IsCompleted),
-                TotalVerses = matnList.Where(m => m.Unit == Hafiz.Domain.Enums.MatnUnit.Verses && m.Amount.HasValue).Sum(m => m.Amount!.Value),
-                CompletedVerses = matnList.Where(m => m.IsCompleted && m.Unit == Hafiz.Domain.Enums.MatnUnit.Verses && m.Amount.HasValue).Sum(m => m.Amount!.Value),
-                CompletedLines = matnList.Where(m => m.IsCompleted && m.Unit == Hafiz.Domain.Enums.MatnUnit.Lines && m.Amount.HasValue).Sum(m => m.Amount!.Value),
-                CompletedPages = matnList.Where(m => m.IsCompleted && m.Unit == Hafiz.Domain.Enums.MatnUnit.Pages && m.Amount.HasValue).Sum(m => m.Amount!.Value),
-                CompletedChapters = matnList.Where(m => m.IsCompleted && m.Unit == Hafiz.Domain.Enums.MatnUnit.Chapters && m.Amount.HasValue).Sum(m => m.Amount!.Value),
-                CompletedHadiths = matnList.Where(m => m.IsCompleted && m.Unit == Hafiz.Domain.Enums.MatnUnit.Hadiths && m.Amount.HasValue).Sum(m => m.Amount!.Value),
+                TotalVerses = matnList
+                    .Where(m => m.Unit == Hafiz.Domain.Enums.MatnUnit.Verses && m.Amount.HasValue)
+                    .Sum(m => m.Amount!.Value),
+                CompletedVerses = matnList
+                    .Where(m =>
+                        m.IsCompleted
+                        && m.Unit == Hafiz.Domain.Enums.MatnUnit.Verses
+                        && m.Amount.HasValue
+                    )
+                    .Sum(m => m.Amount!.Value),
+                CompletedLines = matnList
+                    .Where(m =>
+                        m.IsCompleted
+                        && m.Unit == Hafiz.Domain.Enums.MatnUnit.Lines
+                        && m.Amount.HasValue
+                    )
+                    .Sum(m => m.Amount!.Value),
+                CompletedPages = matnList
+                    .Where(m =>
+                        m.IsCompleted
+                        && m.Unit == Hafiz.Domain.Enums.MatnUnit.Pages
+                        && m.Amount.HasValue
+                    )
+                    .Sum(m => m.Amount!.Value),
+                CompletedChapters = matnList
+                    .Where(m =>
+                        m.IsCompleted
+                        && m.Unit == Hafiz.Domain.Enums.MatnUnit.Chapters
+                        && m.Amount.HasValue
+                    )
+                    .Sum(m => m.Amount!.Value),
+                CompletedHadiths = matnList
+                    .Where(m =>
+                        m.IsCompleted
+                        && m.Unit == Hafiz.Domain.Enums.MatnUnit.Hadiths
+                        && m.Amount.HasValue
+                    )
+                    .Sum(m => m.Amount!.Value),
             };
 
             return View(vm);
@@ -209,7 +254,8 @@ namespace Hafiz.Areas.Admin.Controllers
             var vm = await _wirdService.GetWirdReportForExportAsync(filter);
 
             var bytes = WirdReportExcelExporter.Build(vm);
-            var fileName = $"wird-report-{TimeZoneHelper.GetUserToday(HttpContext):yyyy-MM-dd}.xlsx";
+            var fileName =
+                $"wird-report-{TimeZoneHelper.GetUserToday(HttpContext):yyyy-MM-dd}.xlsx";
             return File(bytes, WirdReportExcelExporter.ContentType, fileName);
         }
 
@@ -229,28 +275,32 @@ namespace Hafiz.Areas.Admin.Controllers
                 filter.Status
             );
 
-            var dtos = matnList.Select(m => new Hafiz.DTOs.Matn.MatnAssignmentDto
-            {
-                Id = m.Id,
-                StudentId = m.StudentId,
-                StudentName = $"{m.Student?.StudentInfo?.FirstName} {m.Student?.StudentInfo?.SecondName}".Trim(),
-                ClassId = m.ClassId,
-                ClassName = m.Class?.Name ?? "",
-                PerformanceType = m.PerformanceType,
-                Unit = m.Unit,
-                Amount = m.Amount,
-                ChapterName = m.ChapterName,
-                FromNumber = m.FromNumber,
-                ToNumber = m.ToNumber,
-                Status = m.Status,
-                IsCompleted = m.IsCompleted,
-                IsUpcoming = m.IsUpcoming,
-                AssignedDate = m.AssignedDate,
-                Note = m.Note
-            }).ToList();
+            var dtos = matnList
+                .Select(m => new Hafiz.DTOs.Matn.MatnAssignmentDto
+                {
+                    Id = m.Id,
+                    StudentId = m.StudentId,
+                    StudentName =
+                        $"{m.Student?.StudentInfo?.FirstName} {m.Student?.StudentInfo?.SecondName}".Trim(),
+                    ClassId = m.ClassId,
+                    ClassName = m.Class?.Name ?? "",
+                    PerformanceType = m.PerformanceType,
+                    Unit = m.Unit,
+                    Amount = m.Amount,
+                    ChapterName = m.ChapterName,
+                    FromNumber = m.FromNumber,
+                    ToNumber = m.ToNumber,
+                    Status = m.Status,
+                    IsCompleted = m.IsCompleted,
+                    IsUpcoming = m.IsUpcoming,
+                    AssignedDate = m.AssignedDate,
+                    Note = m.Note,
+                })
+                .ToList();
 
             var bytes = MatnReportExcelExporter.Build(dtos, "تقرير أوراد المتون العلمية");
-            var fileName = $"matn-wirds-report-{TimeZoneHelper.GetUserToday(HttpContext):yyyy-MM-dd}.xlsx";
+            var fileName =
+                $"matn-wirds-report-{TimeZoneHelper.GetUserToday(HttpContext):yyyy-MM-dd}.xlsx";
             return File(bytes, MatnReportExcelExporter.ContentType, fileName);
         }
 

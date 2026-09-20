@@ -83,7 +83,11 @@ namespace Hafiz.Areas.Admin.Controllers
 
             var studentList = students.ToList();
             var totalStudents = studentList.Count;
-            var totalClasses = studentList.SelectMany(s => s.Classes).Select(c => c.Id).Distinct().Count();
+            var totalClasses = studentList
+                .SelectMany(s => s.Classes)
+                .Select(c => c.Id)
+                .Distinct()
+                .Count();
             var studentsWithClasses = studentList.Count(s => s.Classes.Any());
             var studentsWithoutClasses = totalStudents - studentsWithClasses;
 
@@ -103,10 +107,31 @@ namespace Hafiz.Areas.Admin.Controllers
             {
                 var term = search.Trim();
                 filtered = filtered.Where(s =>
-                    (s.StudentInfo.FirstName != null && s.StudentInfo.FirstName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
-                    (s.StudentInfo.SecondName != null && s.StudentInfo.SecondName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
-                    (s.StudentInfo.Username != null && s.StudentInfo.Username.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
-                    (s.StudentInfo.PhoneNumber != null && s.StudentInfo.PhoneNumber.Contains(term, StringComparison.OrdinalIgnoreCase))
+                    (
+                        s.StudentInfo.FirstName != null
+                        && s.StudentInfo.FirstName.Contains(
+                            term,
+                            StringComparison.OrdinalIgnoreCase
+                        )
+                    )
+                    || (
+                        s.StudentInfo.SecondName != null
+                        && s.StudentInfo.SecondName.Contains(
+                            term,
+                            StringComparison.OrdinalIgnoreCase
+                        )
+                    )
+                    || (
+                        s.StudentInfo.Username != null
+                        && s.StudentInfo.Username.Contains(term, StringComparison.OrdinalIgnoreCase)
+                    )
+                    || (
+                        s.StudentInfo.PhoneNumber != null
+                        && s.StudentInfo.PhoneNumber.Contains(
+                            term,
+                            StringComparison.OrdinalIgnoreCase
+                        )
+                    )
                 );
             }
 
@@ -329,7 +354,8 @@ namespace Hafiz.Areas.Admin.Controllers
             }
             else
             {
-                TempData["SuccessMessage"] = "تمت أرشفة الطالب بنجاح، ويمكنك استعادته في أي وقت من قسم الأرشيف.";
+                TempData["SuccessMessage"] =
+                    "تمت أرشفة الطالب بنجاح، ويمكنك استعادته في أي وقت من قسم الأرشيف.";
             }
 
             return RedirectToAction(nameof(Index));
@@ -397,7 +423,10 @@ namespace Hafiz.Areas.Admin.Controllers
                 var instituteId = GetInstituteId();
                 if (newData.StudentID.HasValue)
                 {
-                    var existingStudent = await _studentService.GetByIdAsync(newData.StudentID.Value, instituteId);
+                    var existingStudent = await _studentService.GetByIdAsync(
+                        newData.StudentID.Value,
+                        instituteId
+                    );
                     if (existingStudent is null)
                         return Forbid();
                 }

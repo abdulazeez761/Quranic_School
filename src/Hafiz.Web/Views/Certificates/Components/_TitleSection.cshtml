@@ -1,2 +1,20 @@
+@using Hafiz.Application.DTO.Certificate.TemplateConfiguration
+@using Hafiz.Application.Services
 @model Hafiz.Application.DTO.Certificate.CertificateModel
-<div class="cert-title-container"><h1 class="cert-main-title">@Model.CertificateTitle</h1><div class="cert-title-line"></div></div>
+@{
+    var section = ViewData["Section"] as SectionConfig;
+    var config = section?.GetConfig<TitleSectionConfig>();
+
+    var title = string.IsNullOrWhiteSpace(config?.Text)
+        ? Model.CertificateTitle
+        : CertificateTokenResolver.Resolve(config!.Text, Model);
+    var showDecorators = config?.ShowDecorators ?? true;
+    var showUnderline = config?.ShowUnderline ?? true;
+}
+<div class="cert-title-container @(showDecorators ? "" : "no-decorators")">
+    <h1 class="cert-main-title">@title</h1>
+    @if (showUnderline)
+    {
+        <div class="cert-title-line"></div>
+    }
+</div>

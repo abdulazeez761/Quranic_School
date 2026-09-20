@@ -190,6 +190,9 @@ public class CertificateService : ICertificateService
         string? authorOrSubtext = "برواية حفص عن عاصم من طريق الشاطبية";
         string achievementDesc;
         string scopeDetails;
+        int? scopeFromJuz = null;
+        int? scopeToJuz = null;
+        int? scopeJuzCount;
 
         var isHafiz = WirdPageCalculator.IsHafiz(student) || (fromJuz == 1 && toJuz == 30);
 
@@ -199,9 +202,15 @@ public class CertificateService : ICertificateService
             subjectName = "كتاب الله تعالى كاملاً (30 جزءاً)";
             achievementDesc = $"تشهد إدارة المركز بأن {(isFemale ? "الطالبة المباركة" : "الطالب المبارك")} قد {(isFemale ? "أتمّت" : "أتمّ")} بحمد الله وتوفيقه وفضله ختم القرآن الكريم كاملاً غيباً عن ظهر قلب.";
             scopeDetails = "من سورة الفاتحة إلى سورة الناس بحفظ متقن ومراعاة لأحكام التلاوة والتجويد";
+            scopeFromJuz = 1;
+            scopeToJuz = 30;
+            scopeJuzCount = 30;
         }
         else if (fromJuz.HasValue && toJuz.HasValue)
         {
+            scopeFromJuz = Math.Min(fromJuz.Value, toJuz.Value);
+            scopeToJuz = Math.Max(fromJuz.Value, toJuz.Value);
+            scopeJuzCount = scopeToJuz - scopeFromJuz + 1;
             if (fromJuz == toJuz)
             {
                 certTitle = "شهادة إتمام حفظ جزء من القرآن الكريم";
@@ -211,11 +220,10 @@ public class CertificateService : ICertificateService
             }
             else
             {
-                var count = Math.Abs(toJuz.Value - fromJuz.Value) + 1;
                 certTitle = "شهادة إتمام أجزاء من القرآن الكريم";
-                subjectName = $"حفظ ({count}) أجزاء من كتاب الله تعالى";
+                subjectName = $"حفظ ({scopeJuzCount}) أجزاء من كتاب الله تعالى";
                 achievementDesc = $"تشهد إدارة المركز بأن {(isFemale ? "الطالبة" : "الطالب")} قد {(isFemale ? "أتمّت" : "أتمّ")} بحمد الله وتوفيقه حفظ وإتقان الأجزاء المقررة غيباً عن ظهر قلب.";
-                scopeDetails = $"من الجزء {Math.Min(fromJuz.Value, toJuz.Value)} إلى الجزء {Math.Max(fromJuz.Value, toJuz.Value)}";
+                scopeDetails = $"من الجزء {scopeFromJuz} إلى الجزء {scopeToJuz}";
             }
         }
         else
@@ -225,6 +233,7 @@ public class CertificateService : ICertificateService
             subjectName = $"إتمام حفظ {juzCount} أجزاء من القرآن الكريم";
             achievementDesc = $"تشهد إدارة المركز بأن {(isFemale ? "الطالبة" : "الطالب")} قد {(isFemale ? "أتمّت" : "أتمّ")} بحمد الله وتوفيقه حفظ وإتقان المقرر من كتاب الله العزيز.";
             scopeDetails = $"بواقع {juzCount} أجزاء محفوفة بالإتقان وحسن الأداء";
+            scopeJuzCount = juzCount;
         }
 
         var today = DateTime.UtcNow;
@@ -242,6 +251,11 @@ public class CertificateService : ICertificateService
             SubtitleOrAuthor = authorOrSubtext,
             AchievementDescription = achievementDesc,
             ScopeDetails = scopeDetails,
+            FromJuz = scopeFromJuz,
+            ToJuz = scopeToJuz,
+            JuzCount = scopeJuzCount,
+            CompletionPercentage = scopeJuzCount.HasValue ? (int)Math.Round(scopeJuzCount.Value / 30m * 100m) : null,
+            Riwayah = authorOrSubtext,
             Rating = "ممتاز",
             ExamResultText = "بتقدير: ممتاز ومبارك",
             IssueDate = today,

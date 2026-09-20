@@ -1,2 +1,44 @@
+@using Hafiz.Application.DTO.Certificate.TemplateConfiguration
+@using Hafiz.Application.Services
 @model Hafiz.Application.DTO.Certificate.CertificateModel
-<div class="cert-body-content"><p class="cert-intro-text">@Model.AchievementDescription</p><div class="cert-student-name">@Model.StudentName</div><div class="cert-achievement-box"><span class="cert-subject-name">@Model.SubjectName</span>@if (!string.IsNullOrEmpty(Model.SubtitleOrAuthor)) { <div class="cert-author-name">@Model.SubtitleOrAuthor</div> } @if (!string.IsNullOrEmpty(Model.ScopeDetails)) { <div class="cert-scope-text">@Model.ScopeDetails</div> }</div></div>
+@{
+    var section = ViewData["Section"] as SectionConfig;
+    var config = section?.GetConfig<StatementSectionConfig>();
+
+    var intro = string.IsNullOrWhiteSpace(config?.Text)
+        ? Model.AchievementDescription
+        : CertificateTokenResolver.Resolve(config!.Text, Model);
+    var showStudentName = config?.ShowStudentName ?? true;
+    var showSubjectName = config?.ShowSubjectName ?? true;
+    var showAuthor = config?.ShowAuthor ?? true;
+    var showScopeDetails = config?.ShowScopeDetails ?? true;
+    var closing = Model.Configuration?.Tokens?.ClosingText;
+}
+<div class="cert-body-content">
+    <p class="cert-intro-text">@intro</p>
+    @if (showStudentName)
+    {
+        <div class="cert-student-name">@Model.StudentName</div>
+    }
+    @if (showSubjectName || (showAuthor && !string.IsNullOrEmpty(Model.SubtitleOrAuthor)) || (showScopeDetails && !string.IsNullOrEmpty(Model.ScopeDetails)))
+    {
+        <div class="cert-achievement-box">
+            @if (showSubjectName)
+            {
+                <span class="cert-subject-name">@Model.SubjectName</span>
+            }
+            @if (showAuthor && !string.IsNullOrEmpty(Model.SubtitleOrAuthor))
+            {
+                <div class="cert-author-name">@Model.SubtitleOrAuthor</div>
+            }
+            @if (showScopeDetails && !string.IsNullOrEmpty(Model.ScopeDetails))
+            {
+                <div class="cert-scope-text">@Model.ScopeDetails</div>
+            }
+        </div>
+    }
+    @if (!string.IsNullOrWhiteSpace(closing))
+    {
+        <p class="cert-closing-text">@CertificateTokenResolver.Resolve(closing, Model)</p>
+    }
+</div>

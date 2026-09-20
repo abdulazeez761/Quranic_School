@@ -1,0 +1,56 @@
+@using Hafiz.Application.DTO.Certificate.TemplateConfiguration
+@using Hafiz.Application.Services
+@model Hafiz.Application.DTO.Certificate.CertificateModel
+@{
+    var section = ViewData["Section"] as SectionConfig;
+    var config = section?.GetConfig<QuranScopeSectionConfig>();
+
+    var juzCount = Model.JuzCount ?? 0;
+    var fromJuz = Model.FromJuz;
+    var toJuz = Model.ToJuz;
+    var hasRange = fromJuz.HasValue && toJuz.HasValue;
+
+    var riwayah = string.IsNullOrWhiteSpace(config?.RiwayahText)
+        ? Model.Riwayah
+        : CertificateTokenResolver.Resolve(config!.RiwayahText, Model);
+
+    var items = new List<(string Label, string Value)>();
+    if (config?.ShowFromJuz == true && hasRange)
+    {
+        items.Add(("من الجزء", fromJuz!.Value.ToString()));
+    }
+    if (config?.ShowToJuz == true && hasRange && toJuz != fromJuz)
+    {
+        items.Add(("إلى الجزء", toJuz!.Value.ToString()));
+    }
+    if (config?.ShowJuzCount == true && juzCount > 0)
+    {
+        items.Add(("عدد الأجزاء", juzCount.ToString()));
+    }
+    if (config?.ShowCompletionPercentage == true && Model.CompletionPercentage.HasValue)
+    {
+        items.Add(("نسبة الإنجاز", $"{Model.CompletionPercentage.Value}%"));
+    }
+}
+<div class="cert-scope">
+    @if (items.Count > 0)
+    {
+        <div class="cert-scope-grid">
+            @foreach (var item in items)
+            {
+                <div class="cert-scope-item">
+                    <span class="cert-scope-label">@item.Label</span>
+                    <span class="cert-scope-value">@item.Value</span>
+                </div>
+            }
+        </div>
+    }
+    @if (config?.ShowRiwayah == true && !string.IsNullOrWhiteSpace(riwayah))
+    {
+        <div class="cert-riwayah">@riwayah</div>
+    }
+    else if (items.Count == 0 && !string.IsNullOrWhiteSpace(Model.ScopeDetails))
+    {
+        <div class="cert-scope-text">@Model.ScopeDetails</div>
+    }
+</div>

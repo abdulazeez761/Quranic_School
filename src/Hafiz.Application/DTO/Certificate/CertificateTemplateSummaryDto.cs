@@ -15,6 +15,13 @@ public class CertificateTemplateSummaryDto
     public bool IsActive { get; set; }
     public int CurrentVersion { get; set; }
     public int CertificatesIssuedCount { get; set; }
+
+    // Theme colors of the current version, used to tint the template card in the admin list.
+    public string PrimaryColor { get; set; } = "#C59B27";
+    public string SecondaryColor { get; set; } = "#064E3B";
+    public string AccentColor { get; set; } = "#DFBA69";
+    public string BackgroundColor { get; set; } = "#FDFBF7";
+
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }

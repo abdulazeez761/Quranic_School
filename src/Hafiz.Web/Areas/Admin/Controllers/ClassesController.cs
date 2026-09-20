@@ -86,17 +86,31 @@ namespace Hafiz.Areas.Admin.Controllers
             {
                 var term = search.Trim();
                 filtered = filtered.Where(c =>
-                    (c.Name != null && c.Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
-                    c.Teachers.Any(t =>
-                        (t.TeacherInfo.FirstName != null && t.TeacherInfo.FirstName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
-                        (t.TeacherInfo.SecondName != null && t.TeacherInfo.SecondName.Contains(term, StringComparison.OrdinalIgnoreCase))
+                    (c.Name != null && c.Name.Contains(term, StringComparison.OrdinalIgnoreCase))
+                    || c.Teachers.Any(t =>
+                        (
+                            t.TeacherInfo.FirstName != null
+                            && t.TeacherInfo.FirstName.Contains(
+                                term,
+                                StringComparison.OrdinalIgnoreCase
+                            )
+                        )
+                        || (
+                            t.TeacherInfo.SecondName != null
+                            && t.TeacherInfo.SecondName.Contains(
+                                term,
+                                StringComparison.OrdinalIgnoreCase
+                            )
+                        )
                     )
                 );
             }
 
             if (!string.IsNullOrWhiteSpace(gender))
             {
-                filtered = filtered.Where(c => string.Equals(c.Gender.ToString(), gender, StringComparison.OrdinalIgnoreCase));
+                filtered = filtered.Where(c =>
+                    string.Equals(c.Gender.ToString(), gender, StringComparison.OrdinalIgnoreCase)
+                );
             }
 
             var pagedClasses = filtered.ToPagedResult(page, pageSize);
@@ -209,7 +223,8 @@ namespace Hafiz.Areas.Admin.Controllers
                 }
                 else
                 {
-                    TempData["SuccessMessage"] = "تمت أرشفة الشعبة بنجاح، ويمكنك استعادتها في أي وقت من قسم الأرشيف.";
+                    TempData["SuccessMessage"] =
+                        "تمت أرشفة الشعبة بنجاح، ويمكنك استعادتها في أي وقت من قسم الأرشيف.";
                 }
             }
             catch (DbUpdateException)
@@ -283,8 +298,12 @@ namespace Hafiz.Areas.Admin.Controllers
             var instituteId = GetInstituteId();
             if (instituteId.HasValue)
             {
-                var programs = (await _studyProgramService.GetActiveByInstituteAsync(instituteId.Value)).ToList();
-                var defaultQuranProg = programs.FirstOrDefault(p => p.Type == Hafiz.Domain.Enums.ProgramType.Quran);
+                var programs = (
+                    await _studyProgramService.GetActiveByInstituteAsync(instituteId.Value)
+                ).ToList();
+                var defaultQuranProg = programs.FirstOrDefault(p =>
+                    p.Type == Hafiz.Domain.Enums.ProgramType.Quran
+                );
                 var effectiveSelected = selectedId ?? defaultQuranProg?.Id;
 
                 ViewBag.StudyPrograms = programs
@@ -292,7 +311,7 @@ namespace Hafiz.Areas.Admin.Controllers
                     {
                         Value = p.Id.ToString(),
                         Text = $"{p.Name} ({p.TypeName})",
-                        Selected = effectiveSelected.HasValue && p.Id == effectiveSelected.Value
+                        Selected = effectiveSelected.HasValue && p.Id == effectiveSelected.Value,
                     })
                     .ToList();
             }

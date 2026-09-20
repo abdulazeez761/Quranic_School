@@ -1,2 +1,41 @@
+@using Hafiz.Application.DTO.Certificate.TemplateConfiguration
+@using Hafiz.Application.Services
 @model Hafiz.Application.DTO.Certificate.CertificateModel
-@if (!string.IsNullOrEmpty(Model.ExamResultText)) { <div class="cert-rating-badge"><i class='bx bxs-star cert-rating-star'></i><span>@Model.ExamResultText</span></div> }
+@{
+    var section = ViewData["Section"] as SectionConfig;
+    var config = section?.GetConfig<EvaluationSectionConfig>();
+
+    var showScore = config?.ShowScore ?? false;
+    var showRating = config?.ShowRating ?? false;
+    var showExamResult = config?.ShowExamResult ?? true;
+
+    var hasScore = showScore && Model.Score.HasValue;
+    var hasRating = showRating && !string.IsNullOrEmpty(Model.Rating);
+    var hasExamResult = showExamResult && !string.IsNullOrEmpty(Model.ExamResultText);
+}
+@if (hasExamResult)
+{
+    <div class="cert-rating-badge">
+        <i class='bx bxs-star cert-rating-star'></i>
+        <span>@Model.ExamResultText</span>
+    </div>
+}
+@if (hasScore || hasRating)
+{
+    <div class="cert-evaluation">
+        @if (hasScore)
+        {
+            <div class="cert-evaluation-item">
+                <span class="cert-evaluation-label">الدرجة</span>
+                <span class="cert-evaluation-value">@Model.Score!.Value.ToString("0.##")</span>
+            </div>
+        }
+        @if (hasRating)
+        {
+            <div class="cert-evaluation-item">
+                <span class="cert-evaluation-label">التقدير</span>
+                <span class="cert-evaluation-value">@Model.Rating</span>
+            </div>
+        }
+    </div>
+}

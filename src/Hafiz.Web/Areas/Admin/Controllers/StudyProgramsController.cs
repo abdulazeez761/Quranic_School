@@ -65,7 +65,10 @@ public class StudyProgramsController : Controller
             return View(dto);
         }
 
-        var (success, message, createdId) = await _programService.CreateAsync(dto, instituteId.Value);
+        var (success, message, createdId) = await _programService.CreateAsync(
+            dto,
+            instituteId.Value
+        );
         if (!success)
         {
             ModelState.AddModelError(string.Empty, message);
@@ -99,7 +102,7 @@ public class StudyProgramsController : Controller
             Name = program.Name,
             Description = program.Description,
             Type = program.Type,
-            IsActive = program.IsActive
+            IsActive = program.IsActive,
         };
 
         ViewBag.Program = program;
@@ -147,7 +150,11 @@ public class StudyProgramsController : Controller
         if (!instituteId.HasValue)
             return Unauthorized();
 
-        var (success, message) = await _programService.AddMatnToProgramAsync(programId, matnId, instituteId.Value);
+        var (success, message) = await _programService.AddMatnToProgramAsync(
+            programId,
+            matnId,
+            instituteId.Value
+        );
         if (success)
             TempData["SuccessMessage"] = message;
         else
@@ -165,7 +172,11 @@ public class StudyProgramsController : Controller
         if (!instituteId.HasValue)
             return Unauthorized();
 
-        var (success, message) = await _programService.RemoveMatnFromProgramAsync(programId, matnId, instituteId.Value);
+        var (success, message) = await _programService.RemoveMatnFromProgramAsync(
+            programId,
+            matnId,
+            instituteId.Value
+        );
         if (success)
             TempData["SuccessMessage"] = message;
         else
@@ -191,7 +202,11 @@ public class StudyProgramsController : Controller
             if (index > 0)
             {
                 (matuns[index - 1], matuns[index]) = (matuns[index], matuns[index - 1]);
-                await _programService.ReorderMatunsAsync(programId, matuns.Select(m => m.Id).ToList(), instituteId.Value);
+                await _programService.ReorderMatunsAsync(
+                    programId,
+                    matuns.Select(m => m.Id).ToList(),
+                    instituteId.Value
+                );
                 TempData["SuccessMessage"] = "تم تحديث ترتيب المتون بنجاح.";
             }
         }
@@ -216,7 +231,11 @@ public class StudyProgramsController : Controller
             if (index >= 0 && index < matuns.Count - 1)
             {
                 (matuns[index + 1], matuns[index]) = (matuns[index], matuns[index + 1]);
-                await _programService.ReorderMatunsAsync(programId, matuns.Select(m => m.Id).ToList(), instituteId.Value);
+                await _programService.ReorderMatunsAsync(
+                    programId,
+                    matuns.Select(m => m.Id).ToList(),
+                    instituteId.Value
+                );
                 TempData["SuccessMessage"] = "تم تحديث ترتيب المتون بنجاح.";
             }
         }
@@ -233,7 +252,11 @@ public class StudyProgramsController : Controller
         if (!instituteId.HasValue)
             return Unauthorized();
 
-        var (success, message) = await _programService.ToggleMatnActiveAsync(programId, matnId, instituteId.Value);
+        var (success, message) = await _programService.ToggleMatnActiveAsync(
+            programId,
+            matnId,
+            instituteId.Value
+        );
         if (success)
             TempData["SuccessMessage"] = message;
         else
@@ -264,11 +287,14 @@ public class StudyProgramsController : Controller
     {
         var instituteId = GetInstituteId();
         var matns = await _matnService.GetUnassignedLibraryMatnsAsync(instituteId);
-        ViewBag.AvailableMatns = matns.Select(m => new SelectListItem
-        {
-            Value = m.Id.ToString(),
-            Text = $"{m.Title} {(string.IsNullOrEmpty(m.Author) ? "" : $"({m.Author})")} - {m.CategoryName}"
-        }).ToList();
+        ViewBag.AvailableMatns = matns
+            .Select(m => new SelectListItem
+            {
+                Value = m.Id.ToString(),
+                Text =
+                    $"{m.Title} {(string.IsNullOrEmpty(m.Author) ? "" : $"({m.Author})")} - {m.CategoryName}",
+            })
+            .ToList();
     }
 
     private async Task PopulateAvailableMatnsForProgram(Guid programId)
@@ -278,10 +304,14 @@ public class StudyProgramsController : Controller
         // exclude matns already in this program
         var availableMatns = allMatns.Where(m => m.StudyProgramId != programId).ToList();
 
-        ViewBag.AvailableMatns = availableMatns.Select(m => new SelectListItem
-        {
-            Value = m.Id.ToString(),
-            Text = $"{m.Title} {(string.IsNullOrEmpty(m.Author) ? "" : $"({m.Author})")} - {m.CategoryName}" + (m.StudyProgramId.HasValue ? $" [مرتبط بـ: {m.StudyProgramName}]" : "")
-        }).ToList();
+        ViewBag.AvailableMatns = availableMatns
+            .Select(m => new SelectListItem
+            {
+                Value = m.Id.ToString(),
+                Text =
+                    $"{m.Title} {(string.IsNullOrEmpty(m.Author) ? "" : $"({m.Author})")} - {m.CategoryName}"
+                    + (m.StudyProgramId.HasValue ? $" [مرتبط بـ: {m.StudyProgramName}]" : ""),
+            })
+            .ToList();
     }
 }

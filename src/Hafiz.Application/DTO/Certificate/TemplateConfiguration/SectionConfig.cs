@@ -42,7 +42,7 @@ public class VerseSectionConfig
 
 public class StatementSectionConfig
 {
-    public string Text { get; set; } = "تشهد إدارة المركز بأن {GenderedStudent} قد {GenderedCompleted} بحمد الله وتوفيقه وفضله {AchievementPhrase}";
+    public string Text { get; set; } = "تشهد إدارة المركز بأن {GenderedStudent} قد {GenderedCompleted} بحمد الله وتوفيقه حفظ وإتقان المقرر من كتاب الله العزيز.";
     public bool ShowStudentName { get; set; } = true;
     public bool ShowSubjectName { get; set; } = true;
     public bool ShowAuthor { get; set; } = true;

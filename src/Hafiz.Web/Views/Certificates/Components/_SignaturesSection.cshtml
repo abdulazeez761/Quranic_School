@@ -1,2 +1,52 @@
+@using Hafiz.Application.DTO.Certificate.TemplateConfiguration
+@using Hafiz.Application.Services
 @model Hafiz.Application.DTO.Certificate.CertificateModel
-<div class="cert-footer"><div class="cert-sign-col"><div class="cert-sign-title">معلم الحلقة</div><div class="cert-sign-name">@Model.TeacherName</div><div class="cert-sign-line"></div><small>التوقيع والاعتماد</small></div><div class="cert-seal-box"><div class="cert-official-seal"><i class='bx bx-award'></i></div><div class="cert-date-text">صدرت بتاريخ: @Model.IssueDateFormatted</div></div><div class="cert-sign-col"><div class="cert-sign-title">إدارة المركز</div><div class="cert-sign-name">@Model.DirectorName</div><div class="cert-sign-line"></div><small>الختم الرسمي</small></div></div>
+@{
+    var section = ViewData["Section"] as SectionConfig;
+    var config = section?.GetConfig<SignaturesSectionConfig>();
+
+    // Templates created before the signature columns existed fall back to the classic three-column footer.
+    var columns = config?.Columns is { Count: > 0 }
+        ? config.Columns
+        : new List<SignatureColumn>
+        {
+            new() { Title = "معلم الحلقة", NameField = "{TeacherName}", Subtitle = "التوقيع والاعتماد", Type = "signature" },
+            new() { Title = "الختم والتاريخ", Type = "seal", ShowSeal = true, ShowDate = true },
+            new() { Title = "إدارة المركز", NameField = "{DirectorName}", Subtitle = "الختم الرسمي", Type = "signature" }
+        };
+}
+<div class="cert-footer">
+    @foreach (var column in columns)
+    {
+        if (string.Equals(column.Type, "seal", StringComparison.OrdinalIgnoreCase))
+        {
+            <div class="cert-seal-box">
+                @if (column.ShowSeal)
+                {
+                    <div class="cert-official-seal">
+                        <i class='bx bxs-check-shield'></i>
+                    </div>
+                }
+                @if (column.ShowDate)
+                {
+                    <div class="cert-date-text">صدرت بتاريخ: @Model.IssueDateFormatted</div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="cert-sign-col">
+                @if (!string.IsNullOrWhiteSpace(column.Title))
+                {
+                    <div class="cert-sign-title">@column.Title</div>
+                }
+                <div class="cert-sign-name">@CertificateTokenResolver.Resolve(column.NameField, Model)</div>
+                <div class="cert-sign-line"></div>
+                @if (!string.IsNullOrWhiteSpace(column.Subtitle))
+                {
+                    <small class="text-muted">@column.Subtitle</small>
+                }
+            </div>
+        }
+    }
+</div>

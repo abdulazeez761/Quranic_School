@@ -1,0 +1,406 @@
+@model Hafiz.Application.DTO.Certificate.UpdateTemplateConfigDto
+@using Hafiz.Application.DTO.Certificate.TemplateConfiguration
+@{
+    ViewData["Title"] = "محرر الشهادات";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    var configuration = TemplateConfiguration.FromJson(Model.ConfigurationJson);
+    var storedSections = configuration.Sections;
+
+    // Every known section is offered in the editor, in the order it is stored (unknown ones keep a stable order at the end).
+    int StoredOrder(string type) =>
+        storedSections.FirstOrDefault(s => string.Equals(s.Type, type, StringComparison.OrdinalIgnoreCase))?.Order ?? int.MaxValue;
+
+    // Metadata drives both the per-section option inputs and the live preview in certificate-template-builder.js.
+    var sectionInfo = new Dictionary<string, (string Label, string Icon, string Hint)>
+    {
+        ["header"] = ("رأس الشهادة", "bx-building", "الشعار واسم المركز والبسملة ورقم الشهادة"),
+        ["title"] = ("العنوان", "bx-heading", "عنوان الشهادة الرئيسي"),
+        ["verse"] = ("الآية", "bx-book-open", "نص قرآني يُطبع أعلى البيان"),
+        ["statement"] = ("بيان الإنجاز", "bx-message-detail", "اسم الطالب والموضوع وتفاصيل الإنجاز"),
+        ["quranScope"] = ("نطاق الحفظ", "bx-list-ol", "الأجزاء المحفوظة ونسبة الإنجاز والرواية"),
+        ["evaluation"] = ("التقييم", "bx-star", "الدرجة والتقدير ونتيجة الاختبار"),
+        ["signatures"] = ("التواقيع", "bx-pen", "أعمدة التوقيع والختم والتاريخ"),
+        ["qrVerification"] = ("رمز التحقق", "bx-qr", "رمز QR لرابط التحقق الإلكتروني")
+    };
+
+    var sectionFields = new Dictionary<string, List<(string Key, string Label, string Kind, object Default, string[] Options)>>(StringComparer.OrdinalIgnoreCase)
+    {
+        ["header"] = new()
+        {
+            ("showInstituteName", "إظهار اسم المركز", "bool", true, Array.Empty<string>()),
+            ("showInstituteLogo", "إظهار شعار المركز", "bool", true, Array.Empty<string>()),
+            ("showSubInstitute", "إظهار السطر الفرعي", "bool", true, Array.Empty<string>()),
+            ("subInstituteText", "نص السطر الفرعي", "text", "شؤون حلقات القرآن الكريم", Array.Empty<string>()),
+            ("showBasmalah", "إظهار البسملة", "bool", true, Array.Empty<string>()),
+            ("showCertificateNumber", "إظهار رقم الشهادة", "bool", true, Array.Empty<string>())
+        },
+        ["title"] = new()
+        {
+            ("text", "نص العنوان", "text", "{CertificateTitle}", Array.Empty<string>()),
+            ("showDecorators", "الزخارف الجانبية (❖)", "bool", true, Array.Empty<string>()),
+            ("showUnderline", "الخط الزخرفي أسفل العنوان", "bool", true, Array.Empty<string>())
+        },
+        ["verse"] = new()
+        {
+            ("text", "نص الآية", "textarea", "﴿ إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ ﴾", Array.Empty<string>())
+        },
+        ["statement"] = new()
+        {
+            ("text", "نص بيان الإنجاز", "textarea", "تشهد إدارة المركز بأن {GenderedStudent} قد أتمّ بحمد الله وتوفيقه.", Array.Empty<string>()),
+            ("showStudentName", "إظهار اسم الطالب", "bool", true, Array.Empty<string>()),
+            ("showSubjectName", "إظهار الموضوع", "bool", true, Array.Empty<string>()),
+            ("showAuthor", "إظهار المؤلف / الرواية", "bool", true, Array.Empty<string>()),
+            ("showScopeDetails", "إظهار سطر تفاصيل النطاق", "bool", true, Array.Empty<string>())
+        },
+        ["quranScope"] = new()
+        {
+            ("showFromJuz", "إظهار «من الجزء»", "bool", true, Array.Empty<string>()),
+            ("showToJuz", "إظهار «إلى الجزء»", "bool", true, Array.Empty<string>()),
+            ("showJuzCount", "إظهار عدد الأجزاء", "bool", true, Array.Empty<string>()),
+            ("showCompletionPercentage", "إظهار نسبة الإنجاز", "bool", true, Array.Empty<string>()),
+            ("showRiwayah", "إظهار الرواية", "bool", true, Array.Empty<string>()),
+            ("riwayahText", "نص الرواية", "text", "برواية حفص عن عاصم من طريق الشاطبية", Array.Empty<string>())
+        },
+        ["evaluation"] = new()
+        {
+            ("showScore", "إظهار الدرجة", "bool", true, Array.Empty<string>()),
+            ("showRating", "إظهار التقدير", "bool", true, Array.Empty<string>()),
+            ("showExamResult", "إظهار شارة نتيجة الاختبار", "bool", true, Array.Empty<string>())
+        },
+        ["qrVerification"] = new()
+        {
+            ("size", "حجم الرمز (بكسل)", "number", 80, Array.Empty<string>()),
+            ("showLabel", "إظهار الوصف أسفل الرمز", "bool", true, Array.Empty<string>()),
+            ("labelText", "نص الوصف", "text", "رمز التحقق الإلكتروني المعتمد", Array.Empty<string>())
+        }
+    };
+
+    var tokens = new[]
+    {
+        "{StudentName}", "{GenderedStudent}", "{GenderedCompleted}", "{InstituteName}", "{ClassName}",
+        "{TeacherName}", "{DirectorName}", "{CertificateNumber}", "{CertificateTitle}", "{SubjectName}",
+        "{AuthorName}", "{FromJuz}", "{ToJuz}", "{JuzCount}", "{CompletionPercentage}", "{Riwayah}",
+        "{ScopeDetails}", "{Score}", "{Rating}", "{HijriDate}", "{GregorianDate}"
+    };
+}
+
+<link rel="stylesheet" href="~/css/certificates/certificate.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/admin/certificate-builder.css" asp-append-version="true" />
+
+<div class="cert-admin-page" dir="rtl">
+    <header class="cert-admin-header">
+        <div>
+            <h1><span class="cert-icon"><i class='bx bx-palette'></i></span>محرر قالب الشهادة</h1>
+            <p>صمّم الشهادة بصرياً وشاهد النتيجة مباشرة قبل الحفظ. كل حفظ يُنشئ نسخة جديدة من القالب.</p>
+        </div>
+        <div style="display:flex; gap:9px; flex-wrap:wrap;">
+            <a asp-action="Index" class="btn btn-outline-secondary"><i class='bx bx-arrow-back'></i> كل القوالب</a>
+        </div>
+    </header>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success"><i class='bx bx-check-circle'></i> @TempData["SuccessMessage"]</div>
+    }
+
+    <form method="post" id="certificateBuilderForm">
+        <input asp-for="TemplateId" type="hidden" />
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+        <div class="cert-builder">
+            <section class="builder-panel">
+                <div class="builder-section">
+                    <h3><i class='bx bx-file'></i> معلومات القالب</h3>
+                    <div class="field-grid">
+                        <div class="cb-field full">
+                            <label asp-for="Name">اسم القالب</label>
+                            <input asp-for="Name" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="cb-field full">
+                            <label asp-for="Description">وصف مختصر</label>
+                            <input asp-for="Description" placeholder="وصف يساعد فريقك على اختيار القالب" />
+                        </div>
+                    </div>
+                    <div class="section-row">
+                        <i class='bx bx-check-shield'></i>
+                        <span>القالب الافتراضي</span>
+                        <small>يُستخدم تلقائياً عند إصدار شهادات هذا النوع</small>
+                        <input asp-for="IsDefault" class="toggle" />
+                    </div>
+                    <div class="section-row">
+                        <i class='bx bx-power-off'></i>
+                        <span>متاح للإصدار</span>
+                        <small>يمكن تعطيله دون فقدان الشهادات الصادرة سابقاً</small>
+                        <input asp-for="IsActive" class="toggle" />
+                    </div>
+                </div>
+
+                <div class="builder-section">
+                    <h3><i class='bx bx-color-fill'></i> هوية الألوان</h3>
+                    <div class="preset-grid mb-3">
+                        <button type="button" class="preset-btn" data-preset='{"preset":"classic_gold","primaryColor":"#C59B27","secondaryColor":"#064E3B","accentColor":"#DFBA69","backgroundColor":"#FDFBF7","borderColor":"#C59B27"}'>
+                            <div class="preset-swatches"><span style="background:#C59B27"></span><span style="background:#064E3B"></span><span style="background:#FDFBF7;border:1px solid #ddd"></span></div>
+                            ذهبي كلاسيكي
+                        </button>
+                        <button type="button" class="preset-btn" data-preset='{"preset":"royal_emerald","primaryColor":"#147D62","secondaryColor":"#0A3D32","accentColor":"#62B99D","backgroundColor":"#F4FBF7","borderColor":"#147D62"}'>
+                            <div class="preset-swatches"><span style="background:#147D62"></span><span style="background:#0A3D32"></span><span style="background:#F4FBF7;border:1px solid #ddd"></span></div>
+                            زمردي
+                        </button>
+                        <button type="button" class="preset-btn" data-preset='{"preset":"navy_sapphire","primaryColor":"#2E6EAA","secondaryColor":"#123F68","accentColor":"#82B9E8","backgroundColor":"#F7FBFF","borderColor":"#2E6EAA"}'>
+                            <div class="preset-swatches"><span style="background:#2E6EAA"></span><span style="background:#123F68"></span><span style="background:#F7FBFF;border:1px solid #ddd"></span></div>
+                            أزرق هادئ
+                        </button>
+                    </div>
+                    <div class="color-grid">
+                        <label class="color-field"><input type="color" data-config="theme.primaryColor" /><span>الرئيسي</span></label>
+                        <label class="color-field"><input type="color" data-config="theme.secondaryColor" /><span>الثانوي</span></label>
+                        <label class="color-field"><input type="color" data-config="theme.accentColor" /><span>الزخرفة</span></label>
+                        <label class="color-field"><input type="color" data-config="theme.borderColor" /><span>الإطار</span></label>
+                        <label class="color-field"><input type="color" data-config="theme.backgroundColor" /><span>الخلفية</span></label>
+                        <label class="color-field"><input type="color" data-config="theme.textColor" /><span>النص</span></label>
+                    </div>
+                    <div class="field-grid mt-3">
+                        <div class="cb-field">
+                            <label>نمط الإطار</label>
+                            <select data-config="theme.borderStyle">
+                                <option value="double">مزدوج</option>
+                                <option value="solid">مستمر</option>
+                                <option value="dashed">متقطع</option>
+                            </select>
+                        </div>
+                        <div class="cb-field">
+                            <label>سماكة الإطار (بكسل)</label>
+                            <input type="number" min="1" max="10" step="1" data-config="theme.borderWidth" data-cast="number" />
+                        </div>
+                    </div>
+                    <div class="section-row">
+                        <i class='bx bx-certification'></i>
+                        <span>زوايا مزخرفة</span>
+                        <small>زخارف في أركان الإطار الداخلي</small>
+                        <input type="checkbox" class="toggle" data-config="theme.cornerDecorations" />
+                    </div>
+                    <div class="section-row">
+                        <i class='bx bx-water'></i>
+                        <span>العلامة المائية</span>
+                        <small>أيقونة باهتة في خلفية الشهادة</small>
+                        <input type="checkbox" class="toggle" data-config="theme.watermarkEnabled" />
+                    </div>
+                    <div class="field-grid">
+                        <div class="cb-field">
+                            <label>أيقونة العلامة المائية</label>
+                            <input data-config="theme.watermarkIcon" placeholder="bx-book-open" />
+                        </div>
+                        <div class="cb-field">
+                            <label>شفافية العلامة المائية</label>
+                            <input type="number" min="0.01" max="0.3" step="0.01" data-config="theme.watermarkOpacity" data-cast="number" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="builder-section">
+                    <h3><i class='bx bx-font'></i> الخطوط والأحجام</h3>
+                    <div class="field-grid">
+                        <div class="cb-field">
+                            <label>خط العنوان</label>
+                            <select data-config="typography.titleFont">
+                                <option value="Reem Kufi">Reem Kufi</option>
+                                <option value="Cairo">Cairo</option>
+                                <option value="Amiri">Amiri</option>
+                                <option value="Tajawal">Tajawal</option>
+                            </select>
+                        </div>
+                        <div class="cb-field">
+                            <label>خط النصوص</label>
+                            <select data-config="typography.bodyFont">
+                                <option value="Cairo">Cairo</option>
+                                <option value="Amiri">Amiri</option>
+                                <option value="Tajawal">Tajawal</option>
+                            </select>
+                        </div>
+                        <div class="cb-field">
+                            <label>الخط العربي (الآيات)</label>
+                            <select data-config="typography.arabicFont">
+                                <option value="Amiri">Amiri</option>
+                                <option value="Reem Kufi">Reem Kufi</option>
+                                <option value="Cairo">Cairo</option>
+                            </select>
+                        </div>
+                        <div class="cb-field">
+                            <label>تباعد الأسطر</label>
+                            <input type="number" min="1" max="3" step="0.1" data-config="typography.lineHeight" data-cast="number" />
+                        </div>
+                        <div class="cb-field">
+                            <label>حجم العنوان</label>
+                            <input type="number" min="0.8" max="4" step="0.1" data-config="typography.titleSize" data-cast="rem" />
+                        </div>
+                        <div class="cb-field">
+                            <label>حجم النص</label>
+                            <input type="number" min="0.6" max="2.5" step="0.1" data-config="typography.bodySize" data-cast="rem" />
+                        </div>
+                        <div class="cb-field full">
+                            <label>حجم اسم الطالب</label>
+                            <input type="number" min="1" max="5" step="0.1" data-config="typography.studentNameSize" data-cast="rem" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="builder-section">
+                    <h3><i class='bx bx-layout'></i> المقاس والهوامش</h3>
+                    <div class="field-grid">
+                        <div class="cb-field">
+                            <label>مقاس الورق</label>
+                            <select data-config="layout.pageSize">
+                                <option value="A4">A4</option>
+                                <option value="Letter">Letter</option>
+                            </select>
+                        </div>
+                        <div class="cb-field">
+                            <label>اتجاه الصفحة</label>
+                            <select data-config="layout.orientation">
+                                <option value="landscape">أفقي</option>
+                                <option value="portrait">عمودي</option>
+                            </select>
+                        </div>
+                        <div class="cb-field">
+                            <label>الهامش العلوي (مم)</label>
+                            <input type="number" min="0" max="40" step="1" data-config="layout.margins.top" data-cast="number" />
+                        </div>
+                        <div class="cb-field">
+                            <label>الهامش السفلي (مم)</label>
+                            <input type="number" min="0" max="40" step="1" data-config="layout.margins.bottom" data-cast="number" />
+                        </div>
+                        <div class="cb-field">
+                            <label>الهامش الأيمن (مم)</label>
+                            <input type="number" min="0" max="40" step="1" data-config="layout.margins.right" data-cast="number" />
+                        </div>
+                        <div class="cb-field">
+                            <label>الهامش الأيسر (مم)</label>
+                            <input type="number" min="0" max="40" step="1" data-config="layout.margins.left" data-cast="number" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="builder-section">
+                    <h3><i class='bx bx-list-check'></i> أقسام الشهادة</h3>
+                    <p class="cb-hint">رتّب الأقسام بالأسهم، وأوقف ما لا تحتاجه، ثم اضبط تفاصيل كل قسم من إعداداته.</p>
+
+                    <div id="sectionList">
+                        @foreach (var type in sectionInfo.Keys.OrderBy(StoredOrder))
+                        {
+                            var info = sectionInfo[type];
+                            var fields = sectionFields.TryGetValue(type, out var f) ? f : new();
+                            <div class="section-card" data-section-card="@type">
+                                <div class="section-card-head">
+                                    <i class='bx @info.Icon'></i>
+                                    <span>@info.Label</span>
+                                    <small>@info.Hint</small>
+                                    <button type="button" class="icon-btn" data-move="up" data-move-target="@type" title="تحريك لأعلى"><i class='bx bx-chevron-up'></i></button>
+                                    <button type="button" class="icon-btn" data-move="down" data-move-target="@type" title="تحريك لأسفل"><i class='bx bx-chevron-down'></i></button>
+                                    <input type="checkbox" class="toggle" data-section="@type" />
+                                </div>
+                                @if (fields.Count > 0 || type == "signatures")
+                                {
+                                    <details class="section-card-body">
+                                        <summary>إعدادات القسم</summary>
+                                        <div class="field-grid mt-2">
+                                            @foreach (var field in fields)
+                                            {
+                                                if (field.Kind == "bool")
+                                                {
+                                                    <div class="section-row">
+                                                        <span>@field.Label</span>
+                                                        <input type="checkbox" class="toggle" data-section-config="@($"{type}:{field.Key}")" data-default="@field.Default.ToString()!.ToLowerInvariant()" />
+                                                    </div>
+                                                }
+                                                else if (field.Kind == "textarea")
+                                                {
+                                                    <div class="cb-field full">
+                                                        <label>@field.Label</label>
+                                                        <textarea rows="3" data-section-config="@($"{type}:{field.Key}")" data-default="@field.Default"></textarea>
+                                                    </div>
+                                                }
+                                                else if (field.Kind == "number")
+                                                {
+                                                    <div class="cb-field">
+                                                        <label>@field.Label</label>
+                                                        <input type="number" data-section-config="@($"{type}:{field.Key}")" data-default="@field.Default" data-cast="number" />
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="cb-field full">
+                                                        <label>@field.Label</label>
+                                                        <input data-section-config="@($"{type}:{field.Key}")" data-default="@field.Default" />
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                        @if (type == "signatures")
+                                        {
+                                            <div class="sig-editor">
+                                                <div class="cb-label mt-3">أعمدة التوقيع</div>
+                                                <div id="signatureColumns"></div>
+                                                <button type="button" class="btn btn-light btn-sm mt-2" id="addSignatureColumn">
+                                                    <i class='bx bx-plus'></i> إضافة عمود
+                                                </button>
+                                            </div>
+                                        }
+                                    </details>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <div class="token-panel">
+                        <div class="cb-label"><i class='bx bx-code-alt'></i> رموز تُستبدل تلقائياً ببيانات الشهادة</div>
+                        <div class="token-list">
+                            @foreach (var token in tokens)
+                            {
+                                <button type="button" class="token-chip" data-token="@token">@token</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="builder-section">
+                    <h3><i class='bx bx-text'></i> النص الختامي</h3>
+                    <div class="cb-field full">
+                        <label>سطر يُطبع أسفل بيان الإنجاز</label>
+                        <textarea rows="2" data-config="tokens.closingText" placeholder="اتركه فارغاً لإخفائه"></textarea>
+                    </div>
+                </div>
+
+                <details class="advanced">
+                    <summary>إعدادات متقدمة (JSON)</summary>
+                    <p class="cb-hint">تعديل مباشر للإعدادات؛ أي تغيير هنا يُحدّث النموذج والمعاينة فوراً.</p>
+                    <textarea asp-for="ConfigurationJson" id="configJson" spellcheck="false"></textarea>
+                    <span asp-validation-for="ConfigurationJson" class="text-danger"></span>
+                </details>
+
+                <div class="builder-actions">
+                    <a asp-action="Index" class="btn btn-light">إلغاء</a>
+                    <button class="btn btn-success"><i class='bx bx-save'></i> حفظ نسخة جديدة</button>
+                </div>
+            </section>
+
+            <aside class="preview-panel">
+                <div class="preview-top">
+                    <strong><i class='bx bx-show'></i> معاينة مباشرة</strong>
+                    <span class="live-dot">● يتم التحديث الآن</span>
+                </div>
+                <div class="preview-stage" id="previewStage">
+                    <div class="preview-scaler" id="previewScaler">
+                        <div id="certificatePreview"></div>
+                    </div>
+                </div>
+                <p class="cb-hint text-center mt-2 mb-0">المعاينة ببيانات تجريبية، وتُطبع الشهادة الفعلية ببيانات الطالب.</p>
+            </aside>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin/certificate-template-builder.js" asp-append-version="true"></script>
+}

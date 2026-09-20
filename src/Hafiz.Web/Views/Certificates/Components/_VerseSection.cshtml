@@ -1,1 +1,12 @@
-<div class="text-center mb-2" style="font-family:var(--tpl-arabic-font);color:var(--tpl-secondary)">﴿ إِنَّ هَـٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ ﴾</div>
+@using Hafiz.Application.DTO.Certificate.TemplateConfiguration
+@using Hafiz.Application.Services
+@model Hafiz.Application.DTO.Certificate.CertificateModel
+@{
+    var section = ViewData["Section"] as SectionConfig;
+    var config = section?.GetConfig<VerseSectionConfig>();
+
+    var verse = string.IsNullOrWhiteSpace(config?.Text)
+        ? "﴿ إِنَّ هَـٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ ﴾"
+        : CertificateTokenResolver.Resolve(config!.Text, Model);
+}
+<div class="cert-verse">@verse</div>

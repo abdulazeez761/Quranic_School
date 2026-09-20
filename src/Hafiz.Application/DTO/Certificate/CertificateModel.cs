@@ -26,6 +26,13 @@ public class CertificateModel
     public string AchievementDescription { get; set; } = string.Empty;
     public string? ScopeDetails { get; set; }
 
+    // Structured memorization scope, so templates can lay the details out instead of parsing prose.
+    public int? FromJuz { get; set; }
+    public int? ToJuz { get; set; }
+    public int? JuzCount { get; set; }
+    public int? CompletionPercentage { get; set; }
+    public string? Riwayah { get; set; }
+
     // Evaluation / Rating
     public decimal? Score { get; set; }
     public string? Rating { get; set; }

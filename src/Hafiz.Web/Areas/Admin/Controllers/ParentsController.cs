@@ -56,7 +56,9 @@ namespace Hafiz.Areas.Admin.Controllers
 
             var parentsList = parents.ToList();
             var totalParents = parentsList.Count;
-            var parentsWithChildren = parentsList.Count(p => p.Students != null && p.Students.Any());
+            var parentsWithChildren = parentsList.Count(p =>
+                p.Students != null && p.Students.Any()
+            );
             var parentsWithoutChildren = totalParents - parentsWithChildren;
             var totalChildren = parentsList.Sum(p => p.Students?.Count ?? 0);
 
@@ -70,11 +72,36 @@ namespace Hafiz.Areas.Admin.Controllers
             {
                 var term = search.Trim();
                 filtered = filtered.Where(p =>
-                    p.ParentInfo != null && (
-                        (p.ParentInfo.FirstName != null && p.ParentInfo.FirstName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
-                        (p.ParentInfo.SecondName != null && p.ParentInfo.SecondName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
-                        (p.ParentInfo.Username != null && p.ParentInfo.Username.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
-                        (p.ParentInfo.PhoneNumber != null && p.ParentInfo.PhoneNumber.Contains(term, StringComparison.OrdinalIgnoreCase))
+                    p.ParentInfo != null
+                    && (
+                        (
+                            p.ParentInfo.FirstName != null
+                            && p.ParentInfo.FirstName.Contains(
+                                term,
+                                StringComparison.OrdinalIgnoreCase
+                            )
+                        )
+                        || (
+                            p.ParentInfo.SecondName != null
+                            && p.ParentInfo.SecondName.Contains(
+                                term,
+                                StringComparison.OrdinalIgnoreCase
+                            )
+                        )
+                        || (
+                            p.ParentInfo.Username != null
+                            && p.ParentInfo.Username.Contains(
+                                term,
+                                StringComparison.OrdinalIgnoreCase
+                            )
+                        )
+                        || (
+                            p.ParentInfo.PhoneNumber != null
+                            && p.ParentInfo.PhoneNumber.Contains(
+                                term,
+                                StringComparison.OrdinalIgnoreCase
+                            )
+                        )
                     )
                 );
             }
@@ -148,7 +175,10 @@ namespace Hafiz.Areas.Admin.Controllers
                 var instituteId = GetInstituteId();
                 if (newData.ParentID.HasValue)
                 {
-                    var existingParent = await _parentService.GetByIdAsync(newData.ParentID.Value, instituteId);
+                    var existingParent = await _parentService.GetByIdAsync(
+                        newData.ParentID.Value,
+                        instituteId
+                    );
                     if (existingParent == null)
                         return Forbid();
                 }
@@ -174,7 +204,8 @@ namespace Hafiz.Areas.Admin.Controllers
             }
             else
             {
-                TempData["SuccessMessage"] = "تمت أرشفة ولي الأمر بنجاح، ويمكنك استعادته في أي وقت من قسم الأرشيف.";
+                TempData["SuccessMessage"] =
+                    "تمت أرشفة ولي الأمر بنجاح، ويمكنك استعادته في أي وقت من قسم الأرشيف.";
             }
             return RedirectToAction(nameof(Index));
         }
