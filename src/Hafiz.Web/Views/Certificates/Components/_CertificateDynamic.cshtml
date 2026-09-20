@@ -1,3 +1,5 @@
+@using System
+@using System.Collections.Generic
 @using System.Globalization
 @using Hafiz.Application.DTO.Certificate.TemplateConfiguration
 @using Hafiz.Application.Services
@@ -30,6 +32,46 @@
 
     // The stylesheet is written against its own --cert-* palette, so the template theme is mapped onto it here.
     var mutedText = Mix(theme.TextColor, theme.BackgroundColor, 0.42);
+
+    // Ornament values come from stored JSON, so everything that reaches a class name is whitelisted.
+    var knownCornerStyles = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        { "none", "simple", "arabesque", "girih", "floral", "medallion" };
+    var knownPatterns = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        { "none", "paper", "grid", "arabesque", "geometric", "damask", "stars" };
+
+    var requestedCorner = string.IsNullOrWhiteSpace(theme.CornerStyle) ? "auto" : theme.CornerStyle.Trim();
+    var cornerIsAutomatic = string.Equals(requestedCorner, "auto", StringComparison.OrdinalIgnoreCase);
+
+    // "auto" is every template saved before CornerStyle existed: fall back to the legacy flag.
+    var cornerStyle = cornerIsAutomatic
+        ? (theme.CornerDecorations ? "simple" : "none")
+        : requestedCorner.ToLowerInvariant();
+    if (!knownCornerStyles.Contains(cornerStyle))
+        cornerStyle = theme.CornerDecorations ? "simple" : "none";
+
+    // Legacy templates keep the original 38px L; picking a style explicitly opts into the size control.
+    var cornerSize = cornerIsAutomatic ? 38 : Math.Clamp(theme.CornerSize, 24, 140);
+    // "simple" keeps the original border-drawn L, so it carries no modifier class.
+    var cornerClasses = cornerStyle switch
+    {
+        "none" => string.Empty,
+        "simple" => string.Empty,
+        _ => $"cert-corners--masked cert-corners--{cornerStyle}"
+    };
+
+    var pattern = (theme.BackgroundPattern ?? "none").Trim().ToLowerInvariant();
+    if (!knownPatterns.Contains(pattern))
+        pattern = "none";
+    var patternOpacity = Math.Clamp(theme.BackgroundPatternOpacity, 0, 0.5);
+    var hasPattern = pattern != "none" && patternOpacity > 0;
+    var patternColor = (theme.BackgroundPatternColor ?? "primary").Trim().ToLowerInvariant() switch
+    {
+        "secondary" => theme.SecondaryColor,
+        "accent" => theme.AccentColor,
+        _ => theme.PrimaryColor
+    };
+
+    var isOrnate = string.Equals(theme.FrameStyle?.Trim(), "ornate", StringComparison.OrdinalIgnoreCase);
 }
 <style>
     @@page {
@@ -61,12 +103,32 @@
         --tpl-body-size: @typography.BodySize;
         --tpl-student-size: @typography.StudentNameSize;
         --tpl-line-height: @typography.LineHeight;
+        --cert-corner-size: @(cornerSize)px;
+        --cert-pattern-color: @patternColor;
+        --cert-pattern-opacity: @patternOpacity;
         padding: @(margins.Top)mm @(margins.Right)mm @(margins.Bottom)mm @(margins.Left)mm;
     }</style>
 <div class="certificate-sheet">
-    <div class="cert-outer-border" style="border-style:@theme.BorderStyle; border-width:@(theme.BorderWidth)px; border-color:@theme.BorderColor">
-        <div class="cert-inner-border">
-            @if (theme.CornerDecorations)
+    <div class="cert-outer-border@(isOrnate ? " cert-outer-border--ornate" : "")" style="border-style:@theme.BorderStyle; border-width:@(theme.BorderWidth)px; border-color:@theme.BorderColor">
+        @if (isOrnate)
+        {
+            <div class="cert-frame-band">
+                <div class="cert-band-edge cert-band-edge--top"></div>
+                <div class="cert-band-edge cert-band-edge--bottom"></div>
+                <div class="cert-band-edge cert-band-edge--left"></div>
+                <div class="cert-band-edge cert-band-edge--right"></div>
+                <div class="cert-band-corner cert-band-corner--tl"></div>
+                <div class="cert-band-corner cert-band-corner--tr"></div>
+                <div class="cert-band-corner cert-band-corner--bl"></div>
+                <div class="cert-band-corner cert-band-corner--br"></div>
+            </div>
+        }
+        <div class="cert-inner-border @cornerClasses">
+            @if (hasPattern)
+            {
+                <div class="cert-bg-pattern cert-pattern--@pattern"></div>
+            }
+            @if (cornerStyle != "none")
             {
                 <div class="cert-corner cert-corner-tl"></div>
                 <div class="cert-corner cert-corner-tr"></div>

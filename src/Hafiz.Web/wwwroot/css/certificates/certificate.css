@@ -151,6 +151,200 @@ body.cert-body {
 .cert-corner-bl { bottom: 4px; left: 4px; border-right: none; border-top: none; }
 .cert-corner-br { bottom: 4px; right: 4px; border-left: none; border-top: none; }
 
+/* --------------------------------------------------------------------------
+   Ornament kit
+   Every ornament is a black SVG data-URI used as a mask on an element whose
+   background-color comes from the theme palette. A data-URI cannot read a CSS
+   variable, so masking (rather than background-image) is what lets a single
+   SVG be recoloured per template. Both _CertificateDynamic.cshtml and
+   certificate-template-builder.js emit the same markup and draw nothing.
+   -------------------------------------------------------------------------- */
+
+.certificate-sheet {
+    --cert-corner-size: 38px;
+    --cert-band-thickness: 22px;
+    --cert-pattern-opacity: 0.06;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+/* Styles other than the legacy "simple" L are mask-driven and share one box. */
+.cert-corners--masked .cert-corner {
+    width: var(--cert-corner-size);
+    height: var(--cert-corner-size);
+    border: 0;
+    background-color: var(--cert-gold-2);
+    -webkit-mask-image: var(--cert-corner-mask);
+    mask-image: var(--cert-corner-mask);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    z-index: 2;
+}
+
+/* One SVG per style, mirrored three ways to build the four corners. */
+.cert-corners--masked .cert-corner-tr { transform: scaleX(-1); }
+.cert-corners--masked .cert-corner-bl { transform: scaleY(-1); }
+.cert-corners--masked .cert-corner-br { transform: scale(-1, -1); }
+
+.cert-corners--arabesque { --cert-corner-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='none' stroke='black' stroke-width='5' stroke-linecap='round'><path d='M5 96C5 62 13 41 31 29 49 17 69 11 96 6'/><path d='M5 72C5 48 15 33 31 23'/><path d='M31 96C35 71 49 53 71 41'/></g><g fill='black'><ellipse cx='35' cy='25' rx='11' ry='6' transform='rotate(-35 35 25)'/><ellipse cx='17' cy='53' rx='10' ry='5.5' transform='rotate(-70 17 53)'/><ellipse cx='59' cy='45' rx='10' ry='5.5' transform='rotate(-45 59 45)'/><circle cx='9' cy='88' r='5'/><circle cx='88' cy='9' r='5'/></g></svg>"); }
+
+.cert-corners--girih { --cert-corner-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='black'><rect x='21' y='21' width='33' height='33'/><rect x='21' y='21' width='33' height='33' transform='rotate(45 37.5 37.5)'/><rect x='33' y='33' width='9' height='9' transform='rotate(45 37.5 37.5)'/></g><g fill='none' stroke='black' stroke-width='4' stroke-linecap='square'><path d='M37.5 0v21M0 37.5h21'/><path d='M78 0v9M0 78h9'/></g><g fill='black'><circle cx='88' cy='88' r='7'/><circle cx='70' cy='70' r='4'/></g></svg>"); }
+
+.cert-corners--floral { --cert-corner-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='black'><ellipse cx='42' cy='21' rx='8.5' ry='14'/><ellipse cx='42' cy='21' rx='8.5' ry='14' transform='rotate(60 42 42)'/><ellipse cx='42' cy='21' rx='8.5' ry='14' transform='rotate(120 42 42)'/><ellipse cx='42' cy='21' rx='8.5' ry='14' transform='rotate(180 42 42)'/><ellipse cx='42' cy='21' rx='8.5' ry='14' transform='rotate(240 42 42)'/><ellipse cx='42' cy='21' rx='8.5' ry='14' transform='rotate(300 42 42)'/></g><g fill='none' stroke='black' stroke-width='4' stroke-linecap='round'><path d='M60 68C74 74 84 84 90 96'/><path d='M68 60C74 74 84 84 96 90'/></g><g fill='black'><ellipse cx='76' cy='82' rx='11' ry='5.5' transform='rotate(45 76 82)'/><ellipse cx='86' cy='70' rx='10' ry='5' transform='rotate(-45 86 70)'/><circle cx='95' cy='95' r='5'/></g></svg>"); }
+
+.cert-corners--medallion { --cert-corner-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='none' stroke='black'><path d='M0 74A74 74 0 0 1 74 0' stroke-width='5'/><path d='M0 56A56 56 0 0 1 56 0' stroke-width='3'/><path d='M0 39A39 39 0 0 1 39 0' stroke-width='5'/></g><g fill='black'><path d='M0 0h26a26 26 0 0 1-26 26z'/><circle cx='0' cy='88' r='6'/><circle cx='88' cy='0' r='6'/><circle cx='66' cy='66' r='4'/></g></svg>"); }
+
+/* The legacy "simple" corner is drawn with borders, not a mask, so real certificates never
+   carry this class. It exists only so the template builder's picker can preview that shape. */
+.cert-corners--simple { --cert-corner-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M4 98V4h94' fill='none' stroke='black' stroke-width='9'/></svg>"); }
+
+/* --------------------------------------------------------------------------
+   Ornate band frame
+   Four edge strips with a repeating tile plus four corner tiles. Built from
+   strips rather than border-image because border-image cannot be recoloured
+   from the theme palette. The vertical strips get their own tile (the same
+   motif rotated a quarter turn) rather than a CSS transform, which would
+   distort a strip whose height comes from the paper size.
+   -------------------------------------------------------------------------- */
+
+.certificate-sheet {
+    --cert-band-tile-h: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='black'><rect y='0' width='100' height='9'/><rect y='91' width='100' height='9'/></g><g fill='none' stroke='black' stroke-width='5'><circle cx='50' cy='50' r='19'/><path d='M50 26v48M26 50h48M0 50h12M88 50h12'/></g><g fill='black'><rect x='44' y='44' width='12' height='12' transform='rotate(45 50 50)'/><circle cx='0' cy='50' r='5'/><circle cx='100' cy='50' r='5'/></g></svg>");
+    --cert-band-tile-v: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g transform='rotate(90 50 50)'><g fill='black'><rect y='0' width='100' height='9'/><rect y='91' width='100' height='9'/></g><g fill='none' stroke='black' stroke-width='5'><circle cx='50' cy='50' r='19'/><path d='M50 26v48M26 50h48M0 50h12M88 50h12'/></g><g fill='black'><rect x='44' y='44' width='12' height='12' transform='rotate(45 50 50)'/><circle cx='0' cy='50' r='5'/><circle cx='100' cy='50' r='5'/></g></g></svg>");
+    --cert-band-corner-tile: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='black'><path d='M0 0h100v9H9v91H0z'/></g><g fill='none' stroke='black' stroke-width='5'><circle cx='38' cy='38' r='19'/><path d='M38 6v12M6 38h12'/></g><g fill='black'><rect x='31' y='31' width='14' height='14' transform='rotate(45 38 38)'/><circle cx='68' cy='9' r='4'/><circle cx='9' cy='68' r='4'/></g></svg>");
+}
+
+.cert-outer-border--ornate {
+    padding: var(--cert-band-thickness);
+}
+
+.cert-frame-band {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.cert-band-edge,
+.cert-band-corner {
+    position: absolute;
+    background-color: var(--cert-gold-2);
+    -webkit-mask-repeat: repeat;
+    mask-repeat: repeat;
+    -webkit-mask-size: var(--cert-band-thickness) var(--cert-band-thickness);
+    mask-size: var(--cert-band-thickness) var(--cert-band-thickness);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.cert-band-edge {
+    -webkit-mask-image: var(--cert-band-tile-h);
+    mask-image: var(--cert-band-tile-h);
+}
+
+.cert-band-edge--top { top: 0; left: 0; right: 0; height: var(--cert-band-thickness); }
+.cert-band-edge--bottom { bottom: 0; left: 0; right: 0; height: var(--cert-band-thickness); }
+
+.cert-band-edge--left,
+.cert-band-edge--right {
+    top: 0;
+    bottom: 0;
+    width: var(--cert-band-thickness);
+    -webkit-mask-image: var(--cert-band-tile-v);
+    mask-image: var(--cert-band-tile-v);
+}
+
+.cert-band-edge--left { left: 0; }
+.cert-band-edge--right { right: 0; }
+
+.cert-band-corner {
+    width: var(--cert-band-thickness);
+    height: var(--cert-band-thickness);
+    -webkit-mask-image: var(--cert-band-corner-tile);
+    mask-image: var(--cert-band-corner-tile);
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+}
+
+.cert-band-corner--tl { top: 0; left: 0; }
+.cert-band-corner--tr { top: 0; right: 0; transform: scaleX(-1); }
+.cert-band-corner--bl { bottom: 0; left: 0; transform: scaleY(-1); }
+.cert-band-corner--br { bottom: 0; right: 0; transform: scale(-1, -1); }
+
+/* --------------------------------------------------------------------------
+   Background patterns
+   Repeating mask tiles tinted by --cert-pattern-color and faded by
+   --cert-pattern-opacity, so one tile serves every template palette.
+   -------------------------------------------------------------------------- */
+
+.cert-bg-pattern {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-color: var(--cert-pattern-color);
+    opacity: var(--cert-pattern-opacity);
+    -webkit-mask-repeat: repeat;
+    mask-repeat: repeat;
+    -webkit-mask-image: var(--cert-pattern-mask);
+    mask-image: var(--cert-pattern-mask);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.cert-pattern--paper {
+    --cert-pattern-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><g stroke='black' stroke-width='1' stroke-linecap='round' opacity='.7'><path d='M6 12l8-3M28 6l6 5M48 18l8-3M12 34l8-3M34 40l8 4M4 52l7 3M44 54l8-4M22 20l6 4M54 44l5 2M18 46l5 5'/></g></svg>");
+    -webkit-mask-size: 60px 60px;
+    mask-size: 60px 60px;
+}
+
+.cert-pattern--grid {
+    --cert-pattern-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><g stroke='black' stroke-width='1.2' fill='none'><path d='M0 0h40M0 0v40'/></g></svg>");
+    -webkit-mask-size: 40px 40px;
+    mask-size: 40px 40px;
+}
+
+.cert-pattern--arabesque {
+    --cert-pattern-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><g fill='none' stroke='black' stroke-width='2.2'><circle cx='0' cy='0' r='42'/><circle cx='120' cy='0' r='42'/><circle cx='0' cy='120' r='42'/><circle cx='120' cy='120' r='42'/><circle cx='60' cy='60' r='42'/><circle cx='0' cy='60' r='21'/><circle cx='120' cy='60' r='21'/><circle cx='60' cy='0' r='21'/><circle cx='60' cy='120' r='21'/></g></svg>");
+    -webkit-mask-size: 120px 120px;
+    mask-size: 120px 120px;
+}
+
+.cert-pattern--geometric {
+    --cert-pattern-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'><g fill='black'><rect x='-9' y='-9' width='18' height='18'/><rect x='-9' y='-9' width='18' height='18' transform='rotate(45 0 0)'/><rect x='71' y='-9' width='18' height='18'/><rect x='71' y='-9' width='18' height='18' transform='rotate(45 80 0)'/><rect x='-9' y='71' width='18' height='18'/><rect x='-9' y='71' width='18' height='18' transform='rotate(45 0 80)'/><rect x='71' y='71' width='18' height='18'/><rect x='71' y='71' width='18' height='18' transform='rotate(45 80 80)'/><rect x='31' y='31' width='18' height='18'/><rect x='31' y='31' width='18' height='18' transform='rotate(45 40 40)'/></g><g stroke='black' stroke-width='1.6' fill='none'><path d='M40 0v80M0 40h80'/></g></svg>");
+    -webkit-mask-size: 80px 80px;
+    mask-size: 80px 80px;
+}
+
+.cert-pattern--damask {
+    --cert-pattern-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='black'><path d='M50 12c12 14 12 26 0 38-12-12-12-24 0-38z'/><path d='M50 88c12-14 12-26 0-38-12 12-12 24 0 38z'/><path d='M12 50c14-12 26-12 38 0-12 12-24 12-38 0z'/><path d='M88 50c-14-12-26-12-38 0 12 12 24 12 38 0z'/></g><g fill='none' stroke='black' stroke-width='1.8'><circle cx='50' cy='50' r='21'/><circle cx='0' cy='0' r='13'/><circle cx='100' cy='0' r='13'/><circle cx='0' cy='100' r='13'/><circle cx='100' cy='100' r='13'/></g></svg>");
+    -webkit-mask-size: 100px 100px;
+    mask-size: 100px 100px;
+}
+
+.cert-pattern--stars {
+    --cert-pattern-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 140'><g fill='black'><g transform='translate(24 24)'><rect x='-7' y='-7' width='14' height='14'/><rect x='-7' y='-7' width='14' height='14' transform='rotate(45)'/></g><g transform='translate(92 46)'><rect x='-5' y='-5' width='10' height='10'/><rect x='-5' y='-5' width='10' height='10' transform='rotate(45)'/></g><g transform='translate(46 100)'><rect x='-6' y='-6' width='12' height='12'/><rect x='-6' y='-6' width='12' height='12' transform='rotate(45)'/></g><g transform='translate(116 112)'><rect x='-4' y='-4' width='8' height='8'/><rect x='-4' y='-4' width='8' height='8' transform='rotate(45)'/></g></g></svg>");
+    -webkit-mask-size: 140px 140px;
+    mask-size: 140px 140px;
+}
+
+/* Section content paints above the pattern and watermark layers. */
+.cert-inner-border > .cert-header,
+.cert-inner-border > .cert-title-container,
+.cert-inner-border > .cert-verse,
+.cert-inner-border > .cert-body-content,
+.cert-inner-border > .cert-scope,
+.cert-inner-border > .cert-evaluation,
+.cert-inner-border > .cert-rating-badge,
+.cert-inner-border > .cert-footer,
+.cert-inner-border > .cert-qr {
+    position: relative;
+    z-index: 1;
+}
+
 /* Watermark Background */
 .cert-watermark {
     position: absolute;
@@ -525,6 +719,42 @@ body.cert-body {
     font-size: 0.85rem;
     color: var(--cert-text-muted);
     font-weight: 600;
+}
+
+/* ==========================================================================
+   SMALL SCREENS
+   The sheet is a fixed physical size (--cert-paper-w), so there is nothing to
+   reflow below that width. The stage scrolls to it instead of clipping: a
+   centred flex child that overflows puts half of itself somewhere the reader
+   cannot scroll to. Scoped to screen so the print rules below stay untouched.
+   ========================================================================== */
+@media screen and (max-width: 1200px) {
+    .cert-stage {
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding: 80px 14px 40px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .certificate-sheet {
+        flex: 0 0 auto;
+    }
+}
+
+@media screen and (max-width: 560px) {
+    .cert-stage {
+        padding: 66px 10px 26px;
+    }
+
+    .cert-toolbar {
+        gap: 8px;
+        padding: 7px 12px;
+    }
+
+    .cert-toolbar .cert-btn {
+        padding: 8px 12px;
+        font-size: 0.82rem;
+    }
 }
 
 /* ==========================================================================

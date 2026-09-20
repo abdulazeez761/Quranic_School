@@ -89,7 +89,9 @@ public class CertificateTemplateRepository : ICertificateTemplateRepository
 
     public async Task<bool> UpdateAsync(CertificateTemplate template)
     {
-        _context.CertificateTemplates.Update(template);
+        // Mark only the template itself: Update() would walk the graph and rewrite the
+        // included Institute row (and every version) from possibly stale values.
+        _context.Entry(template).State = EntityState.Modified;
         return await _context.SaveChangesAsync() > 0;
     }
 
@@ -132,7 +134,12 @@ public class CertificateTemplateRepository : ICertificateTemplateRepository
 
     public async Task ClearDefaultFlagAsync(Guid instituteId, CertificateType type, Guid? exceptTemplateId = null)
     {
+        // Soft-deleted templates are hidden by the global query filter, but the filtered unique
+        // index on (InstituteId, Type, IsDefault) still covers them. Deleting a template leaves
+        // IsDefault = 1 behind, so without IgnoreQueryFilters that stale row blocks every later
+        // set-default with a duplicate key violation.
         var defaults = await _context.CertificateTemplates
+            .IgnoreQueryFilters()
             .Where(t => t.InstituteId == instituteId && t.Type == type && t.IsDefault && (!exceptTemplateId.HasValue || t.Id != exceptTemplateId.Value))
             .ToListAsync();
 

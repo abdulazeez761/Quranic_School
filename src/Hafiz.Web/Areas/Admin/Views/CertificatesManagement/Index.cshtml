@@ -1,4 +1,5 @@
 @model IEnumerable<Hafiz.Application.DTO.Certificate.CertificateListItemDto>
+@using Hafiz.Application.DTO.Certificate
 @using Hafiz.Domain.Enums
 @{
     ViewData["Title"] = "إدارة الشهادات";
@@ -8,11 +9,21 @@
     var selectedStatus = ViewBag.SelectedStatus as CertificateStatus?;
     var search = ViewBag.Search as string;
     var currentPage = ViewBag.Page is int p && p > 0 ? p : 1;
+    var pageSize = ViewBag.PageSize is int ps ? ps : 25;
+    var sortKey = ViewBag.Sort as string ?? "issued";
+    var sortDir = ViewBag.Dir as string ?? "desc";
     var total = ViewBag.Total is int t ? t : 0;
-
-    const int pageSize = 50;
-    var totalPages = (int)Math.Ceiling(total / (double)pageSize);
+    var totalPages = ViewBag.TotalPages is int tp && tp > 0 ? tp : 1;
+    var stats = ViewBag.Stats as CertificateStats ?? new CertificateStats();
     var certificates = Model.ToList();
+
+    // The tile bars read as "share of the whole register", so they stay empty when nothing is issued.
+    var expiredPercent = stats.Total == 0 ? 0 : (int)Math.Round(stats.Expired * 100.0 / stats.Total);
+
+    // A collapsed filter panel on a phone still has to show that it is filtering.
+    var activeFilterCount = (selectedType.HasValue ? 1 : 0)
+        + (selectedStatus.HasValue ? 1 : 0)
+        + (string.IsNullOrWhiteSpace(search) ? 0 : 1);
 
     var typeList = new SelectList(
         new[]
@@ -30,6 +41,113 @@
             new { Value = CertificateStatus.Revoked, Text = "ملغاة" },
             new { Value = CertificateStatus.Expired, Text = "منتهية" }
         }, "Value", "Text", selectedStatus);
+
+    var pageSizes = new[] { 25, 50, 100 };
+
+    // SelectList drives the selected option; a bare selected="@(x == y)" would render
+    // selected="False", which HTML still honours, leaving the last option always shown.
+    var pageSizeList = new SelectList(pageSizes, pageSize);
+
+    var sortList = new SelectList(
+        new[]
+        {
+            new { Value = "issued", Text = "تاريخ الإصدار" },
+            new { Value = "number", Text = "رقم الشهادة" },
+            new { Value = "student", Text = "اسم الطالب" },
+            new { Value = "type", Text = "نوع الشهادة" },
+            new { Value = "template", Text = "القالب" },
+            new { Value = "status", Text = "الحالة" }
+        }, "Value", "Text", sortKey);
+
+    var dirList = new SelectList(
+        new[]
+        {
+            new { Value = "desc", Text = "تنازلي" },
+            new { Value = "asc", Text = "تصاعدي" }
+        }, "Value", "Text", sortDir);
+
+    // Every link preserves the active filters; only the argument that changed differs.
+    object Route(object? overrides = null)
+    {
+        var route = new Microsoft.AspNetCore.Routing.RouteValueDictionary(new
+        {
+            area = "Admin",
+            type = selectedType,
+            status = selectedStatus,
+            search,
+            page = currentPage,
+            pageSize,
+            sort = sortKey,
+            dir = sortDir
+        });
+        if (overrides is not null)
+        {
+            foreach (var property in overrides.GetType().GetProperties())
+                route[property.Name] = property.GetValue(overrides);
+        }
+        return route;
+    }
+
+    string SortLink(string column)
+    {
+        var nextDir = sortKey == column && sortDir == "asc" ? "desc" : "asc";
+        return Url.Action("Index", Route(new { page = 1, sort = column, dir = nextDir }))!;
+    }
+
+    string SortIcon(string column) =>
+        sortKey != column ? "bx-sort" : sortDir == "asc" ? "bx-sort-up" : "bx-sort-down";
+
+    // The pager shows a fixed five-wide window around the current page.
+    var windowEnd = Math.Min(totalPages, Math.Max(1, currentPage - 2) + 4);
+    var windowStart = Math.Max(1, windowEnd - 4);
+
+    string TypeChip(CertificateType type) => type switch
+    {
+        CertificateType.Quran => "cert-chip--quran",
+        CertificateType.Matn => "cert-chip--matn",
+        CertificateType.Sanad => "cert-chip--sanad",
+        _ => "cert-chip--general"
+    };
+
+    string TypeIcon(CertificateType type) => type switch
+    {
+        CertificateType.Quran => "bx-book-open",
+        CertificateType.Matn => "bx-bookmark",
+        CertificateType.Sanad => "bx-link",
+        _ => "bx-certification"
+    };
+
+    string StatusPill(CertificateStatus status) => status switch
+    {
+        CertificateStatus.Active => "cert-pill--active",
+        CertificateStatus.Revoked => "cert-pill--revoked",
+        _ => "cert-pill--expired"
+    };
+
+    string StatusIcon(CertificateStatus status) => status switch
+    {
+        CertificateStatus.Active => "bx-check-shield",
+        CertificateStatus.Revoked => "bx-block",
+        _ => "bx-time-five"
+    };
+
+    string Initials(string name)
+    {
+        var parts = (name ?? string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 0) return "؟";
+        return parts.Length == 1
+            ? parts[0][..1]
+            : string.Concat(parts[0][..1], parts[1][..1]);
+    }
+
+    // Deterministic colour per template so the same template always reads the same in the table.
+    string TemplateTone(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "hsl(150 12% 62%)";
+        var hash = 0;
+        foreach (var ch in name) hash = (hash * 31 + ch) % 360;
+        return $"hsl({hash} 42% 46%)";
+    }
 }
 
 <link rel="stylesheet" href="~/css/admin/certificate-builder.css" asp-append-version="true" />
@@ -40,9 +158,14 @@
             <h1><span class="cert-icon"><i class='bx bx-certification'></i></span>إدارة الشهادات</h1>
             <p>تابع الشهادات الصادرة من المركز، وتحقق منها، وألغِ اعتماد ما يحتاج إلى إلغاء.</p>
         </div>
-        <a asp-controller="CertificateTemplates" asp-action="Index" class="btn btn-outline-primary">
-            <i class='bx bx-palette'></i> قوالب الشهادات
-        </a>
+        <div class="cert-header-actions">
+            <a href="@Url.Action("Export", Route(new { page = (object?)null }))" class="btn btn-outline-success">
+                <i class='bx bx-spreadsheet'></i> تصدير Excel
+            </a>
+            <a asp-controller="CertificateTemplates" asp-action="Index" class="btn btn-outline-primary">
+                <i class='bx bx-palette'></i> قوالب الشهادات
+            </a>
+        </div>
     </header>
 
     @if (TempData["SuccessMessage"] != null)
@@ -54,75 +177,202 @@
         <div class="alert alert-danger"><i class='bx bx-error-circle'></i> @TempData["ErrorMessage"]</div>
     }
 
-    <form method="get" class="builder-panel mb-3" style="padding:16px;">
-        <div class="row g-2 align-items-end">
-            <div class="col-md-4">
-                <label class="cb-label">بحث</label>
-                <input name="search" value="@search" class="form-control" placeholder="رقم الشهادة أو اسم الطالب" />
+    <div class="cert-stat-head">
+        <span>ملخص الشهادات</span>
+        @if (selectedType.HasValue || selectedStatus.HasValue || !string.IsNullOrWhiteSpace(search))
+        {
+            <em>يتبع الفلاتر المحددة أدناه</em>
+        }
+    </div>
+
+    <div class="cert-stat-grid">
+        <div class="card card-stat">
+            <div class="card-stat-icon cert-tone--total"><i class='bx bx-collection'></i></div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">إجمالي الشهادات</div>
+                <div class="card-stat-value">@stats.Total</div>
             </div>
-            <div class="col-md-3">
-                <label class="cb-label">نوع الشهادة</label>
-                @Html.DropDownList("type", typeList, "كل الأنواع", new { @class = "form-select" })
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon cert-tone--active"><i class='bx bx-check-shield'></i></div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">سارية ومعتمدة</div>
+                <div class="card-stat-value">@stats.Active</div>
+                <span class="card-stat-change positive">@stats.ActivePercent% من الإجمالي</span>
+                <span class="cert-stat-bar cert-stat-bar--active"><span style="width:@stats.ActivePercent%"></span></span>
             </div>
-            <div class="col-md-3">
-                <label class="cb-label">الحالة</label>
-                @Html.DropDownList("status", statusList, "كل الحالات", new { @class = "form-select" })
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon cert-tone--revoked"><i class='bx bx-block'></i></div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">ملغاة</div>
+                <div class="card-stat-value">@stats.Revoked</div>
+                <span class="card-stat-change negative">@stats.RevokedPercent% من الإجمالي</span>
+                <span class="cert-stat-bar cert-stat-bar--revoked"><span style="width:@stats.RevokedPercent%"></span></span>
             </div>
-            <div class="col-md-2 d-flex gap-2">
-                <button class="btn btn-primary flex-fill"><i class='bx bx-search'></i> بحث</button>
-                <a asp-action="Index" class="btn btn-light" title="تصفير الفلاتر"><i class='bx bx-reset'></i></a>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon cert-tone--expired"><i class='bx bx-time-five'></i></div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">منتهية</div>
+                <div class="card-stat-value">@stats.Expired</div>
+                <span class="card-stat-change">@expiredPercent% من الإجمالي</span>
+                <span class="cert-stat-bar cert-stat-bar--expired"><span style="width:@expiredPercent%"></span></span>
+            </div>
+        </div>
+        <div class="card card-stat">
+            <div class="card-stat-icon cert-tone--month"><i class='bx bx-calendar'></i></div>
+            <div class="card-stat-content">
+                <div class="card-stat-label">صدرت هذا الشهر</div>
+                <div class="card-stat-value">@stats.IssuedThisMonth</div>
+            </div>
+        </div>
+    </div>
+
+    <form method="get" class="builder-panel cert-filter-bar" id="certFilterForm">
+        <div class="cert-filter-head">
+            <span class="cert-filter-title"><i class='bx bx-filter-alt'></i> تصفية النتائج</span>
+            <span class="cert-filter-count">@total نتيجة</span>
+            @* Hidden until the script marks the form ready, so a phone never shows a dead control. *@
+            <button type="button" class="cert-filter-toggle" id="certFilterToggle"
+                    aria-expanded="true" aria-controls="certFilterBody">
+                <span>الفلاتر</span>
+                @if (activeFilterCount > 0)
+                {
+                    <em class="cert-filter-badge">@activeFilterCount</em>
+                }
+                <i class='bx bx-chevron-down'></i>
+            </button>
+        </div>
+
+        @* The wide table sorts from its own header; this is the phone's stand-in for it, since
+           that header is hidden there. It stays in the form on desktop (where it is display:none
+           but still posts) so the ordering survives a filter change as the hidden inputs did. *@
+        <div class="cert-sort-mobile">
+            <label class="cb-label" for="sort">ترتيب حسب</label>
+            <div class="cert-sort-mobile-row">
+                @Html.DropDownList("sort", sortList, new { @class = "form-select", id = "sort" })
+                @Html.DropDownList("dir", dirList, new { @class = "form-select", id = "dir" })
+            </div>
+        </div>
+
+        <div class="cert-filter-body" id="certFilterBody">
+            <div class="cert-filter-grid">
+                <div class="cert-filter-field cert-filter-search">
+                    <label class="cb-label" for="certSearch">بحث</label>
+                    <div class="cert-input-icon">
+                        <i class='bx bx-search'></i>
+                        <input id="certSearch" name="search" value="@search" class="form-control" placeholder="رقم الشهادة أو اسم الطالب" />
+                    </div>
+                </div>
+                <div class="cert-filter-field">
+                    <label class="cb-label" for="type">نوع الشهادة</label>
+                    @Html.DropDownList("type", typeList, "كل الأنواع", new { @class = "form-select", id = "type" })
+                </div>
+                <div class="cert-filter-field">
+                    <label class="cb-label" for="status">الحالة</label>
+                    @Html.DropDownList("status", statusList, "كل الحالات", new { @class = "form-select", id = "status" })
+                </div>
+                <div class="cert-filter-field cert-filter-pagesize">
+                    <label class="cb-label" for="pageSize">عدد الصفوف</label>
+                    @Html.DropDownList("pageSize", pageSizeList, new { @class = "form-select", id = "pageSize" })
+                </div>
+                <div class="cert-filter-actions">
+                    <button class="btn btn-primary"><i class='bx bx-search'></i> تطبيق</button>
+                    <a asp-action="Index" class="btn btn-light" title="تصفير الفلاتر" aria-label="تصفير الفلاتر">
+                        <i class='bx bx-reset'></i>
+                    </a>
+                </div>
             </div>
         </div>
     </form>
 
-    <div class="builder-panel" style="padding:0; overflow:hidden;">
+    <div class="builder-panel cert-table-panel">
         <div class="table-responsive">
-            <table class="table table-hover mb-0" style="vertical-align:middle;">
+            <table class="table cert-table table-responsive-cards mb-0">
                 <thead>
                     <tr>
-                        <th>رقم الشهادة</th>
-                        <th>الطالب</th>
-                        <th>النوع</th>
+                        <th>
+                            <a class="cert-sort" href="@SortLink("number")">رقم الشهادة <i class='bx @SortIcon("number")'></i></a>
+                        </th>
+                        <th>
+                            <a class="cert-sort" href="@SortLink("student")">الطالب <i class='bx @SortIcon("student")'></i></a>
+                        </th>
+                        <th>
+                            <a class="cert-sort" href="@SortLink("type")">النوع <i class='bx @SortIcon("type")'></i></a>
+                        </th>
                         <th>الموضوع</th>
-                        <th>القالب</th>
-                        <th>تاريخ الإصدار</th>
-                        <th>الحالة</th>
-                        <th></th>
+                        <th>
+                            <a class="cert-sort" href="@SortLink("template")">القالب <i class='bx @SortIcon("template")'></i></a>
+                        </th>
+                        <th>
+                            <a class="cert-sort" href="@SortLink("issued")">تاريخ الإصدار <i class='bx @SortIcon("issued")'></i></a>
+                        </th>
+                        <th>
+                            <a class="cert-sort" href="@SortLink("status")">الحالة <i class='bx @SortIcon("status")'></i></a>
+                        </th>
+                        <th>إجراءات</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in certificates)
                     {
                         <tr>
-                            <td style="direction:ltr; text-align:right; font-weight:700;">@item.CertificateNumber</td>
-                            <td>@item.StudentName</td>
-                            <td>@item.TypeDisplayName</td>
-                            <td>@item.SubjectTitle</td>
-                            <td>@item.TemplateName</td>
-                            <td>@item.IssuedAtDisplay</td>
-                            <td>
-                                <span class="badge @(item.Status == CertificateStatus.Active ? "bg-success" : "bg-danger")"
-                                      title="@item.RevokeReason">
-                                    @item.StatusDisplayName
+                            <td class="cert-cell-number" data-label="رقم الشهادة">@item.CertificateNumber</td>
+                            <td class="cert-card-student">
+                                <div class="cert-student">
+                                    <span class="cert-avatar">@Initials(item.StudentName)</span>
+                                    <span class="cert-student-name">@item.StudentName</span>
+                                </div>
+                            </td>
+                            <td class="cert-cell-type" data-label="النوع">
+                                <span class="cert-chip @TypeChip(item.Type)">
+                                    <i class='bx @TypeIcon(item.Type)'></i> @item.TypeDisplayName
                                 </span>
                             </td>
-                            <td class="text-nowrap">
+                            <td class="cert-cell-subject" data-label="الموضوع" title="@item.SubjectTitle">@item.SubjectTitle</td>
+                            <td class="cert-cell-template" data-label="القالب">
+                                <span class="cert-template">
+                                    <span class="cert-template-dot" style="background:@TemplateTone(item.TemplateName)"></span>
+                                    @item.TemplateName
+                                </span>
+                            </td>
+                            <td class="cert-cell-date" data-label="تاريخ الإصدار">@item.IssuedAtDisplay</td>
+                            <td class="cert-card-status">
+                                <span class="cert-pill @StatusPill(item.Status)" title="@item.RevokeReason">
+                                    <i class='bx @StatusIcon(item.Status)'></i> @item.StatusDisplayName
+                                </span>
+                            </td>
+                            <td class="cert-card-actions text-nowrap">
+                                @* The labels are hidden on the wide table and shown where the row
+                                   becomes a card and an icon alone would be ambiguous. *@
                                 <a href="/Certificates/View/@item.Id" target="_blank" rel="noopener"
-                                   class="btn btn-outline-primary btn-sm" title="عرض الشهادة">
-                                    <i class='bx bx-show'></i>
+                                   class="btn btn-outline-primary btn-sm" title="عرض الشهادة" aria-label="عرض الشهادة">
+                                    <i class='bx bx-show'></i><span class="cert-action-label">عرض</span>
                                 </a>
                                 <a href="/Certificates/Verify/@item.VerificationToken" target="_blank" rel="noopener"
-                                   class="btn btn-outline-secondary btn-sm" title="صفحة التحقق">
-                                    <i class='bx bx-link-external'></i>
+                                   class="btn btn-outline-secondary btn-sm" title="صفحة التحقق" aria-label="صفحة التحقق">
+                                    <i class='bx bx-link-external'></i><span class="cert-action-label">تحقق</span>
                                 </a>
+                                <button type="button" class="btn btn-outline-info btn-sm js-copy"
+                                        data-token="@item.VerificationToken" title="نسخ رابط التحقق" aria-label="نسخ رابط التحقق">
+                                    <i class='bx bx-copy'></i><span class="cert-action-label">نسخ</span>
+                                </button>
+                                <button type="button" class="btn btn-outline-dark btn-sm js-details"
+                                        data-id="@item.Id"
+                                        data-number="@item.CertificateNumber"
+                                        data-student="@item.StudentName"
+                                        title="سجل الإجراءات" aria-label="سجل الإجراءات">
+                                    <i class='bx bx-history'></i><span class="cert-action-label">السجل</span>
+                                </button>
                                 @if (item.Status == CertificateStatus.Active)
                                 {
                                     <button type="button" class="btn btn-outline-danger btn-sm js-revoke"
                                             data-id="@item.Id"
                                             data-number="@item.CertificateNumber"
                                             data-student="@item.StudentName"
-                                            title="إلغاء الاعتماد">
-                                        <i class='bx bx-block'></i>
+                                            title="إلغاء الاعتماد" aria-label="إلغاء الاعتماد">
+                                        <i class='bx bx-block'></i><span class="cert-action-label">إلغاء</span>
                                     </button>
                                 }
                             </td>
@@ -130,47 +380,65 @@
                     }
                     @if (certificates.Count == 0)
                     {
-                        <tr>
-                            <td colspan="8" class="text-center py-5 text-muted">
-                                <i class='bx bx-folder-open' style="font-size:30px; display:block; margin-bottom:8px;"></i>
-                                لا توجد شهادات مطابقة للبحث أو الفلاتر المحددة.
+                        <tr class="cert-card-empty-row">
+                            <td colspan="8" class="cert-card-wide">
+                                <div class="cert-empty">
+                                    <i class='bx bx-folder-open'></i>
+                                    <strong>لا توجد شهادات مطابقة</strong>
+                                    <span>جرّب تعديل كلمة البحث أو إزالة الفلاتر المحددة.</span>
+                                    <a asp-action="Index" class="btn btn-outline-primary btn-sm">
+                                        <i class='bx bx-reset'></i> تصفير الفلاتر
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
-    </div>
 
-    @if (totalPages > 1)
-    {
-        <nav class="mt-3" aria-label="تصفح الصفحات">
-            <ul class="pagination justify-content-center mb-1">
-                <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-page="@(currentPage - 1)"
-                       asp-route-type="@selectedType" asp-route-status="@selectedStatus" asp-route-search="@search">السابق</a>
-                </li>
-                @for (var i = 1; i <= totalPages; i++)
+        @if (total > 0)
+        {
+            <div class="cert-table-footer">
+                <span class="cert-range">
+                    عرض @(((currentPage - 1) * pageSize) + 1)–@Math.Min(currentPage * pageSize, total) من @total شهادة
+                </span>
+
+                @if (totalPages > 1)
                 {
-                    <li class="page-item @(i == currentPage ? "active" : "")">
-                        <a class="page-link" asp-action="Index" asp-route-page="@i"
-                           asp-route-type="@selectedType" asp-route-status="@selectedStatus" asp-route-search="@search">@i</a>
-                    </li>
+                    @* A phone cannot fit nine page links, so it gets this line plus prev/next instead. *@
+                    <span class="cert-pager-compact">صفحة @currentPage من @totalPages</span>
+
+                    <nav aria-label="تصفح الصفحات">
+                        <ul class="pagination mb-0">
+                            <li class="page-item cert-page-first @(currentPage <= 1 ? "disabled" : "")">
+                                <a class="page-link" href="@Url.Action("Index", Route(new { page = 1 }))" title="الأولى">
+                                    <i class='bx bx-chevrons-right'></i>
+                                </a>
+                            </li>
+                            <li class="page-item cert-page-prev @(currentPage <= 1 ? "disabled" : "")">
+                                <a class="page-link" href="@Url.Action("Index", Route(new { page = currentPage - 1 }))">السابق</a>
+                            </li>
+                            @for (var i = windowStart; i <= windowEnd; i++)
+                            {
+                                <li class="page-item cert-page-number @(i == currentPage ? "active" : "")">
+                                    <a class="page-link" href="@Url.Action("Index", Route(new { page = i }))">@i</a>
+                                </li>
+                            }
+                            <li class="page-item cert-page-next @(currentPage >= totalPages ? "disabled" : "")">
+                                <a class="page-link" href="@Url.Action("Index", Route(new { page = currentPage + 1 }))">التالي</a>
+                            </li>
+                            <li class="page-item cert-page-last @(currentPage >= totalPages ? "disabled" : "")">
+                                <a class="page-link" href="@Url.Action("Index", Route(new { page = totalPages }))" title="الأخيرة">
+                                    <i class='bx bx-chevrons-left'></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
                 }
-                <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-page="@(currentPage + 1)"
-                       asp-route-type="@selectedType" asp-route-status="@selectedStatus" asp-route-search="@search">التالي</a>
-                </li>
-            </ul>
-        </nav>
-        <p class="text-center text-muted small">
-            إجمالي @total شهادة — الصفحة @currentPage من @totalPages
-        </p>
-    }
-    else if (total > 0)
-    {
-        <p class="text-muted small mt-3 mb-0">إجمالي @total شهادة.</p>
-    }
+            </div>
+        }
+    </div>
 </div>
 
 <!-- نافذة إلغاء الاعتماد -->
@@ -200,21 +468,172 @@
     </div>
 </div>
 
+<!-- نافذة سجل الإجراءات -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content" dir="rtl">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">
+                    <i class='bx bx-history'></i> سجل الإجراءات
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <div class="modal-body">
+                <div class="cert-details-head">
+                    <div>
+                        <span class="cb-label">رقم الشهادة</span>
+                        <strong id="detailsNumber" class="cert-cell-number"></strong>
+                    </div>
+                    <div>
+                        <span class="cb-label">الطالب</span>
+                        <strong id="detailsStudent"></strong>
+                    </div>
+                </div>
+                <div id="detailsBody" class="cert-timeline-host">
+                    <div class="cert-timeline-loading"><i class='bx bx-loader-alt bx-spin'></i> جارٍ التحميل…</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+<div id="toast" class="cert-toast" role="status" aria-live="polite">
+    <i class='bx bx-check-circle'></i>
+    <span id="toast-message"></span>
+</div>
+
 @section Scripts {
     <script>
         (() => {
-            const modalEl = document.getElementById('revokeModal');
-            if (!modalEl) return;
-            const modal = new bootstrap.Modal(modalEl);
-            document.querySelectorAll('.js-revoke').forEach((btn) => {
-                btn.addEventListener('click', () => {
-                    document.getElementById('revokeId').value = btn.dataset.id;
-                    document.getElementById('revokeNumber').textContent = btn.dataset.number;
-                    document.getElementById('revokeStudent').textContent = btn.dataset.student;
-                    document.getElementById('revokeReason').value = '';
-                    modal.show();
+            const detailsUrl = '@Url.Action("Details", "CertificatesManagement", new { area = "Admin" })';
+
+            function showToast(message, isError) {
+                const toast = document.getElementById('toast');
+                document.getElementById('toast-message').textContent = message;
+                toast.classList.toggle('cert-toast--error', Boolean(isError));
+                toast.querySelector('i').className = isError ? 'bx bx-error-circle' : 'bx bx-check-circle';
+                toast.classList.add('show');
+                clearTimeout(window.__certToastTimer);
+                window.__certToastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+            }
+
+            // --- filters collapse (phones only) ------------------------------
+            // The panel is open in the markup and the toggle is hidden by CSS, so without this
+            // script the filters stay usable; the script only opts into the collapsed state.
+            // Both CSS rules are scoped to the phone breakpoint, so marking up the collapsed
+            // state here costs the desktop layout nothing — and a resize into phone width finds
+            // the panel already collapsed with a working toggle.
+            const filterForm = document.getElementById('certFilterForm');
+            const filterToggle = document.getElementById('certFilterToggle');
+            if (filterForm && filterToggle) {
+                const filterLabel = filterToggle.querySelector('span');
+                const filterChevron = filterToggle.querySelector('i');
+
+                const setCollapsed = (collapsed) => {
+                    filterForm.classList.toggle('is-collapsed', collapsed);
+                    filterToggle.setAttribute('aria-expanded', String(!collapsed));
+                    filterLabel.textContent = collapsed ? 'الفلاتر' : 'إخفاء الفلاتر';
+                    filterChevron.className = collapsed ? 'bx bx-chevron-down' : 'bx bx-chevron-up';
+                };
+
+                filterForm.classList.add('js-ready');
+                setCollapsed(true);
+                filterToggle.addEventListener('click', () => {
+                    setCollapsed(!filterForm.classList.contains('is-collapsed'));
+                });
+            }
+
+            // The sort row is the one control outside the collapsible body, and the submit button
+            // is inside it — so reordering applies on change instead of a tap the user cannot see.
+            if (filterForm) {
+                filterForm.querySelectorAll('.cert-sort-mobile select').forEach((select) => {
+                    select.addEventListener('change', () => {
+                        if (filterForm.requestSubmit) filterForm.requestSubmit();
+                        else filterForm.submit();
+                    });
+                });
+            }
+
+            // --- revoke -----------------------------------------------------
+            const revokeEl = document.getElementById('revokeModal');
+            if (revokeEl) {
+                const revokeModal = new bootstrap.Modal(revokeEl);
+                document.querySelectorAll('.js-revoke').forEach((btn) => {
+                    btn.addEventListener('click', () => {
+                        document.getElementById('revokeId').value = btn.dataset.id;
+                        document.getElementById('revokeNumber').textContent = btn.dataset.number;
+                        document.getElementById('revokeStudent').textContent = btn.dataset.student;
+                        document.getElementById('revokeReason').value = '';
+                        revokeModal.show();
+                    });
+                });
+            }
+
+            // --- copy verification link -------------------------------------
+            document.querySelectorAll('.js-copy').forEach((btn) => {
+                btn.addEventListener('click', async () => {
+                    const url = `${window.location.origin}/Certificates/Verify/${btn.dataset.token}`;
+                    try {
+                        await navigator.clipboard.writeText(url);
+                        showToast('تم نسخ رابط التحقق.');
+                    } catch {
+                        window.prompt('انسخ رابط التحقق:', url);
+                    }
                 });
             });
+
+            // --- audit trail -------------------------------------------------
+            const detailsEl = document.getElementById('detailsModal');
+            if (detailsEl) {
+                const detailsModal = new bootstrap.Modal(detailsEl);
+                const body = document.getElementById('detailsBody');
+
+                const escapeHtml = (value) => {
+                    const div = document.createElement('div');
+                    div.textContent = value ?? '';
+                    return div.innerHTML;
+                };
+
+                document.querySelectorAll('.js-details').forEach((btn) => {
+                    btn.addEventListener('click', async () => {
+                        document.getElementById('detailsNumber').textContent = btn.dataset.number;
+                        document.getElementById('detailsStudent').textContent = btn.dataset.student;
+                        body.innerHTML = '<div class="cert-timeline-loading"><i class="bx bx-loader-alt bx-spin"></i> جارٍ التحميل…</div>';
+                        detailsModal.show();
+
+                        try {
+                            const response = await fetch(`${detailsUrl}?id=${encodeURIComponent(btn.dataset.id)}`, {
+                                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                            });
+                            const data = await response.json();
+                            if (!data || !data.success) {
+                                body.innerHTML = '<div class="cert-empty cert-empty--inline"><i class="bx bx-error-circle"></i><span>تعذّر تحميل سجل الإجراءات.</span></div>';
+                                return;
+                            }
+                            if (data.audits.length === 0) {
+                                body.innerHTML = '<div class="cert-empty cert-empty--inline"><i class="bx bx-history"></i><span>لا توجد إجراءات مسجّلة على هذه الشهادة.</span></div>';
+                                return;
+                            }
+                            body.innerHTML = '<ul class="cert-timeline">' + data.audits.map((entry) => `
+                                <li class="cert-timeline-item cert-timeline-item--${escapeHtml(entry.tone)}">
+                                    <span class="cert-timeline-dot"><i class="bx ${escapeHtml(entry.icon)}"></i></span>
+                                    <div class="cert-timeline-content">
+                                        <div class="cert-timeline-top">
+                                            <strong>${escapeHtml(entry.action)}</strong>
+                                            <time>${escapeHtml(entry.performedAt)}</time>
+                                        </div>
+                                        <div class="cert-timeline-meta">بواسطة ${escapeHtml(entry.performedBy)}</div>
+                                        ${entry.details ? `<p class="cert-timeline-details">${escapeHtml(entry.details)}</p>` : ''}
+                                    </div>
+                                </li>`).join('') + '</ul>';
+                        } catch {
+                            body.innerHTML = '<div class="cert-empty cert-empty--inline"><i class="bx bx-wifi-off"></i><span>تعذّر الاتصال بالخادم.</span></div>';
+                        }
+                    });
+                });
+            }
         })();
     </script>
 }

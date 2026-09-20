@@ -21,11 +21,26 @@ public interface ICertificateIssuanceService
         CertificateStatus? status = null,
         string? search = null,
         int page = 1,
-        int pageSize = 50);
+        int pageSize = 50,
+        string? sort = null);
     Task<int> GetHistoryCountAsync(
         Guid? instituteId = null,
         Guid? studentId = null,
         CertificateType? type = null,
         CertificateStatus? status = null,
         string? search = null);
+
+    /// <summary>Counts for the management tiles, scoped by the same filters as the list.</summary>
+    Task<CertificateStats> GetStatsAsync(
+        Guid? instituteId = null,
+        DateTime? issuedSinceUtc = null,
+        CertificateType? type = null,
+        CertificateStatus? status = null,
+        string? search = null);
+
+    /// <summary>
+    /// Audit trail for one certificate with performer names resolved, newest first.
+    /// Returns null when the certificate does not belong to <paramref name="instituteId"/>.
+    /// </summary>
+    Task<IReadOnlyList<CertificateAuditLogDto>?> GetAuditTrailAsync(Guid certificateId, Guid? instituteId = null);
 }

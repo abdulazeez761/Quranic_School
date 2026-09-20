@@ -54,6 +54,9 @@
   border: 1px solid var(--cb-line);
   border-radius: 20px;
   box-shadow: 0 8px 25px rgba(25, 65, 37, 0.055);
+  /* Grid items default to min-width:auto, which lets a wide child push the whole grid past the
+     page. Both panels size from their track instead. */
+  min-width: 0;
 }
 .builder-panel {
   padding: 21px;
@@ -83,7 +86,9 @@
 }
 .field-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* auto-fit keeps these rows readable at any panel width: the builder and preview share the
+     page, so a fixed column count that suits a wide window is cramped in a narrow one. */
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 12px;
 }
 .cb-field label,
@@ -116,7 +121,7 @@
 }
 .preset-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
   gap: 9px;
 }
 .preset-btn {
@@ -148,7 +153,7 @@
 }
 .color-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 10px;
 }
 .color-field {
@@ -504,12 +509,31 @@
   background: var(--cb-forest);
   color: #fff;
 }
-@media (max-width: 1000px) {
+/* The admin shell holds a 260px sidebar next to the content, so these breakpoints are measured
+   against the content area, not the viewport: between roughly 1180px and 1440px the two panels
+   still fit side by side, and the flexible track is allowed to shrink to nothing so the grid can
+   never spill past the page. */
+@media (max-width: 1440px) {
+  .cert-builder {
+    grid-template-columns: minmax(330px, 460px) minmax(0, 1fr);
+  }
+  /* Five fields plus a button need ~500px, which the narrowed panel no longer has. */
+  .sig-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .sig-row .icon-btn {
+    grid-column: 1/-1;
+    width: 100%;
+  }
+}
+@media (max-width: 1180px) {
   .cert-builder {
     grid-template-columns: 1fr;
   }
+  /* The preview is the point of the page, so it leads once the panels stack. */
   .preview-panel {
     position: static;
+    order: -1;
   }
   .cert-admin-page {
     padding: 18px;
@@ -519,10 +543,6 @@
   .field-grid,
   .color-grid {
     grid-template-columns: 1fr;
-  }
-  .cert-admin-header {
-    align-items: start;
-    flex-direction: column;
   }
   .preset-grid {
     grid-template-columns: 1fr;
@@ -536,5 +556,1016 @@
   }
   .section-card-head small {
     display: none;
+  }
+}
+
+/* --- ornament pickers --------------------------------------------------- */
+/* Swatches reuse the same masks the certificate itself uses, so the picker shows the real
+   artwork. The mask custom property comes from .cert-corners--* / .cert-pattern--* in
+   certificate.css, which is loaded before this file. */
+.ornament-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  gap: 8px;
+}
+.ornament-grid--wide {
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+}
+.ornament-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 8px;
+  background: #fff;
+  border: 1.5px solid var(--cb-line);
+  border-radius: 12px;
+  color: var(--cb-forest);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .15s, background .15s, box-shadow .15s;
+}
+.ornament-btn:hover {
+  border-color: var(--cb-forest);
+  background: #f6fbf8;
+}
+.ornament-btn.active {
+  border-color: var(--cb-forest);
+  background: #eef7f2;
+  box-shadow: 0 0 0 2px rgba(6, 78, 59, .12);
+}
+.ornament-btn > span:last-child {
+  line-height: 1.3;
+  text-align: center;
+}
+
+.ornament-swatch {
+  width: 34px;
+  height: 34px;
+  background-color: currentColor;
+  -webkit-mask-image: var(--cert-corner-mask);
+  mask-image: var(--cert-corner-mask);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+.ornament-swatch--none,
+.pattern-swatch--none {
+  background: none;
+  border: 1.5px dashed var(--cb-line);
+  border-radius: 8px;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.pattern-swatch {
+  width: 52px;
+  height: 34px;
+  border-radius: 6px;
+  background-color: currentColor;
+  -webkit-mask-image: var(--cert-pattern-mask);
+  mask-image: var(--cert-pattern-mask);
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+}
+/* Two classes deep so it beats the --cert-pattern--* tile size for the full sheet. */
+.ornament-btn .pattern-swatch {
+  -webkit-mask-size: 24px 24px;
+  mask-size: 24px 24px;
+}
+
+.frame-swatch {
+  position: relative;
+  width: 56px;
+  height: 34px;
+  border: 2px solid currentColor;
+  border-radius: 3px;
+}
+.frame-swatch::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px solid currentColor;
+  border-radius: 1px;
+}
+.frame-swatch--ornate {
+  border-width: 7px;
+  border-style: double;
+  border-radius: 4px;
+}
+.frame-swatch--ornate::after {
+  inset: 2px;
+  border: 0;
+  border-radius: 2px;
+  background: repeating-linear-gradient(45deg, currentColor 0 2px, transparent 2px 4px);
+  opacity: .55;
+}
+
+/* ==========================================================================
+   Certificates management register
+   ========================================================================== */
+
+.cert-header-actions {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+/* --- stat tiles --------------------------------------------------------- */
+.cert-stat-head {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  margin-bottom: 10px;
+}
+.cert-stat-head > span {
+  font-weight: 700;
+  font-size: 14.5px;
+}
+.cert-stat-head > em {
+  font-style: normal;
+  font-size: 12.5px;
+  color: var(--cb-gold);
+  background: #fdf5e4;
+  padding: 2px 9px;
+  border-radius: 999px;
+}
+.cert-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.cert-stat-grid .card-stat {
+  padding: 16px;
+  gap: 13px;
+  background: #fff;
+  border: 1px solid var(--cb-line);
+  border-radius: 18px;
+  box-shadow: 0 6px 18px rgba(25, 65, 37, .05);
+}
+.cert-stat-grid .card-stat-icon {
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+  border-radius: 14px;
+  font-size: 22px;
+  box-shadow: none;
+}
+.cert-stat-grid .card-stat-value {
+  font-size: 25px;
+}
+.cert-stat-grid .card-stat-change {
+  margin-top: 6px;
+}
+.cert-tone--total   { background: linear-gradient(135deg, #334155, #1e293b); }
+.cert-tone--active  { background: linear-gradient(135deg, #178a5c, #0d5c3d); }
+.cert-tone--revoked { background: linear-gradient(135deg, #dc5a5a, #b02a2a); }
+.cert-tone--expired { background: linear-gradient(135deg, #dba32c, #a9741a); }
+.cert-tone--month   { background: linear-gradient(135deg, #3f7fbf, #24557f); }
+
+/* Share-of-register bar under the tiles that carry a percentage. The fill is a plain block, so it
+   grows from the inline start (the right, in this RTL page) without a direction-aware gradient. */
+.cert-stat-bar {
+  display: block;
+  height: 4px;
+  margin-top: 9px;
+  border-radius: 999px;
+  background: #eef2ef;
+  overflow: hidden;
+}
+.cert-stat-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  transition: width .45s ease;
+}
+.cert-stat-bar--active  > span { background: #178a5c; }
+.cert-stat-bar--revoked > span { background: #cf4a4a; }
+.cert-stat-bar--expired > span { background: #cf9a24; }
+
+.cert-stat-grid .card-stat {
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.cert-table tbody tr {
+  transition: background .15s ease;
+}
+.cert-avatar {
+  transition: background .18s ease, color .18s ease;
+}
+@media (hover: hover) {
+  .cert-stat-grid .card-stat:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 26px rgba(25, 65, 37, .09);
+  }
+  .cert-table tbody tr:hover .cert-avatar {
+    background: var(--cb-forest);
+    color: #fff;
+  }
+}
+
+/* The wide table sorts from its own header. This stands in for it on a phone, and stays in the
+   form on desktop — display:none still posts, so the ordering survives a filter change. */
+.cert-sort-mobile {
+  display: none;
+}
+.cert-sort-mobile-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .8fr);
+  gap: 10px;
+}
+
+/* --- filter bar --------------------------------------------------------- */
+.cert-filter-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--cb-line);
+}
+.cert-filter-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 700;
+  font-size: 14px;
+}
+.cert-filter-title > i {
+  font-size: 18px;
+  color: var(--cb-forest);
+}
+/* Pushed to the inline end so the count and the toggle travel together. */
+.cert-filter-count {
+  margin-inline-start: auto;
+  padding: 3px 11px;
+  border: 1px solid var(--cb-line);
+  border-radius: 999px;
+  background: #f3f7f4;
+  color: var(--cb-muted);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+/* Only the phone layout shows this; the script unhides it via .js-ready. */
+.cert-filter-toggle {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid var(--cb-line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--cb-ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+.cert-filter-toggle > i {
+  font-size: 17px;
+  color: var(--cb-muted);
+}
+.cert-filter-badge {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--cb-forest);
+  color: #fff;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 700;
+}
+.cert-filter-bar {
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.cert-filter-grid {
+  display: grid;
+  grid-template-columns: minmax(200px, 2fr) repeat(3, minmax(140px, 1fr)) auto;
+  gap: 12px;
+  align-items: end;
+}
+.cert-filter-actions {
+  display: flex;
+  gap: 8px;
+}
+.cert-input-icon {
+  position: relative;
+}
+.cert-input-icon > i {
+  position: absolute;
+  inset-inline-start: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--cb-muted);
+  font-size: 17px;
+  pointer-events: none;
+}
+.cert-input-icon > input {
+  padding-inline-start: 36px;
+}
+
+/* --- table -------------------------------------------------------------- */
+.cert-table-panel {
+  padding: 0;
+  overflow: hidden;
+}
+.cert-table {
+  vertical-align: middle;
+  margin: 0;
+}
+.cert-table thead th {
+  background: #f7faf8;
+  border-bottom: 1px solid var(--cb-line);
+  color: var(--cb-muted);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .2px;
+  padding: 12px 14px;
+  white-space: nowrap;
+}
+.cert-table tbody td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f1f5f2;
+  vertical-align: middle;
+}
+.cert-table tbody tr:hover {
+  background: #fbfdfc;
+}
+.cert-sort {
+  color: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.cert-sort:hover {
+  color: var(--cb-forest);
+}
+.cert-sort i {
+  font-size: 15px;
+  opacity: .75;
+}
+
+.cert-cell-number {
+  direction: ltr;
+  text-align: right;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--cb-ink);
+}
+.cert-cell-date {
+  white-space: nowrap;
+  color: var(--cb-muted);
+}
+.cert-cell-subject {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cert-student {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.cert-avatar {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  border-radius: 50%;
+  background: var(--cb-mint);
+  color: var(--cb-forest);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12.5px;
+}
+.cert-student-name {
+  font-weight: 600;
+}
+
+.cert-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.cert-chip--quran   { background: #e8f4eb; color: #17603f; }
+.cert-chip--matn    { background: #eef2fb; color: #33518f; }
+.cert-chip--sanad   { background: #fdf3e3; color: #8a6118; }
+.cert-chip--general { background: #f2f0f7; color: #564a7d; }
+
+.cert-template {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--cb-muted);
+}
+.cert-template-dot {
+  width: 9px;
+  height: 9px;
+  min-width: 9px;
+  border-radius: 50%;
+}
+
+.cert-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.cert-pill--active  { background: #d9f2e4; color: #10603d; }
+.cert-pill--revoked { background: #fbe0e0; color: #9c2222; }
+.cert-pill--expired { background: #fdf0d5; color: #8a6118; }
+
+/* The action buttons are icon-only on the wide table; the card layout reveals these. */
+.cert-action-label {
+  display: none;
+}
+
+/* --- table footer + pager ----------------------------------------------- */
+.cert-table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 13px 16px;
+  border-top: 1px solid var(--cb-line);
+  background: #fcfdfc;
+}
+.cert-range {
+  color: var(--cb-muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.cert-table-footer .pagination {
+  --bs-pagination-color: var(--cb-forest);
+  --bs-pagination-active-bg: var(--cb-forest);
+  --bs-pagination-active-border-color: var(--cb-forest);
+  --bs-pagination-focus-box-shadow: none;
+  --bs-pagination-focus-color: var(--cb-forest);
+  margin: 0;
+}
+.cert-table-footer .page-link {
+  min-width: 38px;
+  text-align: center;
+}
+.cert-table-footer .page-item.disabled .page-link {
+  opacity: .45;
+}
+
+/* --- empty state -------------------------------------------------------- */
+.cert-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 44px 18px;
+  color: var(--cb-muted);
+  text-align: center;
+}
+.cert-empty > i {
+  font-size: 38px;
+  color: #c3d4c8;
+}
+.cert-empty strong {
+  color: var(--cb-ink);
+  font-size: 15.5px;
+}
+.cert-empty span {
+  font-size: 13.5px;
+}
+.cert-empty .btn {
+  margin-top: 6px;
+}
+.cert-empty--inline {
+  padding: 30px 16px;
+}
+.cert-empty--inline > i {
+  font-size: 30px;
+}
+
+/* --- details / audit modal ---------------------------------------------- */
+.cert-details-head {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  padding: 13px 15px;
+  margin-bottom: 16px;
+  background: #f7faf8;
+  border: 1px solid var(--cb-line);
+  border-radius: 14px;
+}
+.cert-details-head .cb-label {
+  display: block;
+  margin-bottom: 3px;
+}
+.cert-timeline-host {
+  min-height: 110px;
+}
+.cert-timeline-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 34px 0;
+  color: var(--cb-muted);
+}
+.cert-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+.cert-timeline-item {
+  position: relative;
+  padding: 0;
+  padding-inline-start: 42px;
+}
+.cert-timeline-item::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 15px;
+  top: 30px;
+  bottom: 0;
+  width: 2px;
+  background: var(--cb-line);
+}
+.cert-timeline-item:last-child {
+  padding-bottom: 0;
+}
+.cert-timeline-item:last-child::before {
+  display: none;
+}
+.cert-timeline-item:not(:last-child) {
+  padding-bottom: 18px;
+}
+.cert-timeline-dot {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  background: #eef2f0;
+  color: #475569;
+}
+.cert-timeline-item--success .cert-timeline-dot { background: #d9f2e4; color: #10603d; }
+.cert-timeline-item--danger  .cert-timeline-dot { background: #fbe0e0; color: #9c2222; }
+.cert-timeline-item--info    .cert-timeline-dot { background: #e2edf9; color: #24557f; }
+.cert-timeline-content {
+  padding-top: 3px;
+}
+.cert-timeline-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.cert-timeline-top time {
+  color: var(--cb-muted);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+.cert-timeline-meta {
+  font-size: 12.5px;
+  color: var(--cb-muted);
+  margin-top: 2px;
+}
+.cert-timeline-details {
+  margin: 7px 0 0;
+  padding: 8px 11px;
+  background: #f7faf8;
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--cb-ink);
+}
+
+/* --- toast -------------------------------------------------------------- */
+.cert-toast {
+  position: fixed;
+  inset-block-end: 26px;
+  inset-inline-start: 50%;
+  transform: translate(50%, 90px);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 20px;
+  background: #14432f;
+  color: #fff;
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .22);
+  font-weight: 600;
+  max-width: calc(100vw - 32px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .25s ease, opacity .25s ease;
+  z-index: 1080;
+}
+.cert-toast.show {
+  transform: translate(50%, 0);
+  opacity: 1;
+}
+.cert-toast > i {
+  font-size: 20px;
+}
+.cert-toast--error {
+  background: #8c1f1f;
+}
+
+/* ==========================================================================
+   Register responsiveness
+   Below 768px the register stops being a table: each row becomes a card whose
+   cells are placed by name, so the markup order (number, student, type, …) can
+   stay as the desktop table needs it. The admin shell reserves 260px for the
+   sidebar (70px under 992px), so these breakpoints are read against the content
+   box, not the viewport.
+   ========================================================================== */
+
+/* Shows only where the numbered page links are dropped. */
+.cert-pager-compact {
+  display: none;
+  color: var(--cb-muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Five tiles only fit side by side on a wide content box; three reads better than four. */
+@media (max-width: 1200px) {
+  .cert-stat-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .cert-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .cert-filter-actions {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  /* --- page chrome ------------------------------------------------------ */
+  /* .content already pads the page, so the register adds none of its own. */
+  .cert-admin-page {
+    padding: 0;
+  }
+  .cert-admin-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .cert-admin-header h1 {
+    font-size: 22px;
+  }
+  .cert-admin-header p {
+    font-size: 13.5px;
+    margin-top: 4px;
+  }
+  .cert-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    font-size: 20px;
+    margin-left: 7px;
+  }
+  .cert-header-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .cert-header-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  /* --- stat tiles ------------------------------------------------------- */
+  .cert-stat-head {
+    flex-wrap: wrap;
+  }
+  .cert-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  /* --- filter panel ----------------------------------------------------- */
+  .cert-filter-bar {
+    padding: 14px;
+  }
+  .cert-filter-head {
+    margin-bottom: 12px;
+    padding-bottom: 11px;
+  }
+  .cert-filter-bar.js-ready .cert-filter-toggle {
+    display: inline-flex;
+  }
+  .cert-filter-bar.is-collapsed .cert-filter-body {
+    display: none;
+  }
+  /* Above the collapsible body, so reordering stays one tap away at any state. */
+  .cert-sort-mobile {
+    display: block;
+    margin-bottom: 13px;
+  }
+  .cert-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 11px;
+  }
+  /* Search applies to everything; the row count and the buttons need the full width. */
+  .cert-filter-search,
+  .cert-filter-pagesize,
+  .cert-filter-actions {
+    grid-column: 1 / -1;
+  }
+
+  /* --- the table becomes cards ------------------------------------------ */
+  /* The rows carry their own card chrome, so the panel around them steps aside. */
+  .cert-table-panel {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+  }
+  .cert-table.table-responsive-cards thead {
+    display: none;
+  }
+  .cert-table.table-responsive-cards tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .cert-table.table-responsive-cards tbody tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "student  student"
+      "number   status"
+      "type     type"
+      "subject  subject"
+      "template template"
+      "date     date"
+      "actions  actions";
+    gap: 8px 10px;
+    padding: 14px;
+    margin: 0;
+    background: #fff;
+    border: 1px solid var(--cb-line);
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(25, 65, 37, .05);
+  }
+  .cert-table.table-responsive-cards tbody tr:hover {
+    background: #fff;
+  }
+
+  /* Each cell is a label/value line; the named areas above place them. */
+  .cert-table.table-responsive-cards tbody td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    text-align: end;
+    /* A long name or an unbroken subject would otherwise push the card past the screen. */
+    overflow-wrap: break-word;
+  }
+  .cert-table.table-responsive-cards tbody td::before {
+    content: attr(data-label);
+    flex: 0 0 auto;
+    color: var(--cb-muted);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  /* Student is the card heading, so it loses its label and gains weight. */
+  .cert-table.table-responsive-cards tbody td.cert-card-student {
+    grid-area: student;
+    justify-content: flex-start;
+    padding-bottom: 9px;
+    border-bottom: 1px solid var(--cb-line);
+  }
+  .cert-table.table-responsive-cards tbody td.cert-card-student::before {
+    display: none;
+  }
+  .cert-table.table-responsive-cards .cert-student {
+    width: 100%;
+    gap: 11px;
+  }
+  .cert-table.table-responsive-cards .cert-avatar {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    font-size: 14px;
+  }
+  .cert-table.table-responsive-cards .cert-student-name {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  /* Number and status share the line under the name. The number keeps direction:ltr from the
+     desktop rule, so flex-end lands it on the reading edge rather than the far one. */
+  .cert-table.table-responsive-cards tbody td.cert-cell-number {
+    grid-area: number;
+    justify-content: flex-end;
+    color: var(--cb-muted);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: .3px;
+  }
+  .cert-table.table-responsive-cards tbody td.cert-card-status {
+    grid-area: status;
+    justify-content: flex-end;
+  }
+  .cert-table.table-responsive-cards tbody td.cert-card-status::before {
+    display: none;
+  }
+
+  /* The type row opens the detail block, so it carries the divider. */
+  .cert-table.table-responsive-cards tbody td.cert-cell-type {
+    grid-area: type;
+    margin-top: 3px;
+    padding-top: 11px;
+    border-top: 1px solid var(--cb-line);
+  }
+  .cert-table.table-responsive-cards tbody td.cert-cell-subject {
+    grid-area: subject;
+    max-width: none;
+    overflow: visible;
+    white-space: normal;
+    text-overflow: clip;
+  }
+  .cert-table.table-responsive-cards tbody td.cert-cell-template {
+    grid-area: template;
+  }
+  .cert-table.table-responsive-cards tbody td.cert-cell-date {
+    grid-area: date;
+  }
+
+  /* Every action gets an equal, thumb-sized target across the card's foot. */
+  .cert-table.table-responsive-cards tbody td.cert-card-actions {
+    grid-area: actions;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(46px, 1fr));
+    gap: 8px;
+    margin-top: 3px;
+    padding-top: 12px;
+    border-top: 1px solid var(--cb-line);
+  }
+  .cert-table.table-responsive-cards tbody td.cert-card-actions::before {
+    display: none;
+  }
+  .cert-table.table-responsive-cards tbody td.cert-card-actions .btn {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    width: 100%;
+    height: 52px;
+    padding: 0;
+    margin: 0;
+    font-size: 17px;
+    line-height: 1;
+    border-radius: 12px;
+  }
+  .cert-table.table-responsive-cards tbody td.cert-card-actions .cert-action-label {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 600;
+  }
+
+  /* The empty state fills the whole card instead of the first column. It carries no areas, so it
+     drops the grid entirely — otherwise the six unused named rows would each add their gap. */
+  .cert-table.table-responsive-cards tbody tr.cert-card-empty-row {
+    display: block;
+  }
+  .cert-table.table-responsive-cards tbody td.cert-card-wide {
+    grid-column: 1 / -1;
+    justify-content: center;
+  }
+  .cert-table.table-responsive-cards tbody td.cert-card-wide::before {
+    display: none;
+  }
+  .cert-empty {
+    padding: 32px 14px;
+  }
+
+  /* --- pager ------------------------------------------------------------ */
+  .cert-table-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-top: 12px;
+    padding: 13px 14px;
+    background: #fff;
+    border: 1px solid var(--cb-line);
+    border-radius: 16px;
+  }
+  .cert-range {
+    text-align: center;
+  }
+  .cert-table-footer .pagination {
+    justify-content: center;
+  }
+  .cert-table-footer .page-link {
+    min-width: 36px;
+    padding: 6px 9px;
+  }
+}
+
+@media (max-width: 576px) {
+  /* Audit modal: the timeline survives on a phone once the rail and the head shrink. */
+  .cert-details-head {
+    grid-template-columns: 1fr;
+    gap: 9px;
+    padding: 12px;
+  }
+  .cert-timeline-item {
+    padding-inline-start: 36px;
+  }
+  .cert-timeline-item:not(:last-child) {
+    padding-bottom: 14px;
+  }
+  .cert-timeline-dot {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+  .cert-timeline-item::before {
+    inset-inline-start: 13px;
+    top: 26px;
+  }
+}
+
+@media (max-width: 560px) {
+  /* Two narrow tiles beat five tall ones, so the tiles go compact rather than single file. */
+  .cert-stat-grid .card-stat {
+    flex-direction: row;
+    text-align: start;
+    gap: 9px;
+    padding: 11px;
+    border-radius: 14px;
+  }
+  .cert-stat-grid .card-stat-icon {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    font-size: 17px;
+    border-radius: 11px;
+  }
+  .cert-stat-grid .card-stat-label {
+    font-size: 11px;
+    margin-bottom: 2px;
+  }
+  .cert-stat-grid .card-stat-value {
+    font-size: 18px;
+  }
+  /* The bar says the same thing as the chip in a fraction of the width. */
+  .cert-stat-grid .card-stat-change {
+    display: none;
+  }
+  .cert-stat-bar {
+    height: 3px;
+    margin-top: 6px;
+  }
+
+  /* Prev/next plus the page line replace nine page links. */
+  .cert-page-first,
+  .cert-page-last,
+  .cert-page-number {
+    display: none;
+  }
+  .cert-page-prev .page-link,
+  .cert-page-next .page-link {
+    min-width: 88px;
+  }
+  .cert-pager-compact {
+    display: block;
+    text-align: center;
   }
 }

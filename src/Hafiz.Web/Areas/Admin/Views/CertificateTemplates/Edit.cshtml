@@ -140,15 +140,15 @@
                 <div class="builder-section">
                     <h3><i class='bx bx-color-fill'></i> هوية الألوان</h3>
                     <div class="preset-grid mb-3">
-                        <button type="button" class="preset-btn" data-preset='{"preset":"classic_gold","primaryColor":"#C59B27","secondaryColor":"#064E3B","accentColor":"#DFBA69","backgroundColor":"#FDFBF7","borderColor":"#C59B27"}'>
+                        <button type="button" class="preset-btn" data-preset='{"preset":"classic_gold","primaryColor":"#C59B27","secondaryColor":"#064E3B","accentColor":"#DFBA69","backgroundColor":"#FDFBF7","borderColor":"#C59B27","frameStyle":"lines","cornerStyle":"arabesque","cornerSize":64,"backgroundPattern":"arabesque","backgroundPatternColor":"accent","backgroundPatternOpacity":0.05}'>
                             <div class="preset-swatches"><span style="background:#C59B27"></span><span style="background:#064E3B"></span><span style="background:#FDFBF7;border:1px solid #ddd"></span></div>
                             ذهبي كلاسيكي
                         </button>
-                        <button type="button" class="preset-btn" data-preset='{"preset":"royal_emerald","primaryColor":"#147D62","secondaryColor":"#0A3D32","accentColor":"#62B99D","backgroundColor":"#F4FBF7","borderColor":"#147D62"}'>
+                        <button type="button" class="preset-btn" data-preset='{"preset":"royal_emerald","primaryColor":"#147D62","secondaryColor":"#0A3D32","accentColor":"#62B99D","backgroundColor":"#F4FBF7","borderColor":"#147D62","frameStyle":"ornate","cornerStyle":"floral","cornerSize":68,"backgroundPattern":"damask","backgroundPatternColor":"secondary","backgroundPatternOpacity":0.06}'>
                             <div class="preset-swatches"><span style="background:#147D62"></span><span style="background:#0A3D32"></span><span style="background:#F4FBF7;border:1px solid #ddd"></span></div>
                             زمردي
                         </button>
-                        <button type="button" class="preset-btn" data-preset='{"preset":"navy_sapphire","primaryColor":"#2E6EAA","secondaryColor":"#123F68","accentColor":"#82B9E8","backgroundColor":"#F7FBFF","borderColor":"#2E6EAA"}'>
+                        <button type="button" class="preset-btn" data-preset='{"preset":"navy_sapphire","primaryColor":"#2E6EAA","secondaryColor":"#123F68","accentColor":"#82B9E8","backgroundColor":"#F7FBFF","borderColor":"#2E6EAA","frameStyle":"ornate","cornerStyle":"girih","cornerSize":60,"backgroundPattern":"geometric","backgroundPatternColor":"primary","backgroundPatternOpacity":0.05}'>
                             <div class="preset-swatches"><span style="background:#2E6EAA"></span><span style="background:#123F68"></span><span style="background:#F7FBFF;border:1px solid #ddd"></span></div>
                             أزرق هادئ
                         </button>
@@ -176,12 +176,6 @@
                         </div>
                     </div>
                     <div class="section-row">
-                        <i class='bx bx-certification'></i>
-                        <span>زوايا مزخرفة</span>
-                        <small>زخارف في أركان الإطار الداخلي</small>
-                        <input type="checkbox" class="toggle" data-config="theme.cornerDecorations" />
-                    </div>
-                    <div class="section-row">
                         <i class='bx bx-water'></i>
                         <span>العلامة المائية</span>
                         <small>أيقونة باهتة في خلفية الشهادة</small>
@@ -195,6 +189,114 @@
                         <div class="cb-field">
                             <label>شفافية العلامة المائية</label>
                             <input type="number" min="0.01" max="0.3" step="0.01" data-config="theme.watermarkOpacity" data-cast="number" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="builder-section">
+                    <h3><i class='bx bx-certification'></i> الإطار والزوايا المزخرفة</h3>
+
+                    <div class="cb-field mb-3">
+                        <label>نمط الإطار</label>
+                        <div class="ornament-grid ornament-grid--wide">
+                            <button type="button" class="ornament-btn" data-frame-style="lines">
+                                <span class="frame-swatch"></span>
+                                <span>إطار بسيط</span>
+                            </button>
+                            <button type="button" class="ornament-btn" data-frame-style="ornate">
+                                <span class="frame-swatch frame-swatch--ornate"></span>
+                                <span>شريط مزخرف</span>
+                            </button>
+                        </div>
+                        <small class="cb-hint">الشريط المزخرف يضيف حزاماً زخرفياً عريضاً حول الإطار الأساسي.</small>
+                    </div>
+
+                    <div class="cb-field">
+                        <label>زوايا مزخرفة</label>
+                        <div class="ornament-grid">
+                            <button type="button" class="ornament-btn" data-corner-style="none">
+                                <span class="ornament-swatch ornament-swatch--none"></span>
+                                <span>بدون</span>
+                            </button>
+                            <button type="button" class="ornament-btn cert-corners--simple" data-corner-style="simple">
+                                <span class="ornament-swatch"></span>
+                                <span>بسيط</span>
+                            </button>
+                            <button type="button" class="ornament-btn cert-corners--arabesque" data-corner-style="arabesque">
+                                <span class="ornament-swatch"></span>
+                                <span>أرابيسك</span>
+                            </button>
+                            <button type="button" class="ornament-btn cert-corners--girih" data-corner-style="girih">
+                                <span class="ornament-swatch"></span>
+                                <span>جيريه</span>
+                            </button>
+                            <button type="button" class="ornament-btn cert-corners--floral" data-corner-style="floral">
+                                <span class="ornament-swatch"></span>
+                                <span>زهري</span>
+                            </button>
+                            <button type="button" class="ornament-btn cert-corners--medallion" data-corner-style="medallion">
+                                <span class="ornament-swatch"></span>
+                                <span>ميدالية</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="cb-field mt-3">
+                        <label>حجم الزاوية (بكسل)</label>
+                        <input type="number" min="24" max="140" step="2" data-config="theme.cornerSize" data-cast="number" />
+                        <small class="cb-hint">اختيار زاوية محددة يفعّل هذا الحجم؛ القوالب القديمة تحتفظ بحجمها الأصلي.</small>
+                    </div>
+                </div>
+
+                <div class="builder-section">
+                    <h3><i class='bx bx-image'></i> خلفية الشهادة</h3>
+
+                    <div class="cb-field">
+                        <label>النقش</label>
+                        <div class="ornament-grid">
+                            <button type="button" class="ornament-btn" data-bg-pattern="none">
+                                <span class="pattern-swatch pattern-swatch--none"></span>
+                                <span>بدون</span>
+                            </button>
+                            <button type="button" class="ornament-btn" data-bg-pattern="paper">
+                                <span class="pattern-swatch cert-pattern--paper"></span>
+                                <span>ورق</span>
+                            </button>
+                            <button type="button" class="ornament-btn" data-bg-pattern="grid">
+                                <span class="pattern-swatch cert-pattern--grid"></span>
+                                <span>شبكة</span>
+                            </button>
+                            <button type="button" class="ornament-btn" data-bg-pattern="arabesque">
+                                <span class="pattern-swatch cert-pattern--arabesque"></span>
+                                <span>أرابيسك</span>
+                            </button>
+                            <button type="button" class="ornament-btn" data-bg-pattern="geometric">
+                                <span class="pattern-swatch cert-pattern--geometric"></span>
+                                <span>هندسي</span>
+                            </button>
+                            <button type="button" class="ornament-btn" data-bg-pattern="damask">
+                                <span class="pattern-swatch cert-pattern--damask"></span>
+                                <span>دمشقي</span>
+                            </button>
+                            <button type="button" class="ornament-btn" data-bg-pattern="stars">
+                                <span class="pattern-swatch cert-pattern--stars"></span>
+                                <span>نجوم</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="field-grid mt-3">
+                        <div class="cb-field">
+                            <label>لون النقش</label>
+                            <select data-config="theme.backgroundPatternColor">
+                                <option value="primary">الرئيسي</option>
+                                <option value="secondary">الثانوي</option>
+                                <option value="accent">الزخرفة</option>
+                            </select>
+                        </div>
+                        <div class="cb-field">
+                            <label>شدة النقش</label>
+                            <input type="number" min="0" max="0.5" step="0.01" data-config="theme.backgroundPatternOpacity" data-cast="number" />
                         </div>
                     </div>
                 </div>

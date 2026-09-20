@@ -123,9 +123,10 @@ public class CertificateIssuanceService : ICertificateIssuanceService
     }
 
     public async Task<IEnumerable<CertificateListItemDto>> GetHistoryAsync(Guid? instituteId = null, Guid? studentId = null,
-        CertificateType? type = null, CertificateStatus? status = null, string? search = null, int page = 1, int pageSize = 50)
+        CertificateType? type = null, CertificateStatus? status = null, string? search = null, int page = 1, int pageSize = 50,
+        string? sort = null)
     {
-        var certificates = await _certificates.GetHistoryAsync(instituteId, studentId, type, status, search, Math.Max(1, page), Math.Clamp(pageSize, 1, 100));
+        var certificates = await _certificates.GetHistoryAsync(instituteId, studentId, type, status, search, Math.Max(1, page), Math.Clamp(pageSize, 1, 100), sort);
         return certificates.Select(c =>
         {
             var model = ToModel(c, null);
@@ -139,6 +140,37 @@ public class CertificateIssuanceService : ICertificateIssuanceService
 
     public Task<int> GetHistoryCountAsync(Guid? instituteId = null, Guid? studentId = null, CertificateType? type = null,
         CertificateStatus? status = null, string? search = null) => _certificates.GetCountAsync(instituteId, studentId, type, status, search);
+
+    public Task<CertificateStats> GetStatsAsync(
+        Guid? instituteId = null,
+        DateTime? issuedSinceUtc = null,
+        CertificateType? type = null,
+        CertificateStatus? status = null,
+        string? search = null) =>
+        _certificates.GetStatsAsync(instituteId, issuedSinceUtc, type, status, search);
+
+    public async Task<IReadOnlyList<CertificateAuditLogDto>?> GetAuditTrailAsync(Guid certificateId, Guid? instituteId = null)
+    {
+        var owner = await _certificates.GetInstituteIdAsync(certificateId);
+        // A certificate from another institute must look absent, not forbidden.
+        if (owner is null || (instituteId.HasValue && owner.Value != instituteId.Value))
+        {
+            return null;
+        }
+
+        var logs = (await _certificates.GetAuditLogsAsync(certificateId)).ToList();
+        var performerIds = logs.Where(l => l.PerformedBy.HasValue).Select(l => l.PerformedBy!.Value);
+        var names = await _certificates.GetUserNamesAsync(performerIds);
+
+        return logs.Select(l => new CertificateAuditLogDto
+        {
+            Id = l.Id,
+            Action = l.Action,
+            Details = l.Details,
+            PerformedAtUserTime = l.PerformedAt,
+            PerformedByName = l.PerformedBy.HasValue && names.TryGetValue(l.PerformedBy.Value, out var name) ? name : null,
+        }).ToList();
+    }
 
     private async Task<CertificateModel> PersistAsync(CertificateModel data, Guid instituteId, CertificateType type, Guid? sourceEntityId,
         Guid? templateId, Guid? issuedBy, string? baseUrl)

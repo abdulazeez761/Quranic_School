@@ -17,11 +17,71 @@
     borderColor: '#C59B27',
     borderStyle: 'double',
     borderWidth: 3,
+    cornerStyle: 'auto',
+    cornerSize: 56,
+    frameStyle: 'lines',
+    backgroundPattern: 'none',
+    backgroundPatternColor: 'primary',
+    backgroundPatternOpacity: 0.06,
     cornerDecorations: true,
     watermarkEnabled: true,
     watermarkIcon: 'bx-book-open',
     watermarkOpacity: 0.04,
   };
+
+  // Whitelists: these values reach class names and mask lookups, so nothing else may pass through.
+  const CORNER_STYLES = ['none', 'simple', 'arabesque', 'girih', 'floral', 'medallion'];
+  const FRAME_STYLES = ['lines', 'ornate'];
+  const BACKGROUND_PATTERNS = ['none', 'paper', 'grid', 'arabesque', 'geometric', 'damask', 'stars'];
+
+  const LEGACY_CORNER_SIZE = 38;
+
+  // Normalises one stored value for a whitelist lookup. Distinct from normalize() further down,
+  // which normalises the whole config object — the two names must stay apart.
+  // Stored JSON is untrusted and may not be cased the way the pickers write it, so every value is
+  // trimmed and lower-cased before matching. The renderer normalises identically — that is what
+  // keeps the preview and the printed sheet in agreement.
+  const normalizeKey = (value, fallback) => {
+    const text = String(value ?? '').trim().toLowerCase();
+    return text === '' ? fallback : text;
+  };
+
+  // Mirrors the resolution in _CertificateDynamic.cshtml so preview and print agree.
+  function resolveCornerStyle(theme) {
+    const requested = normalizeKey(theme.cornerStyle, 'auto');
+    // "auto" is every template saved before CornerStyle existed: fall back to the legacy flag.
+    if (requested === 'auto') return theme.cornerDecorations === false ? 'none' : 'simple';
+    // An unrecognised value falls back to the legacy flag, not to a fixed style, so it cannot
+    // draw corners the renderer would omit.
+    return CORNER_STYLES.includes(requested)
+      ? requested
+      : theme.cornerDecorations === false
+        ? 'none'
+        : 'simple';
+  }
+
+  function resolveCornerSize(theme) {
+    // Legacy templates keep the original 38px L; an explicit style opts into the size control.
+    if (normalizeKey(theme.cornerStyle, 'auto') === 'auto') return LEGACY_CORNER_SIZE;
+    const size = Number(theme.cornerSize);
+    return Number.isFinite(size) ? Math.min(140, Math.max(24, size)) : 56;
+  }
+
+  const resolveFrameStyle = (theme) => {
+    const requested = normalizeKey(theme.frameStyle, 'lines');
+    return FRAME_STYLES.includes(requested) ? requested : 'lines';
+  };
+
+  function resolveBackground(theme) {
+    const requested = normalizeKey(theme.backgroundPattern, 'none');
+    const pattern = BACKGROUND_PATTERNS.includes(requested) ? requested : 'none';
+    const opacity = Math.min(0.5, Math.max(0, Number(theme.backgroundPatternOpacity) || 0));
+    const color =
+      { secondary: theme.secondaryColor, accent: theme.accentColor }[
+        normalizeKey(theme.backgroundPatternColor, 'primary')
+      ] || theme.primaryColor;
+    return { pattern, opacity, color, visible: pattern !== 'none' && opacity > 0 };
+  }
 
   const DEFAULT_TYPOGRAPHY = {
     titleFont: 'Reem Kufi',
@@ -101,7 +161,11 @@
       margins: { ...DEFAULT_LAYOUT.margins, ...((next.layout || {}).margins || {}) },
     };
     next.tokens = { closingText: '', customFields: {}, ...(next.tokens || {}) };
-    next.sections = Array.isArray(next.sections) ? next.sections : [];
+    // A stored section that is not an object would throw while being defaulted, which would take
+    // the whole preview down with it, so anything that is not a section is dropped here.
+    next.sections = Array.isArray(next.sections)
+      ? next.sections.filter((section) => section && typeof section === 'object')
+      : [];
     next.sections.forEach((section, index) => {
       section.config = section.config || {};
       if (typeof section.order !== 'number') section.order = index + 1;
@@ -213,9 +277,62 @@
     }
   });
 
+  // The preset payload is reviewable markup, so it is parsed defensively: one broken attribute must
+  // never throw its way out of init and leave the preview blank.
+  function presetOf(btn) {
+    try {
+      const preset = JSON.parse(btn.dataset.preset);
+      return preset && typeof preset === 'object' ? preset : null;
+    } catch {
+      return null;
+    }
+  }
+
   document.querySelectorAll('.preset-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
-      Object.assign(config.theme, JSON.parse(btn.dataset.preset));
+      const preset = presetOf(btn);
+      // A malformed data-preset must not stop the builder from applying the rest of the page.
+      if (!preset) return;
+      Object.assign(config.theme, preset);
+      syncControls();
+      write();
+    });
+  });
+
+  // The three ornament pickers are button groups, so they write their key by hand.
+  document.querySelectorAll('[data-corner-style]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      config.theme.cornerStyle = btn.dataset.cornerStyle;
+      // Keep the legacy flag coherent so anything still reading it agrees with the picker.
+      config.theme.cornerDecorations = btn.dataset.cornerStyle !== 'none';
+      syncControls();
+      write();
+    });
+  });
+
+  document.querySelectorAll('[data-frame-style]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      config.theme.frameStyle = btn.dataset.frameStyle;
+      syncControls();
+      write();
+    });
+  });
+
+  document.querySelectorAll('[data-bg-pattern]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      config.theme.backgroundPattern = btn.dataset.bgPattern;
+      syncControls();
+      write();
+    });
+  });
+
+  // A template still on "auto" renders the fixed legacy size, so nudging the size control
+  // would do nothing. Pin it to whatever "auto" currently resolves to, then the size applies.
+  document.querySelectorAll('[data-config="theme.cornerSize"]').forEach((input) => {
+    input.addEventListener('change', () => {
+      if (normalizeKey(config.theme.cornerStyle, 'auto') !== 'auto') return;
+      config.theme.cornerStyle = resolveCornerStyle(config.theme);
+      config.theme.cornerDecorations = config.theme.cornerStyle !== 'none';
       syncControls();
       write();
     });
@@ -358,7 +475,23 @@
     });
 
     document.querySelectorAll('.preset-btn').forEach((btn) => {
-      btn.classList.toggle('active', JSON.parse(btn.dataset.preset).preset === config.theme.preset);
+      const preset = presetOf(btn);
+      btn.classList.toggle('active', Boolean(preset) && preset.preset === config.theme.preset);
+    });
+
+    const activeCorner = resolveCornerStyle(config.theme);
+    document.querySelectorAll('[data-corner-style]').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.cornerStyle === activeCorner);
+    });
+
+    const activeFrame = resolveFrameStyle(config.theme);
+    document.querySelectorAll('[data-frame-style]').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.frameStyle === activeFrame);
+    });
+
+    const activePattern = resolveBackground(config.theme).pattern;
+    document.querySelectorAll('[data-bg-pattern]').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.bgPattern === activePattern);
     });
   }
 
@@ -450,6 +583,15 @@
       .filter((section) => section.enabled !== false)
       .sort((a, b) => (a.order || 0) - (b.order || 0));
 
+    const cornerStyle = resolveCornerStyle(theme);
+    // "simple" keeps the original border-drawn L, so it carries no modifier class.
+    const cornerClasses =
+      cornerStyle === 'none' || cornerStyle === 'simple'
+        ? ''
+        : `cert-corners--masked cert-corners--${cornerStyle}`;
+    const ornate = resolveFrameStyle(theme) === 'ornate';
+    const background = resolveBackground(theme);
+
     const sheet = document.createElement('div');
     sheet.className = 'certificate-sheet';
     sheet.style.setProperty('--cert-paper-w', `${width}mm`);
@@ -471,6 +613,9 @@
     sheet.style.setProperty('--tpl-body-size', typography.bodySize);
     sheet.style.setProperty('--tpl-student-size', typography.studentNameSize);
     sheet.style.setProperty('--tpl-line-height', typography.lineHeight);
+    sheet.style.setProperty('--cert-corner-size', `${resolveCornerSize(theme)}px`);
+    sheet.style.setProperty('--cert-pattern-color', background.color);
+    sheet.style.setProperty('--cert-pattern-opacity', background.opacity);
     sheet.style.padding = `${margins.top}mm ${margins.right}mm ${margins.bottom}mm ${margins.left}mm`;
 
     const corners = `
@@ -481,12 +626,40 @@
 
     const watermark = `<div class="cert-watermark" style="opacity:${theme.watermarkOpacity}"><i class="bx ${escapeAttr(theme.watermarkIcon)}"></i></div>`;
 
+    // Same markup the Razor renderer emits — all the artwork lives in certificate.css.
+    const band = `
+      <div class="cert-frame-band">
+        <div class="cert-band-edge cert-band-edge--top"></div>
+        <div class="cert-band-edge cert-band-edge--bottom"></div>
+        <div class="cert-band-edge cert-band-edge--left"></div>
+        <div class="cert-band-edge cert-band-edge--right"></div>
+        <div class="cert-band-corner cert-band-corner--tl"></div>
+        <div class="cert-band-corner cert-band-corner--tr"></div>
+        <div class="cert-band-corner cert-band-corner--bl"></div>
+        <div class="cert-band-corner cert-band-corner--br"></div>
+      </div>`;
+
+    const patternLayer = background.visible
+      ? `<div class="cert-bg-pattern cert-pattern--${background.pattern}"></div>`
+      : '';
+
+    const innerClasses = ['cert-inner-border', cornerClasses].filter(Boolean).join(' ');
+
+    // Mirrors _CertificateDynamic.cshtml: a configuration that carries no sections at all renders the
+    // default set rather than a blank sheet, so the preview cannot disagree with the printed page.
+    const defaultSectionTypes = ['header', 'title', 'verse', 'statement', 'evaluation', 'signatures'];
+    const sectionMarkup = sections.length
+      ? sections.map((section) => renderSection(section.type)).join('')
+      : defaultSectionTypes.map((type) => renderSection(type)).join('');
+
     sheet.innerHTML = `
-      <div class="cert-outer-border" style="border-style:${escapeAttr(theme.borderStyle)};border-width:${Number(theme.borderWidth) || 0}px;border-color:${escapeAttr(theme.borderColor)}">
-        <div class="cert-inner-border">
-          ${theme.cornerDecorations ? corners : ''}
+      <div class="cert-outer-border${ornate ? ' cert-outer-border--ornate' : ''}" style="border-style:${escapeAttr(theme.borderStyle)};border-width:${Number(theme.borderWidth) || 0}px;border-color:${escapeAttr(theme.borderColor)}">
+        ${ornate ? band : ''}
+        <div class="${innerClasses}">
+          ${patternLayer}
+          ${cornerStyle === 'none' ? '' : corners}
           ${theme.watermarkEnabled ? watermark : ''}
-          ${sections.map((section) => renderSection(section.type)).join('')}
+          ${sectionMarkup}
         </div>
       </div>`;
 
@@ -669,11 +842,26 @@
 
   let lastPaper = { width: 297, height: 210 };
 
+  const refit = () => fitPreview(lastPaper.width, lastPaper.height);
+
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => fitPreview(lastPaper.width, lastPaper.height), 120);
+    resizeTimer = setTimeout(refit, 120);
   });
+
+  // The window is not the only thing that resizes the preview: collapsing the admin sidebar, zooming
+  // or showing a scrollbar all change the panel's width with no resize event. fitPreview rewrites the
+  // stage's height, so the observer ignores height-only changes to avoid reacting to its own writes.
+  if (window.ResizeObserver && previewStage) {
+    let lastWidth = null;
+    new ResizeObserver(([entry]) => {
+      const width = entry.contentRect.width;
+      if (lastWidth !== null && Math.abs(width - lastWidth) < 1) return;
+      lastWidth = width;
+      refit();
+    }).observe(previewStage);
+  }
 
   /* ----------------------------------------------------------------- init */
 

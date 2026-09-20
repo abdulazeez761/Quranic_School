@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Hafiz.Application.DTO.Certificate;
 using Hafiz.Data;
 using Hafiz.Domain.Entities;
 using Hafiz.Domain.Enums;
@@ -91,19 +92,96 @@ public class CertificateRepository : ICertificateRepository
         CertificateStatus? status = null,
         string? search = null,
         int page = 1,
-        int pageSize = 50)
+        int pageSize = 50,
+        string? sort = null)
     {
         var query = BuildFilterQuery(instituteId, studentId, type, status, search);
 
-        return await query
+        return await SortBy(query, sort)
             .Include(c => c.Institute)
             .Include(c => c.Student)
                 .ThenInclude(s => s.StudentInfo)
             .Include(c => c.Template)
-            .OrderByDescending(c => c.IssuedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
+    }
+
+    /// <summary>
+    /// Column sorting for the register. Applied before Skip/Take so it pages the whole result
+    /// set, not just the slice already fetched. Unknown keys fall back to newest first.
+    /// </summary>
+    private static IQueryable<Certificate> SortBy(IQueryable<Certificate> query, string? sort) =>
+        sort switch
+        {
+            "number" => query.OrderBy(c => c.CertificateNumber),
+            "number_desc" => query.OrderByDescending(c => c.CertificateNumber),
+            "student" => query.OrderBy(c => c.Student.StudentInfo.FirstName).ThenBy(c => c.Student.StudentInfo.SecondName),
+            "student_desc" => query.OrderByDescending(c => c.Student.StudentInfo.FirstName).ThenByDescending(c => c.Student.StudentInfo.SecondName),
+            "type" => query.OrderBy(c => c.Type).ThenByDescending(c => c.IssuedAt),
+            "type_desc" => query.OrderByDescending(c => c.Type).ThenByDescending(c => c.IssuedAt),
+            "template" => query.OrderBy(c => c.Template!.Name).ThenByDescending(c => c.IssuedAt),
+            "template_desc" => query.OrderByDescending(c => c.Template!.Name).ThenByDescending(c => c.IssuedAt),
+            "issued" => query.OrderBy(c => c.IssuedAt),
+            "issued_desc" => query.OrderByDescending(c => c.IssuedAt),
+            "status" => query.OrderBy(c => c.Status).ThenByDescending(c => c.IssuedAt),
+            "status_desc" => query.OrderByDescending(c => c.Status).ThenByDescending(c => c.IssuedAt),
+            _ => query.OrderByDescending(c => c.IssuedAt),
+        };
+
+    public async Task<CertificateStats> GetStatsAsync(
+        Guid? instituteId = null,
+        DateTime? issuedSinceUtc = null,
+        CertificateType? type = null,
+        CertificateStatus? status = null,
+        string? search = null)
+    {
+        var query = BuildFilterQuery(instituteId, null, type, status, search);
+
+        // One round trip; the per-status counts are read off the same filtered set.
+        var counts = await query
+            .GroupBy(c => c.Status)
+            .Select(g => new { Status = g.Key, Count = g.Count() })
+            .ToListAsync();
+
+        var stats = new CertificateStats
+        {
+            Total = counts.Sum(c => c.Count),
+            Active = counts.Where(c => c.Status == CertificateStatus.Active).Sum(c => c.Count),
+            Revoked = counts.Where(c => c.Status == CertificateStatus.Revoked).Sum(c => c.Count),
+            Expired = counts.Where(c => c.Status == CertificateStatus.Expired).Sum(c => c.Count),
+        };
+
+        if (issuedSinceUtc.HasValue)
+        {
+            stats.IssuedThisMonth = await query.CountAsync(c => c.IssuedAt >= issuedSinceUtc.Value);
+        }
+
+        return stats;
+    }
+
+    public async Task<Guid?> GetInstituteIdAsync(Guid certificateId)
+    {
+        return await _context.Certificates
+            .Where(c => c.Id == certificateId)
+            .Select(c => (Guid?)c.InstituteId)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<IReadOnlyDictionary<Guid, string>> GetUserNamesAsync(IEnumerable<Guid> userIds)
+    {
+        var ids = userIds.Distinct().ToList();
+        if (ids.Count == 0)
+        {
+            return new Dictionary<Guid, string>();
+        }
+
+        var users = await _context.Users
+            .Where(u => ids.Contains(u.Id))
+            .Select(u => new { u.Id, u.FirstName, u.SecondName })
+            .ToListAsync();
+
+        return users.ToDictionary(u => u.Id, u => $"{u.FirstName} {u.SecondName}".Trim());
     }
 
     public async Task<int> GetCountAsync(
