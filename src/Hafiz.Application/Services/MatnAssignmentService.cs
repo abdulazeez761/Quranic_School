@@ -80,7 +80,24 @@ public class MatnAssignmentService : IMatnAssignmentService
         if (!cls.Students.Any(s => s.UserId == dto.StudentId))
             return (false, "الطالب غير مسجل في هذه الحلقة.", null);
 
-        // التحقق من صحة المتن إن تم تحديده
+        // التحقق من صحة المتن إن تم تحديده أو استنتاجه
+        if (!dto.MatnId.HasValue && cls.StudyProgramId.HasValue)
+        {
+            var programMatuns = (await _matnRepository.GetByProgramIdAsync(cls.StudyProgramId.Value)).ToList();
+            if (programMatuns.Count == 1)
+            {
+                dto.MatnId = programMatuns[0].Id;
+            }
+            else if (!string.IsNullOrWhiteSpace(dto.ChapterName))
+            {
+                var matched = programMatuns.FirstOrDefault(m => dto.ChapterName.StartsWith(m.Title, StringComparison.OrdinalIgnoreCase));
+                if (matched != null)
+                {
+                    dto.MatnId = matched.Id;
+                }
+            }
+        }
+
         if (dto.MatnId.HasValue)
         {
             var matn = await _matnRepository.GetByIdAsync(dto.MatnId.Value);
@@ -119,9 +136,9 @@ public class MatnAssignmentService : IMatnAssignmentService
 
         var created = await _assignmentRepository.AddAsync(assignment);
 
-        if (dto.MatnId.HasValue)
+        if (assignment.MatnId.HasValue)
         {
-            await SyncProgressOnAssignmentAsync(dto.StudentId, dto.MatnId.Value, dto.PerformanceType);
+            await ReevaluateProgressAfterAssignmentChangeAsync(assignment.StudentId, assignment.MatnId.Value);
         }
 
         return (true, "تم رصد التسميع بنجاح.", created.Id);
@@ -159,6 +176,8 @@ public class MatnAssignmentService : IMatnAssignmentService
             }
         }
 
+        var oldMatnId = assignment.MatnId;
+
         assignment.MatnId = dto.MatnId;
         assignment.PerformanceType = dto.PerformanceType;
         assignment.Unit = dto.Unit;
@@ -181,55 +200,80 @@ public class MatnAssignmentService : IMatnAssignmentService
         assignment.Note = dto.Note?.Trim();
 
         var updated = await _assignmentRepository.UpdateAsync(assignment);
-        if (updated && dto.MatnId.HasValue)
+        if (updated)
         {
-            await SyncProgressOnAssignmentAsync(assignment.StudentId, dto.MatnId.Value, dto.PerformanceType);
+            if (assignment.MatnId.HasValue)
+            {
+                await ReevaluateProgressAfterAssignmentChangeAsync(assignment.StudentId, assignment.MatnId.Value);
+            }
+            if (oldMatnId.HasValue && oldMatnId.Value != assignment.MatnId)
+            {
+                await ReevaluateProgressAfterAssignmentChangeAsync(assignment.StudentId, oldMatnId.Value);
+            }
         }
         return updated ? (true, "تم تحديث ورد المتن بنجاح.") : (false, "فشل حفظ التعديلات.");
     }
 
-    private async Task SyncProgressOnAssignmentAsync(Guid studentId, Guid matnId, MatnPerformanceType performanceType)
+    private async Task ReevaluateProgressAfterAssignmentChangeAsync(Guid studentId, Guid matnId)
     {
         try
         {
-            var existing = await _progressRepository.GetByStudentAndMatnAsync(studentId, matnId);
-            var isMudarasah = (performanceType == MatnPerformanceType.Mudarasah);
-            var isHifz = (performanceType == MatnPerformanceType.Memorization || performanceType == MatnPerformanceType.Revision);
+            var studentAssignments = (await _assignmentRepository.GetByStudentIdAsync(studentId))
+                .Where(a => a.MatnId == matnId)
+                .ToList();
 
+            bool hasMudarasah = studentAssignments.Any(a => a.PerformanceType == MatnPerformanceType.Mudarasah);
+            bool hasHifz = studentAssignments.Any(a => a.PerformanceType == MatnPerformanceType.Memorization || 
+                                                       a.PerformanceType == MatnPerformanceType.Revision);
+
+            var existing = await _progressRepository.GetByStudentAndMatnAsync(studentId, matnId);
             if (existing == null)
             {
-                var progress = new StudentMatnProgress
+                if (hasMudarasah || hasHifz)
                 {
-                    StudentId = studentId,
-                    MatnId = matnId,
-                    StudyStatus = isMudarasah ? StudyStatus.InProgress : StudyStatus.NotStarted,
-                    StudyStartedAt = isMudarasah ? DateTime.UtcNow : null,
-                    MemorizationStatus = isHifz ? MemorizationStatus.InProgress : MemorizationStatus.NotStarted,
-                    ExamStatus = ExamStatus.NotTested,
-                    LastUpdatedAt = DateTime.UtcNow
-                };
-                await _progressRepository.AddAsync(progress);
+                    var progress = new StudentMatnProgress
+                    {
+                        StudentId = studentId,
+                        MatnId = matnId,
+                        StudyStatus = hasMudarasah ? StudyStatus.InProgress : StudyStatus.NotStarted,
+                        StudyStartedAt = hasMudarasah ? DateTime.UtcNow : null,
+                        MemorizationStatus = hasHifz ? MemorizationStatus.InProgress : MemorizationStatus.NotStarted,
+                        ExamStatus = ExamStatus.NotTested,
+                        LastUpdatedAt = DateTime.UtcNow
+                    };
+                    await _progressRepository.AddAsync(progress);
+                }
+                return;
             }
-            else
-            {
-                bool modified = false;
-                if (isMudarasah && existing.StudyStatus == StudyStatus.NotStarted)
-                {
-                    existing.StudyStatus = StudyStatus.InProgress;
-                    existing.StudyStartedAt ??= DateTime.UtcNow;
-                    modified = true;
-                }
-                else if (isHifz && existing.MemorizationStatus == MemorizationStatus.NotStarted)
-                {
-                    existing.MemorizationStatus = MemorizationStatus.InProgress;
-                    modified = true;
-                }
 
-                if (modified)
+            bool modified = false;
+
+            if (existing.StudyStatus != StudyStatus.Completed)
+            {
+                var newStudyStatus = hasMudarasah ? StudyStatus.InProgress : StudyStatus.NotStarted;
+                if (existing.StudyStatus != newStudyStatus)
                 {
-                    existing.LastUpdatedAt = DateTime.UtcNow;
-                    await _progressRepository.UpdateAsync(existing);
+                    existing.StudyStatus = newStudyStatus;
+                    if (newStudyStatus == StudyStatus.InProgress)
+                        existing.StudyStartedAt ??= DateTime.UtcNow;
+                    modified = true;
                 }
+            }
+
+            if (existing.MemorizationStatus != MemorizationStatus.Memorized)
+            {
+                var newMemStatus = hasHifz ? MemorizationStatus.InProgress : MemorizationStatus.NotStarted;
+                if (existing.MemorizationStatus != newMemStatus)
+                {
+                    existing.MemorizationStatus = newMemStatus;
+                    modified = true;
+                }
+            }
+
+            if (modified)
+            {
+                existing.LastUpdatedAt = DateTime.UtcNow;
+                await _progressRepository.UpdateAsync(existing);
             }
         }
         catch
@@ -271,7 +315,13 @@ public class MatnAssignmentService : IMatnAssignmentService
         if (assignment == null)
             return (false, "السجل غير موجود.");
 
+        var studentId = assignment.StudentId;
+        var matnId = assignment.MatnId;
         var deleted = await _assignmentRepository.DeleteAsync(id);
+        if (deleted && matnId.HasValue)
+        {
+            await ReevaluateProgressAfterAssignmentChangeAsync(studentId, matnId.Value);
+        }
         return deleted ? (true, "تم حذف التكليف بنجاح.") : (false, "تعذر الحذف.");
     }
 

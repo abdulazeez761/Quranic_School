@@ -12,7 +12,7 @@ public static class StudyStatusExtensions
     public static string ToArabic(this StudyStatus status) => status switch
     {
         StudyStatus.NotStarted => "لم يبدأ",
-        StudyStatus.InProgress => "قيد الدراسة",
+        StudyStatus.InProgress => "قيد المدارسة",
         StudyStatus.Completed => "مكتمل",
         _ => "غير محدد"
     };

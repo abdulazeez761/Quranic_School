@@ -33,7 +33,7 @@ public class StudentMatnProgressRepository : IStudentMatnProgressRepository
 
     public async Task<StudentMatnProgress?> GetByStudentAndMatnAsync(Guid studentId, Guid matnId)
     {
-        return await _context.StudentMatnProgresses
+        var progress = await _context.StudentMatnProgresses
             .Include(p => p.Student)
                 .ThenInclude(s => s.StudentInfo)
             .Include(p => p.Matn)
@@ -41,6 +41,13 @@ public class StudentMatnProgressRepository : IStudentMatnProgressRepository
             .Include(p => p.LastUpdatedByTeacher)
                 .ThenInclude(t => t!.TeacherInfo)
             .FirstOrDefaultAsync(p => p.StudentId == studentId && p.MatnId == matnId);
+
+        if (progress != null)
+        {
+            await SyncProgressesWithAssignmentsAsync(new List<StudentMatnProgress> { progress }, new List<Guid> { studentId });
+        }
+
+        return progress;
     }
 
     public async Task<IEnumerable<StudentMatnProgress>> GetByStudentAsync(Guid studentId)
@@ -99,12 +106,14 @@ public class StudentMatnProgressRepository : IStudentMatnProgressRepository
             }
         }
 
+        await SyncProgressesWithAssignmentsAsync(existingProgresses, new List<Guid> { studentId });
+
         return existingProgresses.OrderBy(p => p.Matn?.Order ?? 0);
     }
 
     public async Task<IEnumerable<StudentMatnProgress>> GetByMatnAsync(Guid matnId)
     {
-        return await _context.StudentMatnProgresses
+        var progresses = await _context.StudentMatnProgresses
             .Include(p => p.Student)
                 .ThenInclude(s => s.StudentInfo)
             .Include(p => p.LastUpdatedByTeacher)
@@ -113,6 +122,11 @@ public class StudentMatnProgressRepository : IStudentMatnProgressRepository
             .OrderBy(p => p.Student.StudentInfo.FirstName)
             .ThenBy(p => p.Student.StudentInfo.SecondName)
             .ToListAsync();
+
+        var studentIds = progresses.Select(p => p.StudentId).Distinct().ToList();
+        await SyncProgressesWithAssignmentsAsync(progresses, studentIds);
+
+        return progresses;
     }
 
     public async Task<IEnumerable<StudentMatnProgress>> GetByClassAsync(Guid classId)
@@ -169,10 +183,132 @@ public class StudentMatnProgressRepository : IStudentMatnProgressRepository
             }
         }
 
+        await SyncProgressesWithAssignmentsAsync(existing, studentIds);
+
         return existing
             .OrderBy(p => p.Student?.StudentInfo?.FirstName)
             .ThenBy(p => p.Student?.StudentInfo?.SecondName)
             .ThenBy(p => p.Matn?.Order ?? 0);
+    }
+
+    private async Task SyncProgressesWithAssignmentsAsync(List<StudentMatnProgress> progresses, List<Guid> studentIds)
+    {
+        if (!progresses.Any() || !studentIds.Any())
+            return;
+
+        var cleanStudentIds = studentIds.Distinct().ToList();
+
+        // Fetch all assignments for these students
+        var assignments = await _context.MatnAssignments
+            .Where(ma => cleanStudentIds.Contains(ma.StudentId))
+            .Select(ma => new { ma.StudentId, ma.MatnId, ma.PerformanceType, ma.ChapterName, ma.AssignedDate })
+            .ToListAsync();
+
+        bool hasChanges = false;
+        var toAddList = new List<StudentMatnProgress>();
+
+        foreach (var p in progresses)
+        {
+            var matnTitle = p.Matn?.Title;
+            var studentAssignments = assignments
+                .Where(a => a.StudentId == p.StudentId &&
+                           (a.MatnId == p.MatnId ||
+                           (!a.MatnId.HasValue && !string.IsNullOrEmpty(matnTitle) && a.ChapterName != null && a.ChapterName.StartsWith(matnTitle))))
+                .ToList();
+
+            bool hasMudarasah = studentAssignments.Any(a => a.PerformanceType == MatnPerformanceType.Mudarasah);
+            bool hasHifz = studentAssignments.Any(a => a.PerformanceType == MatnPerformanceType.Memorization ||
+                                                       a.PerformanceType == MatnPerformanceType.Revision);
+
+            // 1. Study status sync
+            if (p.StudyStatus != StudyStatus.Completed)
+            {
+                if (hasMudarasah)
+                {
+                    if (p.StudyStatus == StudyStatus.NotStarted)
+                    {
+                        p.StudyStatus = StudyStatus.InProgress;
+                        var earliestMudarasah = studentAssignments
+                            .Where(a => a.PerformanceType == MatnPerformanceType.Mudarasah)
+                            .OrderBy(a => a.AssignedDate)
+                            .Select(a => (DateTime?)a.AssignedDate)
+                            .FirstOrDefault();
+                        p.StudyStartedAt ??= earliestMudarasah ?? DateTime.UtcNow;
+                        p.LastUpdatedAt = DateTime.UtcNow;
+                        if (p.Id != Guid.Empty) hasChanges = true;
+                    }
+                }
+                else
+                {
+                    if (p.StudyStatus == StudyStatus.InProgress)
+                    {
+                        p.StudyStatus = StudyStatus.NotStarted;
+                        p.LastUpdatedAt = DateTime.UtcNow;
+                        if (p.Id != Guid.Empty) hasChanges = true;
+                    }
+                }
+            }
+
+            // 2. Memorization status sync
+            if (p.MemorizationStatus != MemorizationStatus.Memorized)
+            {
+                if (hasHifz)
+                {
+                    if (p.MemorizationStatus == MemorizationStatus.NotStarted)
+                    {
+                        p.MemorizationStatus = MemorizationStatus.InProgress;
+                        p.LastUpdatedAt = DateTime.UtcNow;
+                        if (p.Id != Guid.Empty) hasChanges = true;
+                    }
+                }
+                else
+                {
+                    if (p.MemorizationStatus == MemorizationStatus.InProgress)
+                    {
+                        p.MemorizationStatus = MemorizationStatus.NotStarted;
+                        p.LastUpdatedAt = DateTime.UtcNow;
+                        if (p.Id != Guid.Empty) hasChanges = true;
+                    }
+                }
+            }
+
+            // If it was a virtual row (Id == Empty) and now has assignments, persist it
+            if (p.Id == Guid.Empty && (hasMudarasah || hasHifz))
+            {
+                var newEntity = new StudentMatnProgress
+                {
+                    Id = Guid.NewGuid(),
+                    StudentId = p.StudentId,
+                    MatnId = p.MatnId,
+                    StudyStatus = p.StudyStatus,
+                    StudyStartedAt = p.StudyStartedAt,
+                    MemorizationStatus = p.MemorizationStatus,
+                    ExamStatus = p.ExamStatus,
+                    CreatedAt = DateTime.UtcNow,
+                    LastUpdatedAt = DateTime.UtcNow
+                };
+                toAddList.Add(newEntity);
+                p.Id = newEntity.Id;
+            }
+        }
+
+        if (toAddList.Any())
+        {
+            await _context.StudentMatnProgresses.AddRangeAsync(toAddList);
+            hasChanges = true;
+        }
+
+        if (hasChanges)
+        {
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                // Non-blocking
+            }
+        }
     }
 
     public async Task<StudentMatnProgress> AddAsync(StudentMatnProgress progress)
