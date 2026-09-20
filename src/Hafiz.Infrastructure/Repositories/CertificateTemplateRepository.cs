@@ -1,0 +1,149 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Hafiz.Data;
+using Hafiz.Domain.Entities;
+using Hafiz.Domain.Enums;
+using Hafiz.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
+namespace Hafiz.Repositories;
+
+public class CertificateTemplateRepository : ICertificateTemplateRepository
+{
+    private readonly ApplicationDbContext _context;
+
+    public CertificateTemplateRepository(ApplicationDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<CertificateTemplate?> GetByIdAsync(Guid id, bool includeVersions = false)
+    {
+        var query = _context.CertificateTemplates
+            .Include(t => t.Institute)
+            .AsQueryable();
+
+        if (includeVersions)
+        {
+            query = query.Include(t => t.Versions.OrderByDescending(v => v.VersionNumber));
+        }
+
+        return await query.FirstOrDefaultAsync(t => t.Id == id);
+    }
+
+    public async Task<CertificateTemplate?> GetDefaultTemplateAsync(Guid instituteId, CertificateType type)
+    {
+        return await _context.CertificateTemplates
+            .Include(t => t.Institute)
+            .Include(t => t.Versions.OrderByDescending(v => v.VersionNumber))
+            .Where(t => t.InstituteId == instituteId && t.Type == type && t.IsActive)
+            .OrderByDescending(t => t.IsDefault)
+            .ThenByDescending(t => t.CreatedAt)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<IEnumerable<CertificateTemplate>> GetByInstituteAsync(Guid instituteId, CertificateType? type = null)
+    {
+        var query = _context.CertificateTemplates
+            .Include(t => t.Institute)
+            .Include(t => t.Versions.OrderByDescending(v => v.VersionNumber))
+            .Where(t => t.InstituteId == instituteId);
+
+        if (type.HasValue)
+        {
+            query = query.Where(t => t.Type == type.Value);
+        }
+
+        return await query.OrderByDescending(t => t.IsDefault)
+            .ThenBy(t => t.Type)
+            .ThenBy(t => t.Name)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<CertificateTemplate>> GetAllAsync(CertificateType? type = null)
+    {
+        var query = _context.CertificateTemplates
+            .Include(t => t.Institute)
+            .Include(t => t.Versions.OrderByDescending(v => v.VersionNumber))
+            .AsQueryable();
+
+        if (type.HasValue)
+        {
+            query = query.Where(t => t.Type == type.Value);
+        }
+
+        return await query.OrderBy(t => t.Institute.Name)
+            .ThenBy(t => t.Type)
+            .ThenBy(t => t.Name)
+            .ToListAsync();
+    }
+
+    public async Task<CertificateTemplate> AddAsync(CertificateTemplate template)
+    {
+        await _context.CertificateTemplates.AddAsync(template);
+        await _context.SaveChangesAsync();
+        return template;
+    }
+
+    public async Task<bool> UpdateAsync(CertificateTemplate template)
+    {
+        _context.CertificateTemplates.Update(template);
+        return await _context.SaveChangesAsync() > 0;
+    }
+
+    public async Task<bool> DeleteAsync(Guid id)
+    {
+        var template = await _context.CertificateTemplates.FindAsync(id);
+        if (template == null) return false;
+
+        template.IsDeleted = true;
+        template.DeletedAt = DateTime.UtcNow;
+        return await _context.SaveChangesAsync() > 0;
+    }
+
+    public async Task<CertificateTemplateVersion> AddVersionAsync(CertificateTemplateVersion version)
+    {
+        await _context.CertificateTemplateVersions.AddAsync(version);
+        await _context.SaveChangesAsync();
+        return version;
+    }
+
+    public async Task<CertificateTemplateVersion?> GetVersionAsync(Guid versionId)
+    {
+        return await _context.CertificateTemplateVersions
+            .Include(v => v.Template)
+            .FirstOrDefaultAsync(v => v.Id == versionId);
+    }
+
+    public async Task<CertificateTemplateVersion?> GetLatestVersionAsync(Guid templateId)
+    {
+        return await _context.CertificateTemplateVersions
+            .Where(v => v.TemplateId == templateId)
+            .OrderByDescending(v => v.VersionNumber)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<int> GetIssuedCertificatesCountAsync(Guid templateId)
+    {
+        return await _context.Certificates.CountAsync(c => c.TemplateId == templateId && !c.IsDeleted);
+    }
+
+    public async Task ClearDefaultFlagAsync(Guid instituteId, CertificateType type, Guid? exceptTemplateId = null)
+    {
+        var defaults = await _context.CertificateTemplates
+            .Where(t => t.InstituteId == instituteId && t.Type == type && t.IsDefault && (!exceptTemplateId.HasValue || t.Id != exceptTemplateId.Value))
+            .ToListAsync();
+
+        foreach (var def in defaults)
+        {
+            def.IsDefault = false;
+        }
+
+        if (defaults.Count > 0)
+        {
+            await _context.SaveChangesAsync();
+        }
+    }
+}

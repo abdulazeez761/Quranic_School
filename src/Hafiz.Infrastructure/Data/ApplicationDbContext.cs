@@ -27,6 +27,10 @@ public class ApplicationDbContext : DbContext
     public DbSet<Matn> Matns { get; set; }
     public DbSet<MatnAssignment> MatnAssignments { get; set; }
     public DbSet<StudentMatnProgress> StudentMatnProgresses { get; set; }
+    public DbSet<CertificateTemplate> CertificateTemplates { get; set; }
+    public DbSet<CertificateTemplateVersion> CertificateTemplateVersions { get; set; }
+    public DbSet<Certificate> Certificates { get; set; }
+    public DbSet<CertificateAuditLog> CertificateAuditLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -42,6 +46,8 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<StudyProgram>().HasQueryFilter(sp => !sp.IsDeleted);
         modelBuilder.Entity<Matn>().HasQueryFilter(m => !m.IsDeleted);
         modelBuilder.Entity<StudentMatnProgress>().HasQueryFilter(smp => !smp.IsDeleted);
+        modelBuilder.Entity<CertificateTemplate>().HasQueryFilter(ct => !ct.IsDeleted);
+        modelBuilder.Entity<Certificate>().HasQueryFilter(c => !c.IsDeleted);
 
         modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique(); // Ensure unique usernames even if soft-deleted because i might return the user
         modelBuilder
@@ -305,6 +311,84 @@ public class ApplicationDbContext : DbContext
             .Entity<MatnAssignment>()
             .HasIndex(ma => ma.MatnId)
             .HasDatabaseName("IX_MatnAssignments_MatnId");
+
+        // Certificate Templates
+        modelBuilder.Entity<CertificateTemplate>(entity =>
+        {
+            entity.HasOne(ct => ct.Institute)
+                .WithMany()
+                .HasForeignKey(ct => ct.InstituteId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasMany(ct => ct.Versions)
+                .WithOne(v => v.Template)
+                .HasForeignKey(v => v.TemplateId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(ct => new { ct.InstituteId, ct.Type, ct.IsDefault })
+                .HasDatabaseName("IX_CertificateTemplates_Institute_Type_Default");
+        });
+
+        // Certificate Template Versions
+        modelBuilder.Entity<CertificateTemplateVersion>(entity =>
+        {
+            entity.HasIndex(v => new { v.TemplateId, v.VersionNumber })
+                .IsUnique()
+                .HasDatabaseName("IX_CertificateTemplateVersions_Template_Version");
+        });
+
+        // Certificates
+        modelBuilder.Entity<Certificate>(entity =>
+        {
+            entity.HasOne(c => c.Institute)
+                .WithMany()
+                .HasForeignKey(c => c.InstituteId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(c => c.Student)
+                .WithMany()
+                .HasForeignKey(c => c.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(c => c.Template)
+                .WithMany(t => t.Certificates)
+                .HasForeignKey(c => c.TemplateId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(c => c.TemplateVersion)
+                .WithMany()
+                .HasForeignKey(c => c.TemplateVersionId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(c => c.VerificationToken)
+                .IsUnique()
+                .HasDatabaseName("IX_Certificates_VerificationToken");
+
+            entity.HasIndex(c => new { c.InstituteId, c.CertificateNumber })
+                .IsUnique()
+                .HasDatabaseName("IX_Certificates_Institute_CertNumber");
+
+            entity.HasIndex(c => new { c.StudentId, c.Type })
+                .HasDatabaseName("IX_Certificates_Student_Type");
+
+            entity.HasIndex(c => c.SourceEntityId)
+                .HasDatabaseName("IX_Certificates_SourceEntityId");
+        });
+
+        // Certificate Audit Logs
+        modelBuilder.Entity<CertificateAuditLog>(entity =>
+        {
+            entity.HasOne(al => al.Institute)
+                .WithMany()
+                .HasForeignKey(al => al.InstituteId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(al => new { al.InstituteId, al.EntityId })
+                .HasDatabaseName("IX_CertificateAuditLogs_Institute_Entity");
+
+            entity.HasIndex(al => al.PerformedAt)
+                .HasDatabaseName("IX_CertificateAuditLogs_PerformedAt");
+        });
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
