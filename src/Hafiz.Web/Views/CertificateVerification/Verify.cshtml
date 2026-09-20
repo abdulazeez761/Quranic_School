@@ -1,0 +1,27 @@
+@model Hafiz.Application.DTO.Certificate.CertificateVerificationDto
+@{ ViewData["Title"] = "التحقق من الشهادة"; }
+<div class="container py-5" dir="rtl">
+    <div class="card shadow-sm mx-auto" style="max-width: 720px">
+        <div class="card-body p-4 text-center">
+            @if (!Model.IsFound)
+            {
+                <h2 class="text-danger">تعذر التحقق من الشهادة</h2>
+                <p>@Model.StatusMessage</p>
+            }
+            else
+            {
+                <h2 class="@(Model.IsValid ? "text-success" : "text-danger")">@(Model.IsValid ? "شهادة صحيحة" : "شهادة غير سارية")</h2>
+                <p>@Model.StatusMessage</p>
+                <hr />
+                <dl class="row text-end mb-0">
+                    <dt class="col-sm-5">رقم الشهادة</dt><dd class="col-sm-7">@Model.CertificateNumber</dd>
+                    <dt class="col-sm-5">الطالب</dt><dd class="col-sm-7">@Model.StudentName</dd>
+                    <dt class="col-sm-5">المعهد</dt><dd class="col-sm-7">@Model.InstituteName</dd>
+                    <dt class="col-sm-5">النوع</dt><dd class="col-sm-7">@Model.TypeDisplayName</dd>
+                    <dt class="col-sm-5">تاريخ الإصدار</dt><dd class="col-sm-7">@Model.IssuedAtDisplay</dd>
+                    @if (!string.IsNullOrWhiteSpace(Model.RevokeReason)) { <dt class="col-sm-5">سبب الإلغاء</dt><dd class="col-sm-7">@Model.RevokeReason</dd> }
+                </dl>
+            }
+        </div>
+    </div>
+</div>

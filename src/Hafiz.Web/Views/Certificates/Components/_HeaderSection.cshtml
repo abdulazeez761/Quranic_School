@@ -1,0 +1,2 @@
+@model Hafiz.Application.DTO.Certificate.CertificateModel
+<div class="cert-header"><div><h2 class="cert-institute-title">@Model.InstituteName</h2><div class="cert-sub-institute">@(string.IsNullOrEmpty(Model.ClassName) ? "شؤون حلقات القرآن الكريم" : $"حلقة: {Model.ClassName}")</div></div><div class="cert-basmalah">بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ</div><div class="cert-number-box"><span class="cert-serial">@Model.CertificateNumber</span></div></div>

@@ -48,6 +48,8 @@ namespace Hafiz.Infrastructure.Extensions
             services.AddScoped<IMatnRepository, MatnRepository>();
             services.AddScoped<IMatnAssignmentRepository, MatnAssignmentRepository>();
             services.AddScoped<IStudentMatnProgressRepository, StudentMatnProgressRepository>();
+            services.AddScoped<ICertificateTemplateRepository, CertificateTemplateRepository>();
+            services.AddScoped<ICertificateRepository, CertificateRepository>();
 
             // Infrastructure services
             services.AddScoped<IPasswordHasher, PasswordHasher>();
@@ -55,6 +57,7 @@ namespace Hafiz.Infrastructure.Extensions
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<IGoogleDriveUploader, GoogleDriveUploader>();
             services.AddScoped<IBackupService, BackupService>();
+            services.AddScoped<IQRCodeService, QRCodeService>();
 
             // Static Reference Data Provider (Singleton in-memory cache)
             services.AddSingleton<Hafiz.Application.Interfaces.Data.IMatnDataProvider, MatnDataProvider>();

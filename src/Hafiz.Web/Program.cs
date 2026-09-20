@@ -35,6 +35,12 @@ using (var scope = app.Services.CreateScope())
     // Apply migrations if needed
     context.Database.Migrate();
 
+    var certificateTemplates = scope.ServiceProvider.GetRequiredService<Hafiz.Application.Interfaces.Services.ICertificateTemplateService>();
+    foreach (var institute in context.Institutes.ToList())
+    {
+        await certificateTemplates.SeedDefaultTemplatesForInstituteAsync(institute.Id);
+    }
+
     if (!context.Users.Any(u => u.Role == Hafiz.Models.UserRole.SuperAdmin))
     {
         var superAdmin = new Hafiz.Models.User

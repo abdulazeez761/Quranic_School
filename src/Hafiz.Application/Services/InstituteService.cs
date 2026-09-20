@@ -1,5 +1,6 @@
 using Hafiz.Application.Interfaces;
 using Hafiz.Application.Interfaces.Repositories;
+using Hafiz.Application.Interfaces.Services;
 using Hafiz.Domain.Entities;
 using Hafiz.DTOs;
 using Hafiz.Models;
@@ -13,16 +14,19 @@ namespace Hafiz.Services
         private readonly IInstituteRepository _instituteRepository;
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher _passwordHasher;
+        private readonly ICertificateTemplateService _certificateTemplates;
 
         public InstituteService(
             IInstituteRepository instituteRepository,
             IUserRepository userRepository,
-            IPasswordHasher passwordHasher
+            IPasswordHasher passwordHasher,
+            ICertificateTemplateService certificateTemplates
         )
         {
             _instituteRepository = instituteRepository;
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
+            _certificateTemplates = certificateTemplates;
         }
 
         public Task<List<Institute>> GetAllAsync()
@@ -49,7 +53,9 @@ namespace Hafiz.Services
                 Address = address,
                 PhoneNumber = phoneNumber,
             };
-            return await _instituteRepository.CreateAsync(institute);
+            var createdInstitute = await _instituteRepository.CreateAsync(institute);
+            await _certificateTemplates.SeedDefaultTemplatesForInstituteAsync(createdInstitute.Id);
+            return createdInstitute;
         }
 
         public async Task<(bool Success, string ErrorMessage)> UpdateAsync(UpdateInstituteDto dto)
@@ -119,6 +125,7 @@ namespace Hafiz.Services
             // Set the manager of the institute
             createdInstitute.ManagerId = adminUser.Id;
             await _instituteRepository.UpdateAsync(createdInstitute);
+            await _certificateTemplates.SeedDefaultTemplatesForInstituteAsync(createdInstitute.Id, adminUser.Id);
 
             return (true, "تم إنشاء المركز والمدير بنجاح.");
         }

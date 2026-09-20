@@ -1,0 +1,2 @@
+@model Hafiz.Application.DTO.Certificate.CertificateModel
+<div class="cert-body-content"><p class="cert-intro-text">@Model.AchievementDescription</p><div class="cert-student-name">@Model.StudentName</div><div class="cert-achievement-box"><span class="cert-subject-name">@Model.SubjectName</span>@if (!string.IsNullOrEmpty(Model.SubtitleOrAuthor)) { <div class="cert-author-name">@Model.SubtitleOrAuthor</div> } @if (!string.IsNullOrEmpty(Model.ScopeDetails)) { <div class="cert-scope-text">@Model.ScopeDetails</div> }</div></div>

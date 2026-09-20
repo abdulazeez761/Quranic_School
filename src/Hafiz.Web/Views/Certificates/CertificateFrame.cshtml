@@ -33,16 +33,7 @@
 
     <!-- Certificate Stage -->
     <div class="cert-stage">
-        <div class="certificate-sheet">
-            @if (Model.Type == Hafiz.Domain.Enums.CertificateType.Quran)
-            {
-                @await Html.PartialAsync("Templates/_QuranTemplate", Model)
-            }
-            else
-            {
-                @await Html.PartialAsync("Templates/_MatnTemplate", Model)
-            }
-        </div>
+        @await Html.PartialAsync("Components/_CertificateDynamic", Model)
     </div>
 
 </body>

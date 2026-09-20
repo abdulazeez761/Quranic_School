@@ -326,6 +326,8 @@ public class ApplicationDbContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasIndex(ct => new { ct.InstituteId, ct.Type, ct.IsDefault })
+                .IsUnique()
+                .HasFilter("[IsDefault] = 1")
                 .HasDatabaseName("IX_CertificateTemplates_Institute_Type_Default");
         });
 

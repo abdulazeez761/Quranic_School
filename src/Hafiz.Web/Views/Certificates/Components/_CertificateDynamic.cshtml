@@ -1,0 +1,25 @@
+@model Hafiz.Application.DTO.Certificate.CertificateModel
+@{
+    var theme = Model.Configuration.Theme;
+    var typography = Model.Configuration.Typography;
+    var sections = Model.Configuration.Sections.Where(s => s.Enabled).OrderBy(s => s.Order).ToList();
+    var hasSections = sections.Count > 0;
+}
+<style>
+    .certificate-sheet { --tpl-primary: @theme.PrimaryColor; --tpl-secondary: @theme.SecondaryColor; --tpl-accent: @theme.AccentColor; --tpl-text: @theme.TextColor; --tpl-bg: @theme.BackgroundColor; --tpl-border: @theme.BorderColor; --tpl-title-font: '@typography.TitleFont'; --tpl-body-font: '@typography.BodyFont'; --tpl-arabic-font: '@typography.ArabicFont'; }
+</style>
+<div class="certificate-sheet">
+    <div class="cert-outer-border" style="border-style:@theme.BorderStyle; border-width:@(theme.BorderWidth)px">
+        <div class="cert-inner-border">
+            @if (theme.CornerDecorations) { <div class="cert-corner cert-corner-tl"></div><div class="cert-corner cert-corner-tr"></div><div class="cert-corner cert-corner-bl"></div><div class="cert-corner cert-corner-br"></div> }
+            @if (theme.WatermarkEnabled) { <div class="cert-watermark" style="opacity:@theme.WatermarkOpacity"><i class='bx @theme.WatermarkIcon'></i></div> }
+            @if (!hasSections || sections.Any(s => s.Type == "header")) { @await Html.PartialAsync("Components/_HeaderSection", Model) }
+            @if (!hasSections || sections.Any(s => s.Type == "title")) { @await Html.PartialAsync("Components/_TitleSection", Model) }
+            @if (!hasSections || sections.Any(s => s.Type == "verse")) { @await Html.PartialAsync("Components/_VerseSection", Model) }
+            @if (!hasSections || sections.Any(s => s.Type == "statement")) { @await Html.PartialAsync("Components/_StatementSection", Model) }
+            @if (!hasSections || sections.Any(s => s.Type == "evaluation")) { @await Html.PartialAsync("Components/_EvaluationSection", Model) }
+            @if (!hasSections || sections.Any(s => s.Type == "signatures")) { @await Html.PartialAsync("Components/_SignaturesSection", Model) }
+            @if ((!hasSections || sections.Any(s => s.Type == "qrVerification")) && !string.IsNullOrEmpty(Model.QrCodeDataUrl)) { @await Html.PartialAsync("Components/_QRSection", Model) }
+        </div>
+    </div>
+</div>
