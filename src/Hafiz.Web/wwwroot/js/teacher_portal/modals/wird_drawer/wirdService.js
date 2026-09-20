@@ -198,26 +198,39 @@ window.showDrawerToast = function showDrawerToast(message, type = 'success') {
   if (!container) {
     container = document.createElement('div');
     container.id = 'drawerToastContainer';
-    container.className = 'toast-container';
+    container.className = 'drawer-toast-container toast-container';
     document.body.appendChild(container);
+  } else {
+    container.classList.add('drawer-toast-container');
+    if (container.parentElement !== document.body) {
+      document.body.appendChild(container);
+    }
   }
 
   const toast = document.createElement('div');
-  toast.className = `toast toast-${type}`;
+  toast.className = `drawer-toast toast toast-${type}`;
+  toast.title = 'انقر للإغلاق السريع';
+  toast.onclick = function () {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 200);
+  };
+
   const icon =
     type === 'success'
       ? 'bx-check-circle'
       : type === 'info'
         ? 'bxs-star'
         : 'bx-info-circle';
-  toast.innerHTML = `<i class='bx ${icon}' style="font-size: 1.25rem;"></i><span>${message}</span>`;
+  toast.innerHTML = `<i class='bx ${icon}'></i><span>${message}</span><i class='bx bx-x drawer-toast-close' title="إغلاق"></i>`;
 
   container.appendChild(toast);
   setTimeout(() => toast.classList.add('show'), 10);
   setTimeout(() => {
-    toast.classList.remove('show');
-    setTimeout(() => toast.remove(), 300);
-  }, 3500);
+    if (toast.parentElement) {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 250);
+    }
+  }, 2400);
 };
 
 window.updateStudentRowStatusOptimistically = function updateStudentRowStatusOptimistically(studentId, count) {

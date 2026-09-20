@@ -449,7 +449,8 @@
 }
 
 /* ========== Toast ========== */
-.toast {
+.admin-student-details .toast,
+.student-details-container .toast {
   position: fixed;
   bottom: 24px;
   inset-inline-end: 24px;
@@ -470,7 +471,8 @@
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.toast.show {
+.admin-student-details .toast.show,
+.student-details-container .toast.show {
   opacity: 1;
   transform: translateY(0);
 }
@@ -710,7 +712,8 @@
     padding: var(--space-xs) var(--space-sm);
     min-height: 40px;
   }
-  .toast {
+  .admin-student-details .toast,
+  .student-details-container .toast {
     inset-inline: 16px;
     bottom: 16px;
     justify-content: center;
