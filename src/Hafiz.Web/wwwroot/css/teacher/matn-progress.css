@@ -741,9 +741,7 @@
   width: 100vw !important;
   height: 100vh !important;
   z-index: 99999 !important;
-  background: rgba(15, 23, 42, 0.65) !important;
-  backdrop-filter: blur(4px) !important;
-  -webkit-backdrop-filter: blur(4px) !important;
+  background: rgba(15, 23, 42, 0.6) !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
   align-items: center !important;

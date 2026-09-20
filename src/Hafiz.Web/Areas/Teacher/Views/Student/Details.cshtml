@@ -641,130 +641,146 @@
 <div class="teacher-matn-modal-overlay" id="teacherMatnModal" tabindex="-1" aria-hidden="true" dir="rtl" style="display: none;" onclick="if(event.target === this) closeTeacherMatnModal()">
     <div class="teacher-matn-modal-dialog">
         <div class="teacher-matn-modal-card">
+            <!-- Modal Header -->
             <div class="teacher-matn-modal-header">
-                <h5 class="teacher-matn-modal-title">
-                    <i class='bx bx-award fs-5'></i>
-                    <span>تحديد حالة المتن ورصد درجة الاختبار</span>
-                </h5>
+                <div class="teacher-matn-modal-title">
+                    <div class="modal-title-icon"><i class='bx bx-award'></i></div>
+                    <div>
+                        <h5 class="modal-main-title">تحديد حالة المتن ورصد الاختبار</h5>
+                        <p class="modal-sub-title">تحديث مستوى الطالب في المدارسة والحفظ ورصد النتيجة</p>
+                    </div>
+                </div>
                 <button type="button" class="teacher-matn-modal-close" aria-label="Close" onclick="closeTeacherMatnModal()">
                     <i class='bx bx-x'></i>
                 </button>
             </div>
+
+            <!-- Form -->
             <form id="teacherMatnForm" onsubmit="saveTeacherMatnProgress(event)">
                 @Html.AntiForgeryToken()
-                <div class="teacher-matn-modal-body">
-                    <input type="hidden" id="tModalStudentId" name="studentId" value="@Model.Student.UserId" />
-                    <input type="hidden" id="tModalMatnId" name="matnId" />
+                <input type="hidden" id="tModalStudentId" name="studentId" value="@Model.Student.UserId" />
+                <input type="hidden" id="tModalMatnId" name="matnId" />
 
-                    <!-- بطاقة سياق الطالب والمتن ودرجة النجاح -->
-                    <div class="matn-context-banner mb-3">
-                        <div class="matn-context-row">
-                            <span class="matn-context-label">اسم الطالب:</span>
-                            <span class="matn-context-val fw-bold" id="tModalStudentName">@studentFullName</span>
+                <div class="teacher-matn-modal-body">
+                    <!-- Compact 1-line Info Bar -->
+                    <div class="matn-quick-info-bar">
+                        <div class="info-chip chip-student" title="اسم الطالب">
+                            <i class='bx bx-user'></i>
+                            <span class="chip-label">الطالب:</span>
+                            <span class="chip-val" id="tModalStudentName">@studentFullName</span>
                         </div>
-                        <div class="matn-context-row">
-                            <span class="matn-context-label">المتن المقرر:</span>
-                            <span class="matn-context-val text-primary fw-bold" id="tModalMatnTitle">-</span>
+                        <div class="info-chip chip-matn" title="المتن المقرر">
+                            <i class='bx bx-book-bookmark'></i>
+                            <span class="chip-label">المتن:</span>
+                            <span class="chip-val text-primary" id="tModalMatnTitle">-</span>
                         </div>
-                        <div class="matn-context-row">
-                            <span class="matn-context-label">علامة النجاح المعتمدة:</span>
-                            <span class="matn-context-val badge bg-info text-white" id="tModalPassingGrade">60%</span>
+                        <div class="info-chip chip-pass" title="درجة النجاح المعتمدة">
+                            <i class='bx bx-check-circle'></i>
+                            <span class="chip-label">النجاح:</span>
+                            <span class="chip-val badge-pass" id="tModalPassingGrade">60%</span>
                         </div>
                     </div>
 
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="matn-label fw-bold mb-1 d-flex align-items-center gap-1">
+                    <!-- Status Section (Grid 2 cols) -->
+                    <div class="modal-fields-grid">
+                        <div class="field-group">
+                            <label class="field-label" for="tModalStudyStatus">
                                 <i class='bx bx-book-open text-success'></i>
                                 <span>حالة المدارسة</span>
                             </label>
-                            <select id="tModalStudyStatus" name="studyStatus" class="form-select form-select-sm">
+                            <select id="tModalStudyStatus" name="studyStatus" class="form-select custom-modal-select">
                                 <option value="0">لم يبدأ</option>
                                 <option value="1">قيد المدارسة</option>
                                 <option value="2">مكتمل</option>
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <label class="matn-label fw-bold mb-1 d-flex align-items-center gap-1">
+
+                        <div class="field-group">
+                            <label class="field-label" for="tModalMemorizationStatus">
                                 <i class='bx bx-bookmarks text-primary'></i>
                                 <span>حالة الحفظ</span>
                             </label>
-                            <select id="tModalMemorizationStatus" name="memorizationStatus" class="form-select form-select-sm">
+                            <select id="tModalMemorizationStatus" name="memorizationStatus" class="form-select custom-modal-select">
                                 <option value="0">لم يبدأ</option>
                                 <option value="1">قيد الحفظ</option>
                                 <option value="2">تم الحفظ</option>
                             </select>
                         </div>
+                    </div>
 
-                        <div class="col-md-6">
-                            <label class="matn-label fw-bold mb-1 d-flex align-items-center gap-1">
+                    <!-- Exam Result & Date (Grid 2 cols) -->
+                    <div class="modal-fields-grid">
+                        <div class="field-group">
+                            <label class="field-label" for="tModalExamStatus">
                                 <i class='bx bx-check-shield text-warning'></i>
                                 <span>نتيجة الاختبار</span>
                             </label>
-                            <select id="tModalExamStatus" name="examStatus" class="form-select form-select-sm" onchange="onTeacherExamStatusChanged(this.value)">
+                            <select id="tModalExamStatus" name="examStatus" class="form-select custom-modal-select" onchange="onTeacherExamStatusChanged(this.value)">
                                 <option value="0">لم يختبر بعد</option>
                                 <option value="1">اجتاز بنجاح (ناجح)</option>
                                 <option value="2">لم يجتز (راسب)</option>
                             </select>
                         </div>
 
-                        <div class="col-md-6">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <label class="matn-label fw-bold mb-0 d-flex align-items-center gap-1">
+                        <div class="field-group">
+                            <div class="modal-label-header">
+                                <label class="field-label" for="tModalExamDate">
                                     <i class='bx bx-calendar-event text-secondary'></i>
                                     <span>تاريخ الاختبار</span>
                                 </label>
-                                <button type="button" class="btn-today-date" onclick="setTeacherExamToday()">اليوم</button>
+                                <button type="button" class="btn-quick-today" onclick="setTeacherExamToday()" title="تحديد تاريخ اليوم">اليوم</button>
                             </div>
-                            <input type="date" id="tModalExamDate" name="examDate" class="form-control form-control-sm" />
-                        </div>
-
-                        <!-- عنصر تفاعلي لرصد درجة الاختبار -->
-                        <div class="col-12">
-                            <div class="p-3 bg-light rounded-3 border">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <label class="matn-label fw-bold mb-0 d-flex align-items-center gap-1">
-                                        <i class='bx bx-award text-primary'></i>
-                                        <span>درجة الاختبار (من 100)</span>
-                                    </label>
-                                    <span id="tScoreRatingPill" class="score-rating-pill" style="display: none;">
-                                        <i class='bx bx-award'></i> <span id="tScoreRatingText">-</span>
-                                    </span>
-                                </div>
-                                <div class="input-group">
-                                    <input type="number" id="tModalScore" name="score" class="form-control"
-                                           min="0" max="100" step="0.5" placeholder="مثال: 95.5"
-                                           oninput="updateTeacherScoreFeedback(this.value)" />
-                                    <span class="input-group-text bg-white fw-bold">%</span>
-                                </div>
-                                <div class="score-presets mt-2 d-flex flex-wrap gap-1 align-items-center">
-                                    <span class="small text-muted me-1">درجات سريعة:</span>
-                                    <button type="button" class="score-preset-btn" onclick="setTeacherScorePreset(100)">100% ممتاز</button>
-                                    <button type="button" class="score-preset-btn" onclick="setTeacherScorePreset(95)">95% ممتاز</button>
-                                    <button type="button" class="score-preset-btn" onclick="setTeacherScorePreset(85)">85% ج.جداً</button>
-                                    <button type="button" class="score-preset-btn" onclick="setTeacherScorePreset(75)">75% جيد</button>
-                                    <button type="button" class="score-preset-btn" onclick="setTeacherScorePreset(60)">60% مقبول</button>
-                                    <button type="button" class="score-preset-btn" style="border-color: #fca5a5; color: #b91c1c; background: #fff5f5;" onclick="setTeacherScorePreset(40)">40% راسب</button>
-                                    <button type="button" class="score-preset-btn preset-clear" onclick="clearTeacherScore()">مسح الدرجة</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="matn-label fw-bold mb-1 d-flex align-items-center gap-1">
-                                <i class='bx bx-comment-detail text-muted'></i>
-                                <span>ملاحظات المعلم / الإدارة</span>
-                            </label>
-                            <textarea id="tModalTeacherNotes" name="teacherNotes" class="form-control form-control-sm" rows="2"
-                                      placeholder="ملاحظات حول مستوى الطالب، الإتقان، أو الاستدراك..."></textarea>
+                            <input type="date" id="tModalExamDate" name="examDate" class="form-control custom-modal-input" />
                         </div>
                     </div>
+
+                    <!-- Exam Score Box -->
+                    <div class="exam-score-compact-box">
+                        <div class="modal-label-header">
+                            <label class="field-label" for="tModalScore">
+                                <i class='bx bx-award text-success'></i>
+                                <span>درجة الاختبار (من 100)</span>
+                            </label>
+                            <span id="tScoreRatingPill" class="score-rating-pill" style="display: none;">
+                                <i class='bx bx-award'></i> <span id="tScoreRatingText">-</span>
+                            </span>
+                        </div>
+                        <div class="score-entry-row">
+                            <div class="score-field-box">
+                                <input type="number" id="tModalScore" name="score" class="score-field-input"
+                                       min="0" max="100" step="0.5" placeholder="95"
+                                       oninput="updateTeacherScoreFeedback(this.value)" />
+                                <span class="score-field-suffix">%</span>
+                            </div>
+                            <div class="score-preset-chips">
+                                <button type="button" class="chip-btn" onclick="setTeacherScorePreset(100)">100%</button>
+                                <button type="button" class="chip-btn" onclick="setTeacherScorePreset(95)">95%</button>
+                                <button type="button" class="chip-btn" onclick="setTeacherScorePreset(85)">85%</button>
+                                <button type="button" class="chip-btn" onclick="setTeacherScorePreset(75)">75%</button>
+                                <button type="button" class="chip-btn" onclick="setTeacherScorePreset(60)">60%</button>
+                                <button type="button" class="chip-btn chip-fail" onclick="setTeacherScorePreset(40)">40%</button>
+                                <button type="button" class="chip-btn chip-clear" onclick="clearTeacherScore()" title="مسح الدرجة"><i class='bx bx-trash'></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="field-group mb-0">
+                        <label class="field-label" for="tModalTeacherNotes">
+                            <i class='bx bx-comment-detail text-muted'></i>
+                            <span>ملاحظات المعلم / الإدارة</span>
+                        </label>
+                        <textarea id="tModalTeacherNotes" name="teacherNotes" class="form-control custom-modal-textarea" rows="2"
+                                  placeholder="ملاحظات حول مستوى الطالب، الإتقان، أو الاستدراك..."></textarea>
+                    </div>
                 </div>
+
+                <!-- Footer -->
                 <div class="teacher-matn-modal-footer">
-                    <button type="button" class="matn-control-btn" onclick="closeTeacherMatnModal()">إلغاء</button>
-                    <button type="submit" class="btn-grade-action px-4" id="saveTeacherProgressBtn" style="background: #16a34a;">
-                        <i class='bx bx-save'></i>
-                        <span>حفظ التعديلات والدرجة</span>
+                    <button type="button" class="btn-modal-cancel" onclick="closeTeacherMatnModal()">إلغاء</button>
+                    <button type="submit" class="btn-modal-submit" id="saveTeacherProgressBtn">
+                        <i class='bx bx-check'></i>
+                        <span>حفظ التعديلات</span>
                     </button>
                 </div>
             </form>
@@ -783,17 +799,6 @@
         return txt.value;
     }
 
-    function setTeacherExamToday() {
-        const today = new Date().toISOString().split('T')[0];
-        const dateInput = document.getElementById('tModalExamDate');
-        if (dateInput) dateInput.value = today;
-    }
-
-    function clearTeacherScore() {
-        const scoreInput = document.getElementById('tModalScore');
-        if (scoreInput) scoreInput.value = '';
-        updateTeacherScoreFeedback('');
-    }
 
     function updateTeacherScoreFeedback(val) {
         const pill = document.getElementById('tScoreRatingPill');
@@ -847,6 +852,25 @@
         if (scoreInput) {
             scoreInput.value = val;
             updateTeacherScoreFeedback(val);
+        }
+    }
+
+    function setTeacherExamToday() {
+        const d = new Date();
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        const dateInput = document.getElementById('tModalExamDate');
+        if (dateInput) {
+            dateInput.value = `${yyyy}-${mm}-${dd}`;
+        }
+    }
+
+    function clearTeacherScore() {
+        const scoreInput = document.getElementById('tModalScore');
+        if (scoreInput) {
+            scoreInput.value = '';
+            updateTeacherScoreFeedback('');
         }
     }
 
