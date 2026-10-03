@@ -23,7 +23,8 @@ public class CertificateService : ICertificateService
         IStudentMatnProgressRepository progressRepository,
         IStudentRepository studentRepository,
         IClassRepository classRepository,
-        IInstituteRepository instituteRepository)
+        IInstituteRepository instituteRepository
+    )
     {
         _progressRepository = progressRepository;
         _studentRepository = studentRepository;
@@ -46,16 +47,16 @@ public class CertificateService : ICertificateService
         var student = progress.Student;
         var studentUser = student?.StudentInfo;
         var isFemale = student?.sex == Sex.female;
-        var studentName = studentUser != null
-            ? studentUser.FullName
-            : progress.StudentId.ToString();
+        var studentName =
+            studentUser != null ? studentUser.FullName : progress.StudentId.ToString();
 
         // Class and Institute information
         string className = string.Empty;
         string instituteName = "مركز تحفيظ القرآن الكريم والعلوم الشرعية";
-        string teacherName = progress.LastUpdatedByTeacher?.TeacherInfo != null
-            ? progress.LastUpdatedByTeacher.TeacherInfo.FullName
-            : string.Empty;
+        string teacherName =
+            progress.LastUpdatedByTeacher?.TeacherInfo != null
+                ? progress.LastUpdatedByTeacher.TeacherInfo.FullName
+                : string.Empty;
 
         if (student?.ClassId.HasValue == true)
         {
@@ -87,19 +88,22 @@ public class CertificateService : ICertificateService
         if (isStudyCompleted && isMemCompleted)
         {
             certTitle = "شهادة إتمام حفظ ومدارسة متن علمي";
-            achievementDesc = $"تشهد إدارة المركز بأن {(isFemale ? "الطالبة" : "الطالب")} قد {(isFemale ? "أتمّت" : "أتمّ")} بحمد الله وتوفيقه وفضله حفظ ومدارسة وإتقان متن:";
+            achievementDesc =
+                $"تشهد إدارة المركز بأن {(isFemale ? "الطالبة" : "الطالب")} قد {(isFemale ? "أتمّت" : "أتمّ")} بحمد الله وتوفيقه وفضله حفظ ومدارسة وإتقان متن:";
             scopeDetails = "تم إكمال متطلبات الحفظ المتقن والمدارسة العلمية الكاملة للمتن";
         }
         else if (isMemCompleted)
         {
             certTitle = "شهادة إتمام حفظ وإتقان متن علمي";
-            achievementDesc = $"تشهد إدارة المركز بأن {(isFemale ? "الطالبة" : "الطالب")} قد {(isFemale ? "أتمّت" : "أتمّ")} بحمد الله وتوفيقه وفضله استظهار وحفظ وإتقان متن:";
+            achievementDesc =
+                $"تشهد إدارة المركز بأن {(isFemale ? "الطالبة" : "الطالب")} قد {(isFemale ? "أتمّت" : "أتمّ")} بحمد الله وتوفيقه وفضله استظهار وحفظ وإتقان متن:";
             scopeDetails = "تم إكمال حفظ واستظهار أبيات / فصول المتن كاملاً غيباً عن ظهر قلب";
         }
         else
         {
             certTitle = "شهادة إتمام دراسة وضبط متن علمي";
-            achievementDesc = $"تشهد إدارة المركز بأن {(isFemale ? "الطالبة" : "الطالب")} قد {(isFemale ? "أتمّت" : "أتمّ")} بحمد الله وتوفيقه وفضله مدارسة وفهم وضبط متن:";
+            achievementDesc =
+                $"تشهد إدارة المركز بأن {(isFemale ? "الطالبة" : "الطالب")} قد {(isFemale ? "أتمّت" : "أتمّ")} بحمد الله وتوفيقه وفضله مدارسة وفهم وضبط متن:";
             scopeDetails = "تم إكمال مدارسة وشرح وضبط أبواب وفصول المتن بنجاح";
         }
 
@@ -109,18 +113,27 @@ public class CertificateService : ICertificateService
         if (progress.Score.HasValue || progress.ExamStatus == ExamStatus.Passed)
         {
             var s = progress.Score ?? 100m;
-            if (s >= 90) rating = "ممتاز (Excellent)";
-            else if (s >= 80) rating = "جيد جداً (Very Good)";
-            else if (s >= 65) rating = "جيد (Good)";
-            else if (s >= 50) rating = "مقبول (Fair)";
-            else rating = "ناجح";
+            if (s >= 90)
+                rating = "ممتاز (Excellent)";
+            else if (s >= 80)
+                rating = "جيد جداً (Very Good)";
+            else if (s >= 65)
+                rating = "جيد (Good)";
+            else if (s >= 50)
+                rating = "مقبول (Fair)";
+            else
+                rating = "ناجح";
 
             examResultText = progress.Score.HasValue
                 ? $"بتقدير: {rating} — بنسبة ({progress.Score.Value:0.##}%)"
                 : $"بتقدير: {rating}";
         }
 
-        var completionDate = progress.ExamDate ?? progress.MemorizationCompletedAt ?? progress.StudyCompletedAt ?? DateTime.UtcNow;
+        var completionDate =
+            progress.ExamDate
+            ?? progress.MemorizationCompletedAt
+            ?? progress.StudyCompletedAt
+            ?? DateTime.UtcNow;
 
         return new CertificateModel
         {
@@ -132,7 +145,9 @@ public class CertificateService : ICertificateService
             StudentGender = isFemale ? "Female" : "Male",
             CertificateTitle = certTitle,
             SubjectName = progress.Matn?.Title ?? "المتن العلمي",
-            SubtitleOrAuthor = !string.IsNullOrEmpty(progress.Matn?.Author) ? $"للإمام / {progress.Matn.Author}" : null,
+            SubtitleOrAuthor = !string.IsNullOrEmpty(progress.Matn?.Author)
+                ? $"للإمام / {progress.Matn.Author}"
+                : null,
             AchievementDescription = achievementDesc,
             ScopeDetails = scopeDetails,
             Score = progress.Score,
@@ -143,11 +158,15 @@ public class CertificateService : ICertificateService
             InstituteName = instituteName,
             ClassName = className,
             TeacherName = !string.IsNullOrEmpty(teacherName) ? teacherName : "معلم الحلقة",
-            DirectorName = "إدارة الشؤون التعليمية"
+            DirectorName = "إدارة الشؤون التعليمية",
         };
     }
 
-    public async Task<CertificateModel?> GetQuranCertificateAsync(Guid studentId, int? fromJuz = null, int? toJuz = null)
+    public async Task<CertificateModel?> GetQuranCertificateAsync(
+        Guid studentId,
+        int? fromJuz = null,
+        int? toJuz = null
+    )
     {
         var student = await _studentRepository.GetByIdAsync(studentId);
         if (student == null)
@@ -155,9 +174,7 @@ public class CertificateService : ICertificateService
 
         var studentUser = student.StudentInfo;
         var isFemale = student.sex == Sex.female;
-        var studentName = studentUser != null
-            ? studentUser.FullName
-            : studentId.ToString();
+        var studentName = studentUser != null ? studentUser.FullName : studentId.ToString();
 
         string className = string.Empty;
         string instituteName = "مركز تحفيظ القرآن الكريم والعلوم الشرعية";
@@ -200,8 +217,10 @@ public class CertificateService : ICertificateService
         {
             certTitle = "شهادة ختم القرآن الكريم كاملاً";
             subjectName = "كتاب الله تعالى كاملاً (30 جزءاً)";
-            achievementDesc = $"تشهد إدارة المركز بأن {(isFemale ? "الطالبة المباركة" : "الطالب المبارك")} قد {(isFemale ? "أتمّت" : "أتمّ")} بحمد الله وتوفيقه وفضله ختم القرآن الكريم كاملاً غيباً عن ظهر قلب.";
-            scopeDetails = "من سورة الفاتحة إلى سورة الناس بحفظ متقن ومراعاة لأحكام التلاوة والتجويد";
+            achievementDesc =
+                $"تشهد إدارة المركز بأن {(isFemale ? "الطالبة المباركة" : "الطالب المبارك")} قد {(isFemale ? "أتمّت" : "أتمّ")} بحمد الله وتوفيقه وفضله ختم القرآن الكريم كاملاً غيباً عن ظهر قلب.";
+            scopeDetails =
+                "من سورة الفاتحة إلى سورة الناس بحفظ متقن ومراعاة لأحكام التلاوة والتجويد";
             scopeFromJuz = 1;
             scopeToJuz = 30;
             scopeJuzCount = 30;
@@ -215,14 +234,16 @@ public class CertificateService : ICertificateService
             {
                 certTitle = "شهادة إتمام حفظ جزء من القرآن الكريم";
                 subjectName = $"الجزء {fromJuz.Value} من القرآن الكريم";
-                achievementDesc = $"تشهد إدارة المركز بأن {(isFemale ? "الطالبة" : "الطالب")} قد {(isFemale ? "أتمّت" : "أتمّ")} بحمد الله وتوفيقه حفظ وإتقان الجزء المقرّر غيباً عن ظهر قلب.";
+                achievementDesc =
+                    $"تشهد إدارة المركز بأن {(isFemale ? "الطالبة" : "الطالب")} قد {(isFemale ? "أتمّت" : "أتمّ")} بحمد الله وتوفيقه حفظ وإتقان الجزء المقرّر غيباً عن ظهر قلب.";
                 scopeDetails = $"إتمام الجزء رقم {fromJuz.Value} متقناً مجوداً";
             }
             else
             {
                 certTitle = "شهادة إتمام أجزاء من القرآن الكريم";
                 subjectName = $"حفظ ({scopeJuzCount}) أجزاء من كتاب الله تعالى";
-                achievementDesc = $"تشهد إدارة المركز بأن {(isFemale ? "الطالبة" : "الطالب")} قد {(isFemale ? "أتمّت" : "أتمّ")} بحمد الله وتوفيقه حفظ وإتقان الأجزاء المقررة غيباً عن ظهر قلب.";
+                achievementDesc =
+                    $"تشهد إدارة المركز بأن {(isFemale ? "الطالبة" : "الطالب")} قد {(isFemale ? "أتمّت" : "أتمّ")} بحمد الله وتوفيقه حفظ وإتقان الأجزاء المقررة غيباً عن ظهر قلب.";
                 scopeDetails = $"من الجزء {scopeFromJuz} إلى الجزء {scopeToJuz}";
             }
         }
@@ -231,7 +252,8 @@ public class CertificateService : ICertificateService
             var juzCount = student.MemorizedJuz > 0 ? student.MemorizedJuz : 1;
             certTitle = "شهادة إنجاز في حفظ القرآن الكريم";
             subjectName = $"إتمام حفظ {juzCount} أجزاء من القرآن الكريم";
-            achievementDesc = $"تشهد إدارة المركز بأن {(isFemale ? "الطالبة" : "الطالب")} قد {(isFemale ? "أتمّت" : "أتمّ")} بحمد الله وتوفيقه حفظ وإتقان المقرر من كتاب الله العزيز.";
+            achievementDesc =
+                $"تشهد إدارة المركز بأن {(isFemale ? "الطالبة" : "الطالب")} قد {(isFemale ? "أتمّت" : "أتمّ")} بحمد الله وتوفيقه حفظ وإتقان المقرر من كتاب الله العزيز.";
             scopeDetails = $"بواقع {juzCount} أجزاء محفوفة بالإتقان وحسن الأداء";
             scopeJuzCount = juzCount;
         }
@@ -254,7 +276,9 @@ public class CertificateService : ICertificateService
             FromJuz = scopeFromJuz,
             ToJuz = scopeToJuz,
             JuzCount = scopeJuzCount,
-            CompletionPercentage = scopeJuzCount.HasValue ? (int)Math.Round(scopeJuzCount.Value / 30m * 100m) : null,
+            CompletionPercentage = scopeJuzCount.HasValue
+                ? (int)Math.Round(scopeJuzCount.Value / 30m * 100m)
+                : null,
             Riwayah = authorOrSubtext,
             Rating = "ممتاز",
             ExamResultText = "بتقدير: ممتاز ومبارك",
@@ -263,7 +287,7 @@ public class CertificateService : ICertificateService
             InstituteName = instituteName,
             ClassName = className,
             TeacherName = !string.IsNullOrEmpty(teacherName) ? teacherName : "معلم الحلقة",
-            DirectorName = "إدارة الشؤون التعليمية"
+            DirectorName = "إدارة الشؤون التعليمية",
         };
     }
 

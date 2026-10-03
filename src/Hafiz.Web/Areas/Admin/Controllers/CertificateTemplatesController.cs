@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Hafiz.Areas.Admin.Controllers;
 
 [Area("Admin")]
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin,SuperAdmin")]
 public class CertificateTemplatesController : Controller
 {
     private readonly ICertificateTemplateService _templates;
@@ -106,6 +106,88 @@ public class CertificateTemplatesController : Controller
             TempData["SuccessMessage"] = "تم حذف القالب.";
         else
             TempData["ErrorMessage"] = "تعذّر حذف القالب لوجود شهادات صادرة به.";
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Versions(Guid id)
+    {
+        var template = await OwnTemplate(id);
+        if (template is null)
+            return NotFound(new { message = "القالب غير موجود." });
+
+        var versions = await _templates.GetTemplateVersionsAsync(id, InstituteId());
+        return Json(new { success = true, templateName = template.Name, currentVersion = template.CurrentVersion, versions });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> VersionConfig(Guid id, Guid versionId)
+    {
+        var template = await OwnTemplate(id);
+        if (template is null)
+            return NotFound(new { message = "القالب غير موجود." });
+
+        var version = await _templates.GetTemplateVersionAsync(id, versionId, InstituteId());
+        if (version is null)
+            return NotFound(new { message = "النسخة غير موجودة." });
+
+        return Json(new { success = true, version });
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> RestoreVersion(Guid id, Guid versionId)
+    {
+        var template = await OwnTemplate(id);
+        if (template is null)
+            return NotFound();
+
+        var restored = await _templates.RestoreVersionAsync(id, versionId, UserId(), InstituteId());
+        if (restored)
+        {
+            TempData["SuccessMessage"] = "تمت استعادة النسخة بنجاح وإنشاء نسخة جديدة بالإعدادات المستعادة.";
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                return Json(new { success = true, message = TempData["SuccessMessage"] });
+        }
+        else
+        {
+            TempData["ErrorMessage"] = "تعذّرت استعادة هذه النسخة.";
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                return BadRequest(new { success = false, message = TempData["ErrorMessage"] });
+        }
+
+        return RedirectToAction(nameof(Edit), new { id });
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> Duplicate(Guid id, string? newName = null)
+    {
+        var template = await OwnTemplate(id);
+        if (template is null)
+            return NotFound();
+
+        var duplicated = await _templates.DuplicateTemplateAsync(id, newName, UserId(), InstituteId());
+        if (duplicated != null)
+        {
+            TempData["SuccessMessage"] = $"تم نسخ القالب بنجاح: {duplicated.Name}";
+            return RedirectToAction(nameof(Edit), new { id = duplicated.Id });
+        }
+
+        TempData["ErrorMessage"] = "تعذّر نسخ هذا القالب.";
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> ToggleActive(Guid id)
+    {
+        var template = await OwnTemplate(id);
+        if (template is null)
+            return NotFound();
+
+        if (await _templates.ToggleTemplateActiveAsync(id, InstituteId()))
+            TempData["SuccessMessage"] = "تم تحديث حالة تفعيل القالب.";
+        else
+            TempData["ErrorMessage"] = "تعذّر تحديث حالة القالب.";
+
         return RedirectToAction(nameof(Index));
     }
 

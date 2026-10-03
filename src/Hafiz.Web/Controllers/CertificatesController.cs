@@ -45,6 +45,49 @@ public class CertificatesController : Controller
         return IsCurrentInstitute(model.InstituteId) ? View("CertificateFrame", model) : Forbid();
     }
 
+    // GET: /Certificates/CheckExistingMatn/{id}
+    [HttpGet("Certificates/CheckExistingMatn/{id:guid}")]
+    public async Task<IActionResult> CheckExistingMatn(Guid id)
+    {
+        var existing = await _certificateService.GetExistingMatnCertificateAsync(id, GetBaseUrl());
+        if (existing == null)
+            return Json(new { exists = false });
+
+        return Json(new
+        {
+            exists = true,
+            certificateId = existing.CertificateId,
+            certificateNumber = existing.CertificateNumber,
+            issueDate = existing.IssueDateFormatted,
+            hijriDate = existing.HijriDateFormatted,
+            matnTitle = existing.SubjectName,
+            studentName = existing.StudentName,
+            viewUrl = $"/Certificates/View/{existing.CertificateId}"
+        });
+    }
+
+    // GET: /Certificates/CheckExistingQuran/{studentId}?fromJuz=...&toJuz=...
+    [HttpGet("Certificates/CheckExistingQuran/{studentId:guid}")]
+    public async Task<IActionResult> CheckExistingQuran(Guid studentId, [FromQuery] int? fromJuz = null, [FromQuery] int? toJuz = null)
+    {
+        var existing = await _certificateService.GetExistingQuranCertificateAsync(studentId, fromJuz, toJuz, GetBaseUrl());
+        if (existing == null)
+            return Json(new { exists = false });
+
+        return Json(new
+        {
+            exists = true,
+            certificateId = existing.CertificateId,
+            certificateNumber = existing.CertificateNumber,
+            issueDate = existing.IssueDateFormatted,
+            hijriDate = existing.HijriDateFormatted,
+            fromJuz = existing.FromJuz,
+            toJuz = existing.ToJuz,
+            studentName = existing.StudentName,
+            viewUrl = $"/Certificates/View/{existing.CertificateId}"
+        });
+    }
+
     [HttpGet("Certificates/View/{id:guid}")]
     public async Task<IActionResult> ViewCertificate(Guid id)
     {

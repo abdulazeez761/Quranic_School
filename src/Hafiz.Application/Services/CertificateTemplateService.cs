@@ -133,6 +133,133 @@ public class CertificateTemplateService : ICertificateTemplateService
         return await _templates.DeleteAsync(templateId);
     }
 
+    public async Task<IReadOnlyList<CertificateTemplateVersionDto>> GetTemplateVersionsAsync(Guid templateId, Guid? instituteId = null)
+    {
+        var template = await _templates.GetByIdAsync(templateId);
+        if (template is null || (instituteId.HasValue && template.InstituteId != instituteId.Value))
+            return Array.Empty<CertificateTemplateVersionDto>();
+
+        var versions = await _templates.GetVersionsByTemplateIdAsync(templateId);
+        var certCounts = await _templates.GetIssuedCertificatesCountPerVersionAsync(templateId);
+        var userIds = versions.Where(v => v.CreatedBy.HasValue).Select(v => v.CreatedBy!.Value);
+        var userNames = await _templates.GetUserNamesAsync(userIds);
+
+        return versions.Select(v => MapVersionToDto(v, template.CurrentVersion, certCounts, userNames)).ToList();
+    }
+
+    public async Task<CertificateTemplateVersionDto?> GetTemplateVersionAsync(Guid templateId, Guid versionId, Guid? instituteId = null)
+    {
+        var template = await _templates.GetByIdAsync(templateId);
+        if (template is null || (instituteId.HasValue && template.InstituteId != instituteId.Value))
+            return null;
+
+        var version = await _templates.GetVersionAsync(versionId);
+        if (version is null || version.TemplateId != templateId)
+            return null;
+
+        var certCounts = await _templates.GetIssuedCertificatesCountPerVersionAsync(templateId);
+        var userNames = version.CreatedBy.HasValue
+            ? await _templates.GetUserNamesAsync(new[] { version.CreatedBy.Value })
+            : new Dictionary<Guid, string>();
+
+        return MapVersionToDto(version, template.CurrentVersion, certCounts, userNames);
+    }
+
+    public async Task<bool> RestoreVersionAsync(Guid templateId, Guid versionId, Guid? userId = null, Guid? instituteId = null)
+    {
+        var template = await _templates.GetByIdAsync(templateId);
+        if (template is null || (instituteId.HasValue && template.InstituteId != instituteId.Value))
+            return false;
+
+        var versionToRestore = await _templates.GetVersionAsync(versionId);
+        if (versionToRestore is null || versionToRestore.TemplateId != template.Id)
+            return false;
+
+        var config = ParseConfiguration(versionToRestore.ConfigurationJson, template.Type);
+
+        template.CurrentVersion++;
+        template.UpdatedAt = DateTime.UtcNow;
+        template.UpdatedBy = userId;
+
+        var updated = await _templates.UpdateAsync(template);
+        if (!updated) return false;
+
+        await _templates.AddVersionAsync(new CertificateTemplateVersion
+        {
+            TemplateId = template.Id,
+            VersionNumber = template.CurrentVersion,
+            ConfigurationJson = config.ToJson(),
+            CreatedBy = userId,
+            CreatedAt = DateTime.UtcNow
+        });
+
+        return true;
+    }
+
+    public async Task<CertificateTemplateDto?> DuplicateTemplateAsync(Guid templateId, string? newName = null, Guid? userId = null, Guid? instituteId = null)
+    {
+        var source = await _templates.GetByIdAsync(templateId, includeVersions: true);
+        if (source is null || (instituteId.HasValue && source.InstituteId != instituteId.Value))
+            return null;
+
+        var latestVersion = await _templates.GetLatestVersionAsync(templateId);
+        var name = string.IsNullOrWhiteSpace(newName) ? $"{source.Name} (نسخة)" : newName.Trim();
+
+        return await CreateTemplateAsync(new CreateTemplateDto
+        {
+            InstituteId = source.InstituteId,
+            Name = name,
+            Description = source.Description,
+            Type = source.Type,
+            IsDefault = false,
+            InitialConfigurationJson = latestVersion?.ConfigurationJson
+        }, userId);
+    }
+
+    public async Task<bool> ToggleTemplateActiveAsync(Guid templateId, Guid? instituteId = null)
+    {
+        var template = await _templates.GetByIdAsync(templateId);
+        if (template is null || (instituteId.HasValue && template.InstituteId != instituteId.Value))
+            return false;
+
+        template.IsActive = !template.IsActive;
+        template.UpdatedAt = DateTime.UtcNow;
+        return await _templates.UpdateAsync(template);
+    }
+
+    private static CertificateTemplateVersionDto MapVersionToDto(
+        CertificateTemplateVersion version,
+        int currentVersionNumber,
+        IReadOnlyDictionary<Guid, int> certCounts,
+        IReadOnlyDictionary<Guid, string> userNames)
+    {
+        var parsed = TemplateConfiguration.FromJson(version.ConfigurationJson);
+        var userDisplay = version.CreatedBy.HasValue && userNames.TryGetValue(version.CreatedBy.Value, out var name)
+            ? name
+            : null;
+
+        return new CertificateTemplateVersionDto
+        {
+            Id = version.Id,
+            TemplateId = version.TemplateId,
+            VersionNumber = version.VersionNumber,
+            ConfigurationJson = version.ConfigurationJson,
+            CreatedAt = version.CreatedAt,
+            CreatedAtFormatted = version.CreatedAt.ToString("yyyy/MM/dd HH:mm"),
+            CreatedBy = version.CreatedBy,
+            CreatedByName = userDisplay,
+            CertificatesIssuedCount = certCounts.GetValueOrDefault(version.Id, 0),
+            IsCurrent = (version.VersionNumber == currentVersionNumber),
+            PrimaryColor = parsed.Theme?.PrimaryColor ?? "#C59B27",
+            SecondaryColor = parsed.Theme?.SecondaryColor ?? "#064E3B",
+            AccentColor = parsed.Theme?.AccentColor ?? "#DFBA69",
+            BackgroundColor = parsed.Theme?.BackgroundColor ?? "#FDFBF7",
+            Orientation = parsed.Layout?.Orientation ?? "landscape",
+            PageSize = parsed.Layout?.PageSize ?? "A4",
+            SectionCount = parsed.Sections?.Count(s => s.Enabled) ?? 0
+        };
+    }
+
     public async Task SeedDefaultTemplatesForInstituteAsync(Guid instituteId, Guid? createdBy = null)
     {
         foreach (var type in new[] { CertificateType.Quran, CertificateType.Matn })

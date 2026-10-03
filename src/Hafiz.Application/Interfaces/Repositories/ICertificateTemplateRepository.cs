@@ -18,6 +18,9 @@ public interface ICertificateTemplateRepository
     Task<CertificateTemplateVersion> AddVersionAsync(CertificateTemplateVersion version);
     Task<CertificateTemplateVersion?> GetVersionAsync(Guid versionId);
     Task<CertificateTemplateVersion?> GetLatestVersionAsync(Guid templateId);
+    Task<IReadOnlyList<CertificateTemplateVersion>> GetVersionsByTemplateIdAsync(Guid templateId);
     Task<int> GetIssuedCertificatesCountAsync(Guid templateId);
+    Task<Dictionary<Guid, int>> GetIssuedCertificatesCountPerVersionAsync(Guid templateId);
+    Task<IReadOnlyDictionary<Guid, string>> GetUserNamesAsync(IEnumerable<Guid> userIds);
     Task ClearDefaultFlagAsync(Guid instituteId, CertificateType type, Guid? exceptTemplateId = null);
 }

@@ -8,5 +8,6 @@ public enum CertificateAuditAction
     Revoked = 4,
     Regenerated = 5,
     Viewed = 6,
-    Verified = 7
+    Verified = 7,
+    Deleted = 8
 }

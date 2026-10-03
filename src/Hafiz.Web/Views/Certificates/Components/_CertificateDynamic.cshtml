@@ -95,18 +95,17 @@
         --cert-emerald-primary: @theme.SecondaryColor;
         --cert-blue-dark: @theme.SecondaryColor;
         --cert-text-dark: @theme.TextColor;
-        --cert-text-muted: @mutedText;
         --tpl-title-font: '@typography.TitleFont';
         --tpl-body-font: '@typography.BodyFont';
         --tpl-arabic-font: '@typography.ArabicFont';
         --tpl-title-size: @typography.TitleSize;
         --tpl-body-size: @typography.BodySize;
         --tpl-student-size: @typography.StudentNameSize;
-        --tpl-line-height: @typography.LineHeight;
+        --tpl-line-height: @typography.LineHeight.ToString("0.##", CultureInfo.InvariantCulture);
         --cert-corner-size: @(cornerSize)px;
         --cert-pattern-color: @patternColor;
-        --cert-pattern-opacity: @patternOpacity;
-        padding: @(margins.Top)mm @(margins.Right)mm @(margins.Bottom)mm @(margins.Left)mm;
+        --cert-pattern-opacity: @patternOpacity.ToString("0.000", CultureInfo.InvariantCulture);
+        padding: @(margins.Top.ToString("0.##", CultureInfo.InvariantCulture))mm @(margins.Right.ToString("0.##", CultureInfo.InvariantCulture))mm @(margins.Bottom.ToString("0.##", CultureInfo.InvariantCulture))mm @(margins.Left.ToString("0.##", CultureInfo.InvariantCulture))mm;
     }</style>
 <div class="certificate-sheet">
     <div class="cert-outer-border@(isOrnate ? " cert-outer-border--ornate" : "")" style="border-style:@theme.BorderStyle; border-width:@(theme.BorderWidth)px; border-color:@theme.BorderColor">
@@ -137,7 +136,7 @@
             }
             @if (theme.WatermarkEnabled)
             {
-                <div class="cert-watermark" style="opacity:@theme.WatermarkOpacity"><i class='bx @theme.WatermarkIcon'></i></div>
+                <div class="cert-watermark" style="opacity:@theme.WatermarkOpacity.ToString("0.000", CultureInfo.InvariantCulture)"><i class='bx @theme.WatermarkIcon'></i></div>
             }
             @if (!hasSections)
             {

@@ -75,7 +75,8 @@
   function resolveBackground(theme) {
     const requested = normalizeKey(theme.backgroundPattern, 'none');
     const pattern = BACKGROUND_PATTERNS.includes(requested) ? requested : 'none';
-    const opacity = Math.min(0.5, Math.max(0, Number(theme.backgroundPatternOpacity) || 0));
+    const rawOpacity = Number(theme.backgroundPatternOpacity);
+    const opacity = Math.min(0.15, Math.max(0, isNaN(rawOpacity) ? 0.05 : rawOpacity));
     const color =
       { secondary: theme.secondaryColor, accent: theme.accentColor }[
         normalizeKey(theme.backgroundPatternColor, 'primary')
@@ -105,33 +106,137 @@
     { title: 'إدارة المركز', nameField: '{DirectorName}', subtitle: 'الختم الرسمي', type: 'signature' },
   ];
 
-  // Sample certificate used by the live preview only.
-  const SAMPLE = {
-    StudentName: 'أحمد محمد العبدالله',
-    GenderedStudent: 'الطالب',
-    GenderedCompleted: 'أتمّ',
-    InstituteName: 'مركز تحفيظ القرآن الكريم',
-    ClassName: 'حلقة الإمام البخاري',
-    TeacherName: 'الأستاذ عبد الرحمن',
-    DirectorName: 'إدارة الشؤون التعليمية',
-    CertificateNumber: 'QRN-ABC-00042',
-    CertificateTitle: 'شهادة إتمام وتفوق قرآني',
-    SubjectName: 'حفظ (5) أجزاء من كتاب الله تعالى',
-    AuthorName: 'برواية حفص عن عاصم من طريق الشاطبية',
-    FromJuz: '1',
-    ToJuz: '5',
-    JuzCount: '5',
-    CompletionPercentage: '17',
-    Riwayah: 'برواية حفص عن عاصم من طريق الشاطبية',
-    ScopeDetails: 'من الجزء 1 إلى الجزء 5',
-    Score: '98',
-    Rating: 'ممتاز',
-    HijriDate: '1447/03/12 هـ',
-    GregorianDate: '2026/09/20 م',
-    IssueDate: '1447/03/12 هـ الموافق 2026/09/20 م',
+  // Sample datasets used by the live preview for different certificate types and student genders.
+  const SAMPLE_DATASETS = {
+    quran_male: {
+      StudentName: 'أحمد محمد العبدالله',
+      GenderedStudent: 'الطالب',
+      GenderedCompleted: 'أتمّ',
+      InstituteName: 'مركز تحفيظ القرآن الكريم',
+      ClassName: 'حلقة الإمام عاصم',
+      TeacherName: 'الشيخ عبد الرحمن السعدي',
+      DirectorName: 'إدارة الشؤون التعليمية',
+      CertificateNumber: 'QRN-ABC-00042',
+      CertificateTitle: 'شهادة إتمام وتفوق قرآني',
+      SubjectName: 'حفظ (5) أجزاء من كتاب الله تعالى',
+      AuthorName: 'برواية حفص عن عاصم من طريق الشاطبية',
+      FromJuz: '1',
+      ToJuz: '5',
+      JuzCount: '5',
+      CompletionPercentage: '17',
+      Riwayah: 'برواية حفص عن عاصم من طريق الشاطبية',
+      ScopeDetails: 'من الجزء 1 إلى الجزء 5',
+      Score: '98',
+      Rating: 'ممتاز',
+      ExamResult: 'بتقدير: ممتاز ومبارك',
+      HijriDate: '1447/03/12 هـ',
+      GregorianDate: '2026/09/20 م',
+      IssueDate: '1447/03/12 هـ الموافق 2026/09/20 م',
+    },
+    quran_female: {
+      StudentName: 'فاطمة بنت أحمد الزهراء',
+      GenderedStudent: 'الطالبة',
+      GenderedCompleted: 'أتمّت',
+      InstituteName: 'دار القرآن والحديث النسائية',
+      ClassName: 'حلقة أم المؤمنين خديجة',
+      TeacherName: 'المعلمة مريم الصالح',
+      DirectorName: 'الإدارة النسائية',
+      CertificateNumber: 'QRN-FEM-00108',
+      CertificateTitle: 'شهادة إتقان وتفوق قرآني',
+      SubjectName: 'حفظ (10) أجزاء من كتاب الله تعالى',
+      AuthorName: 'برواية حفص عن عاصم من طريق الشاطبية',
+      FromJuz: '1',
+      ToJuz: '10',
+      JuzCount: '10',
+      CompletionPercentage: '33',
+      Riwayah: 'برواية حفص عن عاصم من طريق الشاطبية',
+      ScopeDetails: 'من الجزء 1 إلى الجزء 10',
+      Score: '100',
+      Rating: 'ممتاز مرتفع',
+      ExamResult: 'بتقدير: ممتاز مرتفع ومبارك',
+      HijriDate: '1447/03/15 هـ',
+      GregorianDate: '2026/09/23 م',
+      IssueDate: '1447/03/15 هـ الموافق 2026/09/23 م',
+    },
+    matn_male: {
+      StudentName: 'عمر بن خالد الفاسي',
+      GenderedStudent: 'الطالب',
+      GenderedCompleted: 'أتمّ',
+      InstituteName: 'معهد التأصيل والمتون العلمية',
+      ClassName: 'حلقة الإتقان في التجويد',
+      TeacherName: 'الشيخ إبراهيم المقرئ',
+      DirectorName: 'إدارة المعهد العلمية',
+      CertificateNumber: 'MTN-TKH-00015',
+      CertificateTitle: 'شهادة إتقان وضبط متن علمي',
+      SubjectName: 'متن تحفة الأطفال والغلمان في تجويد القرآن',
+      AuthorName: 'للإمام سليمان الجمزوري رحمه الله',
+      FromJuz: '1',
+      ToJuz: '1',
+      JuzCount: '61 بيتاً',
+      CompletionPercentage: '100',
+      Riwayah: 'حفظاً وضبطاً وإتقاناً مع شرح الأصول',
+      ScopeDetails: 'كامل منظومة تحفة الأطفال (61 بيتاً)',
+      Score: '99',
+      Rating: 'ممتاز',
+      ExamResult: 'بتقدير: إتقان تام وضبط مبارك',
+      HijriDate: '1447/03/18 هـ',
+      GregorianDate: '2026/09/26 م',
+      IssueDate: '1447/03/18 هـ الموافق 2026/09/26 م',
+    },
+    sanad_male: {
+      StudentName: 'عبد الله بن يحيى الشنقيطي',
+      GenderedStudent: 'الطالب المجاز',
+      GenderedCompleted: 'أتمّ',
+      InstituteName: 'مقرأة الإسناد والقراءات العشر',
+      ClassName: 'مجلس الإسناد العالي',
+      TeacherName: 'المسند الشيخ عبد العزيز المكي',
+      DirectorName: 'عمادة المقارئ القرآنية',
+      CertificateNumber: 'SND-QUR-00003',
+      CertificateTitle: 'إجازة بالسند المتصل في القرآن الكريم',
+      SubjectName: 'ختم القرآن الكريم كاملاً غيباً عن ظهر قلب',
+      AuthorName: 'برواية ورش عن نافع المدني من طريق الأزرق',
+      FromJuz: '1',
+      ToJuz: '30',
+      JuzCount: '30 جزءاً',
+      CompletionPercentage: '100',
+      Riwayah: 'برواية ورش عن نافع من طريق الأزرق بسند متصل',
+      ScopeDetails: 'من سورة الفاتحة إلى سورة الناس قراءة وإقراءً',
+      Score: '100',
+      Rating: 'إجازة مسندة',
+      ExamResult: 'أجيز بالسند المتصل إلى رسول الله ﷺ',
+      HijriDate: '1447/03/20 هـ',
+      GregorianDate: '2026/09/28 م',
+      IssueDate: '1447/03/20 هـ الموافق 2026/09/28 م',
+    },
+    general_appreciation: {
+      StudentName: 'محمد بن سالم الغامدي',
+      GenderedStudent: 'المكرم',
+      GenderedCompleted: 'أتمّ',
+      InstituteName: 'مركز التميز والأنشطة القرآنية',
+      ClassName: 'المسابقة القرآنية السنوية',
+      TeacherName: 'لجنة التحكيم والمسابقات',
+      DirectorName: 'مدير عام المركز',
+      CertificateNumber: 'GEN-APR-00088',
+      CertificateTitle: 'شهادة شكر وتقدير وتميز',
+      SubjectName: 'المشاركة الفاعلة والتفوق في فعاليات الملتقى القرآني',
+      AuthorName: 'المركز العام للأنشطة الطلابية',
+      FromJuz: '-',
+      ToJuz: '-',
+      JuzCount: '-',
+      CompletionPercentage: '100',
+      Riwayah: '-',
+      ScopeDetails: 'المشاركة المتميزة في برامج خدمة القرآن الكريم',
+      Score: '97',
+      Rating: 'تميز شرفي',
+      ExamResult: 'مع وافر الشكر والتقدير والدعاء بمزيد من التوفيق',
+      HijriDate: '1447/03/22 هـ',
+      GregorianDate: '2026/09/30 م',
+      IssueDate: '1447/03/22 هـ الموافق 2026/09/30 م',
+    }
   };
 
-  const SAMPLE_EXAM_RESULT = 'بتقدير: ممتاز ومبارك';
+  let currentSampleKey = 'quran_male';
+  const getSample = () => SAMPLE_DATASETS[currentSampleKey] || SAMPLE_DATASETS.quran_male;
 
   let config;
   let parseFailed = false;
@@ -531,8 +636,9 @@
 
   function resolve(text) {
     if (!text) return '';
-    return Object.keys(SAMPLE).reduce(
-      (result, key) => result.replace(new RegExp(`\\{${key}\\}`, 'gi'), SAMPLE[key]),
+    const sample = getSample();
+    return Object.keys(sample).reduce(
+      (result, key) => result.replace(new RegExp(`\\{${key}\\}`, 'gi'), sample[key]),
       String(text),
     );
   }
@@ -584,7 +690,6 @@
       .sort((a, b) => (a.order || 0) - (b.order || 0));
 
     const cornerStyle = resolveCornerStyle(theme);
-    // "simple" keeps the original border-drawn L, so it carries no modifier class.
     const cornerClasses =
       cornerStyle === 'none' || cornerStyle === 'simple'
         ? ''
@@ -626,7 +731,6 @@
 
     const watermark = `<div class="cert-watermark" style="opacity:${theme.watermarkOpacity}"><i class="bx ${escapeAttr(theme.watermarkIcon)}"></i></div>`;
 
-    // Same markup the Razor renderer emits — all the artwork lives in certificate.css.
     const band = `
       <div class="cert-frame-band">
         <div class="cert-band-edge cert-band-edge--top"></div>
@@ -645,8 +749,6 @@
 
     const innerClasses = ['cert-inner-border', cornerClasses].filter(Boolean).join(' ');
 
-    // Mirrors _CertificateDynamic.cshtml: a configuration that carries no sections at all renders the
-    // default set rather than a blank sheet, so the preview cannot disagree with the printed page.
     const defaultSectionTypes = ['header', 'title', 'verse', 'statement', 'evaluation', 'signatures'];
     const sectionMarkup = sections.length
       ? sections.map((section) => renderSection(section.type)).join('')
@@ -692,19 +794,20 @@
   }
 
   function renderHeader() {
+    const sample = getSample();
     const showLogo = sectionConfig('header', 'showInstituteLogo', true);
     const showName = sectionConfig('header', 'showInstituteName', true);
     const showSub = sectionConfig('header', 'showSubInstitute', true);
     const showBasmalah = sectionConfig('header', 'showBasmalah', true);
     const showNumber = sectionConfig('header', 'showCertificateNumber', true);
-    const subText = sectionConfig('header', 'subInstituteText', `حلقة: ${SAMPLE.ClassName}`);
+    const subText = sectionConfig('header', 'subInstituteText', `حلقة: ${sample.ClassName}`);
 
     const side =
       showLogo || showName || showSub
         ? `<div class="cert-header-side">
              ${showLogo ? '<div class="cert-logo cert-logo-placeholder">شعار</div>' : ''}
              <div>
-               ${showName ? `<h2 class="cert-institute-title">${escapeHtml(SAMPLE.InstituteName)}</h2>` : ''}
+               ${showName ? `<h2 class="cert-institute-title">${escapeHtml(sample.InstituteName)}</h2>` : ''}
                ${showSub ? `<div class="cert-sub-institute">${escapeHtml(resolve(subText))}</div>` : ''}
              </div>
            </div>`
@@ -713,7 +816,7 @@
     return `<div class="cert-header">
       ${side}
       ${showBasmalah ? '<div class="cert-basmalah">بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ</div>' : ''}
-      ${showNumber ? `<div class="cert-number-box"><span class="cert-serial">${SAMPLE.CertificateNumber}</span></div>` : ''}
+      ${showNumber ? `<div class="cert-number-box"><span class="cert-serial">${sample.CertificateNumber}</span></div>` : ''}
     </div>`;
   }
 
@@ -728,6 +831,7 @@
   }
 
   function renderStatement() {
+    const sample = getSample();
     const intro = resolve(sectionConfig('statement', 'text', 'تشهد إدارة المركز بأن {GenderedStudent} قد أتمّ بحمد الله وتوفيقه.'));
     const showStudent = sectionConfig('statement', 'showStudentName', true);
     const showSubject = sectionConfig('statement', 'showSubjectName', true);
@@ -738,26 +842,27 @@
     const box =
       showSubject || showAuthor || showScope
         ? `<div class="cert-achievement-box">
-             ${showSubject ? `<span class="cert-subject-name">${escapeHtml(SAMPLE.SubjectName)}</span>` : ''}
-             ${showAuthor ? `<div class="cert-author-name">${escapeHtml(SAMPLE.AuthorName)}</div>` : ''}
-             ${showScope ? `<div class="cert-scope-text">${escapeHtml(SAMPLE.ScopeDetails)}</div>` : ''}
+             ${showSubject ? `<span class="cert-subject-name">${escapeHtml(sample.SubjectName)}</span>` : ''}
+             ${showAuthor ? `<div class="cert-author-name">${escapeHtml(sample.AuthorName)}</div>` : ''}
+             ${showScope ? `<div class="cert-scope-text">${escapeHtml(sample.ScopeDetails)}</div>` : ''}
            </div>`
         : '';
 
     return `<div class="cert-body-content">
       <p class="cert-intro-text">${escapeHtml(intro)}</p>
-      ${showStudent ? `<div class="cert-student-name">${escapeHtml(SAMPLE.StudentName)}</div>` : ''}
+      ${showStudent ? `<div class="cert-student-name">${escapeHtml(sample.StudentName)}</div>` : ''}
       ${box}
       ${closing ? `<p class="cert-closing-text">${escapeHtml(resolve(closing))}</p>` : ''}
     </div>`;
   }
 
   function renderScope() {
+    const sample = getSample();
     const items = [];
-    if (sectionConfig('quranScope', 'showFromJuz', true)) items.push(['من الجزء', SAMPLE.FromJuz]);
-    if (sectionConfig('quranScope', 'showToJuz', true)) items.push(['إلى الجزء', SAMPLE.ToJuz]);
-    if (sectionConfig('quranScope', 'showJuzCount', true)) items.push(['عدد الأجزاء', SAMPLE.JuzCount]);
-    if (sectionConfig('quranScope', 'showCompletionPercentage', true)) items.push(['نسبة الإنجاز', `${SAMPLE.CompletionPercentage}%`]);
+    if (sectionConfig('quranScope', 'showFromJuz', true)) items.push(['من الجزء', sample.FromJuz]);
+    if (sectionConfig('quranScope', 'showToJuz', true)) items.push(['إلى الجزء', sample.ToJuz]);
+    if (sectionConfig('quranScope', 'showJuzCount', true)) items.push(['عدد الأجزاء', sample.JuzCount]);
+    if (sectionConfig('quranScope', 'showCompletionPercentage', true)) items.push(['نسبة الإنجاز', `${sample.CompletionPercentage}%`]);
 
     const grid = items.length
       ? `<div class="cert-scope-grid">${items
@@ -769,26 +874,27 @@
       : '';
 
     const riwayah = sectionConfig('quranScope', 'showRiwayah', true)
-      ? `<div class="cert-riwayah">${escapeHtml(resolve(sectionConfig('quranScope', 'riwayahText', SAMPLE.Riwayah)))}</div>`
+      ? `<div class="cert-riwayah">${escapeHtml(resolve(sectionConfig('quranScope', 'riwayahText', sample.Riwayah)))}</div>`
       : '';
 
     return `<div class="cert-scope">${grid}${riwayah}</div>`;
   }
 
   function renderEvaluation() {
+    const sample = getSample();
     const showScore = sectionConfig('evaluation', 'showScore', true);
     const showRating = sectionConfig('evaluation', 'showRating', true);
     const showExam = sectionConfig('evaluation', 'showExamResult', true);
 
     const badge = showExam
-      ? `<div class="cert-rating-badge"><i class='bx bxs-star cert-rating-star'></i><span>${escapeHtml(SAMPLE_EXAM_RESULT)}</span></div>`
+      ? `<div class="cert-rating-badge"><i class='bx bxs-star cert-rating-star'></i><span>${escapeHtml(sample.ExamResult || 'بتقدير: ممتاز ومبارك')}</span></div>`
       : '';
 
     const rows =
       showScore || showRating
         ? `<div class="cert-evaluation">
-             ${showScore ? `<div class="cert-evaluation-item"><span class="cert-evaluation-label">الدرجة</span><span class="cert-evaluation-value">${SAMPLE.Score}</span></div>` : ''}
-             ${showRating ? `<div class="cert-evaluation-item"><span class="cert-evaluation-label">التقدير</span><span class="cert-evaluation-value">${escapeHtml(SAMPLE.Rating)}</span></div>` : ''}
+             ${showScore ? `<div class="cert-evaluation-item"><span class="cert-evaluation-label">الدرجة</span><span class="cert-evaluation-value">${sample.Score}</span></div>` : ''}
+             ${showRating ? `<div class="cert-evaluation-item"><span class="cert-evaluation-label">التقدير</span><span class="cert-evaluation-value">${escapeHtml(sample.Rating)}</span></div>` : ''}
            </div>`
         : '';
 
@@ -796,13 +902,14 @@
   }
 
   function renderSignatures() {
+    const sample = getSample();
     const columns = signatureColumns().length ? signatureColumns() : DEFAULT_SIGNATURE_COLUMNS;
     const html = columns
       .map((column) => {
         if (column.type === 'seal') {
           return `<div class="cert-seal-box">
             ${column.showSeal ? '<div class="cert-official-seal"><i class="bx bxs-check-shield"></i></div>' : ''}
-            ${column.showDate ? `<div class="cert-date-text">صدرت بتاريخ: ${escapeHtml(SAMPLE.IssueDate)}</div>` : ''}
+            ${column.showDate ? `<div class="cert-date-text">صدرت بتاريخ: ${escapeHtml(sample.IssueDate)}</div>` : ''}
           </div>`;
         }
         return `<div class="cert-sign-col">
@@ -826,23 +933,53 @@
     </div>`;
   }
 
-  // Scales the sheet down to the width of the preview panel.
+  // Scales the sheet down to the width of the preview panel with optional zoom.
+  let zoomFactor = 1.0;
+
   function fitPreview(widthMm, heightMm) {
     if (!previewStage || !previewScaler) return;
     const sheet = previewHost.firstElementChild;
-    // Content may run past the paper height, so the stage grows to whatever is actually rendered.
     const sheetHeight = Math.max(heightMm * MM_TO_PX, sheet ? sheet.offsetHeight : 0);
     const sheetWidth = widthMm * MM_TO_PX;
-    const scale = Math.min(1, previewStage.clientWidth / sheetWidth);
+    const baseScale = Math.min(1, previewStage.clientWidth / sheetWidth);
+    const scale = baseScale * zoomFactor;
     previewScaler.style.width = `${sheetWidth}px`;
     previewScaler.style.transform = `scale(${scale})`;
-    previewScaler.style.transformOrigin = 'top right';
+    previewScaler.style.transformOrigin = 'top center';
     previewStage.style.height = `${sheetHeight * scale}px`;
+
+    const zoomEl = document.getElementById('zoomLevel');
+    if (zoomEl) zoomEl.textContent = `${Math.round(zoomFactor * 100)}%`;
   }
 
   let lastPaper = { width: 297, height: 210 };
 
   const refit = () => fitPreview(lastPaper.width, lastPaper.height);
+
+  // Zoom controls
+  document.getElementById('btnZoomIn')?.addEventListener('click', () => {
+    zoomFactor = Math.min(2.0, Math.round((zoomFactor + 0.15) * 100) / 100);
+    refit();
+  });
+  document.getElementById('btnZoomOut')?.addEventListener('click', () => {
+    zoomFactor = Math.max(0.4, Math.round((zoomFactor - 0.15) * 100) / 100);
+    refit();
+  });
+  document.getElementById('btnZoomReset')?.addEventListener('click', () => {
+    zoomFactor = 1.0;
+    refit();
+  });
+
+  // Sample dataset dropdown
+  document.getElementById('sampleDataSelect')?.addEventListener('change', (e) => {
+    currentSampleKey = e.target.value;
+    renderPreview();
+  });
+
+  // Print test
+  document.getElementById('btnPrintTest')?.addEventListener('click', () => {
+    window.print();
+  });
 
   let resizeTimer;
   window.addEventListener('resize', () => {
@@ -850,9 +987,6 @@
     resizeTimer = setTimeout(refit, 120);
   });
 
-  // The window is not the only thing that resizes the preview: collapsing the admin sidebar, zooming
-  // or showing a scrollbar all change the panel's width with no resize event. fitPreview rewrites the
-  // stage's height, so the observer ignores height-only changes to avoid reacting to its own writes.
   if (window.ResizeObserver && previewStage) {
     let lastWidth = null;
     new ResizeObserver(([entry]) => {
@@ -862,6 +996,47 @@
       refit();
     }).observe(previewStage);
   }
+
+  // Version loader APIs for history inspection and restoration
+  const originalInitialJson = configArea.value;
+
+  window.loadVersionConfigIntoBuilder = function(configJson, versionNumber) {
+    try {
+      configArea.value = configJson;
+      config = normalize(JSON.parse(configJson));
+      configArea.classList.remove('is-invalid');
+      syncControls();
+      renderSignatureEditor();
+      renderPreview();
+
+      const banner = document.getElementById('versionNoticeBanner');
+      const label = document.getElementById('loadedVersionLabel');
+      if (banner && label) {
+        label.textContent = `النسخة ${versionNumber}`;
+        banner.style.display = 'flex';
+        banner.style.setProperty('display', 'flex', 'important');
+      }
+      return true;
+    } catch (e) {
+      console.error('Failed to load version config:', e);
+      return false;
+    }
+  };
+
+  window.resetToOriginalConfig = function() {
+    configArea.value = originalInitialJson;
+    config = normalize(JSON.parse(originalInitialJson));
+    configArea.classList.remove('is-invalid');
+    syncControls();
+    renderSignatureEditor();
+    renderPreview();
+
+    const banner = document.getElementById('versionNoticeBanner');
+    if (banner) {
+      banner.style.display = 'none';
+      banner.style.setProperty('display', 'none', 'important');
+    }
+  };
 
   /* ----------------------------------------------------------------- init */
 
@@ -874,3 +1049,4 @@
     write();
   }
 })();
+

@@ -96,10 +96,13 @@
                     </button>
                 </form>
             }
-            <a href="/Certificates/Quran/@student.UserId" target="_blank" class="btn btn-outline" style="height: 38px; display: inline-flex; align-items: center; gap: 6px; padding: 0 14px; font-weight: 600; border-color: #10b981; color: #047857;" title="تصدير وطباعة شهادة إتمام القرآن الكريم أو أجزاء منه">
+            <button type="button" class="btn btn-outline" id="btnExportQuranCert"
+                    style="height: 38px; display: inline-flex; align-items: center; gap: 6px; padding: 0 14px; font-weight: 600; border-color: #10b981; color: #047857;"
+                    title="إصدار وطباعة شهادة إتمام القرآن الكريم أو أجزاء منه"
+                    onclick="openConfirmQuranCertModal(this)">
                 <i class='bx bx-award' style="font-size: 1.15rem;"></i>
                 <span>تصدير شهادة القرآن</span>
-            </a>
+            </button>
             <a href="@backUrl" class="back-btn">
                 <i class='bx bx-arrow-back'></i>
                 @Localizer["BackToList"]
@@ -970,11 +973,12 @@
                                                 </button>
                                                 @if (prog.Id != Guid.Empty && (prog.StudyStatus == StudyStatus.Completed || prog.MemorizationStatus == MemorizationStatus.Memorized || isActuallyPassed))
                                                 {
-                                                    <a href="/Certificates/Matn/@prog.Id" target="_blank" class="btn-admin-cert"
-                                                       title="تصدير وطباعة شهادة إتمام المتن">
+                                                    <button type="button" class="btn-admin-cert"
+                                                            title="تصدير وطباعة شهادة إتمام المتن"
+                                                            onclick="openConfirmMatnCertModal(this, '@prog.Id', '@(prog.MatnTitle?.Replace("'", "\\'"))', '@(prog.Score?.ToString("0.##") ?? "")', '@(prog.ExamStatusName?.Replace("'", "\\'") ?? "")', '@(prog.ExamDate?.ToString("yyyy-MM-dd") ?? "")')">
                                                         <i class='bx bx-award'></i>
                                                         <span>تصدير الشهادة</span>
-                                                    </a>
+                                                    </button>
                                                 }
                                             </div>
                                         </td>
@@ -1141,7 +1145,449 @@
             </div>
         </div>
 
+        <!-- =================================================================== -->
+        <!-- نافذة تأكيد إصدار شهادة القرآن الكريم                                    -->
+        <!-- =================================================================== -->
+        <div class="matn-modal-overlay" id="confirmQuranCertModal" tabindex="-1" aria-hidden="true" dir="rtl" style="display: none;" onclick="if(event.target === this) closeConfirmQuranCertModal()">
+            <div class="matn-modal-dialog" style="max-width: 540px;">
+                <div class="matn-modal-card">
+                    <div class="matn-modal-header" style="background: linear-gradient(135deg, #065f46 0%, #047857 100%); color: #fff; padding: 1.15rem 1.5rem;">
+                        <h5 class="matn-modal-title" style="color: #fff; display: flex; align-items: center; gap: 8px; margin: 0; font-size: 1.1rem; font-weight: 700;">
+                            <i class='bx bx-award fs-5'></i>
+                            <span>تأكيد إصدار شهادة القرآن الكريم</span>
+                        </h5>
+                        <button type="button" class="matn-modal-close" aria-label="Close" onclick="closeConfirmQuranCertModal()" style="color: #fff; background: none; border: none; font-size: 1.5rem; cursor: pointer;">
+                            <i class='bx bx-x'></i>
+                        </button>
+                    </div>
+                    <div class="matn-modal-body" style="padding: 20px;">
+                        <!-- تنبيه وجود شهادة سابقة إن وجدت -->
+                        <div id="quranExistingCertAlert" style="display: none; background: #fffbeb; border: 1.5px solid #fcd34d; border-radius: 8px; padding: 12px 14px; margin-bottom: 14px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
+                                <div style="display: flex; align-items: center; gap: 8px; color: #92400e; font-size: 13px; font-weight: 700;">
+                                    <i class='bx bx-error-circle' style="font-size: 20px; color: #d97706;"></i>
+                                    <span>تنبيه: توجد شهادة قرآن صادرة مسبقاً برقم (<span id="quranExistingCertNum"></span>)</span>
+                                </div>
+                                <a id="quranExistingCertLink" href="#" target="_blank" class="btn btn-sm" style="background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+                                    <i class='bx bx-show'></i> عرض الشهادة الصادرة
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- بطاقة بيانات الطالب -->
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-bottom: 16px;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <i class='bx bx-user-pin' style="font-size: 20px; color: #047857;"></i>
+                                <span style="font-weight: 700; color: #1e293b;">الطالب:</span>
+                                <span style="color: #0f172a; font-weight: 600;">@studentFullName</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class='bx bx-book-bookmark' style="font-size: 20px; color: #047857;"></i>
+                                <span style="font-weight: 700; color: #1e293b;">المحفوظ المسجل:</span>
+                                <span class="badge" style="background: #e6f4ea; color: #137333; font-size: 13px; font-weight: 700; padding: 4px 8px; border-radius: 6px;">
+                                    @(isHafiz ? "أتم حفظ القرآن الكريم كاملاً (30 جزءاً)" : $"{memorizedJuzDisplay} جزءاً و {memorizedPagesRemainder} صفحة")
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- خيارات نطاق الشهادة -->
+                        <div style="margin-bottom: 16px;">
+                            <label style="font-weight: 700; color: #334155; font-size: 13.5px; margin-bottom: 8px; display: block;">
+                                <i class='bx bx-slider-alt text-success me-1'></i> نطاق الشهادة المراد اعتمادها:
+                            </label>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 8px; background: #fff; margin: 0;">
+                                    <input type="radio" name="quranScopeChoice" value="full" @(isHafiz ? "checked" : "") onchange="toggleQuranScopeInput()" />
+                                    <span style="font-weight: 600; color: #1e293b; font-size: 13.5px;">كامل القرآن الكريم (30 جزءاً)</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 8px; background: #fff; margin: 0;">
+                                    <input type="radio" name="quranScopeChoice" value="range" @(!isHafiz ? "checked" : "") onchange="toggleQuranScopeInput()" />
+                                    <span style="font-weight: 600; color: #1e293b; font-size: 13.5px;">تحديد أجزاء معينة (من جزء إلى جزء)</span>
+                                </label>
+                            </div>
+
+                            <div id="quranRangeSelector" style="margin-top: 10px; display: @(isHafiz ? "none" : "flex"); gap: 12px; align-items: center; background: #f0fdf4; border: 1px dashed #86efac; border-radius: 8px; padding: 12px;">
+                                <div style="flex: 1;">
+                                    <label style="font-size: 12px; font-weight: 600; color: #166534; margin-bottom: 4px; display: block;">من الجزء:</label>
+                                    <input type="number" id="quranCertFromJuz" min="1" max="30" value="1" class="form-control form-control-sm" style="height: 36px; font-weight: 700;" />
+                                </div>
+                                <div style="flex: 1;">
+                                    <label style="font-size: 12px; font-weight: 600; color: #166534; margin-bottom: 4px; display: block;">إلى الجزء:</label>
+                                    <input type="number" id="quranCertToJuz" min="1" max="30" value="@(Math.Max(1, Math.Min(30, memorizedJuzDisplay)))" class="form-control form-control-sm" style="height: 36px; font-weight: 700;" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- تنبيه الاعتماد -->
+                        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 14px; display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: #1e40af;">
+                            <i class='bx bx-info-circle' style="font-size: 18px; margin-top: 2px; flex-shrink: 0;"></i>
+                            <span>تأكيد الإصدار يقوم بتوليد الشهادة الرسمية برقم متسلسل موثق في سجلات المركز ورمز QR للتحقق، وفتحها للطباعة في نافذة جديدة.</span>
+                        </div>
+                    </div>
+                    <div class="matn-modal-footer" style="padding: 14px 20px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                        <button type="button" class="btn btn-secondary" onclick="closeConfirmQuranCertModal()">إلغاء</button>
+                        <button type="button" class="btn btn-success" id="btnConfirmQuranSubmit" onclick="executeConfirmQuranCert()" style="display: inline-flex; align-items: center; gap: 6px; font-weight: 700; padding: 8px 18px;">
+                            <i class='bx bx-award'></i>
+                            <span>تأكيد وإصدار الشهادة</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- نافذة تأكيد إصدار شهادة المتن العلمي                                     -->
+        <!-- =================================================================== -->
+        <div class="matn-modal-overlay" id="confirmMatnCertModal" tabindex="-1" aria-hidden="true" dir="rtl" style="display: none;" onclick="if(event.target === this) closeConfirmMatnCertModal()">
+            <div class="matn-modal-dialog" style="max-width: 520px;">
+                <div class="matn-modal-card">
+                    <div class="matn-modal-header" style="background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%); color: #fff; padding: 1.15rem 1.5rem;">
+                        <h5 class="matn-modal-title" style="color: #fff; display: flex; align-items: center; gap: 8px; margin: 0; font-size: 1.1rem; font-weight: 700;">
+                            <i class='bx bx-book-bookmark fs-5'></i>
+                            <span>تأكيد إصدار شهادة المتن العلمي</span>
+                        </h5>
+                        <button type="button" class="matn-modal-close" aria-label="Close" onclick="closeConfirmMatnCertModal()" style="color: #fff; background: none; border: none; font-size: 1.5rem; cursor: pointer;">
+                            <i class='bx bx-x'></i>
+                        </button>
+                    </div>
+                    <div class="matn-modal-body" style="padding: 20px;">
+                        <!-- تنبيه وجود شهادة سابقة إن وجدت -->
+                        <div id="matnExistingCertAlert" style="display: none; background: #fffbeb; border: 1.5px solid #fcd34d; border-radius: 8px; padding: 12px 14px; margin-bottom: 14px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
+                                <div style="display: flex; align-items: center; gap: 8px; color: #92400e; font-size: 13px; font-weight: 700;">
+                                    <i class='bx bx-error-circle' style="font-size: 20px; color: #d97706;"></i>
+                                    <span>تنبيه: تم إصدار شهادة مسبقاً لهذا المتن برقم (<span id="matnExistingCertNum"></span>)</span>
+                                </div>
+                                <a id="matnExistingCertLink" href="#" target="_blank" class="btn btn-sm" style="background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+                                    <i class='bx bx-show'></i> عرض الشهادة الصادرة
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- بطاقة بيانات الطالب والمتن -->
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-bottom: 16px;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <i class='bx bx-user-pin' style="font-size: 20px; color: #0284c7;"></i>
+                                <span style="font-weight: 700; color: #1e293b;">الطالب:</span>
+                                <span style="color: #0f172a; font-weight: 600;">@studentFullName</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <i class='bx bx-book' style="font-size: 20px; color: #0284c7;"></i>
+                                <span style="font-weight: 700; color: #1e293b;">المتن المقرر:</span>
+                                <span id="confirmMatnTitleText" style="color: #0369a1; font-weight: 800; font-size: 15px;"></span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <i class='bx bx-star' style="font-size: 20px; color: #eab308;"></i>
+                                <span style="font-weight: 700; color: #1e293b;">النتيجة / التقدير:</span>
+                                <span id="confirmMatnScoreBadge" class="badge" style="background: #e0f2fe; color: #0369a1; font-size: 13px; font-weight: 700; padding: 4px 8px; border-radius: 6px;"></span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class='bx bx-calendar' style="font-size: 20px; color: #64748b;"></i>
+                                <span style="font-weight: 700; color: #1e293b;">تاريخ الاختبار:</span>
+                                <span id="confirmMatnDateText" style="color: #64748b; font-size: 13px;"></span>
+                            </div>
+                        </div>
+
+                        <!-- تنبيه الاعتماد -->
+                        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 14px; display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: #1e40af;">
+                            <i class='bx bx-info-circle' style="font-size: 18px; margin-top: 2px; flex-shrink: 0;"></i>
+                            <span>تأكيد الإصدار يقوم باعتماد الشهادة وتوليد السيريال الموثق ورمز QR للتحقق، وفتح الشهادة للطباعة في نافذة جديدة.</span>
+                        </div>
+                    </div>
+                    <div class="matn-modal-footer" style="padding: 14px 20px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                        <button type="button" class="btn btn-secondary" onclick="closeConfirmMatnCertModal()">إلغاء</button>
+                        <button type="button" class="btn btn-success" id="btnConfirmMatnSubmit" onclick="executeConfirmMatnCert()" style="display: inline-flex; align-items: center; gap: 6px; font-weight: 700; padding: 8px 18px;">
+                            <i class='bx bx-award'></i>
+                            <span>تأكيد وإصدار الشهادة</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script>
+            let pendingMatnProgId = null;
+            let existingQuranCertData = null;
+            let existingMatnCertData = null;
+
+            async function openConfirmQuranCertModal(triggerBtn) {
+                const alertBox = document.getElementById('quranExistingCertAlert');
+                const certNum = document.getElementById('quranExistingCertNum');
+                const certLink = document.getElementById('quranExistingCertLink');
+
+                let origHtml = '';
+                if (triggerBtn) {
+                    origHtml = triggerBtn.innerHTML;
+                    triggerBtn.disabled = true;
+                    triggerBtn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> <span>جاري الفحص...</span>";
+                }
+
+                try {
+                    const res = await fetch('/Certificates/CheckExistingQuran/@student.UserId');
+                    const data = await res.json();
+
+                    if (data && data.exists) {
+                        existingQuranCertData = data;
+                        if (alertBox && certNum && certLink) {
+                            certNum.textContent = data.certificateNumber;
+                            certLink.href = data.viewUrl;
+                            alertBox.style.display = 'block';
+                        }
+
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                title: 'تنبيه: توجد شهادة قرآن صادرة مسبقاً!',
+                                html: `<div style="text-align: right; font-size: 14px; line-height: 1.8; color: #334155;">
+                                         <p style="margin-bottom: 10px;">هذا الطالب لديه بالفعل شهادة قرآن رسمية معتمدة ومسجلة في النظام:</p>
+                                         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px;">
+                                            <div>🔹 <strong>رقم الشهادة:</strong> <code style="font-weight:700; color:#047857;">${data.certificateNumber}</code></div>
+                                            <div>🔹 <strong>تاريخ الإصدار:</strong> ${data.issueDate || data.hijriDate || 'مسجلة مسبقاً'}</div>
+                                            <div>🔹 <strong>اسم الطالب:</strong> @studentFullName</div>
+                                         </div>
+                                         <p style="font-size: 13px; margin: 0; color: #64748b;">يمكنك فتح الشهادة الصادرة مسبقاً مباشرة، أو المتابعة لفتح نافذة خيارات إصدار الشهادة.</p>
+                                       </div>`,
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#059669',
+                                cancelButtonColor: '#0284c7',
+                                confirmButtonText: '<i class="bx bx-show me-1"></i> عرض الشهادة السابقة',
+                                cancelButtonText: '<i class="bx bx-slider-alt me-1"></i> فتح نافذة الإصدار',
+                                reverseButtons: false
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.open(data.viewUrl, '_blank');
+                                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                                    showQuranModalInternal();
+                                }
+                            });
+                            return;
+                        } else {
+                            const choice = window.confirm(`تنبيه: توجد شهادة قرآن صادرة مسبقاً لهذا الطالب برقم (${data.certificateNumber}) بتاريخ (${data.issueDate || 'سابق'}).\n\nاضغط [موافق / OK] لفتح وعرض الشهادة السابقة مباشرة.\nاضغط [إلغاء / Cancel] لفتح نافذة خيارات الإصدار.`);
+                            if (choice) {
+                                window.open(data.viewUrl, '_blank');
+                                return;
+                            }
+                        }
+                    } else {
+                        existingQuranCertData = null;
+                        if (alertBox) alertBox.style.display = 'none';
+                    }
+                } catch (e) {
+                    console.error('Error checking existing Quran certificate:', e);
+                } finally {
+                    if (triggerBtn) {
+                        triggerBtn.innerHTML = origHtml;
+                        triggerBtn.disabled = false;
+                    }
+                }
+
+                showQuranModalInternal();
+            }
+
+            function showQuranModalInternal() {
+                const modal = document.getElementById('confirmQuranCertModal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                    modal.classList.add('show');
+                }
+            }
+
+            function closeConfirmQuranCertModal() {
+                const modal = document.getElementById('confirmQuranCertModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                    modal.classList.remove('show');
+                }
+            }
+
+            function toggleQuranScopeInput() {
+                const choice = document.querySelector('input[name="quranScopeChoice"]:checked')?.value;
+                const rangeBox = document.getElementById('quranRangeSelector');
+                if (rangeBox) {
+                    rangeBox.style.display = choice === 'range' ? 'flex' : 'none';
+                }
+            }
+
+            function executeConfirmQuranCert() {
+                const choice = document.querySelector('input[name="quranScopeChoice"]:checked')?.value || 'full';
+                let url = '/Certificates/Quran/@student.UserId';
+                if (choice === 'range') {
+                    const fromJuz = document.getElementById('quranCertFromJuz')?.value || '1';
+                    const toJuz = document.getElementById('quranCertToJuz')?.value || '30';
+                    url += `?fromJuz=${encodeURIComponent(fromJuz)}&toJuz=${encodeURIComponent(toJuz)}`;
+                }
+
+                if (existingQuranCertData) {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            title: 'تنبيه: شهادة معتمدة مسبقاً',
+                            html: `<div style="text-align: right; font-size: 13.5px; line-height: 1.8; color: #334155;">
+                                     <p>هذا الطالب يمتلك بالفعل شهادة رسمية مسجلة برقم (<strong style="color:#047857;">${existingQuranCertData.certificateNumber}</strong>).</p>
+                                     <p style="margin: 0; color: #64748b;">سيتم فتح وثيقة الشهادة الرسمية المعتمدة في نافذة جديدة.</p>
+                                   </div>`,
+                            icon: 'info',
+                            showCancelButton: true,
+                            confirmButtonColor: '#059669',
+                            cancelButtonColor: '#64748b',
+                            confirmButtonText: '<i class="bx bx-check me-1"></i> فتح الشهادة الآن',
+                            cancelButtonText: 'إلغاء'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                closeConfirmQuranCertModal();
+                                window.open(url, '_blank');
+                            }
+                        });
+                        return;
+                    }
+                }
+
+                closeConfirmQuranCertModal();
+                window.open(url, '_blank');
+            }
+
+            async function openConfirmMatnCertModal(triggerBtn, progId, matnTitle, score, grade, examDate) {
+                pendingMatnProgId = progId;
+
+                const alertBox = document.getElementById('matnExistingCertAlert');
+                const certNum = document.getElementById('matnExistingCertNum');
+                const certLink = document.getElementById('matnExistingCertLink');
+
+                let origHtml = '';
+                if (triggerBtn) {
+                    origHtml = triggerBtn.innerHTML;
+                    triggerBtn.disabled = true;
+                    triggerBtn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> <span>فحص...</span>";
+                }
+
+                try {
+                    const res = await fetch(`/Certificates/CheckExistingMatn/${progId}`);
+                    const data = await res.json();
+
+                    if (data && data.exists) {
+                        existingMatnCertData = data;
+                        if (alertBox && certNum && certLink) {
+                            certNum.textContent = data.certificateNumber;
+                            certLink.href = data.viewUrl;
+                            alertBox.style.display = 'block';
+                        }
+
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                title: 'تنبيه: تم إصدار شهادة مسبقاً لهذا المتن!',
+                                html: `<div style="text-align: right; font-size: 14px; line-height: 1.8; color: #334155;">
+                                         <p style="margin-bottom: 10px;">تم إصدار واعتماد شهادة رسمية مسبقاً للطالب لهذا المتن:</p>
+                                         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px;">
+                                            <div>🔹 <strong>المتن:</strong> <strong style="color:#0369a1;">${matnTitle}</strong></div>
+                                            <div>🔹 <strong>رقم الشهادة:</strong> <code style="font-weight:700; color:#047857;">${data.certificateNumber}</code></div>
+                                            <div>🔹 <strong>تاريخ الإصدار:</strong> ${data.issueDate || 'سابق'}</div>
+                                         </div>
+                                         <p style="font-size: 13px; margin: 0; color: #64748b;">هل ترغب بعرض الشهادة الصادرة مسبقاً أم فتح نافذة تأكيد خيارات الإصدار؟</p>
+                                       </div>`,
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#059669',
+                                cancelButtonColor: '#0284c7',
+                                confirmButtonText: '<i class="bx bx-show me-1"></i> عرض الشهادة السابقة',
+                                cancelButtonText: '<i class="bx bx-slider-alt me-1"></i> فتح نافذة الإصدار',
+                                reverseButtons: false
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.open(data.viewUrl, '_blank');
+                                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                                    showMatnModalInternal(progId, matnTitle, score, grade, examDate);
+                                }
+                            });
+                            return;
+                        } else {
+                            const choice = window.confirm(`تنبيه: تم إصدار شهادة مسبقاً لمتن (${matnTitle}) برقم (${data.certificateNumber}) بتاريخ (${data.issueDate || 'سابق'}).\n\nاضغط [موافق / OK] لعرض الشهادة السابقة مباشرة.\nاضغط [إلغاء / Cancel] لفتح نافذة تأكيد الإصدار.`);
+                            if (choice) {
+                                window.open(data.viewUrl, '_blank');
+                                return;
+                            }
+                        }
+                    } else {
+                        existingMatnCertData = null;
+                        if (alertBox) alertBox.style.display = 'none';
+                    }
+                } catch (e) {
+                    console.error('Error checking existing Matn certificate:', e);
+                } finally {
+                    if (triggerBtn) {
+                        triggerBtn.innerHTML = origHtml;
+                        triggerBtn.disabled = false;
+                    }
+                }
+
+                showMatnModalInternal(progId, matnTitle, score, grade, examDate);
+            }
+
+            function showMatnModalInternal(progId, matnTitle, score, grade, examDate) {
+                const titleEl = document.getElementById('confirmMatnTitleText');
+                if (titleEl) titleEl.textContent = matnTitle || 'متن علمي';
+
+                let resultText = '';
+                if (score && !isNaN(score)) {
+                    resultText += `${parseFloat(score).toFixed(0)}% `;
+                }
+                if (grade) {
+                    resultText += `(${grade})`;
+                }
+                if (!resultText) {
+                    resultText = 'مكتمل بنجاح';
+                }
+                const badgeEl = document.getElementById('confirmMatnScoreBadge');
+                if (badgeEl) badgeEl.textContent = resultText;
+
+                const dateEl = document.getElementById('confirmMatnDateText');
+                if (dateEl) dateEl.textContent = examDate ? examDate : 'تاريخ الاعتماد: اليوم';
+
+                const modal = document.getElementById('confirmMatnCertModal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                    modal.classList.add('show');
+                }
+            }
+
+            function closeConfirmMatnCertModal() {
+                const modal = document.getElementById('confirmMatnCertModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                    modal.classList.remove('show');
+                }
+            }
+
+            function executeConfirmMatnCert() {
+                if (!pendingMatnProgId) return;
+                const url = `/Certificates/Matn/${pendingMatnProgId}`;
+
+                if (existingMatnCertData) {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            title: 'تنبيه: شهادة مسجلة مسبقاً لهذا المتن',
+                            html: `<div style="text-align: right; font-size: 13.5px; line-height: 1.8; color: #334155;">
+                                     <p>تم إصدار شهادة رسمية مسبقاً لهذا المتن برقم (<strong style="color:#047857;">${existingMatnCertData.certificateNumber}</strong>).</p>
+                                     <p style="margin: 0; color: #64748b;">سيتم فتح وثيقة الشهادة الرسمية المعتمدة في نافذة جديدة.</p>
+                                   </div>`,
+                            icon: 'info',
+                            showCancelButton: true,
+                            confirmButtonColor: '#059669',
+                            cancelButtonColor: '#64748b',
+                            confirmButtonText: '<i class="bx bx-check me-1"></i> عرض الشهادة الآن',
+                            cancelButtonText: 'إلغاء'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                closeConfirmMatnCertModal();
+                                window.open(url, '_blank');
+                            }
+                        });
+                        return;
+                    }
+                }
+
+                closeConfirmMatnCertModal();
+                window.open(url, '_blank');
+            }
+
             let currentAdminPassingGrade = 60;
 
             function setAdminExamToday() {

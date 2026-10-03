@@ -57,6 +57,7 @@ public class CertificateModel
     public string VerificationUrl { get; set; } = string.Empty;
     public string? QrCodeDataUrl { get; set; } // Base64 PNG data:image/png;base64,...
     public CertificateStatus Status { get; set; } = CertificateStatus.Active;
+    public bool IsExistingCertificate { get; set; }
 
     // Active Template Configuration
     public TemplateConfiguration.TemplateConfiguration Configuration { get; set; } = new();

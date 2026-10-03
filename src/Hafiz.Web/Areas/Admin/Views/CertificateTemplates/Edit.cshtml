@@ -7,11 +7,9 @@
     var configuration = TemplateConfiguration.FromJson(Model.ConfigurationJson);
     var storedSections = configuration.Sections;
 
-    // Every known section is offered in the editor, in the order it is stored (unknown ones keep a stable order at the end).
     int StoredOrder(string type) =>
         storedSections.FirstOrDefault(s => string.Equals(s.Type, type, StringComparison.OrdinalIgnoreCase))?.Order ?? int.MaxValue;
 
-    // Metadata drives both the per-section option inputs and the live preview in certificate-template-builder.js.
     var sectionInfo = new Dictionary<string, (string Label, string Icon, string Hint)>
     {
         ["header"] = ("رأس الشهادة", "bx-building", "الشعار واسم المركز والبسملة ورقم الشهادة"),
@@ -92,20 +90,47 @@
     <header class="cert-admin-header">
         <div>
             <h1><span class="cert-icon"><i class='bx bx-palette'></i></span>محرر قالب الشهادة</h1>
-            <p>صمّم الشهادة بصرياً وشاهد النتيجة مباشرة قبل الحفظ. كل حفظ يُنشئ نسخة جديدة من القالب.</p>
+            <p>صمّم الشهادة بصرياً وشاهد النتيجة مباشرة قبل الحفظ. كل حفظ يُنشئ نسخة جديدة ومؤرشفة من القالب.</p>
         </div>
-        <div style="display:flex; gap:9px; flex-wrap:wrap;">
+        <div style="display:flex; gap:9px; flex-wrap:wrap; align-items:center;">
+            <button type="button" class="btn btn-outline-secondary" id="btnDesignerVersions" onclick="openDesignerVersionsModal()">
+                <i class='bx bx-history'></i> سجل نسخ هذا القالب
+            </button>
             <a asp-action="Index" class="btn btn-outline-secondary"><i class='bx bx-arrow-back'></i> كل القوالب</a>
         </div>
     </header>
 
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success"><i class='bx bx-check-circle'></i> @TempData["SuccessMessage"]</div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class='bx bx-check-circle me-1'></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="إغلاق"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class='bx bx-error-circle me-1'></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="إغلاق"></button>
+        </div>
     }
 
+    <div id="versionNoticeBanner" class="alert alert-warning mb-3" style="display:none; align-items:center; justify-content:space-between; gap:12px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+            <i class='bx bx-history' style="font-size:22px; color:#b45309;"></i>
+            <div>
+                <strong>تنبيه المعاينة التاريخية:</strong>
+                أنت تشاهد حالياً إعدادات <span id="loadedVersionLabel" style="font-weight:800; color:#b45309;"></span> في المحرر.
+                <div class="text-muted small">يمكنك تعديل هذه الإعدادات وحفظها لإنشاء إصدار جديد تماماً، أو العودة لإعدادات النسخة الأحدث.</div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-dark" id="btnResetToCurrentVersion" onclick="resetToCurrentVersion()">
+            <i class='bx bx-undo'></i> العودة للإعدادات الحالية
+        </button>
+    </div>
+
     <form method="post" id="certificateBuilderForm">
-        <input asp-for="TemplateId" type="hidden" />
+        <input asp-for="TemplateId" id="templateIdInput" type="hidden" />
         <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
         <div class="cert-builder">
@@ -140,15 +165,18 @@
                 <div class="builder-section">
                     <h3><i class='bx bx-color-fill'></i> هوية الألوان</h3>
                     <div class="preset-grid mb-3">
-                        <button type="button" class="preset-btn" data-preset='{"preset":"classic_gold","primaryColor":"#C59B27","secondaryColor":"#064E3B","accentColor":"#DFBA69","backgroundColor":"#FDFBF7","borderColor":"#C59B27","frameStyle":"lines","cornerStyle":"arabesque","cornerSize":64,"backgroundPattern":"arabesque","backgroundPatternColor":"accent","backgroundPatternOpacity":0.05}'>
+                        <button type="button" class="preset-btn"
+                                data-preset='{"preset":"classic_gold","primaryColor":"#C59B27","secondaryColor":"#064E3B","accentColor":"#DFBA69","backgroundColor":"#FDFBF7","borderColor":"#C59B27","frameStyle":"lines","cornerStyle":"arabesque","cornerSize":64,"backgroundPattern":"arabesque","backgroundPatternColor":"accent","backgroundPatternOpacity":0.05}'>
                             <div class="preset-swatches"><span style="background:#C59B27"></span><span style="background:#064E3B"></span><span style="background:#FDFBF7;border:1px solid #ddd"></span></div>
                             ذهبي كلاسيكي
                         </button>
-                        <button type="button" class="preset-btn" data-preset='{"preset":"royal_emerald","primaryColor":"#147D62","secondaryColor":"#0A3D32","accentColor":"#62B99D","backgroundColor":"#F4FBF7","borderColor":"#147D62","frameStyle":"ornate","cornerStyle":"floral","cornerSize":68,"backgroundPattern":"damask","backgroundPatternColor":"secondary","backgroundPatternOpacity":0.06}'>
+                        <button type="button" class="preset-btn"
+                                data-preset='{"preset":"royal_emerald","primaryColor":"#147D62","secondaryColor":"#0A3D32","accentColor":"#62B99D","backgroundColor":"#F4FBF7","borderColor":"#147D62","frameStyle":"ornate","cornerStyle":"floral","cornerSize":68,"backgroundPattern":"damask","backgroundPatternColor":"secondary","backgroundPatternOpacity":0.06}'>
                             <div class="preset-swatches"><span style="background:#147D62"></span><span style="background:#0A3D32"></span><span style="background:#F4FBF7;border:1px solid #ddd"></span></div>
-                            زمردي
+                            زمردي ملكي
                         </button>
-                        <button type="button" class="preset-btn" data-preset='{"preset":"navy_sapphire","primaryColor":"#2E6EAA","secondaryColor":"#123F68","accentColor":"#82B9E8","backgroundColor":"#F7FBFF","borderColor":"#2E6EAA","frameStyle":"ornate","cornerStyle":"girih","cornerSize":60,"backgroundPattern":"geometric","backgroundPatternColor":"primary","backgroundPatternOpacity":0.05}'>
+                        <button type="button" class="preset-btn"
+                                data-preset='{"preset":"navy_sapphire","primaryColor":"#2E6EAA","secondaryColor":"#123F68","accentColor":"#82B9E8","backgroundColor":"#F7FBFF","borderColor":"#2E6EAA","frameStyle":"ornate","cornerStyle":"girih","cornerSize":60,"backgroundPattern":"geometric","backgroundPatternColor":"primary","backgroundPatternOpacity":0.05}'>
                             <div class="preset-swatches"><span style="background:#2E6EAA"></span><span style="background:#123F68"></span><span style="background:#F7FBFF;border:1px solid #ddd"></span></div>
                             أزرق هادئ
                         </button>
@@ -195,7 +223,6 @@
 
                 <div class="builder-section">
                     <h3><i class='bx bx-certification'></i> الإطار والزوايا المزخرفة</h3>
-
                     <div class="cb-field mb-3">
                         <label>نمط الإطار</label>
                         <div class="ornament-grid ornament-grid--wide">
@@ -250,7 +277,6 @@
 
                 <div class="builder-section">
                     <h3><i class='bx bx-image'></i> خلفية الشهادة</h3>
-
                     <div class="cb-field">
                         <label>النقش</label>
                         <div class="ornament-grid">
@@ -296,7 +322,8 @@
                         </div>
                         <div class="cb-field">
                             <label>شدة النقش</label>
-                            <input type="number" min="0" max="0.5" step="0.01" data-config="theme.backgroundPatternOpacity" data-cast="number" />
+                            <input type="number" min="0" max="0.15" step="0.01" data-config="theme.backgroundPatternOpacity" data-cast="number" />
+                            <small class="cb-hint" style="font-size:11px; margin:2px 0 0; display:block;">الموصى به: 0.03 إلى 0.08</small>
                         </div>
                     </div>
                 </div>
@@ -413,28 +440,33 @@
                                                 {
                                                     <div class="section-row">
                                                         <span>@field.Label</span>
-                                                        <input type="checkbox" class="toggle" data-section-config="@($"{type}:{field.Key}")" data-default="@field.Default.ToString()!.ToLowerInvariant()" />
+                                                        <input type="checkbox" class="toggle"
+                                                               data-section-config="@($"{type}:{field.Key}")"
+                                                               data-default="@field.Default.ToString()!.ToLowerInvariant()" />
                                                     </div>
                                                 }
                                                 else if (field.Kind == "textarea")
                                                 {
                                                     <div class="cb-field full">
                                                         <label>@field.Label</label>
-                                                        <textarea rows="3" data-section-config="@($"{type}:{field.Key}")" data-default="@field.Default"></textarea>
+                                                        <textarea rows="3" data-section-config="@($"{type}:{field.Key}")"
+                                                                  data-default="@field.Default"></textarea>
                                                     </div>
                                                 }
                                                 else if (field.Kind == "number")
                                                 {
                                                     <div class="cb-field">
                                                         <label>@field.Label</label>
-                                                        <input type="number" data-section-config="@($"{type}:{field.Key}")" data-default="@field.Default" data-cast="number" />
+                                                        <input type="number" data-section-config="@($"{type}:{field.Key}")"
+                                                               data-default="@field.Default" data-cast="number" />
                                                     </div>
                                                 }
                                                 else
                                                 {
                                                     <div class="cb-field full">
                                                         <label>@field.Label</label>
-                                                        <input data-section-config="@($"{type}:{field.Key}")" data-default="@field.Default" />
+                                                        <input data-section-config="@($"{type}:{field.Key}")"
+                                                               data-default="@field.Default" />
                                                     </div>
                                                 }
                                             }
@@ -483,26 +515,270 @@
 
                 <div class="builder-actions">
                     <a asp-action="Index" class="btn btn-light">إلغاء</a>
-                    <button class="btn btn-success"><i class='bx bx-save'></i> حفظ نسخة جديدة</button>
+                    <button type="submit" class="btn btn-success"><i class='bx bx-save'></i> حفظ نسخة جديدة</button>
                 </div>
             </section>
 
             <aside class="preview-panel">
                 <div class="preview-top">
                     <strong><i class='bx bx-show'></i> معاينة مباشرة</strong>
-                    <span class="live-dot">● يتم التحديث الآن</span>
+                    <span class="live-dot">● يتم التحديث فورياً</span>
                 </div>
+
+                <div class="preview-controls-row">
+                    <div class="preview-controls-group">
+                        <label for="sampleDataSelect" style="font-size:12px; font-weight:700; margin:0;"><i class='bx bx-user'></i> النموذج:</label>
+                        <select id="sampleDataSelect" class="preview-sample-select">
+                            <option value="quran_male">طالب - قرآن كريم (أحمد العبدالله)</option>
+                            <option value="quran_female">طالبة - قرآن كريم (فاطمة الزهراء)</option>
+                            <option value="matn_male">طالب - متن علمي (تحفة الأطفال)</option>
+                            <option value="sanad_male">طالب - إجازة بالسند المتصل</option>
+                            <option value="general_appreciation">طالب - شهادة شكر وتقدير</option>
+                        </select>
+                    </div>
+                    <div class="preview-controls-group">
+                        <button type="button" class="icon-btn" id="btnZoomOut" title="تصغير المعاينة"><i class='bx bx-minus'></i></button>
+                        <span class="zoom-indicator" id="zoomLevel">100%</span>
+                        <button type="button" class="icon-btn" id="btnZoomIn" title="تكبير المعاينة"><i class='bx bx-plus'></i></button>
+                        <button type="button" class="icon-btn" id="btnZoomReset" title="إعادة ضبط الحجم"><i class='bx bx-reset'></i></button>
+                        <button type="button" class="icon-btn" id="btnFullscreenPreview" title="معاينة بملء الشاشة"><i class='bx bx-fullscreen'></i></button>
+                        <button type="button" class="icon-btn" id="btnPrintTest" title="طباعة تجريبية"><i class='bx bx-printer'></i></button>
+                    </div>
+                </div>
+
                 <div class="preview-stage" id="previewStage">
                     <div class="preview-scaler" id="previewScaler">
                         <div id="certificatePreview"></div>
                     </div>
                 </div>
-                <p class="cb-hint text-center mt-2 mb-0">المعاينة ببيانات تجريبية، وتُطبع الشهادة الفعلية ببيانات الطالب.</p>
+                <p class="cb-hint text-center mt-2 mb-0">المعاينة ببيانات تجريبية، وتُطبع الشهادة الفعلية ببيانات الطالب المعتمدة.</p>
             </aside>
         </div>
     </form>
 </div>
 
+<!-- نافذة سجل نسخ القالب داخل المحرر -->
+<div class="modal fade" id="designerVersionsModal" tabindex="-1" aria-labelledby="designerVersionsModalLabel" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content" dir="rtl">
+            <div class="modal-header">
+                <h5 class="modal-title" id="designerVersionsModalLabel">
+                    <span class="cert-icon" style="width:34px; height:34px; font-size:18px;"><i class='bx bx-history'></i></span>
+                    سجل نسخ القالب والإصدارات السابقة
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <div class="modal-body">
+                <div id="designerVersionsLoading" class="text-center py-4">
+                    <i class='bx bx-loader-alt bx-spin' style="font-size:32px; color:var(--cb-forest);"></i>
+                    <p class="text-muted mt-2">جارٍ جلب النسخ التاريخية لهذا القالب...</p>
+                </div>
+                <div id="designerVersionsEmpty" class="text-center py-4" style="display:none;">
+                    <i class='bx bx-info-circle' style="font-size:32px; color:var(--cb-muted);"></i>
+                    <p class="text-muted mt-2">لا توجد نسخ مسجلة أخرى لهذا القالب.</p>
+                </div>
+                <div id="designerVersionsList" class="version-timeline" style="display:none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- نافذة المعاينة بملء الشاشة -->
+<div class="modal fade modal-fullscreen-preview" id="fullscreenModal" tabindex="-1" aria-labelledby="fullscreenModalLabel" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" dir="rtl">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fullscreenModalLabel">
+                    <span class="cert-icon" style="width:34px; height:34px; font-size:18px;"><i class='bx bx-fullscreen'></i></span>
+                    معاينة قالب الشهادة بالحجم الكامل
+                </h5>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="window.print()">
+                        <i class='bx bx-printer'></i> طباعة تجريبية
+                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                </div>
+            </div>
+            <div class="modal-body p-0">
+                <div class="fullscreen-preview-container" id="fullscreenModalContainer">
+                    <div id="fullscreenModalHost"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script src="~/js/admin/certificate-template-builder.js" asp-append-version="true"></script>
+    <script>
+        (() => {
+            const templateId = document.getElementById('templateIdInput')?.value;
+            const versionsUrl = '@Url.Action("Versions", "CertificateTemplates", new { area = "Admin" })';
+            const versionConfigUrl = '@Url.Action("VersionConfig", "CertificateTemplates", new { area = "Admin" })';
+
+            ['designerVersionsModal', 'fullscreenModal'].forEach((id) => {
+                const el = document.getElementById(id);
+                if (el && el.parentElement !== document.body) {
+                    document.body.appendChild(el);
+                }
+            });
+
+            const modalController = {
+                open(el) {
+                    if (!el) return;
+                    this.closeAll();
+                    el.style.display = 'flex';
+                    void el.offsetHeight;
+                    el.classList.add('show', 'is-open');
+                    el.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+                    document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+                },
+                close(el) {
+                    if (!el) return;
+                    el.classList.remove('show', 'is-open');
+                    el.setAttribute('aria-hidden', 'true');
+                    el.style.display = 'none';
+                    document.body.style.overflow = '';
+                    document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+                },
+                closeAll() {
+                    document.querySelectorAll('.modal').forEach(m => {
+                        m.classList.remove('show', 'is-open');
+                        m.setAttribute('aria-hidden', 'true');
+                        m.style.display = 'none';
+                    });
+                    document.body.style.overflow = '';
+                    document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+                }
+            };
+
+            document.addEventListener('click', (e) => {
+                const dismissBtn = e.target.closest('[data-bs-dismiss="modal"]');
+                if (dismissBtn) {
+                    e.preventDefault();
+                    const modal = dismissBtn.closest('.modal');
+                    if (modal) modalController.close(modal);
+                } else if (e.target.classList.contains('modal')) {
+                    modalController.close(e.target);
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') modalController.closeAll();
+            });
+
+            window.openDesignerVersionsModal = async function() {
+                if (!templateId) return;
+                const modal = document.getElementById('designerVersionsModal');
+                const loading = document.getElementById('designerVersionsLoading');
+                const empty = document.getElementById('designerVersionsEmpty');
+                const list = document.getElementById('designerVersionsList');
+
+                loading.style.display = 'block';
+                empty.style.display = 'none';
+                list.style.display = 'none';
+                list.innerHTML = '';
+
+                modalController.open(modal);
+
+                try {
+                    const res = await fetch(`${versionsUrl}?id=${encodeURIComponent(templateId)}`);
+                    const data = await res.json();
+                    loading.style.display = 'none';
+
+                    if (!data.success || !data.versions || data.versions.length === 0) {
+                        empty.style.display = 'block';
+                        return;
+                    }
+
+                    list.style.display = 'flex';
+                    list.innerHTML = data.versions.map(v => {
+                        const isCurrent = v.isCurrent;
+                        const issuedText = v.certificatesIssuedCount > 0 
+                            ? `<span class="badge bg-light text-primary border"><i class='bx bx-award'></i> ${v.certificatesIssuedCount} شهادة صادرة</span>`
+                            : `<span class="badge bg-light text-muted border">0 شهادة</span>`;
+
+                        const creatorText = v.createdByName ? `بواسطة: ${v.createdByName}` : '';
+                        const orientationText = v.orientation === 'portrait' ? 'عمودي' : 'أفقي';
+
+                        return `
+                            <div class="version-card ${isCurrent ? 'is-current' : ''}">
+                                <div class="version-card-head">
+                                    <div class="version-badge">
+                                        <i class='bx bx-git-commit'></i>
+                                        النسخة ${v.versionNumber}
+                                        ${isCurrent ? '<span class="version-badge-pill version-badge-pill--current">الإصدار الحالي</span>' : '<span class="version-badge-pill">إصدار سابق</span>'}
+                                    </div>
+                                    <div class="version-actions">
+                                        <button type="button" class="btn btn-primary btn-sm"
+                                                onclick="loadVersionDirectly('${v.id}', ${v.versionNumber})">
+                                            <i class='bx bx-download'></i> تحميل في المحرر
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="version-meta">
+                                    <span><i class='bx bx-calendar'></i> ${v.createdAtFormatted}</span>
+                                    ${creatorText ? `<span><i class='bx bx-user'></i> ${creatorText}</span>` : ''}
+                                    ${issuedText}
+                                </div>
+                                <div class="version-card-details">
+                                    <div class="version-badges-list">
+                                        <span class="version-palette" title="هوية ألوان النسخة">
+                                            <span class="version-palette-dot" style="background:${v.primaryColor}"></span>
+                                            <span class="version-palette-dot" style="background:${v.secondaryColor}"></span>
+                                            <span class="version-palette-dot" style="background:${v.accentColor}"></span>
+                                        </span>
+                                        <span class="badge bg-light text-dark border">${orientationText} (${v.pageSize})</span>
+                                        <span class="badge bg-light text-dark border">${v.sectionCount} أقسام مفعّلة</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } catch (err) {
+                    loading.style.display = 'none';
+                    empty.style.display = 'block';
+                    empty.innerHTML = `<p class="text-danger"><i class='bx bx-error'></i> تعذّر جلب النسخ: ${err.message}</p>`;
+                }
+            };
+
+            window.loadVersionDirectly = async function(versionId, versionNumber) {
+                try {
+                    const res = await fetch(`${versionConfigUrl}?id=${encodeURIComponent(templateId)}&versionId=${encodeURIComponent(versionId)}`);
+                    const data = await res.json();
+                    if (data.success && data.version) {
+                        if (window.loadVersionConfigIntoBuilder) {
+                            window.loadVersionConfigIntoBuilder(data.version.configurationJson, versionNumber);
+                        }
+                        modalController.close(document.getElementById('designerVersionsModal'));
+                    }
+                } catch (e) {
+                    alert('تعذّر تحميل إعدادات النسخة: ' + e.message);
+                }
+            };
+
+            window.resetToCurrentVersion = function() {
+                if (window.resetToOriginalConfig) {
+                    window.resetToOriginalConfig();
+                }
+            };
+
+            // Fullscreen preview handler
+            document.getElementById('btnFullscreenPreview')?.addEventListener('click', () => {
+                const sheet = document.querySelector('#certificatePreview .certificate-sheet');
+                if (!sheet) return;
+                const modal = document.getElementById('fullscreenModal');
+                const host = document.getElementById('fullscreenModalHost');
+                host.replaceChildren(sheet.cloneNode(true));
+                modalController.open(modal);
+            });
+        })();
+    </script>
 }

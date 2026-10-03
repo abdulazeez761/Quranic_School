@@ -127,9 +127,39 @@ public class CertificateTemplateRepository : ICertificateTemplateRepository
             .FirstOrDefaultAsync();
     }
 
+    public async Task<IReadOnlyList<CertificateTemplateVersion>> GetVersionsByTemplateIdAsync(Guid templateId)
+    {
+        return await _context.CertificateTemplateVersions
+            .Where(v => v.TemplateId == templateId)
+            .OrderByDescending(v => v.VersionNumber)
+            .ToListAsync();
+    }
+
     public async Task<int> GetIssuedCertificatesCountAsync(Guid templateId)
     {
         return await _context.Certificates.CountAsync(c => c.TemplateId == templateId && !c.IsDeleted);
+    }
+
+    public async Task<Dictionary<Guid, int>> GetIssuedCertificatesCountPerVersionAsync(Guid templateId)
+    {
+        return await _context.Certificates
+            .Where(c => c.TemplateId == templateId && !c.IsDeleted)
+            .GroupBy(c => c.TemplateVersionId)
+            .Select(g => new { VersionId = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.VersionId, x => x.Count);
+    }
+
+    public async Task<IReadOnlyDictionary<Guid, string>> GetUserNamesAsync(IEnumerable<Guid> userIds)
+    {
+        var ids = userIds.Distinct().ToList();
+        if (ids.Count == 0) return new Dictionary<Guid, string>();
+
+        var users = await _context.Users
+            .Where(u => ids.Contains(u.Id))
+            .Select(u => new { u.Id, u.FirstName, u.SecondName })
+            .ToListAsync();
+
+        return users.ToDictionary(u => u.Id, u => $"{u.FirstName} {u.SecondName}".Trim());
     }
 
     public async Task ClearDefaultFlagAsync(Guid instituteId, CertificateType type, Guid? exceptTemplateId = null)

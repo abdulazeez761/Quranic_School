@@ -44,10 +44,6 @@
 
     var pageSizes = new[] { 25, 50, 100 };
 
-    // SelectList drives the selected option; a bare selected="@(x == y)" would render
-    // selected="False", which HTML still honours, leaving the last option always shown.
-    var pageSizeList = new SelectList(pageSizes, pageSize);
-
     var sortList = new SelectList(
         new[]
         {
@@ -275,7 +271,12 @@
                 </div>
                 <div class="cert-filter-field cert-filter-pagesize">
                     <label class="cb-label" for="pageSize">عدد الصفوف</label>
-                    @Html.DropDownList("pageSize", pageSizeList, new { @class = "form-select", id = "pageSize" })
+                    <select name="pageSize" id="pageSize" class="form-select">
+                        @foreach (var size in pageSizes)
+                        {
+                            <option value="@size" selected="@(size == pageSize)">@size</option>
+                        }
+                    </select>
                 </div>
                 <div class="cert-filter-actions">
                     <button class="btn btn-primary"><i class='bx bx-search'></i> تطبيق</button>
@@ -367,7 +368,7 @@
                                 </button>
                                 @if (item.Status == CertificateStatus.Active)
                                 {
-                                    <button type="button" class="btn btn-outline-danger btn-sm js-revoke"
+                                    <button type="button" class="btn btn-outline-warning btn-sm js-revoke"
                                             data-id="@item.Id"
                                             data-number="@item.CertificateNumber"
                                             data-student="@item.StudentName"
@@ -375,6 +376,14 @@
                                         <i class='bx bx-block'></i><span class="cert-action-label">إلغاء</span>
                                     </button>
                                 }
+                                <button type="button" class="btn btn-outline-danger btn-sm js-delete"
+                                        data-id="@item.Id"
+                                        data-number="@item.CertificateNumber"
+                                        data-student="@item.StudentName"
+                                        data-status="@item.StatusDisplayName"
+                                        title="حذف الشهادة وأرشفتها" aria-label="حذف الشهادة وأرشفتها">
+                                    <i class='bx bx-trash'></i><span class="cert-action-label">حذف</span>
+                                </button>
                             </td>
                         </tr>
                     }
@@ -442,39 +451,115 @@
 </div>
 
 <!-- نافذة إلغاء الاعتماد -->
-<div class="modal fade" id="revokeModal" tabindex="-1" aria-labelledby="revokeModalLabel" aria-hidden="true">
+<div class="modal fade" id="revokeModal" tabindex="-1" aria-labelledby="revokeModalLabel" aria-hidden="true" role="dialog">
     <div class="modal-dialog modal-dialog-centered">
         <form method="post" asp-action="Revoke" class="modal-content" dir="rtl">
             @Html.AntiForgeryToken()
             <input type="hidden" name="id" id="revokeId" />
-            <div class="modal-header">
-                <h5 class="modal-title" id="revokeModalLabel">إلغاء اعتماد الشهادة</h5>
+            <div class="modal-header modal-header--warning">
+                <h5 class="modal-title" id="revokeModalLabel">
+                    <span class="modal-icon-badge"><i class='bx bx-block'></i></span>
+                    إلغاء اعتماد الشهادة
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
             </div>
             <div class="modal-body">
-                <p class="mb-3">
-                    سيتم إلغاء اعتماد الشهادة <strong id="revokeNumber" style="direction:ltr;"></strong>
-                    الصادرة للطالب <strong id="revokeStudent"></strong>، ولن تظهر بعد ذلك كشهادة سارية عند التحقق.
-                </p>
-                <label class="cb-label" for="revokeReason">سبب الإلغاء</label>
-                <textarea class="form-control" id="revokeReason" name="reason" rows="3" required
-                          placeholder="مثال: خطأ في بيانات الطالب، أو إعادة إصدار الشهادة."></textarea>
+                <div class="cert-modal-callout cert-modal-callout--warning">
+                    <i class='bx bx-error-circle'></i>
+                    <div>
+                        <strong>تنبيه إداري:</strong>
+                        سيتم إلغاء سريان الشهادة في نظام التحقق الإلكتروني، ولن تظهر بعد ذلك كشهادة معتمدة عند فحص رمز QR أو الرابط العام.
+                    </div>
+                </div>
+
+                <div class="cert-modal-preview">
+                    <div class="cert-modal-preview-info">
+                        <span class="cert-modal-preview-title">رقم الشهادة</span>
+                        <strong id="revokeNumber" class="cert-modal-preview-val" style="direction:ltr; text-align:right;"></strong>
+                    </div>
+                    <div class="cert-modal-preview-info">
+                        <span class="cert-modal-preview-title">الطالب</span>
+                        <strong id="revokeStudent" class="cert-modal-preview-val"></strong>
+                    </div>
+                </div>
+
+                <div class="mb-2">
+                    <label class="cb-label" for="revokeReason">سبب الإلغاء <span class="text-danger">*</span></label>
+                    <div class="cert-preset-reasons" aria-label="أسباب سريعة">
+                        <button type="button" class="cert-preset-chip" data-reason="خطأ في بيانات الشهادة">خطأ في البيانات</button>
+                        <button type="button" class="cert-preset-chip" data-reason="إعادة إصدار الشهادة بنسخة جديدة">إعادة إصدار جديدة</button>
+                        <button type="button" class="cert-preset-chip" data-reason="بناءً على توجيه إدارة المركز">طلب الإدارة</button>
+                        <button type="button" class="cert-preset-chip" data-reason="تحديث أو تصحيح بيانات الطالب">تصحيح الاسم</button>
+                    </div>
+                    <textarea class="form-control" id="revokeReason" name="reason" rows="3" required
+                              placeholder="مثال: خطأ في بيانات الطالب، أو إعادة إصدار الشهادة بنسخة جديدة."></textarea>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">تراجع</button>
-                <button class="btn btn-danger"><i class='bx bx-block'></i> تأكيد الإلغاء</button>
+                <button type="submit" class="btn btn-danger"><i class='bx bx-block'></i> تأكيد إلغاء الاعتماد</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- نافذة سجل الإجراءات -->
-<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+<!-- نافذة حذف الشهادة وأرشفتها -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="post" asp-action="Delete" class="modal-content" dir="rtl">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="deleteId" />
+            <div class="modal-header modal-header--danger">
+                <h5 class="modal-title" id="deleteModalLabel">
+                    <span class="modal-icon-badge"><i class='bx bx-trash'></i></span>
+                    حذف الشهادة وأرشفتها
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <div class="modal-body">
+                <div class="cert-modal-callout cert-modal-callout--danger">
+                    <i class='bx bx-trash'></i>
+                    <div>
+                        <strong>تنبيه وإجراء حسّاس:</strong>
+                        سيتم حذف هذه الشهادة وأرشفتها من لوحة إدارة الشهادات. لن تظهر في الفلاتر العادية أو الإحصاءات العامة، مع بقاء سجل الحذف محفوظاً للأغراض الرقابية والأمنية.
+                    </div>
+                </div>
+
+                <div class="cert-modal-preview">
+                    <div class="cert-modal-preview-info">
+                        <span class="cert-modal-preview-title">رقم الشهادة</span>
+                        <strong id="deleteNumber" class="cert-modal-preview-val" style="direction:ltr; text-align:right;"></strong>
+                    </div>
+                    <div class="cert-modal-preview-info">
+                        <span class="cert-modal-preview-title">الطالب</span>
+                        <strong id="deleteStudent" class="cert-modal-preview-val"></strong>
+                    </div>
+                    <div class="cert-modal-preview-info">
+                        <span class="cert-modal-preview-title">الحالة</span>
+                        <span id="deleteStatus" class="cert-pill cert-pill--active"></span>
+                    </div>
+                </div>
+
+                <p class="text-muted small mb-0">
+                    هل أنت متأكد من رغبتك في حذف هذا السجل نهائياً؟
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">تراجع</button>
+                <button type="submit" class="btn btn-danger"><i class='bx bx-trash'></i> تأكيد الحذف والأرشفة</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- نافذة سجل الإجراءات والتدقيق -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
         <div class="modal-content" dir="rtl">
             <div class="modal-header">
                 <h5 class="modal-title" id="detailsModalLabel">
-                    <i class='bx bx-history'></i> سجل الإجراءات
+                    <span class="modal-icon-badge"><i class='bx bx-history'></i></span>
+                    سجل الإجراءات والتدقيق
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
             </div>
@@ -482,7 +567,7 @@
                 <div class="cert-details-head">
                     <div>
                         <span class="cb-label">رقم الشهادة</span>
-                        <strong id="detailsNumber" class="cert-cell-number"></strong>
+                        <strong id="detailsNumber" class="cert-cell-number" style="direction:ltr; text-align:right; display:block;"></strong>
                     </div>
                     <div>
                         <span class="cb-label">الطالب</span>
@@ -492,6 +577,9 @@
                 <div id="detailsBody" class="cert-timeline-host">
                     <div class="cert-timeline-loading"><i class='bx bx-loader-alt bx-spin'></i> جارٍ التحميل…</div>
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">إغلاق</button>
             </div>
         </div>
     </div>
@@ -511,20 +599,103 @@
 
             function showToast(message, isError) {
                 const toast = document.getElementById('toast');
-                document.getElementById('toast-message').textContent = message;
+                if (!toast) return;
+                const msgEl = document.getElementById('toast-message');
+                if (msgEl) msgEl.textContent = message;
                 toast.classList.toggle('cert-toast--error', Boolean(isError));
-                toast.querySelector('i').className = isError ? 'bx bx-error-circle' : 'bx bx-check-circle';
+                const icon = toast.querySelector('i');
+                if (icon) icon.className = isError ? 'bx bx-error-circle' : 'bx bx-check-circle';
                 toast.classList.add('show');
                 clearTimeout(window.__certToastTimer);
                 window.__certToastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
             }
 
+            // Ensure modals are direct children of <body> to escape any transformed container (.main-content)
+            ['revokeModal', 'deleteModal', 'detailsModal'].forEach((id) => {
+                const el = document.getElementById(id);
+                if (el && el.parentElement !== document.body) {
+                    document.body.appendChild(el);
+                }
+            });
+
+            // Standalone, rock-solid modal open/close controller (no Bootstrap JS conflicts, no scroll lockups)
+            const modalController = {
+                open(el) {
+                    if (!el) return;
+                    // Close any other open modals first
+                    this.closeAll();
+
+                    el.style.display = 'flex';
+                    // Force reflow for smooth animation
+                    void el.offsetHeight;
+                    el.classList.add('show', 'is-open');
+                    el.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+
+                    // Clean any orphaned bootstrap backdrops
+                    document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+
+                    // Auto-focus input
+                    setTimeout(() => {
+                        const target = el.querySelector('textarea, input:not([type="hidden"]), .btn-danger, .btn-close');
+                        if (target) target.focus();
+                    }, 60);
+                },
+                close(el) {
+                    if (!el) return;
+                    el.classList.remove('show', 'is-open');
+                    el.setAttribute('aria-hidden', 'true');
+                    el.style.display = 'none';
+                    document.body.style.overflow = '';
+                    document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+                },
+                closeAll() {
+                    document.querySelectorAll('.modal').forEach(m => {
+                        m.classList.remove('show', 'is-open');
+                        m.setAttribute('aria-hidden', 'true');
+                        m.style.display = 'none';
+                    });
+                    document.body.style.overflow = '';
+                    document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+                }
+            };
+
+            // Global dismiss handlers
+            document.addEventListener('click', (e) => {
+                const dismissBtn = e.target.closest('[data-bs-dismiss="modal"]');
+                if (dismissBtn) {
+                    e.preventDefault();
+                    const modal = dismissBtn.closest('.modal');
+                    if (modal) {
+                        modalController.close(modal);
+                        return;
+                    }
+                }
+                // Click on modal backdrop outside modal-dialog
+                if (e.target.classList.contains('modal')) {
+                    modalController.close(e.target);
+                }
+            });
+
+            // Escape key closes modals
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    modalController.closeAll();
+                }
+            });
+
+            // Quick preset reasons for Revoke
+            document.querySelectorAll('.cert-preset-chip').forEach((chip) => {
+                chip.addEventListener('click', () => {
+                    const reasonInput = document.getElementById('revokeReason');
+                    if (reasonInput) {
+                        reasonInput.value = chip.dataset.reason || '';
+                        reasonInput.focus();
+                    }
+                });
+            });
+
             // --- filters collapse (phones only) ------------------------------
-            // The panel is open in the markup and the toggle is hidden by CSS, so without this
-            // script the filters stay usable; the script only opts into the collapsed state.
-            // Both CSS rules are scoped to the phone breakpoint, so marking up the collapsed
-            // state here costs the desktop layout nothing — and a resize into phone width finds
-            // the panel already collapsed with a working toggle.
             const filterForm = document.getElementById('certFilterForm');
             const filterToggle = document.getElementById('certFilterToggle');
             if (filterForm && filterToggle) {
@@ -534,8 +705,8 @@
                 const setCollapsed = (collapsed) => {
                     filterForm.classList.toggle('is-collapsed', collapsed);
                     filterToggle.setAttribute('aria-expanded', String(!collapsed));
-                    filterLabel.textContent = collapsed ? 'الفلاتر' : 'إخفاء الفلاتر';
-                    filterChevron.className = collapsed ? 'bx bx-chevron-down' : 'bx bx-chevron-up';
+                    if (filterLabel) filterLabel.textContent = collapsed ? 'الفلاتر' : 'إخفاء الفلاتر';
+                    if (filterChevron) filterChevron.className = collapsed ? 'bx bx-chevron-down' : 'bx bx-chevron-up';
                 };
 
                 filterForm.classList.add('js-ready');
@@ -545,8 +716,7 @@
                 });
             }
 
-            // The sort row is the one control outside the collapsible body, and the submit button
-            // is inside it — so reordering applies on change instead of a tap the user cannot see.
+            // Mobile sort auto-submit
             if (filterForm) {
                 filterForm.querySelectorAll('.cert-sort-mobile select').forEach((select) => {
                     select.addEventListener('change', () => {
@@ -556,67 +726,85 @@
                 });
             }
 
-            // --- revoke -----------------------------------------------------
-            const revokeEl = document.getElementById('revokeModal');
-            if (revokeEl) {
-                const revokeModal = new bootstrap.Modal(revokeEl);
-                document.querySelectorAll('.js-revoke').forEach((btn) => {
-                    btn.addEventListener('click', () => {
-                        document.getElementById('revokeId').value = btn.dataset.id;
-                        document.getElementById('revokeNumber').textContent = btn.dataset.number;
-                        document.getElementById('revokeStudent').textContent = btn.dataset.student;
-                        document.getElementById('revokeReason').value = '';
-                        revokeModal.show();
-                    });
+            // --- revoke modal ------------------------------------------------
+            const revokeModalEl = document.getElementById('revokeModal');
+            document.querySelectorAll('.js-revoke').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('revokeId').value = btn.dataset.id || '';
+                    document.getElementById('revokeNumber').textContent = btn.dataset.number || '';
+                    document.getElementById('revokeStudent').textContent = btn.dataset.student || '';
+                    document.getElementById('revokeReason').value = '';
+                    modalController.open(revokeModalEl);
                 });
-            }
+            });
+
+            // --- delete modal ------------------------------------------------
+            const deleteModalEl = document.getElementById('deleteModal');
+            document.querySelectorAll('.js-delete').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('deleteId').value = btn.dataset.id || '';
+                    document.getElementById('deleteNumber').textContent = btn.dataset.number || '';
+                    document.getElementById('deleteStudent').textContent = btn.dataset.student || '';
+                    const statusEl = document.getElementById('deleteStatus');
+                    if (statusEl) {
+                        statusEl.textContent = btn.dataset.status || 'معتمدة';
+                    }
+                    modalController.open(deleteModalEl);
+                });
+            });
 
             // --- copy verification link -------------------------------------
             document.querySelectorAll('.js-copy').forEach((btn) => {
                 btn.addEventListener('click', async () => {
-                    const url = `${window.location.origin}/Certificates/Verify/${btn.dataset.token}`;
+                    const token = btn.dataset.token;
+                    const url = `${window.location.origin}/Certificates/Verify/${token}`;
                     try {
                         await navigator.clipboard.writeText(url);
-                        showToast('تم نسخ رابط التحقق.');
+                        showToast('تم نسخ رابط التحقق بنجاح.');
                     } catch {
                         window.prompt('انسخ رابط التحقق:', url);
                     }
                 });
             });
 
-            // --- audit trail -------------------------------------------------
-            const detailsEl = document.getElementById('detailsModal');
-            if (detailsEl) {
-                const detailsModal = new bootstrap.Modal(detailsEl);
-                const body = document.getElementById('detailsBody');
+            // --- audit trail modal -------------------------------------------
+            const detailsModalEl = document.getElementById('detailsModal');
+            const detailsBody = document.getElementById('detailsBody');
 
-                const escapeHtml = (value) => {
-                    const div = document.createElement('div');
-                    div.textContent = value ?? '';
-                    return div.innerHTML;
-                };
+            const escapeHtml = (value) => {
+                const div = document.createElement('div');
+                div.textContent = value ?? '';
+                return div.innerHTML;
+            };
 
-                document.querySelectorAll('.js-details').forEach((btn) => {
-                    btn.addEventListener('click', async () => {
-                        document.getElementById('detailsNumber').textContent = btn.dataset.number;
-                        document.getElementById('detailsStudent').textContent = btn.dataset.student;
-                        body.innerHTML = '<div class="cert-timeline-loading"><i class="bx bx-loader-alt bx-spin"></i> جارٍ التحميل…</div>';
-                        detailsModal.show();
+            document.querySelectorAll('.js-details').forEach((btn) => {
+                btn.addEventListener('click', async () => {
+                    document.getElementById('detailsNumber').textContent = btn.dataset.number || '';
+                    document.getElementById('detailsStudent').textContent = btn.dataset.student || '';
+                    if (detailsBody) {
+                        detailsBody.innerHTML = '<div class="cert-timeline-loading"><i class="bx bx-loader-alt bx-spin"></i> جارٍ التحميل…</div>';
+                    }
+                    modalController.open(detailsModalEl);
 
-                        try {
-                            const response = await fetch(`${detailsUrl}?id=${encodeURIComponent(btn.dataset.id)}`, {
-                                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                            });
-                            const data = await response.json();
-                            if (!data || !data.success) {
-                                body.innerHTML = '<div class="cert-empty cert-empty--inline"><i class="bx bx-error-circle"></i><span>تعذّر تحميل سجل الإجراءات.</span></div>';
-                                return;
+                    try {
+                        const response = await fetch(`${detailsUrl}?id=${encodeURIComponent(btn.dataset.id)}`, {
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        });
+                        const data = await response.json();
+                        if (!data || !data.success) {
+                            if (detailsBody) {
+                                detailsBody.innerHTML = '<div class="cert-empty cert-empty--inline"><i class="bx bx-error-circle"></i><span>تعذّر تحميل سجل الإجراءات.</span></div>';
                             }
-                            if (data.audits.length === 0) {
-                                body.innerHTML = '<div class="cert-empty cert-empty--inline"><i class="bx bx-history"></i><span>لا توجد إجراءات مسجّلة على هذه الشهادة.</span></div>';
-                                return;
+                            return;
+                        }
+                        if (!data.audits || data.audits.length === 0) {
+                            if (detailsBody) {
+                                detailsBody.innerHTML = '<div class="cert-empty cert-empty--inline"><i class="bx bx-history"></i><span>لا توجد إجراءات مسجّلة على هذه الشهادة.</span></div>';
                             }
-                            body.innerHTML = '<ul class="cert-timeline">' + data.audits.map((entry) => `
+                            return;
+                        }
+                        if (detailsBody) {
+                            detailsBody.innerHTML = '<ul class="cert-timeline">' + data.audits.map((entry) => `
                                 <li class="cert-timeline-item cert-timeline-item--${escapeHtml(entry.tone)}">
                                     <span class="cert-timeline-dot"><i class="bx ${escapeHtml(entry.icon)}"></i></span>
                                     <div class="cert-timeline-content">
@@ -624,16 +812,18 @@
                                             <strong>${escapeHtml(entry.action)}</strong>
                                             <time>${escapeHtml(entry.performedAt)}</time>
                                         </div>
-                                        <div class="cert-timeline-meta">بواسطة ${escapeHtml(entry.performedBy)}</div>
+                                        <div class="cert-timeline-meta">بواسطة: ${escapeHtml(entry.performedBy)}</div>
                                         ${entry.details ? `<p class="cert-timeline-details">${escapeHtml(entry.details)}</p>` : ''}
                                     </div>
                                 </li>`).join('') + '</ul>';
-                        } catch {
-                            body.innerHTML = '<div class="cert-empty cert-empty--inline"><i class="bx bx-wifi-off"></i><span>تعذّر الاتصال بالخادم.</span></div>';
                         }
-                    });
+                    } catch {
+                        if (detailsBody) {
+                            detailsBody.innerHTML = '<div class="cert-empty cert-empty--inline"><i class="bx bx-wifi-off"></i><span>تعذّر الاتصال بالخادم.</span></div>';
+                        }
+                    }
                 });
-            }
+            });
         })();
     </script>
 }

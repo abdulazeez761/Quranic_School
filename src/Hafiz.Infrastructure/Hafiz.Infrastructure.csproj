@@ -21,6 +21,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <!-- QR generation for certificate verification links. The net6.0 asset (selected for our
+         net8.0 target) has no System.Drawing dependency, so this stays cross-platform. -->
+    <PackageReference Include="QRCoder" Version="1.6.0" />
   </ItemGroup>
 
   <PropertyGroup>

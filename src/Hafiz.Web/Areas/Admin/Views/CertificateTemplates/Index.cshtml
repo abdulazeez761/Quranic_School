@@ -18,13 +18,14 @@
     };
 }
 
+<link rel="stylesheet" href="~/css/certificates/certificate.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/admin/certificate-builder.css" asp-append-version="true" />
 
 <div class="cert-admin-page" dir="rtl">
     <header class="cert-admin-header">
         <div>
             <h1><span class="cert-icon"><i class='bx bx-palette'></i></span>قوالب الشهادات</h1>
-            <p>صمّم قوالب الشهادات التي تصدرها حلقات المركز، وحدّد القالب الافتراضي لكل نوع.</p>
+            <p>صمّم قوالب الشهادات التي تصدرها حلقات ومسارات المركز، تابع سجل النسخ السابقة، واستعد أي إصدار عند الحاجة.</p>
         </div>
         <div style="display:flex; gap:9px; flex-wrap:wrap;">
             <a asp-controller="CertificatesManagement" asp-action="Index" class="btn btn-outline-secondary">
@@ -38,15 +39,21 @@
 
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success"><i class='bx bx-check-circle'></i> @TempData["SuccessMessage"]</div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class='bx bx-check-circle me-1'></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="إغلاق"></button>
+        </div>
     }
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger"><i class='bx bx-error-circle'></i> @TempData["ErrorMessage"]</div>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class='bx bx-error-circle me-1'></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="إغلاق"></button>
+        </div>
     }
 
     <nav class="filter-tabs" aria-label="تصفية حسب نوع الشهادة">
-        <a asp-action="Index" class="@(selectedType is null ? "active" : "")">كل الأنواع</a>
+        <a asp-action="Index" class="@(selectedType is null ? "active" : "")">كل الأنواع (@templates.Count)</a>
         @foreach (var type in new[] { CertificateType.Quran, CertificateType.Matn, CertificateType.Sanad, CertificateType.General })
         {
             <a asp-action="Index" asp-route-type="@type" class="@(selectedType == type ? "active" : "")">@TypeName(type)</a>
@@ -82,65 +89,507 @@
                     <div class="template-card-body">
                         <div style="display:flex; align-items:start; justify-content:space-between; gap:10px;">
                             <h3 style="font-size:17px; font-weight:800; margin:0;">@template.Name</h3>
-                            @if (template.IsDefault)
-                            {
-                                <span class="chip"><i class='bx bxs-star'></i> الافتراضي</span>
-                            }
+                            <div style="display:flex; gap:5px; align-items:center;">
+                                @if (template.IsDefault)
+                                {
+                                    <span class="chip"><i class='bx bxs-star'></i> الافتراضي</span>
+                                }
+                                <form asp-action="ToggleActive" asp-route-id="@template.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="chip" style="cursor:pointer; border:none; @(template.IsActive ? "background:#e8f5e9; color:#1b5e20;" : "background:#ffebee; color:#b71c1c;")"
+                                            title="اضغط لتغيير حالة التفعيل">
+                                        @(template.IsActive ? "مفعّل" : "معطّل")
+                                    </button>
+                                </form>
+                            </div>
                         </div>
+
                         <p style="color:var(--cb-muted); font-size:13px; margin:8px 0 0; min-height:36px;">
-                            @(string.IsNullOrWhiteSpace(template.Description) ? "بدون وصف." : template.Description)
+                            @(string.IsNullOrWhiteSpace(template.Description) ? "بدون وصف توضيحي." : template.Description)
                         </p>
 
                         <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:12px;">
                             <span class="chip">@TypeName(template.Type)</span>
-                            @if (!template.IsActive)
-                            {
-                                <span class="chip" style="background:#fdeaea; color:#a52a2a;">معطّل</span>
-                            }
                             @if (template.CertificatesIssuedCount > 0)
                             {
                                 <span class="chip" style="background:#eef2fb; color:#2e4a86;">
-                                    @template.CertificatesIssuedCount شهادة صادرة
+                                    <i class='bx bx-award'></i> @template.CertificatesIssuedCount شهادة صادرة
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="chip" style="background:#f9fafb; color:#6b7280;">
+                                    لم تصدر شهادات بعد
                                 </span>
                             }
                         </div>
 
                         <div class="template-meta">
-                            <span title="ألوان القالب">
+                            <span title="ألوان القالب الأساسية">
                                 <span style="display:inline-flex; gap:3px; vertical-align:middle;">
-                                    <span style="width:14px; height:14px; border-radius:4px; background:@template.PrimaryColor; display:inline-block;"></span>
-                                    <span style="width:14px; height:14px; border-radius:4px; background:@template.SecondaryColor; display:inline-block;"></span>
-                                    <span style="width:14px; height:14px; border-radius:4px; background:@template.AccentColor; display:inline-block;"></span>
+                                    <span style="width:13px; height:13px; border-radius:3px; background:@template.PrimaryColor; display:inline-block;" title="اللون الرئيسي"></span>
+                                    <span style="width:13px; height:13px; border-radius:3px; background:@template.SecondaryColor; display:inline-block;" title="اللون الثانوي"></span>
+                                    <span style="width:13px; height:13px; border-radius:3px; background:@template.AccentColor; display:inline-block;" title="لون الزخرفة"></span>
                                 </span>
                             </span>
                             <span>·</span>
-                            <span>النسخة @template.CurrentVersion</span>
+                            <button type="button" class="template-version-btn"
+                                    onclick="openVersionsModal('@template.Id', '@Html.Raw(Html.Encode(template.Name))', @template.CurrentVersion)">
+                                <i class='bx bx-history'></i> النسخة @template.CurrentVersion
+                            </button>
                             <span>·</span>
                             <span>آخر تحديث: @((template.UpdatedAt ?? template.CreatedAt).ToString("yyyy/MM/dd"))</span>
                         </div>
                     </div>
+
                     <div class="template-card-footer">
                         <a asp-action="Edit" asp-route-id="@template.Id" class="btn btn-primary btn-sm">
-                            <i class='bx bx-edit'></i> محرر التصميم
+                            <i class='bx bx-palette'></i> محرر التصميم
                         </a>
-                        @if (!template.IsDefault)
-                        {
-                            <form asp-action="SetDefault" asp-route-id="@template.Id" method="post" class="d-inline">
-                                @Html.AntiForgeryToken()
-                                <button class="btn btn-outline-secondary btn-sm"><i class='bx bx-star'></i> تعيين كافتراضي</button>
-                            </form>
-                        }
-                        @if (template.CertificatesIssuedCount == 0)
-                        {
-                            <form asp-action="Delete" asp-route-id="@template.Id" method="post" class="d-inline ms-auto"
-                                  onsubmit="return confirm('حذف هذا القالب نهائياً؟');">
-                                @Html.AntiForgeryToken()
-                                <button class="btn btn-outline-danger btn-sm"><i class='bx bx-trash'></i></button>
-                            </form>
-                        }
+
+                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                onclick="openVersionsModal('@template.Id', '@Html.Raw(Html.Encode(template.Name))', @template.CurrentVersion)"
+                                title="عرض وإدارة سجل نسخ هذا القالب">
+                            <i class='bx bx-history'></i> النسخ
+                        </button>
+
+                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                onclick="openDuplicateModal('@template.Id', '@Html.Raw(Html.Encode(template.Name))')"
+                                title="نسخ هذا القالب كقالب جديد">
+                            <i class='bx bx-copy'></i> نسخ
+                        </button>
+
+                        <div class="actions-right">
+                            @if (!template.IsDefault)
+                            {
+                                <form asp-action="SetDefault" asp-route-id="@template.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button class="btn btn-outline-secondary btn-sm" title="تعيين كقالب افتراضي لهذا النوع"><i class='bx bx-star'></i></button>
+                                </form>
+                            }
+                            @if (template.CertificatesIssuedCount == 0)
+                            {
+                                <form asp-action="Delete" asp-route-id="@template.Id" method="post" class="d-inline"
+                                      onsubmit="return confirm('هل أنت متأكد من حذف هذا القالب نهائياً؟');">
+                                    @Html.AntiForgeryToken()
+                                    <button class="btn btn-outline-danger btn-sm" title="حذف القالب"><i class='bx bx-trash'></i></button>
+                                </form>
+                            }
+                        </div>
                     </div>
                 </article>
             }
         </div>
     }
 </div>
+
+<!-- نافذة سجل نسخ القالب -->
+<div class="modal fade" id="versionsModal" tabindex="-1" aria-labelledby="versionsModalLabel" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content" dir="rtl">
+            <div class="modal-header">
+                <h5 class="modal-title" id="versionsModalLabel">
+                    <span class="cert-icon" style="width:34px; height:34px; font-size:18px;"><i class='bx bx-history'></i></span>
+                    <span>سجل نسخ القالب: <strong id="versionsTemplateName"></strong></span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <div class="modal-body">
+                <div id="versionsLoading" class="text-center py-4">
+                    <i class='bx bx-loader-alt bx-spin' style="font-size:32px; color:var(--cb-forest);"></i>
+                    <p class="text-muted mt-2">جارٍ جلب سجل النسخ التاريخية...</p>
+                </div>
+                <div id="versionsEmpty" class="text-center py-4" style="display:none;">
+                    <i class='bx bx-info-circle' style="font-size:32px; color:var(--cb-muted);"></i>
+                    <p class="text-muted mt-2">لا توجد نسخ مسجلة لهذا القالب بعد.</p>
+                </div>
+                <div id="versionsList" class="version-timeline" style="display:none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- نافذة استنساخ القالب -->
+<div class="modal fade" id="duplicateModal" tabindex="-1" aria-labelledby="duplicateModalLabel" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="post" asp-action="Duplicate" class="modal-content" dir="rtl">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="duplicateTemplateId" />
+            <div class="modal-header">
+                <h5 class="modal-title" id="duplicateModalLabel">
+                    <span class="cert-icon" style="width:34px; height:34px; font-size:18px;"><i class='bx bx-copy'></i></span>
+                    نسخ قالب الشهادة
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted small">
+                    سيتم إنشاء نسخة جديدة مطابقة لهذا القالب بكافة ألوانه وتنسيقاته لتتمكن من تخصيصها باسم مختلف.
+                </p>
+                <div class="cb-field">
+                    <label for="duplicateNewName">اسم القالب الجديد</label>
+                    <input type="text" id="duplicateNewName" name="newName" required class="form-control" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">إلغاء</button>
+                <button type="submit" class="btn btn-primary"><i class='bx bx-copy'></i> تأكيد النسخ والبدء بالتصميم</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- نافذة تأكيد استعادة نسخة سابقة -->
+<div class="modal fade" id="restoreConfirmModal" tabindex="-1" aria-labelledby="restoreConfirmModalLabel" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="post" asp-action="RestoreVersion" id="restoreForm" class="modal-content" dir="rtl">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="restoreTemplateId" />
+            <input type="hidden" name="versionId" id="restoreVersionId" />
+            <div class="modal-header">
+                <h5 class="modal-title" id="restoreConfirmModalLabel">
+                    <span class="cert-icon" style="width:34px; height:34px; font-size:18px; color:#d97706; background:#fef3c7;">
+                        <i class='bx bx-undo'></i>
+                    </span>
+                    استعادة نسخة سابقة من القالب
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning mb-3">
+                    <i class='bx bx-info-circle'></i>
+                    <strong>ملاحظة أمان وتدقيق:</strong>
+                    استعادة هذه النسخة لن تحذف أي نسخة سابقة. سيتم إنشاء <strong>نسخة جديدة ذات رقم تسلسلي تالٍ</strong> تحتوي على نفس إعدادات هذه النسخة، مع الحفاظ الكامل على كافة السجلات والشهادات الصادرة.
+                </div>
+                <p>هل أنت متأكد من رغبتك في استعادة إعدادات <strong id="restoreVersionNumberText"></strong> وتطبيقها على القالب؟</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">تراجع</button>
+                <button type="submit" class="btn btn-warning" style="background:#d97706; border-color:#d97706; color:#fff;">
+                    <i class='bx bx-check'></i> تأكيد الاستعادة وإنشاء نسخة جديدة
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- نافذة معاينة النسخة التاريخية -->
+<div class="modal fade modal-fullscreen-preview" id="previewVersionModal" tabindex="-1" aria-labelledby="previewVersionModalLabel" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" dir="rtl">
+            <div class="modal-header">
+                <h5 class="modal-title" id="previewVersionModalLabel">
+                    <span class="cert-icon" style="width:34px; height:34px; font-size:18px;"><i class='bx bx-show'></i></span>
+                    <span>معاينة النسخة: <strong id="previewVersionTitle"></strong></span>
+                </h5>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="window.print()">
+                        <i class='bx bx-printer'></i> طباعة تجريبية
+                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                </div>
+            </div>
+            <div class="modal-body p-0">
+                <div class="fullscreen-preview-container" id="fullscreenPreviewContainer">
+                    <div id="fullscreenPreviewHost"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="cert-toast" role="status" aria-live="polite">
+    <i class='bx bx-check-circle'></i>
+    <span id="toast-message"></span>
+</div>
+
+@section Scripts {
+    <script>
+        (() => {
+            const versionsUrl = '@Url.Action("Versions", "CertificateTemplates", new { area = "Admin" })';
+            const versionConfigUrl = '@Url.Action("VersionConfig", "CertificateTemplates", new { area = "Admin" })';
+
+            function showToast(message, isError) {
+                const toast = document.getElementById('toast');
+                if (!toast) return;
+                const msgEl = document.getElementById('toast-message');
+                if (msgEl) msgEl.textContent = message;
+                toast.classList.toggle('cert-toast--error', Boolean(isError));
+                const icon = toast.querySelector('i');
+                if (icon) icon.className = isError ? 'bx bx-error-circle' : 'bx bx-check-circle';
+                toast.classList.add('show');
+                clearTimeout(window.__certToastTimer);
+                window.__certToastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+            }
+
+            // Move modals to body
+            ['versionsModal', 'duplicateModal', 'restoreConfirmModal', 'previewVersionModal'].forEach((id) => {
+                const el = document.getElementById(id);
+                if (el && el.parentElement !== document.body) {
+                    document.body.appendChild(el);
+                }
+            });
+
+            // Standalone rock-solid modal controller
+            const modalController = {
+                open(el) {
+                    if (!el) return;
+                    this.closeAll();
+                    el.style.display = 'flex';
+                    void el.offsetHeight;
+                    el.classList.add('show', 'is-open');
+                    el.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+                    document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+                    setTimeout(() => {
+                        const target = el.querySelector('input:not([type="hidden"]), .btn-primary, .btn-close');
+                        if (target) target.focus();
+                    }, 60);
+                },
+                close(el) {
+                    if (!el) return;
+                    el.classList.remove('show', 'is-open');
+                    el.setAttribute('aria-hidden', 'true');
+                    el.style.display = 'none';
+                    document.body.style.overflow = '';
+                    document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+                },
+                closeAll() {
+                    document.querySelectorAll('.modal').forEach(m => {
+                        m.classList.remove('show', 'is-open');
+                        m.setAttribute('aria-hidden', 'true');
+                        m.style.display = 'none';
+                    });
+                    document.body.style.overflow = '';
+                    document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+                }
+            };
+
+            document.addEventListener('click', (e) => {
+                const dismissBtn = e.target.closest('[data-bs-dismiss="modal"]');
+                if (dismissBtn) {
+                    e.preventDefault();
+                    const modal = dismissBtn.closest('.modal');
+                    if (modal) modalController.close(modal);
+                } else if (e.target.classList.contains('modal')) {
+                    modalController.close(e.target);
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') modalController.closeAll();
+            });
+
+            // Version modal opener
+            window.openVersionsModal = async function(templateId, templateName, currentVersion) {
+                document.getElementById('versionsTemplateName').textContent = templateName;
+                const modal = document.getElementById('versionsModal');
+                const loading = document.getElementById('versionsLoading');
+                const empty = document.getElementById('versionsEmpty');
+                const list = document.getElementById('versionsList');
+
+                loading.style.display = 'block';
+                empty.style.display = 'none';
+                list.style.display = 'none';
+                list.innerHTML = '';
+
+                modalController.open(modal);
+
+                try {
+                    const response = await fetch(`${versionsUrl}?id=${encodeURIComponent(templateId)}`);
+                    const data = await response.json();
+
+                    loading.style.display = 'none';
+                    if (!data.success || !data.versions || data.versions.length === 0) {
+                        empty.style.display = 'block';
+                        return;
+                    }
+
+                    list.style.display = 'flex';
+                    list.innerHTML = data.versions.map(v => {
+                        const isCurrent = v.isCurrent;
+                        const issuedText = v.certificatesIssuedCount > 0 
+                            ? `<span class="badge bg-light text-primary border"><i class='bx bx-award'></i> ${v.certificatesIssuedCount} شهادة صادرة</span>`
+                            : `<span class="badge bg-light text-muted border">0 شهادة</span>`;
+
+                        const creatorText = v.createdByName ? `بواسطة: ${v.createdByName}` : '';
+                        const orientationText = v.orientation === 'portrait' ? 'عمودي' : 'أفقي';
+
+                        return `
+                            <div class="version-card ${isCurrent ? 'is-current' : ''}">
+                                <div class="version-card-head">
+                                    <div class="version-badge">
+                                        <i class='bx bx-git-commit'></i>
+                                        النسخة ${v.versionNumber}
+                                        ${isCurrent ? '<span class="version-badge-pill version-badge-pill--current">النسخة الحالية النشطة</span>' : '<span class="version-badge-pill">نسخة تاريخية</span>'}
+                                    </div>
+                                    <div class="version-actions">
+                                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                                onclick="previewSpecificVersion('${templateId}', '${v.id}', ${v.versionNumber})">
+                                            <i class='bx bx-show'></i> معاينة
+                                        </button>
+                                        ${!isCurrent ? `
+                                            <button type="button" class="btn btn-outline-warning btn-sm"
+                                                    onclick="promptRestoreVersion('${templateId}', '${v.id}', ${v.versionNumber})">
+                                                <i class='bx bx-undo'></i> استعادة كنسخة جديدة
+                                            </button>
+                                        ` : `
+                                            <a href="/Admin/CertificateTemplates/Edit/${templateId}" class="btn btn-outline-primary btn-sm">
+                                                <i class='bx bx-edit'></i> فتح في المحرر
+                                            </a>
+                                        `}
+                                    </div>
+                                </div>
+                                <div class="version-meta">
+                                    <span><i class='bx bx-calendar'></i> ${v.createdAtFormatted}</span>
+                                    ${creatorText ? `<span><i class='bx bx-user'></i> ${creatorText}</span>` : ''}
+                                    ${issuedText}
+                                </div>
+                                <div class="version-card-details">
+                                    <div class="version-badges-list">
+                                        <span class="version-palette" title="هوية ألوان النسخة">
+                                            <span class="version-palette-dot" style="background:${v.primaryColor}"></span>
+                                            <span class="version-palette-dot" style="background:${v.secondaryColor}"></span>
+                                            <span class="version-palette-dot" style="background:${v.accentColor}"></span>
+                                        </span>
+                                        <span class="badge bg-light text-dark border">${orientationText} (${v.pageSize})</span>
+                                        <span class="badge bg-light text-dark border">${v.sectionCount} أقسام مفعّلة</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } catch (err) {
+                    loading.style.display = 'none';
+                    empty.style.display = 'block';
+                    empty.innerHTML = `<p class="text-danger"><i class='bx bx-error'></i> تعذّر جلب النسخ: ${err.message}</p>`;
+                }
+            };
+
+            // Duplicate modal opener
+            window.openDuplicateModal = function(templateId, templateName) {
+                document.getElementById('duplicateTemplateId').value = templateId;
+                document.getElementById('duplicateNewName').value = `${templateName} (نسخة)`;
+                modalController.open(document.getElementById('duplicateModal'));
+            };
+
+            // Restore prompt
+            window.promptRestoreVersion = function(templateId, versionId, versionNumber) {
+                document.getElementById('restoreTemplateId').value = templateId;
+                document.getElementById('restoreVersionId').value = versionId;
+                document.getElementById('restoreVersionNumberText').textContent = `النسخة ${versionNumber}`;
+                modalController.open(document.getElementById('restoreConfirmModal'));
+            };
+
+            // Version preview
+            window.previewSpecificVersion = async function(templateId, versionId, versionNumber) {
+                document.getElementById('previewVersionTitle').textContent = `النسخة ${versionNumber}`;
+                const previewHost = document.getElementById('fullscreenPreviewHost');
+                previewHost.innerHTML = '<div class="text-center py-5"><i class="bx bx-loader-alt bx-spin" style="font-size:32px;"></i><p>جارٍ تحميل إعدادات النسخة...</p></div>';
+                modalController.open(document.getElementById('previewVersionModal'));
+
+                try {
+                    const res = await fetch(`${versionConfigUrl}?id=${encodeURIComponent(templateId)}&versionId=${encodeURIComponent(versionId)}`);
+                    const data = await res.json();
+                    if (!data.success || !data.version) {
+                        previewHost.innerHTML = '<div class="alert alert-danger m-4">تعذّر تحميل إعدادات النسخة.</div>';
+                        return;
+                    }
+
+                    renderVersionPreviewHtml(data.version.configurationJson, previewHost);
+                } catch (err) {
+                    previewHost.innerHTML = `<div class="alert alert-danger m-4">خطأ أثناء التحميل: ${err.message}</div>`;
+                }
+            };
+
+            function renderVersionPreviewHtml(configJson, host) {
+                let config = {};
+                try { config = JSON.parse(configJson || '{}'); } catch {}
+                const theme = config.theme || {};
+                const typography = config.typography || {};
+                const layout = config.layout || {};
+                const margins = layout.margins || { top: 10, right: 12, bottom: 10, left: 12 };
+
+                const portrait = layout.orientation === 'portrait';
+                const letter = layout.pageSize === 'Letter';
+                const width = portrait ? (letter ? 216 : 210) : letter ? 279 : 297;
+                const height = portrait ? (letter ? 279 : 297) : letter ? 216 : 210;
+
+                const primaryColor = theme.primaryColor || '#C59B27';
+                const secondaryColor = theme.secondaryColor || '#064E3B';
+                const accentColor = theme.accentColor || '#DFBA69';
+                const bgColor = theme.backgroundColor || '#FDFBF7';
+                const textColor = theme.textColor || '#1C1917';
+
+                const sheet = document.createElement('div');
+                sheet.className = 'certificate-sheet';
+                sheet.style.setProperty('--cert-paper-w', `${width}mm`);
+                sheet.style.setProperty('--cert-paper-h', `${height}mm`);
+                sheet.style.setProperty('--cert-bg-parchment', bgColor);
+                sheet.style.setProperty('--cert-gold-1', accentColor);
+                sheet.style.setProperty('--cert-gold-2', primaryColor);
+                sheet.style.setProperty('--cert-emerald-dark', secondaryColor);
+                sheet.style.setProperty('--cert-emerald-primary', secondaryColor);
+                sheet.style.setProperty('--cert-text-dark', textColor);
+                sheet.style.setProperty('--tpl-title-font', `'${typography.titleFont || 'Reem Kufi'}'`);
+                sheet.style.setProperty('--tpl-body-font', `'${typography.bodyFont || 'Cairo'}'`);
+                sheet.style.setProperty('--tpl-arabic-font', `'${typography.arabicFont || 'Amiri'}'`);
+                sheet.style.setProperty('--tpl-title-size', typography.titleSize || '2.1rem');
+                sheet.style.setProperty('--tpl-body-size', typography.bodySize || '1.28rem');
+                sheet.style.setProperty('--tpl-student-size', typography.studentNameSize || '2.6rem');
+                sheet.style.setProperty('--tpl-line-height', typography.lineHeight || 1.8);
+                sheet.style.padding = `${margins.top}mm ${margins.right}mm ${margins.bottom}mm ${margins.left}mm`;
+
+                sheet.innerHTML = `
+                    <div class="cert-outer-border" style="border-style:${theme.borderStyle || 'double'};border-width:${theme.borderWidth || 3}px;border-color:${theme.borderColor || primaryColor}">
+                        <div class="cert-inner-border">
+                            <div class="cert-header">
+                                <div class="cert-header-side">
+                                    <div class="cert-logo cert-logo-placeholder">شعار</div>
+                                    <div><h2 class="cert-institute-title">مركز تعليم القرآن الكريم</h2></div>
+                                </div>
+                                <div class="cert-basmalah">بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ</div>
+                                <div class="cert-number-box"><span class="cert-serial">QRN-DEMO-001</span></div>
+                            </div>
+                            <div class="cert-title-container">
+                                <h1 class="cert-main-title">شهادة إتمام وتفوق</h1>
+                                <div class="cert-title-line"></div>
+                            </div>
+                            <div class="cert-verse">﴿ إِنَّ هَـٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ ﴾</div>
+                            <div class="cert-body-content">
+                                <p class="cert-intro-text">تشهد إدارة المركز بأن الطالب المتميز قد أتم المقرر بنجاح:</p>
+                                <div class="cert-student-name">أحمد بن محمد القحطاني</div>
+                                <div class="cert-achievement-box">
+                                    <span class="cert-subject-name">حفظ خمسة أجزاء من القرآن الكريم</span>
+                                </div>
+                            </div>
+                            <div class="cert-footer">
+                                <div class="cert-sign-col">
+                                    <div class="cert-sign-title">معلم الحلقة</div>
+                                    <div class="cert-sign-name">الشيخ المقرئ</div>
+                                    <div class="cert-sign-line"></div>
+                                </div>
+                                <div class="cert-seal-box">
+                                    <div class="cert-official-seal"><i class="bx bxs-check-shield"></i></div>
+                                </div>
+                                <div class="cert-sign-col">
+                                    <div class="cert-sign-title">إدارة المركز</div>
+                                    <div class="cert-sign-name">مدير الشؤون التعليمية</div>
+                                    <div class="cert-sign-line"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                host.replaceChildren(sheet);
+            }
+        })();
+    </script>
+}

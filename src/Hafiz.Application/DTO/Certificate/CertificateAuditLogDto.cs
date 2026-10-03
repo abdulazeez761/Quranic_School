@@ -29,6 +29,7 @@ public class CertificateAuditLogDto
         CertificateAuditAction.Regenerated => "إعادة إصدار",
         CertificateAuditAction.Viewed => "عرض",
         CertificateAuditAction.Verified => "تحقق",
+        CertificateAuditAction.Deleted => "حذف الشهادة",
         _ => "إجراء"
     };
 
@@ -40,6 +41,7 @@ public class CertificateAuditLogDto
         CertificateAuditAction.Regenerated => "bx-refresh",
         CertificateAuditAction.Verified => "bx-check-shield",
         CertificateAuditAction.Viewed => "bx-show",
+        CertificateAuditAction.Deleted => "bx-trash",
         _ => "bx-edit"
     };
 
@@ -48,6 +50,7 @@ public class CertificateAuditLogDto
     {
         CertificateAuditAction.Issued => "success",
         CertificateAuditAction.Revoked => "danger",
+        CertificateAuditAction.Deleted => "danger",
         CertificateAuditAction.Verified => "info",
         _ => "neutral"
     };

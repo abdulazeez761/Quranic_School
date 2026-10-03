@@ -29,7 +29,7 @@ public class CertificateRepository : ICertificateRepository
             query = query
                 .Include(c => c.Institute)
                 .Include(c => c.Student)
-                    .ThenInclude(s => s.StudentInfo)
+                .ThenInclude(s => s.StudentInfo)
                 .Include(c => c.Template)
                 .Include(c => c.TemplateVersion);
         }
@@ -39,12 +39,13 @@ public class CertificateRepository : ICertificateRepository
 
     public async Task<Certificate?> GetByVerificationTokenAsync(string token)
     {
-        if (string.IsNullOrWhiteSpace(token)) return null;
+        if (string.IsNullOrWhiteSpace(token))
+            return null;
 
-        return await _context.Certificates
-            .Include(c => c.Institute)
+        return await _context
+            .Certificates.Include(c => c.Institute)
             .Include(c => c.Student)
-                .ThenInclude(s => s.StudentInfo)
+            .ThenInclude(s => s.StudentInfo)
             .Include(c => c.Template)
             .Include(c => c.TemplateVersion)
             .FirstOrDefaultAsync(c => c.VerificationToken == token);
@@ -52,35 +53,41 @@ public class CertificateRepository : ICertificateRepository
 
     public async Task<Certificate?> GetByNumberAsync(Guid instituteId, string certificateNumber)
     {
-        return await _context.Certificates
-            .Include(c => c.Institute)
+        return await _context
+            .Certificates.Include(c => c.Institute)
             .Include(c => c.Student)
-                .ThenInclude(s => s.StudentInfo)
+            .ThenInclude(s => s.StudentInfo)
             .Include(c => c.Template)
             .Include(c => c.TemplateVersion)
-            .FirstOrDefaultAsync(c => c.InstituteId == instituteId && c.CertificateNumber == certificateNumber);
+            .FirstOrDefaultAsync(c =>
+                c.InstituteId == instituteId && c.CertificateNumber == certificateNumber
+            );
     }
 
     public async Task<Certificate?> GetBySourceEntityAsync(Guid sourceEntityId)
     {
-        return await _context.Certificates
-            .Include(c => c.Institute)
+        return await _context
+            .Certificates.Include(c => c.Institute)
             .Include(c => c.Student)
-                .ThenInclude(s => s.StudentInfo)
+            .ThenInclude(s => s.StudentInfo)
             .Include(c => c.Template)
             .Include(c => c.TemplateVersion)
-            .FirstOrDefaultAsync(c => c.SourceEntityId == sourceEntityId && c.Status == CertificateStatus.Active);
+            .FirstOrDefaultAsync(c =>
+                c.SourceEntityId == sourceEntityId && c.Status == CertificateStatus.Active
+            );
     }
 
     public async Task<Certificate?> GetLatestForStudentAsync(Guid studentId, CertificateType type)
     {
-        return await _context.Certificates
-            .Include(c => c.Institute)
+        return await _context
+            .Certificates.Include(c => c.Institute)
             .Include(c => c.Student)
-                .ThenInclude(s => s.StudentInfo)
+            .ThenInclude(s => s.StudentInfo)
             .Include(c => c.Template)
             .Include(c => c.TemplateVersion)
-            .Where(c => c.StudentId == studentId && c.Type == type && c.Status == CertificateStatus.Active)
+            .Where(c =>
+                c.StudentId == studentId && c.Type == type && c.Status == CertificateStatus.Active
+            )
             .OrderByDescending(c => c.IssuedAt)
             .FirstOrDefaultAsync();
     }
@@ -93,14 +100,15 @@ public class CertificateRepository : ICertificateRepository
         string? search = null,
         int page = 1,
         int pageSize = 50,
-        string? sort = null)
+        string? sort = null
+    )
     {
         var query = BuildFilterQuery(instituteId, studentId, type, status, search);
 
         return await SortBy(query, sort)
             .Include(c => c.Institute)
             .Include(c => c.Student)
-                .ThenInclude(s => s.StudentInfo)
+            .ThenInclude(s => s.StudentInfo)
             .Include(c => c.Template)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
@@ -116,16 +124,24 @@ public class CertificateRepository : ICertificateRepository
         {
             "number" => query.OrderBy(c => c.CertificateNumber),
             "number_desc" => query.OrderByDescending(c => c.CertificateNumber),
-            "student" => query.OrderBy(c => c.Student.StudentInfo.FirstName).ThenBy(c => c.Student.StudentInfo.SecondName),
-            "student_desc" => query.OrderByDescending(c => c.Student.StudentInfo.FirstName).ThenByDescending(c => c.Student.StudentInfo.SecondName),
+            "student" => query
+                .OrderBy(c => c.Student.StudentInfo.FirstName)
+                .ThenBy(c => c.Student.StudentInfo.SecondName),
+            "student_desc" => query
+                .OrderByDescending(c => c.Student.StudentInfo.FirstName)
+                .ThenByDescending(c => c.Student.StudentInfo.SecondName),
             "type" => query.OrderBy(c => c.Type).ThenByDescending(c => c.IssuedAt),
             "type_desc" => query.OrderByDescending(c => c.Type).ThenByDescending(c => c.IssuedAt),
             "template" => query.OrderBy(c => c.Template!.Name).ThenByDescending(c => c.IssuedAt),
-            "template_desc" => query.OrderByDescending(c => c.Template!.Name).ThenByDescending(c => c.IssuedAt),
+            "template_desc" => query
+                .OrderByDescending(c => c.Template!.Name)
+                .ThenByDescending(c => c.IssuedAt),
             "issued" => query.OrderBy(c => c.IssuedAt),
             "issued_desc" => query.OrderByDescending(c => c.IssuedAt),
             "status" => query.OrderBy(c => c.Status).ThenByDescending(c => c.IssuedAt),
-            "status_desc" => query.OrderByDescending(c => c.Status).ThenByDescending(c => c.IssuedAt),
+            "status_desc" => query
+                .OrderByDescending(c => c.Status)
+                .ThenByDescending(c => c.IssuedAt),
             _ => query.OrderByDescending(c => c.IssuedAt),
         };
 
@@ -134,7 +150,8 @@ public class CertificateRepository : ICertificateRepository
         DateTime? issuedSinceUtc = null,
         CertificateType? type = null,
         CertificateStatus? status = null,
-        string? search = null)
+        string? search = null
+    )
     {
         var query = BuildFilterQuery(instituteId, null, type, status, search);
 
@@ -162,13 +179,15 @@ public class CertificateRepository : ICertificateRepository
 
     public async Task<Guid?> GetInstituteIdAsync(Guid certificateId)
     {
-        return await _context.Certificates
-            .Where(c => c.Id == certificateId)
+        return await _context
+            .Certificates.Where(c => c.Id == certificateId)
             .Select(c => (Guid?)c.InstituteId)
             .FirstOrDefaultAsync();
     }
 
-    public async Task<IReadOnlyDictionary<Guid, string>> GetUserNamesAsync(IEnumerable<Guid> userIds)
+    public async Task<IReadOnlyDictionary<Guid, string>> GetUserNamesAsync(
+        IEnumerable<Guid> userIds
+    )
     {
         var ids = userIds.Distinct().ToList();
         if (ids.Count == 0)
@@ -176,9 +195,14 @@ public class CertificateRepository : ICertificateRepository
             return new Dictionary<Guid, string>();
         }
 
-        var users = await _context.Users
-            .Where(u => ids.Contains(u.Id))
-            .Select(u => new { u.Id, u.FirstName, u.SecondName })
+        var users = await _context
+            .Users.Where(u => ids.Contains(u.Id))
+            .Select(u => new
+            {
+                u.Id,
+                u.FirstName,
+                u.SecondName,
+            })
             .ToListAsync();
 
         return users.ToDictionary(u => u.Id, u => $"{u.FirstName} {u.SecondName}".Trim());
@@ -189,7 +213,8 @@ public class CertificateRepository : ICertificateRepository
         Guid? studentId = null,
         CertificateType? type = null,
         CertificateStatus? status = null,
-        string? search = null)
+        string? search = null
+    )
     {
         var query = BuildFilterQuery(instituteId, studentId, type, status, search);
         return await query.CountAsync();
@@ -200,7 +225,8 @@ public class CertificateRepository : ICertificateRepository
         Guid? studentId,
         CertificateType? type,
         CertificateStatus? status,
-        string? search)
+        string? search
+    )
     {
         var query = _context.Certificates.AsQueryable();
 
@@ -228,10 +254,10 @@ public class CertificateRepository : ICertificateRepository
         {
             var term = search.Trim();
             query = query.Where(c =>
-                c.CertificateNumber.Contains(term) ||
-                c.Student.StudentInfo.FirstName.Contains(term) ||
-                c.Student.StudentInfo.SecondName.Contains(term) ||
-                c.Student.StudentInfo.Username.Contains(term)
+                c.CertificateNumber.Contains(term)
+                || c.Student.StudentInfo.FirstName.Contains(term)
+                || c.Student.StudentInfo.SecondName.Contains(term)
+                || c.Student.StudentInfo.Username.Contains(term)
             );
         }
 
@@ -253,8 +279,8 @@ public class CertificateRepository : ICertificateRepository
 
     public async Task<int> GetNextSequenceAsync(Guid instituteId, CertificateType type)
     {
-        var count = await _context.Certificates
-            .IgnoreQueryFilters()
+        var count = await _context
+            .Certificates.IgnoreQueryFilters()
             .CountAsync(c => c.InstituteId == instituteId && c.Type == type);
 
         return count + 1;
@@ -268,8 +294,8 @@ public class CertificateRepository : ICertificateRepository
 
     public async Task<IEnumerable<CertificateAuditLog>> GetAuditLogsAsync(Guid certificateId)
     {
-        return await _context.CertificateAuditLogs
-            .Where(l => l.EntityId == certificateId)
+        return await _context
+            .CertificateAuditLogs.Where(l => l.EntityId == certificateId)
             .OrderByDescending(l => l.PerformedAt)
             .ToListAsync();
     }

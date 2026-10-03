@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Hafiz.Areas.Admin.Controllers;
 
 [Area("Admin")]
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin,SuperAdmin")]
 public class CertificatesManagementController : Controller
 {
     private static readonly int[] AllowedPageSizes = { 25, 50, 100 };
@@ -143,11 +143,66 @@ public class CertificatesManagementController : Controller
         var instituteId = InstituteId();
         var userId = UserId();
         if (!instituteId.HasValue || !userId.HasValue)
+        {
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                return Json(new { success = false, message = "غير مصرح بهذا الإجراء." });
             return Forbid();
-        if (await _certificates.RevokeCertificateAsync(id, reason, userId.Value, instituteId))
-            TempData["SuccessMessage"] = "تم إلغاء اعتماد الشهادة، ولم تعد سارية عند التحقق.";
+        }
+
+        if (string.IsNullOrWhiteSpace(reason))
+        {
+            var msg = "يجب تحديد سبب إلغاء اعتماد الشهادة.";
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                return Json(new { success = false, message = msg });
+            TempData["ErrorMessage"] = msg;
+            return RedirectToAction(nameof(Index));
+        }
+
+        if (await _certificates.RevokeCertificateAsync(id, reason.Trim(), userId.Value, instituteId))
+        {
+            var msg = "تم إلغاء اعتماد الشهادة، ولم تعد سارية عند التحقق.";
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                return Json(new { success = true, message = msg });
+            TempData["SuccessMessage"] = msg;
+        }
         else
-            TempData["ErrorMessage"] = "تعذّر إلغاء اعتماد الشهادة؛ تأكد من أنها ما زالت سارية.";
+        {
+            var msg = "تعذّر إلغاء اعتماد الشهادة؛ تأكد من أنها ما زالت سارية.";
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                return Json(new { success = false, message = msg });
+            TempData["ErrorMessage"] = msg;
+        }
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var instituteId = InstituteId();
+        var userId = UserId();
+        if (!instituteId.HasValue || !userId.HasValue)
+        {
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                return Json(new { success = false, message = "غير مصرح بهذا الإجراء." });
+            return Forbid();
+        }
+
+        var deleted = await _certificates.DeleteCertificateAsync(id, userId.Value, instituteId);
+        if (deleted)
+        {
+            var msg = "تم حذف الشهادة وأرشفتها بنجاح.";
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                return Json(new { success = true, message = msg });
+            TempData["SuccessMessage"] = msg;
+        }
+        else
+        {
+            var msg = "تعذّر حذف الشهادة؛ تأكد من صلاحياتك ووجود السجل.";
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                return Json(new { success = false, message = msg });
+            TempData["ErrorMessage"] = msg;
+        }
+
         return RedirectToAction(nameof(Index));
     }
 

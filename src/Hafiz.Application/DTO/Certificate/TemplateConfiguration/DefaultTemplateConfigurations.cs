@@ -316,7 +316,29 @@ public static class DefaultTemplateConfigurations
         config.Theme.Preset = "navy_sapphire";
         config.Theme.PrimaryColor = "#1E3A8A";
         config.Theme.SecondaryColor = "#B45309";
+        config.Theme.AccentColor = "#60A5FA";
         config.Theme.BorderColor = "#1E3A8A";
+        config.Theme.FrameStyle = "ornate";
+        config.Theme.CornerStyle = "girih";
+        config.Theme.CornerSize = 64;
+
+        var header = config.Sections.FirstOrDefault(s => s.Type == "header");
+        if (header != null) header.Config["subInstituteText"] = "قسم الإسناد والإجازات القرآنية";
+
+        var title = config.Sections.FirstOrDefault(s => s.Type == "title");
+        if (title != null) title.Config["text"] = "إجازة بالسند المتصل في القرآن الكريم";
+
+        var verse = config.Sections.FirstOrDefault(s => s.Type == "verse");
+        if (verse != null) verse.Config["text"] = "﴿ ثُمَّ أَوْرَثْنَا الْكِتَابَ الَّذِينَ اصْطَفَيْنَا مِنْ عِبَادِنَا ﴾";
+
+        var stmt = config.Sections.FirstOrDefault(s => s.Type == "statement");
+        if (stmt != null)
+        {
+            stmt.Config["text"] = "تشهد إدارة المركز والمسند المجيز بأن {GenderedStudent}:";
+            stmt.Config["showAuthor"] = true;
+        }
+
+        config.Tokens.ClosingText = "وأوصيه بتقوى الله تعالى في السر والعلن، وملازمة كتاب الله، وألا ينساني ومشايخي من صالح دعائه.";
         return config;
     }
 
@@ -324,6 +346,31 @@ public static class DefaultTemplateConfigurations
     {
         var config = CreateDefaultQuranConfig();
         config.Theme.Preset = "classic_gold";
+        config.Theme.PrimaryColor = "#854D0E";
+        config.Theme.SecondaryColor = "#1E3A8A";
+        config.Theme.AccentColor = "#CA8A04";
+        config.Theme.BorderColor = "#854D0E";
+
+        var header = config.Sections.FirstOrDefault(s => s.Type == "header");
+        if (header != null) header.Config["subInstituteText"] = "إدارة البرامج والأنشطة الطلابية";
+
+        var title = config.Sections.FirstOrDefault(s => s.Type == "title");
+        if (title != null) title.Config["text"] = "شهادة شكر وتقدير";
+
+        var verse = config.Sections.FirstOrDefault(s => s.Type == "verse");
+        if (verse != null) verse.Config["text"] = "﴿ هَلْ جَزَاءُ الْإِحْسَانِ إِلَّا الْإِحْسَانُ ﴾";
+
+        var stmt = config.Sections.FirstOrDefault(s => s.Type == "statement");
+        if (stmt != null)
+        {
+            stmt.Config["text"] = "تتقدم إدارة المركز بوافر الشكر والتقدير إلى {GenderedStudent}:";
+            stmt.Config["showScopeDetails"] = false;
+        }
+
+        var scope = config.Sections.FirstOrDefault(s => s.Type == "quranScope");
+        if (scope != null) scope.Enabled = false;
+
+        config.Tokens.ClosingText = "تقديراً لجهوده المتميزة وتفوقه المستمر، متمنين له دوام التوفيق والنجاح.";
         return config;
     }
 }

@@ -285,8 +285,10 @@ body.cert-body {
     inset: 0;
     pointer-events: none;
     z-index: 0;
-    background-color: var(--cert-pattern-color);
-    opacity: var(--cert-pattern-opacity);
+    background-color: var(--cert-pattern-color, #c59b27);
+    opacity: 0.05;
+    opacity: clamp(0.01, var(--cert-pattern-opacity, 0.05), 0.12) !important;
+    mix-blend-mode: multiply;
     -webkit-mask-repeat: repeat;
     mask-repeat: repeat;
     -webkit-mask-image: var(--cert-pattern-mask);
@@ -342,7 +344,7 @@ body.cert-body {
 .cert-inner-border > .cert-footer,
 .cert-inner-border > .cert-qr {
     position: relative;
-    z-index: 1;
+    z-index: 2;
 }
 
 /* Watermark Background */
@@ -358,52 +360,65 @@ body.cert-body {
     z-index: 0;
 }
 
-/* Header Section */
+/* Header Section: 3-column symmetric grid ensures basmalah is mathematically centered */
 .cert-header {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
-    gap: 14px;
+    gap: 16px;
     position: relative;
-    z-index: 1;
-    margin-bottom: 12px;
+    z-index: 2;
+    margin-bottom: 14px;
+    min-height: 52px;
 }
 
 .cert-header-side {
+    grid-column: 1;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    justify-self: start;
+    text-align: right;
 }
 
 .cert-logo {
-    width: 54px;
-    height: 54px;
+    width: 52px;
+    height: 52px;
     object-fit: contain;
     flex: none;
+    border-radius: 8px;
 }
 
 .cert-institute-title {
-    font-size: 1.15rem;
+    font-size: 1.12rem;
     font-weight: 800;
     color: var(--cert-emerald-dark);
     margin: 0;
+    line-height: 1.25;
 }
 
 .cert-sub-institute {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: var(--cert-text-muted);
-    margin-top: 2px;
+    margin-top: 3px;
+    font-weight: 600;
 }
 
 .cert-basmalah {
+    grid-column: 2;
     font-family: 'Amiri', serif;
-    font-size: 1.6rem;
+    font-size: 1.55rem;
     color: var(--cert-gold-3);
     font-weight: 700;
     text-align: center;
+    justify-self: center;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
 }
 
 .cert-number-box {
+    grid-column: 3;
+    justify-self: end;
     text-align: left;
     direction: ltr;
 }
@@ -413,10 +428,11 @@ body.cert-body {
     font-family: 'Courier New', monospace;
     font-weight: 700;
     color: var(--cert-gold-dark);
-    background: rgba(197, 155, 39, 0.1);
+    background: rgba(197, 155, 39, 0.08);
     padding: 3px 8px;
     border-radius: 4px;
     border: 1px solid rgba(197, 155, 39, 0.25);
+    white-space: nowrap;
 }
 
 /* Certificate Title Banner */
@@ -763,18 +779,26 @@ body.cert-body {
    and --cert-paper-w/h carry the same dimensions into these rules.
    ========================================================================== */
 @media print {
+    /* The @page box above is the physical constraint. Nothing here may impose a
+       second, smaller one: an exact height plus overflow:hidden clipped whatever
+       the sheet rendered past --cert-paper-h (signatures, QR block). Sizing is
+       therefore min-height, and overflow stays visible so content that does run
+       long paginates onto a following page instead of disappearing. */
     html, body.cert-body {
         background: #ffffff !important;
         margin: 0 !important;
         padding: 0 !important;
         width: var(--cert-paper-w, 297mm) !important;
-        height: var(--cert-paper-h, 210mm) !important;
-        overflow: hidden !important;
+        min-height: var(--cert-paper-h, 210mm) !important;
+        height: auto !important;
+        overflow: visible !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
 
-    .cert-toolbar {
+    .cert-toolbar,
+    .cert-existing-notice,
+    .swal2-container {
         display: none !important;
     }
 
@@ -782,17 +806,22 @@ body.cert-body {
         padding: 0 !important;
         margin: 0 !important;
         width: var(--cert-paper-w, 297mm) !important;
-        height: var(--cert-paper-h, 210mm) !important;
+        min-height: var(--cert-paper-h, 210mm) !important;
+        height: auto !important;
+        overflow: visible !important;
     }
 
     .certificate-sheet {
         width: var(--cert-paper-w, 297mm) !important;
-        height: var(--cert-paper-h, 210mm) !important;
         min-height: var(--cert-paper-h, 210mm) !important;
-        max-height: var(--cert-paper-h, 210mm) !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
         box-shadow: none !important;
         border-radius: 0 !important;
-        page-break-after: avoid !important;
-        page-break-inside: avoid !important;
+        page-break-after: auto !important;
+        /* Was `avoid`: on a sheet that outgrows one page that pushes the whole
+           thing to page 2 and leaves page 1 blank, without saving the overflow. */
+        page-break-inside: auto !important;
     }
 }
