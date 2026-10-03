@@ -31,21 +31,26 @@
             ("showSubInstitute", "إظهار السطر الفرعي", "bool", true, Array.Empty<string>()),
             ("subInstituteText", "نص السطر الفرعي", "text", "شؤون حلقات القرآن الكريم", Array.Empty<string>()),
             ("showBasmalah", "إظهار البسملة", "bool", true, Array.Empty<string>()),
-            ("showCertificateNumber", "إظهار رقم الشهادة", "bool", true, Array.Empty<string>())
+            ("basmalahText", "نص البسملة / الاستفتاح", "text", "بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ", Array.Empty<string>()),
+            ("showCertificateNumber", "إظهار رقم الشهادة", "bool", true, Array.Empty<string>()),
+            ("showDate", "إظهار تاريخ الإصدار أعلى الشهادة", "bool", false, Array.Empty<string>())
         },
         ["title"] = new()
         {
             ("text", "نص العنوان", "text", "{CertificateTitle}", Array.Empty<string>()),
+            ("subtitle", "سطر فرعي أسفل العنوان", "text", "", Array.Empty<string>()),
             ("showDecorators", "الزخارف الجانبية (❖)", "bool", true, Array.Empty<string>()),
             ("showUnderline", "الخط الزخرفي أسفل العنوان", "bool", true, Array.Empty<string>())
         },
         ["verse"] = new()
         {
-            ("text", "نص الآية", "textarea", "﴿ إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ ﴾", Array.Empty<string>())
+            ("text", "نص الآية", "textarea", "﴿ إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ ﴾", Array.Empty<string>()),
+            ("reference", "مرجع الآية (مثال: [سورة الإسراء: 9])", "text", "", Array.Empty<string>())
         },
         ["statement"] = new()
         {
             ("text", "نص بيان الإنجاز", "textarea", "تشهد إدارة المركز بأن {GenderedStudent} قد أتمّ بحمد الله وتوفيقه.", Array.Empty<string>()),
+            ("studentNamePrefix", "بادئة اسم الطالب (مثال: المكرم / أو الطالب النجيب /)", "text", "", Array.Empty<string>()),
             ("showStudentName", "إظهار اسم الطالب", "bool", true, Array.Empty<string>()),
             ("showSubjectName", "إظهار الموضوع", "bool", true, Array.Empty<string>()),
             ("showAuthor", "إظهار المؤلف / الرواية", "bool", true, Array.Empty<string>()),
@@ -179,6 +184,21 @@
                                 data-preset='{"preset":"navy_sapphire","primaryColor":"#2E6EAA","secondaryColor":"#123F68","accentColor":"#82B9E8","backgroundColor":"#F7FBFF","borderColor":"#2E6EAA","frameStyle":"ornate","cornerStyle":"girih","cornerSize":60,"backgroundPattern":"geometric","backgroundPatternColor":"primary","backgroundPatternOpacity":0.05}'>
                             <div class="preset-swatches"><span style="background:#2E6EAA"></span><span style="background:#123F68"></span><span style="background:#F7FBFF;border:1px solid #ddd"></span></div>
                             أزرق هادئ
+                        </button>
+                        <button type="button" class="preset-btn"
+                                data-preset='{"preset":"imperial_ruby","primaryColor":"#8B1E3F","secondaryColor":"#4A0E2E","accentColor":"#E6A15C","backgroundColor":"#FFFDFB","borderColor":"#8B1E3F","frameStyle":"ornate","cornerStyle":"arabesque","cornerSize":64,"backgroundPattern":"arabesque","backgroundPatternColor":"accent","backgroundPatternOpacity":0.05}'>
+                            <div class="preset-swatches"><span style="background:#8B1E3F"></span><span style="background:#4A0E2E"></span><span style="background:#E6A15C"></span></div>
+                            عقيقي أندلسي
+                        </button>
+                        <button type="button" class="preset-btn"
+                                data-preset='{"preset":"midnight_onyx","primaryColor":"#1F2937","secondaryColor":"#0B0F19","accentColor":"#D4AF37","backgroundColor":"#FAF9F5","borderColor":"#1F2937","frameStyle":"ornate","cornerStyle":"girih","cornerSize":60,"backgroundPattern":"geometric","backgroundPatternColor":"accent","backgroundPatternOpacity":0.06}'>
+                            <div class="preset-swatches"><span style="background:#1F2937"></span><span style="background:#D4AF37"></span><span style="background:#FAF9F5;border:1px solid #ddd"></span></div>
+                            أونيكس ذهبي
+                        </button>
+                        <button type="button" class="preset-btn"
+                                data-preset='{"preset":"desert_amber","primaryColor":"#B45309","secondaryColor":"#78350F","accentColor":"#F59E0B","backgroundColor":"#FFFDF5","borderColor":"#B45309","frameStyle":"lines","cornerStyle":"medallion","cornerSize":60,"backgroundPattern":"stars","backgroundPatternColor":"primary","backgroundPatternOpacity":0.05}'>
+                            <div class="preset-swatches"><span style="background:#B45309"></span><span style="background:#78350F"></span><span style="background:#FFFDF5;border:1px solid #ddd"></span></div>
+                            كهرماني تراثي
                         </button>
                     </div>
                     <div class="color-grid">

@@ -8,5 +8,14 @@
     var verse = string.IsNullOrWhiteSpace(config?.Text)
         ? "﴿ إِنَّ هَـٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ ﴾"
         : CertificateTokenResolver.Resolve(config!.Text, Model);
+    var reference = string.IsNullOrWhiteSpace(config?.Reference)
+        ? null
+        : CertificateTokenResolver.Resolve(config!.Reference, Model);
 }
-<div class="cert-verse">@verse</div>
+<div class="cert-verse-container">
+    <div class="cert-verse">@verse</div>
+    @if (!string.IsNullOrWhiteSpace(reference))
+    {
+        <div class="cert-verse-ref">@reference</div>
+    }
+</div>

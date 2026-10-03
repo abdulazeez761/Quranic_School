@@ -776,8 +776,14 @@
         return renderHeader();
       case 'title':
         return renderTitle();
-      case 'verse':
-        return `<div class="cert-verse">${escapeHtml(resolve(sectionConfig('verse', 'text', '﴿ إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ ﴾')))}</div>`;
+      case 'verse': {
+        const verseText = resolve(sectionConfig('verse', 'text', '﴿ إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ ﴾'));
+        const verseRef = resolve(sectionConfig('verse', 'reference', ''));
+        return `<div class="cert-verse-container">
+          <div class="cert-verse">${escapeHtml(verseText)}</div>
+          ${verseRef ? `<div class="cert-verse-ref">${escapeHtml(verseRef)}</div>` : ''}
+        </div>`;
+      }
       case 'statement':
         return renderStatement();
       case 'quranScope':
@@ -800,6 +806,8 @@
     const showSub = sectionConfig('header', 'showSubInstitute', true);
     const showBasmalah = sectionConfig('header', 'showBasmalah', true);
     const showNumber = sectionConfig('header', 'showCertificateNumber', true);
+    const showDate = sectionConfig('header', 'showDate', false);
+    const basmalahText = resolve(sectionConfig('header', 'basmalahText', 'بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ'));
     const subText = sectionConfig('header', 'subInstituteText', `حلقة: ${sample.ClassName}`);
 
     const side =
@@ -813,19 +821,29 @@
            </div>`
         : '';
 
+    const numberBox =
+      showNumber || showDate
+        ? `<div class="cert-number-box">
+             ${showNumber ? `<span class="cert-serial">${sample.CertificateNumber}</span>` : ''}
+             ${showDate ? `<div class="cert-header-date">${sample.IssueDate}</div>` : ''}
+           </div>`
+        : '';
+
     return `<div class="cert-header">
       ${side}
-      ${showBasmalah ? '<div class="cert-basmalah">بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ</div>' : ''}
-      ${showNumber ? `<div class="cert-number-box"><span class="cert-serial">${sample.CertificateNumber}</span></div>` : ''}
+      ${showBasmalah ? `<div class="cert-basmalah">${escapeHtml(basmalahText)}</div>` : ''}
+      ${numberBox}
     </div>`;
   }
 
   function renderTitle() {
     const text = resolve(sectionConfig('title', 'text', '{CertificateTitle}'));
+    const subtitle = resolve(sectionConfig('title', 'subtitle', ''));
     const decorators = sectionConfig('title', 'showDecorators', true);
     const underline = sectionConfig('title', 'showUnderline', true);
     return `<div class="cert-title-container${decorators ? '' : ' no-decorators'}">
       <h1 class="cert-main-title">${escapeHtml(text)}</h1>
+      ${subtitle ? `<div class="cert-title-subtitle">${escapeHtml(subtitle)}</div>` : ''}
       ${underline ? '<div class="cert-title-line"></div>' : ''}
     </div>`;
   }
@@ -834,10 +852,18 @@
     const sample = getSample();
     const intro = resolve(sectionConfig('statement', 'text', 'تشهد إدارة المركز بأن {GenderedStudent} قد أتمّ بحمد الله وتوفيقه.'));
     const showStudent = sectionConfig('statement', 'showStudentName', true);
+    const studentPrefix = resolve(sectionConfig('statement', 'studentNamePrefix', ''));
     const showSubject = sectionConfig('statement', 'showSubjectName', true);
     const showAuthor = sectionConfig('statement', 'showAuthor', true);
     const showScope = sectionConfig('statement', 'showScopeDetails', true);
     const closing = config.tokens?.closingText;
+
+    const studentMarkup = showStudent
+      ? `<div class="cert-student-wrapper">
+           ${studentPrefix ? `<span class="cert-student-prefix">${escapeHtml(studentPrefix)}</span>` : ''}
+           <span class="cert-student-name">${escapeHtml(sample.StudentName)}</span>
+         </div>`
+      : '';
 
     const box =
       showSubject || showAuthor || showScope
@@ -850,7 +876,7 @@
 
     return `<div class="cert-body-content">
       <p class="cert-intro-text">${escapeHtml(intro)}</p>
-      ${showStudent ? `<div class="cert-student-name">${escapeHtml(sample.StudentName)}</div>` : ''}
+      ${studentMarkup}
       ${box}
       ${closing ? `<p class="cert-closing-text">${escapeHtml(resolve(closing))}</p>` : ''}
     </div>`;

@@ -13,11 +13,18 @@
     var title = string.IsNullOrWhiteSpace(rawText)
         ? Model.CertificateTitle
         : CertificateTokenResolver.Resolve(rawText, Model);
+    var subtitle = string.IsNullOrWhiteSpace(config?.Subtitle)
+        ? null
+        : CertificateTokenResolver.Resolve(config!.Subtitle, Model);
     var showDecorators = config?.ShowDecorators ?? true;
     var showUnderline = config?.ShowUnderline ?? true;
 }
 <div class="cert-title-container @(showDecorators ? "" : "no-decorators")">
     <h1 class="cert-main-title">@title</h1>
+    @if (!string.IsNullOrWhiteSpace(subtitle))
+    {
+        <div class="cert-title-subtitle">@subtitle</div>
+    }
     @if (showUnderline)
     {
         <div class="cert-title-line"></div>

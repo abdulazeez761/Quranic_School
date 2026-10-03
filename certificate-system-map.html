@@ -1438,6 +1438,63 @@ if (template == null && !templateId.HasValue)
             </div>
         </div>
 
+        <!-- Lesson 8 -->
+        <div class="engineering-card">
+            <div class="eng-header">
+                <div class="eng-title-group">
+                    <div class="eng-num-badge">8</div>
+                    <div>
+                        <h3>محرك التخصيص الدقيق وتناغم المعاينة الحية مع الطباعة (Fine-Grained Customization Engine & View-Mirroring)</h3>
+                        <div class="file-path">DTO/SectionConfig.cs & Views/Certificates/Components/ & certificate-template-builder.js</div>
+                    </div>
+                </div>
+                <div class="eng-meta-badges">
+                    <span class="eng-badge vibe-pitfall"><i class='bx bx-x-circle'></i> Vibe Coding: نصوص وإعدادات صلبة غير قابلة للتغيير في الكود</span>
+                    <span class="eng-badge solution"><i class='bx bx-check-circle'></i> حل مهندس: Declarative Config Contract + Dual Client/Server Rendering</span>
+                </div>
+            </div>
+
+            <div style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.8;">
+                <p><strong>المعضلة المعمارية:</strong> القوالب النموذجية تحتوي على عناصر ثابتة مشفرة داخل الـ Razor Views مثل: نص البسملة، غياب السطر الفرعي للعنوان، عدم إمكانية توثيق مرجع الآية القرآنية، عدم وجود بادئة لاسم الطالب (مثل: المكرم /، الطالب النجيب /)، وتنافر أحياناً بين ما يراه المستخدم في محرر الويب (Canvas Preview) وما يخرج فعلياً في أمر الطباعة المباشر <code>window.print()</code>.</p>
+                <p style="margin-top: 8px;"><strong>الحل المعماري المتكامل:</strong>
+                1. <strong>توسيع عقد الإعدادات الدقيقة (Fine-Grained DTO Contract)</strong>: إضافة <code>BasmalahText</code> و <code>ShowDate</code> في ترويسة الشهادة، و <code>Subtitle</code> في العنوان، و <code>Reference</code> في الآية القرآنية، و <code>StudentNamePrefix</code> في بيان الإنجاز.
+                2. <strong>تطابق مخرجات العميل والخادم (Dual View-Mirroring)</strong>: تم تحديث كل من مكونات Razor الجزئية (<code>_HeaderSection</code>, <code>_TitleSection</code>, <code>_VerseSection</code>, <code>_StatementSection</code>) وكود جافاسكريبت المباشر في <code>certificate-template-builder.js</code> ليولدا نفس هيكل الـ HTML ونفس فئات الـ CSS الدقيقة (<code>.cert-title-subtitle</code>, <code>.cert-verse-ref</code>, <code>.cert-student-wrapper</code>, <code>.cert-header-date</code>).
+                3. <strong>باليتات ألوان فاخرة متكاملة (Luxury Presets)</strong>: إدراج ثيمات رفيعة المستوى (العقيقي الأندلسي الفاخر، الأونيكس الأسود والذهبي الملكي، الكهرماني التراثي) مع نمط الإطار الفاخر (Ornate Band Frame) والزوايا الأرابيسك المنقوشة.
+                </p>
+            </div>
+
+            <div class="code-compare-grid">
+                <div class="code-pane bad">
+                    <div class="code-pane-header"><i class='bx bx-x'></i> قبل الحل (نصوص صلبة مشفرة في العرض)</div>
+                    <pre>&lt;!-- نصوص جامدة لا يمكن لمدير النظام تغييرها --&gt;
+&lt;div class="cert-basmalah"&gt;بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ&lt;/div&gt;
+&lt;h1 class="cert-main-title"&gt;@title&lt;/h1&gt;
+&lt;div class="cert-student-name"&gt;@Model.StudentName&lt;/div&gt;</pre>
+                </div>
+                <div class="code-pane good">
+                    <div class="code-pane-header"><i class='bx bx-check'></i> بعد الحل (تخصيص ديناميكي شامل مع حل الرموز)</div>
+                    <pre>&lt;!-- عقد مرن يستقبل التخصيص أو يعود للقيمة الافتراضية --&gt;
+&lt;div class="cert-basmalah"&gt;@basmalahText&lt;/div&gt;
+&lt;h1 class="cert-main-title"&gt;@title&lt;/h1&gt;
+@if (!string.IsNullOrWhiteSpace(subtitle)) {
+    &lt;div class="cert-title-subtitle"&gt;@subtitle&lt;/div&gt;
+}
+&lt;div class="cert-student-wrapper"&gt;
+    &lt;span class="cert-student-prefix"&gt;@studentPrefix&lt;/span&gt;
+    &lt;span class="cert-student-name"&gt;@Model.StudentName&lt;/span&gt;
+&lt;/div&gt;</pre>
+                </div>
+            </div>
+
+            <div class="takeaway-box">
+                <i class='bx bx-shield-quarter'></i>
+                <div>
+                    <div class="takeaway-title">القاعدة المعمارية المستفادة:</div>
+                    <div class="takeaway-text">«عند تصميم محركات القوالب والمستندات (Template Engines)، لا تفصل بين المعاينة الحية للواجهة (WYSIWYG Preview) ومخرجات الطباعة الحقيقية؛ اجعل كلاهما مرآة دقيقة للعقد نفسه (Configuration Contract) لضمان موثوقية النتيجة التامة دون أي مفاجآت عند التصدير».</div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- ==================== ENTITIES ==================== -->

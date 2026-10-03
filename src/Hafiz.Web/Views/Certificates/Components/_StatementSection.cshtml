@@ -10,6 +10,9 @@
         : CertificateTokenResolver.Resolve(config!.Text, Model);
     var isGeneral = Model.Type == Hafiz.Domain.Enums.CertificateType.General;
     var showStudentName = config?.ShowStudentName ?? true;
+    var studentPrefix = string.IsNullOrWhiteSpace(config?.StudentNamePrefix)
+        ? null
+        : CertificateTokenResolver.Resolve(config!.StudentNamePrefix, Model);
     var showSubjectName = !isGeneral && (config?.ShowSubjectName ?? true);
     var showAuthor = !isGeneral && (config?.ShowAuthor ?? true);
     var showScopeDetails = !isGeneral && (config?.ShowScopeDetails ?? true);
@@ -19,7 +22,13 @@
     <p class="cert-intro-text">@intro</p>
     @if (showStudentName)
     {
-        <div class="cert-student-name">@Model.StudentName</div>
+        <div class="cert-student-wrapper">
+            @if (!string.IsNullOrWhiteSpace(studentPrefix))
+            {
+                <span class="cert-student-prefix">@studentPrefix</span>
+            }
+            <span class="cert-student-name">@Model.StudentName</span>
+        </div>
     }
     @if (showSubjectName || (showAuthor && !string.IsNullOrEmpty(Model.SubtitleOrAuthor)) || (showScopeDetails && !string.IsNullOrEmpty(Model.ScopeDetails)))
     {

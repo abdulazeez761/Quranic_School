@@ -9,6 +9,11 @@
     var showSubInstitute = config?.ShowSubInstitute ?? true;
     var showBasmalah = config?.ShowBasmalah ?? true;
     var showNumber = config?.ShowCertificateNumber ?? true;
+    var showDate = config?.ShowDate ?? false;
+
+    var basmalahText = string.IsNullOrWhiteSpace(config?.BasmalahText)
+        ? "بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ"
+        : CertificateTokenResolver.Resolve(config!.BasmalahText, Model);
 
     var subInstitute = string.IsNullOrWhiteSpace(config?.SubInstituteText)
         ? (string.IsNullOrEmpty(Model.ClassName) ? "شؤون حلقات القرآن الكريم" : $"حلقة: {Model.ClassName}")
@@ -36,12 +41,19 @@
     }
     @if (showBasmalah)
     {
-        <div class="cert-basmalah">بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ</div>
+        <div class="cert-basmalah">@basmalahText</div>
     }
-    @if (showNumber)
+    @if (showNumber || showDate)
     {
         <div class="cert-number-box">
-            <span class="cert-serial">@Model.CertificateNumber</span>
+            @if (showNumber)
+            {
+                <span class="cert-serial">@Model.CertificateNumber</span>
+            }
+            @if (showDate && !string.IsNullOrEmpty(Model.IssueDateFormatted))
+            {
+                <div class="cert-header-date">@Model.IssueDateFormatted</div>
+            }
         </div>
     }
 </div>
