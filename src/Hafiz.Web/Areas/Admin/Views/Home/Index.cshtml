@@ -32,11 +32,23 @@
 <partial name="_KpiCards" model="Model" />
 
 @{
-    var wirdsViewData = new ViewDataDictionary(ViewData)
+    var quranWirdsViewData = new ViewDataDictionary(ViewData)
     {
-        ["Title"] = "أوراد اليوم",
-        ["Subtitle"] = "أحدث أوراد الحفظ والمراجعة المُسنَدة اليوم",
+        ["Title"] = "أوراد القرآن الكريم",
+        ["Subtitle"] = "أحدث أوراد الحفظ والمراجعة للقرآن الكريم اليوم",
         ["HeaderIcon"] = "bx bx-book-heart",
+    };
+    var matnsViewData = new ViewDataDictionary(ViewData)
+    {
+        ["Title"] = "أوراد المتون العلمية",
+        ["Subtitle"] = "أحدث أوراد حفظ ومراجعة ومدارسة المتون اليوم",
+        ["HeaderIcon"] = "bx bx-book-bookmark",
+    };
+    var sanadViewData = new ViewDataDictionary(ViewData)
+    {
+        ["Title"] = "أوراد السند والإجازة",
+        ["Subtitle"] = "أحدث أوراد الإسناد بالسند المتصل والإجازة اليوم",
+        ["HeaderIcon"] = "bx bx-award",
     };
     var attendanceCounter = Model.ExpectedAttendanceToday > 0 ?
                $"📊 الطلاب: {Model.AttendedToday} من {Model.ExpectedAttendanceToday} | المعلمون: {Model.AttendedTeachersToday} من {Model.ExpectedTeachersToday}" :
@@ -51,9 +63,10 @@
 }
 
 <div class="dashboard-secondary-grid">
-    @await Html.PartialAsync("_ActivityFeed", Model.WirdsActivity, wirdsViewData)
+    @await Html.PartialAsync("_ActivityFeed", Model.WirdsActivity, quranWirdsViewData)
+    @await Html.PartialAsync("_ActivityFeed", Model.MatnsActivity, matnsViewData)
+    @await Html.PartialAsync("_ActivityFeed", Model.SanadActivity, sanadViewData)
     @await Html.PartialAsync("_ActivityFeed", Model.AttendanceActivity, attendanceViewData)
-    <partial name="_GenderPanel" model="Model" />
 </div>
 
 @section Scripts {

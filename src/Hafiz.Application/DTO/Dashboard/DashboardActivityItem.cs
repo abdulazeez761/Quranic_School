@@ -14,16 +14,28 @@ namespace Hafiz.DTOs.Dashboard
         MatnMemorization = 5,
         MatnRevision = 6,
         MatnMudarasah = 7,
+        SanadMemorization = 8,
+        SanadRevision = 9,
+        SanadTajwid = 10,
     }
 
     /// <summary>فئة النشاط المعروض في قسم/تبويب مستقل على لوحة الإدارة.</summary>
     public enum DashboardActivityCategory
     {
-        /// <summary>أوراد الحفظ والمراجعة.</summary>
-        Wirds = 0,
+        /// <summary>أوراد القرآن الكريم (حفظ، مراجعة، تجويد).</summary>
+        QuranWirds = 0,
 
         /// <summary>حضور الطلاب والمعلمين.</summary>
         Attendance = 1,
+
+        /// <summary>أوراد المتون العلمية (حفظ، مراجعة، مدارسة).</summary>
+        Matns = 2,
+
+        /// <summary>أوراد السند الغيبي والإجازة.</summary>
+        Sanad = 3,
+
+        /// <summary>اسم بديل لأوراد القرآن للتوافق مع الإصدارات السابقة.</summary>
+        Wirds = 0,
     }
 
     /// <summary>ملخّص أعداد الحضور لصف واحد في يوم واحد — يُلوَّن في الواجهة لجذب الانتباه.</summary>

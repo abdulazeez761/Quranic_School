@@ -132,8 +132,21 @@ namespace Hafiz.DTOs.Dashboard
         /// <summary>الفترة الزمنية المُطبَّقة على إحصائيات الأوراد (لإبراز الزر المختار في الواجهة).</summary>
         public DashboardPeriod SelectedPeriod { get; set; } = DashboardPeriod.AllTime;
 
-        /// <summary>الصفحة الأولى من أوراد اليوم (حفظ + مراجعة).</summary>
+        /// <summary>الصفحة الأولى من أوراد القرآن الكريم لليوم (حفظ + مراجعة + تجويد).</summary>
         public DashboardActivityPage WirdsActivity { get; set; } = new();
+
+        /// <summary>اسم بديل لأوراد القرآن الكريم.</summary>
+        public DashboardActivityPage QuranWirdsActivity
+        {
+            get => WirdsActivity;
+            set => WirdsActivity = value;
+        }
+
+        /// <summary>الصفحة الأولى من أوراد المتون العلمية لليوم (حفظ + مراجعة + مدارسة).</summary>
+        public DashboardActivityPage MatnsActivity { get; set; } = new();
+
+        /// <summary>الصفحة الأولى من أوراد السند الغيبي والإجازة لليوم.</summary>
+        public DashboardActivityPage SanadActivity { get; set; } = new();
 
         /// <summary>الصفحة الأولى من حضور اليوم (طلاب + معلمين).</summary>
         public DashboardActivityPage AttendanceActivity { get; set; } = new();

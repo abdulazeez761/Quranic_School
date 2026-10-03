@@ -38,9 +38,21 @@ namespace Hafiz.Infrastructure.Services
                 await AggregateWirdUnitsAsync(instituteId, period);
             var (matnTotal, matnMem, matnRev, matnMud, matnCompleted, matnMemVerses, matnRevVerses, memUnits, revUnits) =
                 await AggregateMatnUnitsAsync(instituteId, period);
-            var wirdsPage = await _activityQuery.GetTodaysPageAsync(
+            var quranWirdsPage = await _activityQuery.GetTodaysPageAsync(
                 instituteId,
-                DashboardActivityCategory.Wirds,
+                DashboardActivityCategory.QuranWirds,
+                0,
+                ActivityPageSize
+            );
+            var matnsPage = await _activityQuery.GetTodaysPageAsync(
+                instituteId,
+                DashboardActivityCategory.Matns,
+                0,
+                ActivityPageSize
+            );
+            var sanadPage = await _activityQuery.GetTodaysPageAsync(
+                instituteId,
+                DashboardActivityCategory.Sanad,
                 0,
                 ActivityPageSize
             );
@@ -83,7 +95,9 @@ namespace Hafiz.Infrastructure.Services
                 TajwidJuz = Math.Round(tajJuz, 2),
                 TajwidAyahs = tajAyahs,
                 SelectedPeriod = period,
-                WirdsActivity = wirdsPage,
+                WirdsActivity = quranWirdsPage,
+                MatnsActivity = matnsPage,
+                SanadActivity = sanadPage,
                 AttendanceActivity = attendancePage,
                 ExpectedAttendanceToday = counts.ExpectedStudentsToday,
                 AttendedToday = counts.AttendedStudentsToday,

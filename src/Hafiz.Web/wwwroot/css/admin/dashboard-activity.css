@@ -191,15 +191,31 @@
   padding-top: 2px;
 }
 
-/* Kind-specific tint variables — set on the item, inherited by icon. */
-.dashboard-activity-item.--memorization      { --activity-color: #a67c2e; --activity-bg: rgba(191, 145, 59, 0.14); }
-.dashboard-activity-item.--revision          { --activity-color: #138496; --activity-bg: rgba(23, 162, 184, 0.14); }
-.dashboard-activity-item.--tajwid            { --activity-color: #7c3aed; --activity-bg: rgba(124, 58, 237, 0.14); }
-.dashboard-activity-item.--matn-memorization { --activity-color: #0d9488; --activity-bg: rgba(13, 148, 136, 0.14); }
-.dashboard-activity-item.--matn-revision     { --activity-color: #2563eb; --activity-bg: rgba(37, 99, 235, 0.14); }
-.dashboard-activity-item.--matn-mudarasah    { --activity-color: #d97706; --activity-bg: rgba(217, 119, 6, 0.14); }
-.dashboard-activity-item.--attendance        { --activity-color: #2c6fad; --activity-bg: rgba(74, 144, 217, 0.14); }
-.dashboard-activity-item.--teacher           { --activity-color: #5e3b8a; --activity-bg: rgba(94, 59, 138, 0.16); }
+.dashboard-activity-item.--memorization        { --activity-color: #a67c2e; --activity-bg: rgba(191, 145, 59, 0.14); }
+.dashboard-activity-item.--revision            { --activity-color: #138496; --activity-bg: rgba(23, 162, 184, 0.14); }
+.dashboard-activity-item.--tajwid              { --activity-color: #7c3aed; --activity-bg: rgba(124, 58, 237, 0.14); }
+.dashboard-activity-item.--matn-memorization   { --activity-color: #0d9488; --activity-bg: rgba(13, 148, 136, 0.14); }
+.dashboard-activity-item.--matn-revision       { --activity-color: #2563eb; --activity-bg: rgba(37, 99, 235, 0.14); }
+.dashboard-activity-item.--matn-mudarasah      { --activity-color: #d97706; --activity-bg: rgba(217, 119, 6, 0.14); }
+.dashboard-activity-item.--sanad-memorization  { --activity-color: #7c3aed; --activity-bg: rgba(124, 58, 237, 0.14); }
+.dashboard-activity-item.--sanad-revision      { --activity-color: #8b5cf6; --activity-bg: rgba(139, 92, 246, 0.14); }
+.dashboard-activity-item.--sanad-tajwid        { --activity-color: #6366f1; --activity-bg: rgba(99, 102, 241, 0.14); }
+.dashboard-activity-item.--attendance          { --activity-color: #2c6fad; --activity-bg: rgba(74, 144, 217, 0.14); }
+.dashboard-activity-item.--teacher             { --activity-color: #5e3b8a; --activity-bg: rgba(94, 59, 138, 0.16); }
+
+/* Category-specific card headers and counters */
+.dashboard-feed[data-category="0"] .card-title i { color: #16a34a; }
+.dashboard-feed[data-category="0"] .dashboard-feed-counter { color: #15803d; background: rgba(22, 163, 74, 0.12); }
+
+.dashboard-feed[data-category="1"] .card-title i { color: #2563eb; }
+.dashboard-feed[data-category="1"] .dashboard-feed-counter { color: #1d4ed8; background: rgba(37, 99, 235, 0.12); }
+
+.dashboard-feed[data-category="2"] .card-title i { color: #0d9488; }
+.dashboard-feed[data-category="2"] .dashboard-feed-counter { color: #0f766e; background: rgba(13, 148, 136, 0.12); }
+
+.dashboard-feed[data-category="3"] .card-title i { color: #7c3aed; }
+.dashboard-feed[data-category="3"] .dashboard-feed-counter { color: #6d28d9; background: rgba(124, 58, 237, 0.12); }
+
 
 @media (max-width: 480px) {
   .dashboard-activity-item { padding: var(--space-sm); }

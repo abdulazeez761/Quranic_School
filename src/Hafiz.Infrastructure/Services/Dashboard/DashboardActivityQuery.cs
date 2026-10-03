@@ -37,10 +37,14 @@ namespace Hafiz.Infrastructure.Services.Dashboard
             pageSize = Math.Clamp(pageSize, 1, 50);
             var (from, toExclusive) = TodayRange();
 
-            var all =
-                category == DashboardActivityCategory.Wirds
-                    ? await FetchWirdsAsync(instituteId, from, toExclusive)
-                    : await FetchAttendanceAsync(instituteId, from, toExclusive);
+            var all = category switch
+            {
+                DashboardActivityCategory.QuranWirds => await FetchQuranWirdsAsync(instituteId, from, toExclusive),
+                DashboardActivityCategory.Matns => await FetchMatnWirdsAsync(instituteId, from, toExclusive),
+                DashboardActivityCategory.Sanad => await FetchSanadWirdsAsync(instituteId, from, toExclusive),
+                DashboardActivityCategory.Attendance => await FetchAttendanceAsync(instituteId, from, toExclusive),
+                _ => await FetchQuranWirdsAsync(instituteId, from, toExclusive),
+            };
 
             all = all.OrderByDescending(a => a.Timestamp).ToList();
             var slice = all.Skip(page * pageSize).Take(pageSize).ToList();
@@ -55,7 +59,22 @@ namespace Hafiz.Infrastructure.Services.Dashboard
             };
         }
 
-        private async Task<List<DashboardActivityItem>> FetchWirdsAsync(
+        private sealed class RawWirdRow
+        {
+            public AssignmentType Type { get; set; }
+            public decimal? Amount { get; set; }
+            public WirdUnit? AmountUnit { get; set; }
+            public DateTime AssignedDate { get; set; }
+            public string First { get; set; } = string.Empty;
+            public string Second { get; set; } = string.Empty;
+            public string? ClassName { get; set; }
+            public Hafiz.Domain.Enums.ProgramType? ProgramType { get; set; }
+            public string? ProgramName { get; set; }
+            public Hafiz.Domain.Enums.ProgramType? FallbackProgramType { get; set; }
+            public string? FallbackProgramName { get; set; }
+        }
+
+        private async Task<List<RawWirdRow>> FetchRawWirdRowsAsync(
             Guid? instituteId,
             DateTime from,
             DateTime toExclusive
@@ -67,28 +86,67 @@ namespace Hafiz.Infrastructure.Services.Dashboard
                 )
                 : _context.WirdAssignments.AsQueryable();
 
-            var rows = await query
+            return await query
                 .Where(w => w.AssignedDate >= from && w.AssignedDate < toExclusive)
                 .OrderByDescending(w => w.AssignedDate)
                 .Take(PerSourceCap)
-                .Select(w => new
+                .Select(w => new RawWirdRow
                 {
-                    w.Type,
-                    w.Amount,
-                    w.AmountUnit,
-                    w.AssignedDate,
+                    Type = w.Type,
+                    Amount = w.Amount,
+                    AmountUnit = w.AmountUnit,
+                    AssignedDate = w.AssignedDate,
                     First = w.Student.StudentInfo.FirstName,
                     Second = w.Student.StudentInfo.SecondName,
                     ClassName = w.Class != null
                         ? w.Class.Name
-                        : w
-                            .Student.Classes.OrderBy(c => c.Name)
-                            .Select(c => c.Name)
-                            .FirstOrDefault(),
+                        : w.Student.Classes.OrderBy(c => c.Name).Select(c => c.Name).FirstOrDefault(),
+                    ProgramType = w.Class != null && w.Class.StudyProgram != null
+                        ? (Hafiz.Domain.Enums.ProgramType?)w.Class.StudyProgram.Type
+                        : null,
+                    ProgramName = w.Class != null && w.Class.StudyProgram != null
+                        ? w.Class.StudyProgram.Name
+                        : null,
+                    FallbackProgramType = w.Class == null
+                        ? w.Student.Classes.Where(c => c.StudyProgram != null).Select(c => (Hafiz.Domain.Enums.ProgramType?)c.StudyProgram!.Type).FirstOrDefault()
+                        : null,
+                    FallbackProgramName = w.Class == null
+                        ? w.Student.Classes.Where(c => c.StudyProgram != null).Select(c => c.StudyProgram!.Name).FirstOrDefault()
+                        : null,
                 })
                 .ToListAsync();
+        }
 
-            var wirdItems = rows.Select(r => new DashboardActivityItem
+        private static bool IsSanadWird(RawWirdRow r)
+        {
+            var pType = r.ProgramType ?? r.FallbackProgramType;
+            if (pType == Hafiz.Domain.Enums.ProgramType.Sanad || pType == Hafiz.Domain.Enums.ProgramType.Ijaza)
+                return true;
+
+            if (!string.IsNullOrEmpty(r.ClassName) &&
+                (r.ClassName.Contains("سند") || r.ClassName.Contains("إسناد") || r.ClassName.Contains("إجازة") ||
+                 r.ClassName.Contains("sanad", StringComparison.OrdinalIgnoreCase) || r.ClassName.Contains("ijaza", StringComparison.OrdinalIgnoreCase)))
+                return true;
+
+            var pName = r.ProgramName ?? r.FallbackProgramName;
+            if (!string.IsNullOrEmpty(pName) &&
+                (pName.Contains("سند") || pName.Contains("إسناد") || pName.Contains("إجازة") ||
+                 pName.Contains("sanad", StringComparison.OrdinalIgnoreCase) || pName.Contains("ijaza", StringComparison.OrdinalIgnoreCase)))
+                return true;
+
+            return false;
+        }
+
+        private async Task<List<DashboardActivityItem>> FetchQuranWirdsAsync(
+            Guid? instituteId,
+            DateTime from,
+            DateTime toExclusive
+        )
+        {
+            var rows = await FetchRawWirdRowsAsync(instituteId, from, toExclusive);
+            var quranRows = rows.Where(r => !IsSanadWird(r));
+
+            return quranRows.Select(r => new DashboardActivityItem
             {
                 Kind = r.Type switch
                 {
@@ -102,7 +160,7 @@ namespace Hafiz.Infrastructure.Services.Dashboard
                     AssignmentType.Memorization => "ورد حفظ جديد",
                     AssignmentType.Revision => "ورد مراجعة جديد",
                     AssignmentType.Tajwid => "ورد تجويد جديد",
-                    _ => "ورد جديد",
+                    _ => "ورد قرآن جديد",
                 },
                 Subtitle = DashboardActivityFormatter.BuildWirdSubtitle(
                     r.First,
@@ -112,9 +170,51 @@ namespace Hafiz.Infrastructure.Services.Dashboard
                     r.AmountUnit
                 ),
                 Timestamp = r.AssignedDate,
-            });
+            }).ToList();
+        }
 
-            // جلب أوراد المتون العلمية (حفظ، مراجعة، مدارسة) لليوم
+        private async Task<List<DashboardActivityItem>> FetchSanadWirdsAsync(
+            Guid? instituteId,
+            DateTime from,
+            DateTime toExclusive
+        )
+        {
+            var rows = await FetchRawWirdRowsAsync(instituteId, from, toExclusive);
+            var sanadRows = rows.Where(r => IsSanadWird(r));
+
+            return sanadRows.Select(r => new DashboardActivityItem
+            {
+                Kind = r.Type switch
+                {
+                    AssignmentType.Memorization => DashboardActivityKind.SanadMemorization,
+                    AssignmentType.Revision => DashboardActivityKind.SanadRevision,
+                    AssignmentType.Tajwid => DashboardActivityKind.SanadTajwid,
+                    _ => DashboardActivityKind.SanadMemorization,
+                },
+                Title = r.Type switch
+                {
+                    AssignmentType.Memorization => "ورد إسناد (حفظ)",
+                    AssignmentType.Revision => "ورد إسناد (مراجعة)",
+                    AssignmentType.Tajwid => "ورد إسناد (تجويد)",
+                    _ => "ورد إسناد جديد",
+                },
+                Subtitle = DashboardActivityFormatter.BuildWirdSubtitle(
+                    r.First,
+                    r.Second,
+                    r.ClassName,
+                    r.Amount,
+                    r.AmountUnit
+                ),
+                Timestamp = r.AssignedDate,
+            }).ToList();
+        }
+
+        private async Task<List<DashboardActivityItem>> FetchMatnWirdsAsync(
+            Guid? instituteId,
+            DateTime from,
+            DateTime toExclusive
+        )
+        {
             var matnQuery = instituteId.HasValue
                 ? _context.MatnAssignments.Where(m =>
                     m.Student.StudentInfo.InstituteId == instituteId
@@ -140,7 +240,7 @@ namespace Hafiz.Infrastructure.Services.Dashboard
                 })
                 .ToListAsync();
 
-            var matnItems = matnRows.Select(m =>
+            return matnRows.Select(m =>
             {
                 var kind = m.PerformanceType switch
                 {
@@ -188,9 +288,7 @@ namespace Hafiz.Infrastructure.Services.Dashboard
                     Subtitle = subtitle,
                     Timestamp = m.AssignedDate,
                 };
-            });
-
-            return wirdItems.Concat(matnItems).OrderByDescending(x => x.Timestamp).ToList();
+            }).ToList();
         }
 
         private async Task<List<DashboardActivityItem>> FetchAttendanceAsync(
