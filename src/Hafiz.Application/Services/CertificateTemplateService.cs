@@ -262,15 +262,22 @@ public class CertificateTemplateService : ICertificateTemplateService
 
     public async Task SeedDefaultTemplatesForInstituteAsync(Guid instituteId, Guid? createdBy = null)
     {
-        foreach (var type in new[] { CertificateType.Quran, CertificateType.Matn })
+        var items = new[]
         {
-            if (await _templates.GetDefaultTemplateAsync(instituteId, type) is not null) continue;
+            (Type: CertificateType.Quran, Name: "القالب الافتراضي لشهادة القرآن"),
+            (Type: CertificateType.Matn, Name: "القالب الافتراضي لشهادة المتن"),
+            (Type: CertificateType.General, Name: "القالب الافتراضي لشهادة الشكر والتقدير")
+        };
+
+        foreach (var item in items)
+        {
+            if (await _templates.GetDefaultTemplateAsync(instituteId, item.Type) is not null) continue;
             await CreateTemplateAsync(new CreateTemplateDto
             {
                 InstituteId = instituteId,
-                Type = type,
+                Type = item.Type,
                 IsDefault = true,
-                Name = type == CertificateType.Quran ? "القالب الافتراضي لشهادة القرآن" : "القالب الافتراضي لشهادة المتن"
+                Name = item.Name
             }, createdBy);
         }
     }

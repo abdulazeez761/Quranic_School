@@ -355,7 +355,7 @@ public static class DefaultTemplateConfigurations
         if (header != null) header.Config["subInstituteText"] = "إدارة البرامج والأنشطة الطلابية";
 
         var title = config.Sections.FirstOrDefault(s => s.Type == "title");
-        if (title != null) title.Config["text"] = "شهادة شكر وتقدير";
+        if (title != null) title.Config["text"] = "{CertificateTitle}";
 
         var verse = config.Sections.FirstOrDefault(s => s.Type == "verse");
         if (verse != null) verse.Config["text"] = "﴿ هَلْ جَزَاءُ الْإِحْسَانِ إِلَّا الْإِحْسَانُ ﴾";
@@ -365,6 +365,8 @@ public static class DefaultTemplateConfigurations
         {
             stmt.Config["text"] = "تتقدم إدارة المركز بوافر الشكر والتقدير إلى {GenderedStudent}:";
             stmt.Config["showScopeDetails"] = false;
+            stmt.Config["showSubjectName"] = false;
+            stmt.Config["showAuthor"] = false;
         }
 
         var scope = config.Sections.FirstOrDefault(s => s.Type == "quranScope");

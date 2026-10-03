@@ -88,6 +88,53 @@ public class CertificatesController : Controller
         });
     }
 
+    // GET: /Certificates/General/{studentId}?title=...&reason=...&forceNew=...
+    [HttpGet("Certificates/General/{studentId:guid}")]
+    public async Task<IActionResult> General(
+        Guid studentId,
+        [FromQuery] string? title = null,
+        [FromQuery] string? reason = null,
+        [FromQuery] bool forceNew = false
+    )
+    {
+        var model = await _certificateService.IssueGeneralCertificateAsync(
+            studentId,
+            title,
+            reason,
+            issuedBy: GetUserId(),
+            baseUrl: GetBaseUrl(),
+            forceNew: forceNew
+        );
+        if (model == null)
+        {
+            TempData["ErrorMessage"] = "تعذر إصدار الشهادة التقديرية: بيانات الطالب أو المركز غير متوفرة.";
+            return View("CertificateNotFound");
+        }
+
+        return IsCurrentInstitute(model.InstituteId) ? View("CertificateFrame", model) : Forbid();
+    }
+
+    // GET: /Certificates/CheckExistingGeneral/{studentId}?title=...
+    [HttpGet("Certificates/CheckExistingGeneral/{studentId:guid}")]
+    public async Task<IActionResult> CheckExistingGeneral(Guid studentId, [FromQuery] string? title = null)
+    {
+        var existing = await _certificateService.GetExistingGeneralCertificateAsync(studentId, title, GetBaseUrl());
+        if (existing == null)
+            return Json(new { exists = false });
+
+        return Json(new
+        {
+            exists = true,
+            certificateId = existing.CertificateId,
+            certificateNumber = existing.CertificateNumber,
+            certificateTitle = existing.CertificateTitle,
+            issueDate = existing.IssueDateFormatted,
+            hijriDate = existing.HijriDateFormatted,
+            studentName = existing.StudentName,
+            viewUrl = $"/Certificates/View/{existing.CertificateId}"
+        });
+    }
+
     [HttpGet("Certificates/View/{id:guid}")]
     public async Task<IActionResult> ViewCertificate(Guid id)
     {

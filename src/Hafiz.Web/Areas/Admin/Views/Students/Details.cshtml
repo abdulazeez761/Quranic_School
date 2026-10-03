@@ -103,6 +103,13 @@
                 <i class='bx bx-award' style="font-size: 1.15rem;"></i>
                 <span>تصدير شهادة القرآن</span>
             </button>
+            <button type="button" class="btn btn-outline" id="btnExportGeneralCert"
+                    style="height: 38px; display: inline-flex; align-items: center; gap: 6px; padding: 0 14px; font-weight: 600; border-color: #f59e0b; color: #b45309; background: #fffbeb;"
+                    title="إصدار وطباعة شهادة تقديرية / شكر وتميز لهذا الطالب"
+                    onclick="openConfirmGeneralCertModal(this)">
+                <i class='bx bx-star' style="font-size: 1.15rem; color: #d97706;"></i>
+                <span>شهادة تقديرية</span>
+            </button>
             <a href="@backUrl" class="back-btn">
                 <i class='bx bx-arrow-back'></i>
                 @Localizer["BackToList"]
@@ -1305,10 +1312,98 @@
             </div>
         </div>
 
+        <!-- =================================================================== -->
+        <!-- نافذة تأكيد وإعداد الشهادة التقديرية / شكر وتميز                    -->
+        <!-- =================================================================== -->
+        <div class="matn-modal-overlay" id="confirmGeneralCertModal" tabindex="-1" aria-hidden="true" dir="rtl" style="display: none;" onclick="if(event.target === this) closeConfirmGeneralCertModal()">
+            <div class="matn-modal-dialog" style="max-width: 540px;">
+                <div class="matn-modal-card">
+                    <div class="matn-modal-header" style="background: linear-gradient(135deg, #b45309 0%, #d97706 100%); color: #fff; padding: 1.15rem 1.5rem;">
+                        <h5 class="matn-modal-title" style="color: #fff; display: flex; align-items: center; gap: 8px; margin: 0; font-size: 1.1rem; font-weight: 700;">
+                            <i class='bx bx-star fs-5'></i>
+                            <span>إصدار شهادة تقديرية / شكر وتميز</span>
+                        </h5>
+                        <button type="button" class="matn-modal-close" aria-label="Close" onclick="closeConfirmGeneralCertModal()" style="color: #fff; background: none; border: none; font-size: 1.5rem; cursor: pointer;">
+                            <i class='bx bx-x'></i>
+                        </button>
+                    </div>
+                    <div class="matn-modal-body" style="padding: 20px;">
+                        <!-- تنبيه وجود شهادة سابقة إن وجدت -->
+                        <div id="generalExistingCertAlert" style="display: none; background: #fffbeb; border: 1.5px solid #fcd34d; border-radius: 8px; padding: 12px 14px; margin-bottom: 14px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
+                                <div style="display: flex; align-items: center; gap: 8px; color: #92400e; font-size: 13px; font-weight: 700;">
+                                    <i class='bx bx-error-circle' style="font-size: 20px; color: #d97706;"></i>
+                                    <span>تنبيه: توجد شهادة تقديرية صادرة مسبقاً برقم (<span id="generalExistingCertNum"></span>)</span>
+                                </div>
+                                <a id="generalExistingCertLink" href="#" target="_blank" class="btn btn-sm" style="background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+                                    <i class='bx bx-show'></i> عرض الشهادة السابقة
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- بطاقة بيانات الطالب -->
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-bottom: 16px;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <i class='bx bx-user-pin' style="font-size: 20px; color: #d97706;"></i>
+                                <span style="font-weight: 700; color: #1e293b;">الطالب:</span>
+                                <span style="color: #0f172a; font-weight: 600;">@studentFullName</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class='bx bx-award' style="font-size: 20px; color: #d97706;"></i>
+                                <span style="font-weight: 700; color: #1e293b;">نوع الوثيقة:</span>
+                                <span class="badge" style="background: #fef3c7; color: #92400e; font-size: 13px; font-weight: 700; padding: 4px 8px; border-radius: 6px;">
+                                    شهادة تقديرية وتكريم عام
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- خيارات عنوان الشهادة -->
+                        <div style="margin-bottom: 14px;">
+                            <label style="font-weight: 700; color: #334155; font-size: 13.5px; margin-bottom: 6px; display: block;">
+                                <i class='bx bx-heading text-warning me-1'></i> عنوان الشهادة:
+                            </label>
+                            <select id="generalCertTitleSelect" class="form-select form-control" onchange="onGeneralCertTitleSelectChange(this)" style="height: 40px; font-size: 14px; font-weight: 600;">
+                                <option value="شهادة شكر وتقدير" selected>شهادة شكر وتقدير</option>
+                                <option value="شهادة تفوق دراسي">شهادة تفوق دراسي</option>
+                                <option value="شهادة تميز ومواظبة">شهادة تميز ومواظبة</option>
+                                <option value="شهادة إتقان وحسن تلاوة">شهادة إتقان وحسن تلاوة</option>
+                                <option value="شهادة انضباط وسلوك متميز">شهادة انضباط وسلوك متميز</option>
+                                <option value="__custom__">عنوان مخصص...</option>
+                            </select>
+                            <input type="text" id="generalCertCustomTitle" class="form-control" placeholder="اكتب عنوان الشهادة المخصص..." style="display: none; margin-top: 8px; height: 38px; font-size: 13.5px; font-weight: 600;" />
+                        </div>
+
+                        <!-- سبب التكريم / نص التقدير -->
+                        <div style="margin-bottom: 16px;">
+                            <label style="font-weight: 700; color: #334155; font-size: 13.5px; margin-bottom: 6px; display: block;">
+                                <i class='bx bx-message-detail text-warning me-1'></i> نص وسبب التكريم والتقدير:
+                            </label>
+                            <textarea id="generalCertReason" class="form-control" rows="3" style="font-size: 13.5px; line-height: 1.6; resize: vertical;" placeholder="اكتب نص أو مبرر منح الشهادة...">@(student.sex == Hafiz.Models.enums.Sex.female ? "تقديراً لجهودها المتميزة ومواظبتها على حضور الحلقات والتزامها بالآداب الإسلامية، متمنين لها دوام التوفيق والنجاح." : "تقديراً لجهوده المتميزة ومواظبته على حضور الحلقات والتزامه بالآداب الإسلامية، متمنين له دوام التوفيق والنجاح.")</textarea>
+                            <span style="font-size: 11.5px; color: #64748b; margin-top: 4px; display: block;">سيظهر هذا النص في فقرة التقدير والختام في وثيقة الشهادة الرسمية.</span>
+                        </div>
+
+                        <!-- تنبيه الاعتماد -->
+                        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 14px; display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: #1e40af;">
+                            <i class='bx bx-info-circle' style="font-size: 18px; margin-top: 2px; flex-shrink: 0;"></i>
+                            <span>تأكيد الإصدار يقوم باعتماد الشهادة التقديرية وتوليد رقم رسمي وسيريال موثق ورمز QR للتحقق، وفتحها للطباعة في نافذة جديدة.</span>
+                        </div>
+                    </div>
+                    <div class="matn-modal-footer" style="padding: 14px 20px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                        <button type="button" class="btn btn-secondary" onclick="closeConfirmGeneralCertModal()">إلغاء</button>
+                        <button type="button" class="btn" id="btnConfirmGeneralSubmit" onclick="executeConfirmGeneralCert()" style="background: #d97706; color: #fff; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; padding: 8px 18px; border: none; border-radius: 6px;">
+                            <i class='bx bx-award'></i>
+                            <span>تأكيد وإصدار الشهادة</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script>
             let pendingMatnProgId = null;
             let existingQuranCertData = null;
             let existingMatnCertData = null;
+            let existingGeneralCertData = null;
 
             async function openConfirmQuranCertModal(triggerBtn) {
                 const alertBox = document.getElementById('quranExistingCertAlert');
@@ -1585,6 +1680,124 @@
                 }
 
                 closeConfirmMatnCertModal();
+                window.open(url, '_blank');
+            }
+
+            async function openConfirmGeneralCertModal(triggerBtn) {
+                const alertBox = document.getElementById('generalExistingCertAlert');
+                const certNum = document.getElementById('generalExistingCertNum');
+                const certLink = document.getElementById('generalExistingCertLink');
+
+                let origHtml = '';
+                if (triggerBtn) {
+                    origHtml = triggerBtn.innerHTML;
+                    triggerBtn.disabled = true;
+                    triggerBtn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> <span>جاري الفحص...</span>";
+                }
+
+                try {
+                    const res = await fetch('/Certificates/CheckExistingGeneral/@student.UserId');
+                    const data = await res.json();
+
+                    if (data && data.exists) {
+                        existingGeneralCertData = data;
+                        if (alertBox && certNum && certLink) {
+                            certNum.textContent = data.certificateNumber;
+                            certLink.href = data.viewUrl;
+                            alertBox.style.display = 'block';
+                        }
+
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                title: 'تنبيه: توجد شهادة تقديرية مسجلة مسبقاً!',
+                                html: `<div style="text-align: right; font-size: 14px; line-height: 1.8; color: #334155;">
+                                         <p style="margin-bottom: 10px;">هذا الطالب لديه بالفعل شهادة تقديرية معتمدة ومسجلة في النظام:</p>
+                                         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px;">
+                                            <div>🎖️ <strong>العنوان:</strong> <strong style="color:#b45309;">${data.certificateTitle || 'شهادة شكر وتقدير'}</strong></div>
+                                            <div>🏷️ <strong>رقم الشهادة:</strong> <code style="font-weight:700; color:#047857;">${data.certificateNumber}</code></div>
+                                            <div>📅 <strong>تاريخ الإصدار:</strong> ${data.issueDate || data.hijriDate || 'مسجلة مسبقاً'}</div>
+                                            <div>👤 <strong>اسم الطالب:</strong> @studentFullName</div>
+                                         </div>
+                                         <p style="font-size: 13px; margin: 0; color: #64748b;">يمكنك فتح الشهادة الصادرة مسبقاً، أو المتابعة لفتح نافذة إصدار شهادة تقديرية جديدة.</p>
+                                       </div>`,
+                                icon: 'info',
+                                showCancelButton: true,
+                                confirmButtonColor: '#d97706',
+                                cancelButtonColor: '#0284c7',
+                                confirmButtonText: '<i class="bx bx-show me-1"></i> عرض الشهادة السابقة',
+                                cancelButtonText: '<i class="bx bx-slider-alt me-1"></i> فتح نافذة الإصدار',
+                                reverseButtons: false
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.open(data.viewUrl, '_blank');
+                                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                                    showGeneralModalInternal();
+                                }
+                            });
+                            return;
+                        } else {
+                            const choice = window.confirm(`تنبيه: توجد شهادة تقديرية مسجلة مسبقاً لهذا الطالب برقم (${data.certificateNumber}).\n\nاضغط [موافق / OK] لعرض الشهادة السابقة.\nاضغط [إلغاء / Cancel] لفتح نافذة الإصدار.`);
+                            if (choice) {
+                                window.open(data.viewUrl, '_blank');
+                                return;
+                            }
+                        }
+                    } else {
+                        existingGeneralCertData = null;
+                        if (alertBox) alertBox.style.display = 'none';
+                    }
+                } catch (e) {
+                    console.error('Error checking existing General certificate:', e);
+                } finally {
+                    if (triggerBtn) {
+                        triggerBtn.innerHTML = origHtml;
+                        triggerBtn.disabled = false;
+                    }
+                }
+
+                showGeneralModalInternal();
+            }
+
+            function showGeneralModalInternal() {
+                const modal = document.getElementById('confirmGeneralCertModal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                    modal.classList.add('show');
+                }
+            }
+
+            function closeConfirmGeneralCertModal() {
+                const modal = document.getElementById('confirmGeneralCertModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                    modal.classList.remove('show');
+                }
+            }
+
+            function onGeneralCertTitleSelectChange(select) {
+                const customInput = document.getElementById('generalCertCustomTitle');
+                if (customInput) {
+                    if (select.value === '__custom__') {
+                        customInput.style.display = 'block';
+                        customInput.focus();
+                    } else {
+                        customInput.style.display = 'none';
+                    }
+                }
+            }
+
+            function executeConfirmGeneralCert() {
+                const select = document.getElementById('generalCertTitleSelect');
+                let title = select?.value || 'شهادة شكر وتقدير';
+                if (title === '__custom__') {
+                    const custom = document.getElementById('generalCertCustomTitle')?.value?.trim();
+                    title = custom || 'شهادة شكر وتقدير';
+                }
+                const reason = document.getElementById('generalCertReason')?.value?.trim() || '';
+
+                const url = `/Certificates/General/@student.UserId?title=${encodeURIComponent(title)}&reason=${encodeURIComponent(reason)}&forceNew=true`;
+
+                closeConfirmGeneralCertModal();
                 window.open(url, '_blank');
             }
 

@@ -5,9 +5,14 @@
     var section = ViewData["Section"] as SectionConfig;
     var config = section?.GetConfig<TitleSectionConfig>();
 
-    var title = string.IsNullOrWhiteSpace(config?.Text)
+    var rawText = config?.Text;
+    if (Model.Type == Hafiz.Domain.Enums.CertificateType.General && !string.IsNullOrWhiteSpace(Model.CertificateTitle) && rawText == "شهادة شكر وتقدير" && Model.CertificateTitle != "شهادة شكر وتقدير")
+    {
+        rawText = "{CertificateTitle}";
+    }
+    var title = string.IsNullOrWhiteSpace(rawText)
         ? Model.CertificateTitle
-        : CertificateTokenResolver.Resolve(config!.Text, Model);
+        : CertificateTokenResolver.Resolve(rawText, Model);
     var showDecorators = config?.ShowDecorators ?? true;
     var showUnderline = config?.ShowUnderline ?? true;
 }

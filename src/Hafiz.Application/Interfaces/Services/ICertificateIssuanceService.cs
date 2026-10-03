@@ -22,8 +22,18 @@ public interface ICertificateIssuanceService
         Guid? issuedBy = null,
         string? baseUrl = null
     );
+    Task<CertificateModel?> IssueGeneralCertificateAsync(
+        Guid studentId,
+        string? title = null,
+        string? reason = null,
+        Guid? templateId = null,
+        Guid? issuedBy = null,
+        string? baseUrl = null,
+        bool forceNew = false
+    );
     Task<CertificateModel?> GetExistingMatnCertificateAsync(Guid studentMatnProgressId, string? baseUrl = null);
     Task<CertificateModel?> GetExistingQuranCertificateAsync(Guid studentId, int? fromJuz = null, int? toJuz = null, string? baseUrl = null);
+    Task<CertificateModel?> GetExistingGeneralCertificateAsync(Guid studentId, string? title = null, string? baseUrl = null);
     Task<CertificateModel?> GetCertificateModelAsync(Guid certificateId, string? baseUrl = null);
     Task<CertificateModel?> GetCertificateModelByVerificationTokenAsync(
         string token,

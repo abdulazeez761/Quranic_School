@@ -291,6 +291,86 @@ public class CertificateService : ICertificateService
         };
     }
 
+    public async Task<CertificateModel?> GetGeneralCertificateAsync(
+        Guid studentId,
+        string? title = null,
+        string? reason = null
+    )
+    {
+        var student = await _studentRepository.GetByIdAsync(studentId);
+        if (student == null)
+            return null;
+
+        var studentUser = student.StudentInfo;
+        var isFemale = student.sex == Sex.female;
+        var studentName = studentUser != null ? studentUser.FullName : studentId.ToString();
+
+        string className = string.Empty;
+        string instituteName = "مركز تحفيظ القرآن الكريم والعلوم الشرعية";
+        string teacherName = string.Empty;
+        Guid instituteId = studentUser?.InstituteId ?? Guid.Empty;
+
+        if (student.ClassId.HasValue)
+        {
+            var cls = await _classRepository.GetById(student.ClassId.Value);
+            if (cls != null)
+            {
+                className = cls.Name;
+                if (cls.Teachers != null && cls.Teachers.Any())
+                {
+                    var leadTeacher = cls.Teachers.FirstOrDefault()?.TeacherInfo;
+                    if (leadTeacher != null)
+                        teacherName = leadTeacher.FullName;
+                }
+
+                if (cls.InstituteId.HasValue)
+                {
+                    instituteId = cls.InstituteId.Value;
+                    var inst = await _instituteRepository.GetByIdAsync(cls.InstituteId.Value);
+                    if (inst != null && !string.IsNullOrEmpty(inst.Name))
+                        instituteName = inst.Name;
+                }
+            }
+        }
+        else if (instituteId != Guid.Empty)
+        {
+            var inst = await _instituteRepository.GetByIdAsync(instituteId);
+            if (inst != null && !string.IsNullOrEmpty(inst.Name))
+                instituteName = inst.Name;
+        }
+
+        var certTitle = !string.IsNullOrWhiteSpace(title) ? title.Trim() : "شهادة شكر وتقدير";
+        var defaultReason = isFemale
+            ? "تقديراً لجهودها المتميزة ومواظبتها على حضور الحلقات والتزامها بالآداب والعلوم الإسلامية، متمنين لها دوام التوفيق والنجاح."
+            : "تقديراً لجهوده المتميزة ومواظبته على حضور الحلقات والتزامه بالآداب والعلوم الإسلامية، متمنين له دوام التوفيق والنجاح.";
+        var finalReason = !string.IsNullOrWhiteSpace(reason) ? reason.Trim() : defaultReason;
+
+        var today = DateTime.UtcNow;
+
+        return new CertificateModel
+        {
+            CertificateNumber = $"GEN-{Guid.NewGuid().ToString()[..8].ToUpper()}",
+            Type = CertificateType.General,
+            TemplateName = "General",
+            StudentId = studentId,
+            StudentName = studentName,
+            StudentGender = isFemale ? "Female" : "Male",
+            CertificateTitle = certTitle,
+            SubjectName = certTitle,
+            AchievementDescription = $"تتقدم إدارة المركز بوافر الشكر والتقدير والثناء العاطر إلى {(isFemale ? "الطالبة المباركة" : "الطالب المبارك")}:",
+            ScopeDetails = finalReason,
+            Rating = "متميز",
+            ExamResultText = "بتقدير: متميز ومبارك",
+            IssueDate = today,
+            IssueDateFormatted = FormatArabicDate(today),
+            InstituteId = instituteId,
+            InstituteName = instituteName,
+            ClassName = className,
+            TeacherName = !string.IsNullOrEmpty(teacherName) ? teacherName : "معلم الحلقة",
+            DirectorName = "إدارة البرامج والأنشطة",
+        };
+    }
+
     private static string FormatArabicDate(DateTime dt)
     {
         try

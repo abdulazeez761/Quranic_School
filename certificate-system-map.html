@@ -743,6 +743,150 @@
         .status-dot.revoked { background: var(--rose); box-shadow: 0 0 8px rgba(244, 63, 94, 0.4); }
         .status-dot.expired { background: var(--orange); box-shadow: 0 0 8px rgba(245, 158, 11, 0.4); }
 
+        /* Engineering Deep Dive Special Styles */
+        .engineering-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            margin-bottom: 24px;
+            transition: var(--transition);
+            position: relative;
+        }
+        .engineering-card:hover {
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-md);
+        }
+        .eng-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+        .eng-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .eng-num-badge {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+            color: #000;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .eng-title-group h3 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+        .eng-meta-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .eng-badge {
+            font-size: 0.72rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .eng-badge.vibe-pitfall {
+            background: rgba(244, 63, 94, 0.15);
+            color: #fb7185;
+            border: 1px solid rgba(244, 63, 94, 0.3);
+        }
+        .eng-badge.solution {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .eng-badge.architecture {
+            background: rgba(139, 92, 246, 0.15);
+            color: #c084fc;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        .code-compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 16px 0;
+        }
+        @media (max-width: 900px) {
+            .code-compare-grid { grid-template-columns: 1fr; }
+        }
+        .code-pane {
+            background: #0d121f;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+        .code-pane-header {
+            padding: 8px 14px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 1px solid var(--border);
+        }
+        .code-pane.bad .code-pane-header {
+            background: rgba(244, 63, 94, 0.1);
+            color: #f87171;
+        }
+        .code-pane.good .code-pane-header {
+            background: rgba(16, 185, 129, 0.1);
+            color: #4ade80;
+        }
+        .code-pane pre {
+            padding: 14px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+        }
+        .takeaway-box {
+            background: linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(16, 185, 129, 0.04) 100%);
+            border: 1px solid rgba(212, 168, 67, 0.25);
+            border-radius: var(--radius-md);
+            padding: 14px 18px;
+            margin-top: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .takeaway-box i {
+            color: var(--gold);
+            font-size: 1.3rem;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        .takeaway-title {
+            font-weight: 800;
+            color: var(--gold);
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+        .takeaway-text {
+            color: var(--text-secondary);
+            font-size: 0.84rem;
+            line-height: 1.7;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .hero { padding: 40px 20px 24px; }
@@ -780,12 +924,14 @@
         <span class="badge emerald"><i class='bx bx-data'></i> Entity Framework Core</span>
         <span class="badge blue"><i class='bx bx-code-alt'></i> ASP.NET Core MVC</span>
         <span class="badge purple"><i class='bx bx-palette'></i> Template Engine</span>
+        <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: var(--orange); border-color: rgba(245, 158, 11, 0.3);"><i class='bx bx-brain'></i> Software Engineering Deep-Dives</span>
     </div>
 </header>
 
 <!-- Navigation -->
 <nav class="nav-tabs" id="navTabs">
     <button class="nav-tab active" data-tab="overview"><i class='bx bx-map-alt'></i> نظرة عامة</button>
+    <button class="nav-tab" data-tab="engineering"><i class='bx bx-brain'></i> الدروس المعمارية والتحسينات</button>
     <button class="nav-tab" data-tab="entities"><i class='bx bx-cube'></i> الكيانات</button>
     <button class="nav-tab" data-tab="enums"><i class='bx bx-list-check'></i> التعدادات</button>
     <button class="nav-tab" data-tab="services"><i class='bx bx-cog'></i> الخدمات</button>
@@ -894,6 +1040,404 @@
                 طبقة Domain لا تعتمد على شيء، و Application تعتمد على Domain فقط، بينما Infrastructure و Web تعتمدان على Application.
             </div>
         </div>
+    </div>
+
+    <!-- ==================== ENGINEERING DEEP DIVE ==================== -->
+    <div class="section" id="tab-engineering">
+        <div class="section-title t-orange">
+            <div class="icon-box" style="background: rgba(245, 158, 11, 0.15); color: var(--orange);"><i class='bx bx-brain'></i></div>
+            <div>
+                <h2>دروس الهندسة البرمجية والتحسينات المعمارية</h2>
+                <p>تشريح الأخطاء الحقيقية، القرارات المعمارية، وفهم الأسباب الجذرية — ما وراء "Vibe Coding"</p>
+            </div>
+        </div>
+
+        <div class="annotation" style="background: rgba(245, 158, 11, 0.05); border-color: rgba(245, 158, 11, 0.2); margin-bottom: 28px;">
+            <i class='bx bx-compass' style="color: var(--orange);"></i>
+            <div>
+                <strong>الفرق الجوهري بين Vibe Coding والهندسة البرمجية (Software Engineering):</strong>
+                المبرمج السطحي (Vibe Coder) يرى العَرَض فيجرب تعديلات عشوائية حتى "يختفي الخطأ بالصدفة". المهندس الحقيقي (Software Engineer) يشرح السبب الجذري (Root Cause) في سياق المعايير والمواصفات القياسية (Standards)، ويكتب حلاً مبنياً على مبادئ الدفاع في العمق (Defense-in-Depth) والحتمية (Idempotency) وثبات السجلات (Immutability). فيما يلي توثيق تحليلي للتحسينات الستة المنجزة في النظام:
+            </div>
+        </div>
+
+        <!-- Lesson 1 -->
+        <div class="engineering-card">
+            <div class="eng-header">
+                <div class="eng-title-group">
+                    <div class="eng-num-badge">1</div>
+                    <div>
+                        <h3>مشكلة الفاصلة العشرية في CSS وثنائية الثقافات (Culture-Invariant CSS Trap)</h3>
+                        <div class="file-path">Views/Certificates/Components/_CertificateDynamic.cshtml & wwwroot/css/certificates/certificate.css</div>
+                    </div>
+                </div>
+                <div class="eng-meta-badges">
+                    <span class="eng-badge vibe-pitfall"><i class='bx bx-x-circle'></i> Vibe Coding: تغيير كود الشفافية عشوائياً</span>
+                    <span class="eng-badge solution"><i class='bx bx-check-circle'></i> حل مهندس: Invariant Culture + CSS Clamps</span>
+                </div>
+            </div>
+
+            <div style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.8;">
+                <p><strong>الأعراض والظاهرة:</strong> عند تعديل القالب أو عرض الشهادة في المتصفح، تحولت الزخرفة الإسلامية الخلفية (Damask Pattern) إلى لون ذهبي غامق مصمت بنسبة 100% طمس كل نصوص الشهادة وأسماء الطلاب.</p>
+                <p style="margin-top: 8px;"><strong>التشخيص الهندسي العميق (Root Cause Autopsy):</strong>
+                في بيئة <code>ASP.NET Core Razor</code>، عندما يعمل التطبيق في سياق ثقافة عربية (مثل <code>ar-SA</code> أو <code>ar</code>)، فإن دالة تحويل الأرقام العشرية إلى نصوص <code>ToString()</code> تستخدم الفاصلة <code>,</code> أو الفاصلة العربية <code>٫</code> بدلاً من النقطة <code>.</code> كفاصل عشري.
+                وبالتالي، كود Razor: <code>opacity: @patternOpacity;</code> تحول في مخرجات الـ HTML إلى: <code>opacity: 0,06;</code>.
+                وحسب المواصفة القياسية للغة CSS (W3C CSS Syntax Specification): الفاصلة <code>,</code> غير مسموح بها كفاصل عشري في قيم الخصائص الرقمية. بمجرد أن يقرأ المتصفح <code>opacity: 0,06;</code>، يعتبر السطر بالكامل خطأ صياغة (Syntax Error)، فيتجاهله ويعود للقيمة الافتراضية للخاصية وهي <code>opacity: 1</code> (شفافية كاملة / لون مصمت 100%)!
+                </p>
+            </div>
+
+            <div class="code-compare-grid">
+                <div class="code-pane bad">
+                    <div class="code-pane-header"><i class='bx bx-x'></i> قبل الحل (Vibe Coding — يعتمد على لغة الخادم الافتراضية)</div>
+                    <pre>&lt;!-- في Razor: يعتمد على CurrentCulture --&gt;
+&lt;div style="opacity: @patternOpacity;"&gt;&lt;/div&gt;
+
+&lt;!-- النتيجة الفعلية في HTML تحت لغة عربية: --&gt;
+&lt;div style="opacity: 0,06;"&gt;&lt;/div&gt;
+&lt;!-- المتصفح يرفض السطر تماماً ويسقط إلى opacity: 1 --&gt;</pre>
+                </div>
+                <div class="code-pane good">
+                    <div class="code-pane-header"><i class='bx bx-check'></i> بعد الحل (Software Engineering — دفاع متعدد الطبقات)</div>
+                    <pre>&lt;!-- الطبقة 1 (Razor): حتمية الفاصلة العشرية بالإنجليزية --&gt;
+&lt;div style="opacity: @patternOpacity.ToString("0.000", CultureInfo.InvariantCulture);"&gt;
+
+/* الطبقة 2 (CSS): حماية دفاعية دائرية مع clamp و mix-blend */
+.cert-pattern-overlay {
+    opacity: clamp(0.01, var(--cert-pattern-opacity, 0.05), 0.12) !important;
+    mix-blend-mode: multiply;
+}</pre>
+                </div>
+            </div>
+
+            <div class="takeaway-box">
+                <i class='bx bx-shield-quarter'></i>
+                <div>
+                    <div class="takeaway-title">القاعدة المعمارية المستفادة (Architectural Takeaway):</div>
+                    <div class="takeaway-text">«أي رقم يتم توليده برمجياً ليُكتب داخل ملفات أو مخرجات تقنية (CSS، JSON، SVG، HTML Attributes، SQL Queries) يجب دائماً وأبداً أن يُنسق باستخدام <code>CultureInfo.InvariantCulture</code>، ولا يُترك للثقافة المحلية للمستخدم <code>CurrentCulture</code> تجنباً لاختلاف الفواصل العشرية».</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lesson 2 -->
+        <div class="engineering-card">
+            <div class="eng-header">
+                <div class="eng-title-group">
+                    <div class="eng-num-badge">2</div>
+                    <div>
+                        <h3>التمركز الهندسي المطلق في ترويسة الشهادة (Symmetric CSS Grid vs Flexbox)</h3>
+                        <div class="file-path">wwwroot/css/certificates/certificate.css (.cert-header)</div>
+                    </div>
+                </div>
+                <div class="eng-meta-badges">
+                    <span class="eng-badge vibe-pitfall"><i class='bx bx-x-circle'></i> Vibe Coding: ضبط الهوامش بـ Margin/Padding تقريبي</span>
+                    <span class="eng-badge solution"><i class='bx bx-check-circle'></i> حل مهندس: 3-Column Symmetric Grid (1fr auto 1fr)</span>
+                </div>
+            </div>
+
+            <div style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.8;">
+                <p><strong>الأعراض والظاهرة:</strong> البسملة في ترويسة الشهادة كانت تنزاح جانبياً ولا تستقر في منتصف الصفحة بالضبط، وتتغير إزاحتها باختلاف طول اسم المعهد أو طول رقم الشهادة وتاريخها.</p>
+                <p style="margin-top: 8px;"><strong>التشخيص الهندسي العميق:</strong>
+                عند استخدام <code>display: flex</code> مع 3 عناصر متباينة الطول الداخلي: الطرف الأيمن (اسم المعهد + الشعار = 190px)، والطرف الأيسر (الرقم المتسلسل + رمز التحقق QR + التاريخ = 270px).
+                خاصية <code>justify-content: space-between</code> توزع المساحة المتبقية فقط، وبالتالي العنصر الأوسط (البسملة) لا يتمركز في منتصف الورقة، بل يُدفع نحو الجهة الأقصر مسافة بمقدار الفرق بين الطرفين!
+                </p>
+            </div>
+
+            <div class="code-compare-grid">
+                <div class="code-pane bad">
+                    <div class="code-pane-header"><i class='bx bx-x'></i> قبل الحل (Flexbox — غير متناظر المحتوى)</div>
+                    <pre>.cert-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+/* إذا كان الطرف الأيسر أعرض من الأيمن،
+   فإن البسملة تنزاح عن منتصف الورقة! */</pre>
+                </div>
+                <div class="code-pane good">
+                    <div class="code-pane-header"><i class='bx bx-check'></i> بعد الحل (Symmetric CSS Grid — قفل رياضي للمنتصف)</div>
+                    <pre>.cert-header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr; /* تماثل كامل للأطراف */
+    align-items: center;
+}
+.cert-header-side:first-child { justify-self: start; }
+.cert-basmalah { justify-self: center; text-align: center; }
+.cert-header-side:last-child { justify-self: end; }</pre>
+                </div>
+            </div>
+
+            <div class="takeaway-box">
+                <i class='bx bx-shield-quarter'></i>
+                <div>
+                    <div class="takeaway-title">القاعدة المعمارية المستفادة:</div>
+                    <div class="takeaway-text">«في الوثائق الرسمية والشهادات، لا تستخدم Flexbox لتوسيط عنصر بين عنصرين غير متساويين في الطول؛ بل استخدم شبكة CSS Grid بأعمدة متناظرة رياضياً <code>grid-template-columns: 1fr auto 1fr;</code> لقفل موضع العنصر الأوسط في المركز الهندسي الدقيق للورقة».</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lesson 3 -->
+        <div class="engineering-card">
+            <div class="eng-header">
+                <div class="eng-title-group">
+                    <div class="eng-num-badge">3</div>
+                    <div>
+                        <h3>دورة حياة النوافذ المنبثقة وتجمد التمرير (Modal Scroll-Lock & Teardown Bug)</h3>
+                        <div class="file-path">Areas/Admin/Views/CertificatesManagement/Index.cshtml & Students/Details.cshtml</div>
+                    </div>
+                </div>
+                <div class="eng-meta-badges">
+                    <span class="eng-badge vibe-pitfall"><i class='bx bx-x-circle'></i> Vibe Coding: إخفاء عنصر الحوار فقط بـ display:none</span>
+                    <span class="eng-badge solution"><i class='bx bx-check-circle'></i> حل مهندس: Teardown Lifecycle & Backdrop Cleanup</span>
+                </div>
+            </div>
+
+            <div style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.8;">
+                <p><strong>الأعراض والظاهرة:</strong> عند فتح نافذة الحذف أو الإلغاء للشهادة ثم إلغائها، تتجمد الصفحة تماماً ويصبح شريط التمرير (Scroll) غير مستجيب لأي حركة بالماوس أو الكيبورد.</p>
+                <p style="margin-top: 8px;"><strong>التشخيص الهندسي العميق:</strong>
+                عند فتح أي نافذة منبثقة، يقوم نظام النوافذ بتطبيق قفل على الـ DOM عبر خطوتين:
+                1. وضع <code>overflow: hidden</code> على عنصر <code>&lt;body&gt;</code> لمنع التمرير الخلفي أثناء الحوار.
+                2. إدراج عنصر تغطية شفاف أو شبه شفاف <code>.modal-backdrop</code> في نهاية الـ DOM.
+                إذا تم إغلاق النافذة من خلال كود مخصص يغير فقط خاصية الحوار إلى <code>display: none</code>، دون استدعاء دورة حياة الإتلاف والتنظيف (Teardown Lifecycle)، يظل الـ <code>&lt;body&gt;</code> محبوساً بـ <code>overflow: hidden</code> ويظل عنصر الـ backdrop الشفاف يغطي كامل نافذة العرض ويمنع وصول أي أحداث نقر أو تمرير!
+                </p>
+            </div>
+
+            <div class="code-compare-grid">
+                <div class="code-pane bad">
+                    <div class="code-pane-header"><i class='bx bx-x'></i> قبل الحل (إغلاق جزئي يترك آثاراً عالقة في الـ DOM)</div>
+                    <pre>function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+    // خطأ: لم تتم إزالة overflow:hidden عن body!
+    // خطأ: عناصر backdrop ظلت عالقة تغطي الشاشة!
+}</pre>
+                </div>
+                <div class="code-pane good">
+                    <div class="code-pane-header"><i class='bx bx-check'></i> بعد الحل (دورة تنظيف شاملة ومضمونة Teardown)</div>
+                    <pre>function closeModalSafely(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.style.display = 'none';
+        modal.classList.remove('show');
+    }
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = ''; // استعادة التمرير
+    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+}</pre>
+                </div>
+            </div>
+
+            <div class="takeaway-box">
+                <i class='bx bx-shield-quarter'></i>
+                <div>
+                    <div class="takeaway-title">القاعدة المعمارية المستفادة:</div>
+                    <div class="takeaway-text">«أي مكون واجهة يعدل حالة عامة (Global State) مثل قفل الـ Body أو إضافة طبقات حظر تفاعل، يجب أن يمتلك دالة تنظيف وتفكيك حتمية (Deterministic Teardown) تُنفذ في جميع حالات الخروج أو الإلغاء دون استثناء».</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lesson 4 -->
+        <div class="engineering-card">
+            <div class="eng-header">
+                <div class="eng-title-group">
+                    <div class="eng-num-badge">4</div>
+                    <div>
+                        <h3>فصل نية المستخدم عن التنفيذ المباشر (Decoupling Intent from Accidental Issuance)</h3>
+                        <div class="file-path">Areas/Admin/Views/Students/Details.cshtml</div>
+                    </div>
+                </div>
+                <div class="eng-meta-badges">
+                    <span class="eng-badge vibe-pitfall"><i class='bx bx-x-circle'></i> Vibe Coding: رابط مباشر &lt;a href="/Certificates/..."&gt; يولد السجل فور النقر</span>
+                    <span class="eng-badge solution"><i class='bx bx-check-circle'></i> حل مهندس: Multi-stage Confirmation & Parameter Preview</span>
+                </div>
+            </div>
+
+            <div style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.8;">
+                <p><strong>الأعراض والظاهرة:</strong> سابقاً، كان مجرد النقر العرضي على رابط "تصدير الشهادة" يقوم فورياً بإنشاء السجل في قاعدة البيانات واستهلاك رقم رسمي متسلسل دون أي فرصة للمراجعة أو اختيار نطاق الأجزاء.</p>
+                <p style="margin-top: 8px;"><strong>التشخيص الهندسي العميق:</strong>
+                الشهادة كيان رسمي (Attested Credential) وليست مجرد صفحة عرض. توليدها ينتج عنه:
+                1. استهلاك رقم تسلسلي تدقيقي غير قابل للتكرار (مثل <code>QRN-INS-00001</code>).
+                2. إنشاء سجل تدقيق دائم <code>CertificateAuditLog</code> باسم المستخدم والوقت.
+                3. تجميد بيانات الطالب في لقطة JSON دائمة.
+                دمج إعلان النية (Intent) مع التنفيذ المباشر (Execution) في نقرة واحدة ينتهك أبسط معايير هندسة تجربة المستخدم ومنع الأخطاء غير القابلة للعكس (Irreversible Action Prevention).
+                </p>
+            </div>
+
+            <div class="code-compare-grid">
+                <div class="code-pane bad">
+                    <div class="code-pane-header"><i class='bx bx-x'></i> قبل الحل (نقر مباشر غير آمن يستهلك الأرقام)</div>
+                    <pre>&lt;!-- نقرة واحدة عرضية تنشئ شهادة رسمية فوراً في الـ Database! --&gt;
+&lt;a href="/Certificates/Quran/@student.UserId" target="_blank"&gt;
+    تصدير شهادة القرآن
+&lt;/a&gt;</pre>
+                </div>
+                <div class="code-pane good">
+                    <div class="code-pane-header"><i class='bx bx-check'></i> بعد الحل (نافذة تأكيد مرحلية متعددة المراحل)</div>
+                    <pre>&lt;!-- فصل النية: استدعاء نافذة التأكيد وضبط المعاملات --&gt;
+&lt;button onclick="openConfirmQuranCertModal(this)"&gt;
+    تصدير شهادة القرآن
+&lt;/button&gt;
+&lt;!-- تفتح نافذة تعرض:
+     - بيانات الطالب والمحفوظ
+     - اختيار نطاق الشهادة (كامل المصحف أو من جزء إلى جزء)
+     - فحص استباقي للشهادات السابقة
+     - زر تأكيد نهائي واضح المعالم --&gt;</pre>
+                </div>
+            </div>
+
+            <div class="takeaway-box">
+                <i class='bx bx-shield-quarter'></i>
+                <div>
+                    <div class="takeaway-title">القاعدة المعمارية المستفادة:</div>
+                    <div class="takeaway-text">«العمليات الإنشائية ذات الأثر الرسمي أو المالي أو التدقيقي لا يجوز أبداً ربطها بنقرة واحدة غير خاضعة للتأكيد؛ بل يجب فصل نية المستخدم (Intent) عن التنفيذ الفعلي (Commitment) عبر نافذة حوار واضحة المعالم».</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lesson 5 -->
+        <div class="engineering-card">
+            <div class="eng-header">
+                <div class="eng-title-group">
+                    <div class="eng-num-badge">5</div>
+                    <div>
+                        <h3>الفحص الاستباقي ومبدأ اللا تغيرية (Pre-Flight Checks & Idempotency Pattern)</h3>
+                        <div class="file-path">Controllers/CertificatesController.cs & Services/CertificateIssuanceService.cs</div>
+                    </div>
+                </div>
+                <div class="eng-meta-badges">
+                    <span class="eng-badge vibe-pitfall"><i class='bx bx-x-circle'></i> Vibe Coding: توليد شهادة جديدة كلما طلب المشرف الطباعة</span>
+                    <span class="eng-badge solution"><i class='bx bx-check-circle'></i> حل مهندس: Idempotent Issuance + Pre-flight SweetAlert2</span>
+                </div>
+            </div>
+
+            <div style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.8;">
+                <p><strong>الأعراض والظاهرة:</strong> إذا كان الطالب يمتلك بالفعل شهادة رسمية سابقة معتمدة لنفس المتن أو نفس نطاق القرآن، يحتاج المشرف لتنبيه واضح يمنعه من توليد أرقام مكررة ويوفر له خيار عرض الشهادة السابقة فوراً.</p>
+                <p style="margin-top: 8px;"><strong>التشخيص الهندسي العميق:</strong>
+                تكرار إنشاء الشهادات لنفس الإنجاز يفسد سجلات المركز وسجل التدقيق ويزرع ارتباكاً في أرقام الاعتماد ورموز التحقق QR.
+                لحل ذلك، تم تطبيق نمطين هندسيين متكاملين:
+                1. <strong>Pre-flight Verification (فحص استباقي في الفرونت-إند)</strong>: استدعاء واجهات خفيفة <code>CheckExistingQuran</code> و <code>CheckExistingMatn</code> قبل فتح الحوار، لإظهار تنبيه SweetAlert2 تفاعلي يخير المشرف بين عرض الوثيقة السابقة أو الاستمرار.
+                2. <strong>Idempotent Service Handling (حتمية عدم التكرار في الباك-إند)</strong>: في <code>IssueQuranCertificateAsync</code> و <code>IssueMatnCertificateAsync</code>، إذا كانت هناك شهادة لنفس الإنجاز بحالة نشطة <code>Active</code>، تعيد الخدمة نفس السجل وتفعل راية <code>IsExistingCertificate = true</code> دون إدراج أي سجل جديد في قاعدة البيانات.
+                </p>
+            </div>
+
+            <div class="code-compare-grid">
+                <div class="code-pane bad">
+                    <div class="code-pane-header"><i class='bx bx-x'></i> نمط غير حتمي (Non-idempotent — ينشئ نسخاً مكررة)</div>
+                    <pre>// خطأ: كل استدعاء ينشئ رقماً تسلسلياً جديداً وسجل تدقيق جديد!
+var data = await _legacy.GetMatnCertificateAsync(id);
+return await PersistAsync(data, ...); // سجل مكرر في كل نقرة!</pre>
+                </div>
+                <div class="code-pane good">
+                    <div class="code-pane-header"><i class='bx bx-check'></i> نمط حتمي (Idempotent — يضمن سلامة السجلات)</div>
+                    <pre>// فحص وجود شهادة نشطة مسبقاً
+var existing = await _certificates.GetBySourceEntityAsync(progress.Id);
+if (existing != null && existing.Status == CertificateStatus.Active)
+{
+    var model = ToModel(existing, baseUrl);
+    model.IsExistingCertificate = true; // راية الإشعار
+    return model; // إرجاع السجل الأصلي المعتمد دون تكرار
+}</pre>
+                </div>
+            </div>
+
+            <div class="takeaway-box">
+                <i class='bx bx-shield-quarter'></i>
+                <div>
+                    <div class="takeaway-title">القاعدة المعمارية المستفادة:</div>
+                    <div class="takeaway-text">«صمم عملياتك التوثيقية لتكون Idempotent؛ أي أن استدعاء العملية 10 مرات لنفس الإنجاز ينتج عنه نفس الحالة تماماً كالاستدعاء مرة واحدة، مع تقديم فحص استباقي Pre-flight للمستخدم لتجربة تفاعلية سلسة».</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lesson 6 -->
+        <div class="engineering-card">
+            <div class="eng-header">
+                <div class="eng-title-group">
+                    <div class="eng-num-badge">6</div>
+                    <div>
+                        <h3>نمط التجميد واللاتغيرية في الوثائق (Immutability Pattern & Template Versioning)</h3>
+                        <div class="file-path">Hafiz.Domain/Entities/Certificate.cs & CertificateTemplateVersion.cs</div>
+                    </div>
+                </div>
+                <div class="eng-meta-badges">
+                    <span class="eng-badge vibe-pitfall"><i class='bx bx-x-circle'></i> Vibe Coding: ربط الشهادة بالقالب الحي فقط عبر Foreign Key</span>
+                    <span class="eng-badge solution"><i class='bx bx-check-circle'></i> حل مهندس: Immutable JSON Snapshot + Version Entity</span>
+                </div>
+            </div>
+
+            <div style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.8;">
+                <p><strong>المعضلة المعمارية:</strong> لو أصدر المركز شهادة لطالب في عام 2024 بتصميم معين، ثم قام المشرف في عام 2026 بتعديل ألوان أو شعار أو خطوط القالب، هل يجوز أن يتغير شكل الشهادة الصادرة عام 2024 بأثر رجعي؟ قطعا لا!</p>
+                <p style="margin-top: 8px;"><strong>الحل المعماري المعتمد:</strong>
+                إذا اعتمدت الشهادة على القالب الحي (Live Reference)، فإن أي تعديل مستقبلي سيشوه أرشيف السجلات السابقة ويخرق الموثوقية القانونية والتوثيقية.
+                تم حل ذلك عبر ركيزتين:
+                1. <strong>حقل التجميد <code>CertificateDataJson</code></strong>: تخزين لقطة مجمدة كاملة للشهادة وكافة إعدادات القالب والنصوص لحظة النقر على الاعتماد.
+                2. <strong>كيان إصدارات القالب <code>CertificateTemplateVersion</code></strong>: عند أي تعديل على القالب، يُنشأ إصدار جديد برقم تسلسلي متزايد (Version 1, Version 2...)، وتبقى الشهادات التاريخية مرتبطة بنسختها المجمدة للأبد.
+                </p>
+            </div>
+
+            <div class="takeaway-box">
+                <i class='bx bx-shield-quarter'></i>
+                <div>
+                    <div class="takeaway-title">القاعدة المعمارية المستفادة:</div>
+                    <div class="takeaway-text">«في أي نظام يصدر وثائق رسمية، فواتير، أو عقود، لا تعتمد على العلاقات الحية فقط في قواعد البيانات؛ بل جمّد لقطة كاملة من الحالة (State Snapshot) كبيانات ثابتة (Immutable Data) تضمن استقلالية الماضي عن تعديلات المستقبل».</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lesson 7 -->
+        <div class="engineering-card">
+            <div class="eng-header">
+                <div class="eng-title-group">
+                    <div class="eng-num-badge">7</div>
+                    <div>
+                        <h3>محرك الشهادات التقديرية العامة والشفاء التلقائي للقوالب (General Appreciation Engine & On-Demand Template Healing)</h3>
+                        <div class="file-path">Services/CertificateIssuanceService.cs & DTO/DefaultTemplateConfigurations.cs</div>
+                    </div>
+                </div>
+                <div class="eng-meta-badges">
+                    <span class="eng-badge vibe-pitfall"><i class='bx bx-x-circle'></i> Vibe Coding: قوالب ثابتة مسبقة + استثناء Runtime إذا لم يُزرع القالب</span>
+                    <span class="eng-badge solution"><i class='bx bx-check-circle'></i> حل مهندس: Dynamic Token Resolution + On-demand Auto-seeding</span>
+                </div>
+            </div>
+
+            <div style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.8;">
+                <p><strong>المعضلة المعمارية:</strong> الشهادات التقديرية العامة (شكر وتقدير، تفوق دراسي، مواظبة، سلوك متميز) تتطلب مرونة كاملة في تخصيص عنوان الشهادة ومبرر/نص التكريم لكل طالب على حدة، دون كسر مبدأ اللاتغيرية (Immutability) ودون التعرض لاستثناء <code>InvalidOperationException</code> إذا لم يكن المركز قد زرع قالب الشهادة التقديرية مسبقاً في قاعدة بياناته.</p>
+                <p style="margin-top: 8px;"><strong>الحل المعماري المتكامل:</strong>
+                1. <strong>الشفاء والتهيئة الذاتية للقوالب (Self-Healing Resolution)</strong>: في دالة <code>ResolveTemplateAsync</code>، إذا لم تجد الخدمة قالباً افتراضياً مسجلاً للمعهد من النوع <code>CertificateType.General</code>، فإنها تقوم تلقائياً وعلى الفور بإنشاء القالب الافتراضي مع إصداره الأول من <code>DefaultTemplateConfigurations.CreateDefaultGeneralConfig()</code> وحفظه في قاعدة البيانات فورياً، مما يمنع تعطل عملية الإصدار تماماً في أي مركز.
+                2. <strong>حل الرموز الديناميكية (Dynamic Token Resolution)</strong>: تم ضبط ترويسة العنوان في قالب التقدير على الرمز <code>{CertificateTitle}</code> بحيث يتكيف العنوان لحظياً مع خيار المشرف (شكر وتقدير / تفوق دراسي / عنوان مخصص).
+                3. <strong>حقن المبرر في اللقطة المجمدة (Closing Text Injection)</strong>: في دالة <code>PersistAsync</code>، يتم حقن نص التقدير المخصص في <code>data.Configuration.Tokens.ClosingText</code> و <code>ScopeDetails</code> قبل التشفير التسلسلي إلى JSON، ليكون نص التكريم المخصص جزءاً أصيلاً وموثقاً في الوثيقة ورمز الـ QR للأبد.
+                </p>
+            </div>
+
+            <div class="code-compare-grid">
+                <div class="code-pane bad">
+                    <div class="code-pane-header"><i class='bx bx-x'></i> قبل الحل (انهيار فوري عند عدم وجود القالب)</div>
+                    <pre>// إذا لم يُزرع القالب يدوياً للمعهد، تفشل العملية فوراً!
+var template = await _templates.GetDefaultTemplateAsync(instId, type);
+if (template == null)
+    throw new InvalidOperationException("An active template is required.");</pre>
+                </div>
+                <div class="code-pane good">
+                    <div class="code-pane-header"><i class='bx bx-check'></i> بعد الحل (شفاء ذاتي + تهيئة فورية على الطلب)</div>
+                    <pre>var template = await _templates.GetDefaultTemplateAsync(instId, type);
+if (template == null && !templateId.HasValue)
+{
+    // تهيئة القالب الافتراضي فورياً دون انتظار Migration أو زرع يدوي
+    var config = DefaultTemplateConfigurations.GetDefault(type);
+    var newTemplate = new CertificateTemplate { ... };
+    await _templates.AddAsync(newTemplate);
+    await _templates.AddVersionAsync(new Version { ConfigurationJson = config.ToJson() });
+    template = newTemplate;
+}</pre>
+                </div>
+            </div>
+
+            <div class="takeaway-box">
+                <i class='bx bx-shield-quarter'></i>
+                <div>
+                    <div class="takeaway-title">القاعدة المعمارية المستفادة:</div>
+                    <div class="takeaway-text">«صمم خدماتك الأساسية وفق مبدأ المقاومة والشفاء الذاتي (Self-Healing Services)؛ لا تعتمد فقط على وجود بيانات أولية مسبقة، بل اجعل نظامك قادراً على تهيئة بيئته التشغيلية تلقائياً عند أول طلب، مع إتاحة التخصيص المتغير فوق قالب مجمد متين».</div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- ==================== ENTITIES ==================== -->
@@ -1212,6 +1756,16 @@
                             <span class="prop-desc">إصدار شهادة قرآن — يتحقق من حفظ الأجزاء المطلوبة</span>
                         </li>
                         <li>
+                            <span class="prop-name">IssueGeneralCertificateAsync</span>
+                            <span class="prop-type">→ CertificateModel?</span>
+                            <span class="prop-desc">إصدار شهادة تقديرية عامة مع دعم عنوان ومبرر تكريم مخصص وشفاء ذاتي للقالب</span>
+                        </li>
+                        <li>
+                            <span class="prop-name">GetExistingGeneralCertificateAsync</span>
+                            <span class="prop-type">→ CertificateModel?</span>
+                            <span class="prop-desc">فحص استباقي لوجود شهادة تقديرية نشطة لنفس الطالب</span>
+                        </li>
+                        <li>
                             <span class="prop-name">GetCertificateModelAsync</span>
                             <span class="prop-type">→ CertificateModel?</span>
                             <span class="prop-desc">استرجاع شهادة موجودة بالمعرف</span>
@@ -1237,6 +1791,16 @@
                             <span class="prop-desc">إحصائيات للوحة الإدارة</span>
                         </li>
                         <li>
+                            <span class="prop-name">GetExistingQuranCertificateAsync</span>
+                            <span class="prop-type">→ CertificateModel?</span>
+                            <span class="prop-desc">فحص استباقي لوجود شهادة قرآن نشطة مسبقاً مع مطابقة النطاق</span>
+                        </li>
+                        <li>
+                            <span class="prop-name">GetExistingMatnCertificateAsync</span>
+                            <span class="prop-type">→ CertificateModel?</span>
+                            <span class="prop-desc">فحص استباقي لوجود شهادة متن نشطة معتمدة لنفس تقدم الطالب</span>
+                        </li>
+                        <li>
                             <span class="prop-name">GetAuditTrailAsync</span>
                             <span class="prop-type">→ IReadOnlyList?</span>
                             <span class="prop-desc">سجل التدقيق لشهادة محددة</span>
@@ -1246,8 +1810,8 @@
                     <div class="annotation">
                         <i class='bx bx-bulb'></i>
                         <div>
-                            <strong>آلية منع الإصدار المزدوج:</strong> عند إصدار شهادة متن، تتحقق الخدمة أولاً من وجود شهادة مصدرة مسبقاً لنفس الـ SourceEntityId.
-                            إذا وُجدت، تُعاد الشهادة الموجودة بدلاً من إصدار واحدة جديدة.
+                            <strong>آلية منع الإصدار المزدوج (Idempotency):</strong> عند إصدار أو طلب شهادة متن أو قرآن، تتحقق الخدمة أولاً من وجود شهادة نشطة مصدرة مسبقاً.
+                            إذا وُجدت، تُعاد الشهادة الموجودة مع تفعيل راية <code>IsExistingCertificate = true</code> بدلاً من استهلاك رقم تسلسلي جديد.
                         </div>
                     </div>
                 </div>
@@ -1355,13 +1919,29 @@
                             <span class="prop-desc">إصدار شهادة قرآن مع نطاق الأجزاء (اختياري)</span>
                         </li>
                         <li>
+                            <span class="prop-name">GET /Certificates/General/{studentId}</span>
+                            <span class="prop-desc">إصدار شهادة تقديرية للطالب مع عنوان ومبرر مخصصين</span>
+                        </li>
+                        <li>
+                            <span class="prop-name">GET /Certificates/CheckExistingGeneral/{studentId}</span>
+                            <span class="prop-desc">JSON API: استعلام استباقي عن وجود شهادة تقديرية سابقة</span>
+                        </li>
+                        <li>
                             <span class="prop-name">GET /Certificates/View/{id}</span>
-                            <span class="prop-desc">عرض شهادة مصدرة سابقاً</span>
+                            <span class="prop-desc">عرض شهادة مصدرة سابقاً مع راية الاعتماد</span>
+                        </li>
+                        <li>
+                            <span class="prop-name">GET /Certificates/CheckExistingMatn/{id}</span>
+                            <span class="prop-desc">JSON API: استعلام استباقي عن وجود شهادة متن معتمدة مسبقاً</span>
+                        </li>
+                        <li>
+                            <span class="prop-name">GET /Certificates/CheckExistingQuran/{studentId}</span>
+                            <span class="prop-desc">JSON API: استعلام استباقي عن وجود شهادة قرآن معتمدة مسبقاً لنفس النطاق</span>
                         </li>
                     </ul>
                     <div class="annotation">
                         <i class='bx bx-shield'></i>
-                        <div>يتحقق من أن الشهادة تابعة لمركز المستخدم الحالي عبر <code>IsCurrentInstitute()</code></div>
+                        <div>يتحقق من أن الشهادة تابعة لمركز المستخدم الحالي عبر <code>IsCurrentInstitute()</code>، ويضمن عدم تكرار التوليد العرضي.</div>
                     </div>
                 </div>
             </div>
@@ -1541,6 +2121,56 @@
             <div>
                 <h2>سير العمل (Workflow)</h2>
                 <p>خطوات إصدار الشهادة من البداية للنهاية</p>
+            </div>
+        </div>
+
+        <!-- Pre-flight & Confirmation Flow -->
+        <div style="margin-bottom: 32px;">
+            <h3 style="margin-bottom: 16px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                <span style="color: var(--orange);">🛡️</span> سير الفحص الاستباقي وتأكيد الإصدار (Pre-flight & Confirmation Workflow)
+            </h3>
+            <div class="flow-container" style="border-color: rgba(245, 158, 11, 0.2);">
+                <div class="flow-steps">
+                    <div class="flow-step">
+                        <div class="flow-step-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--blue); border-color: var(--blue);">
+                            <i class='bx bx-pointer'></i>
+                        </div>
+                        <div class="flow-step-title">1. نقر المشرف</div>
+                        <div class="flow-step-desc">نقر "تصدير الشهادة" في صفحة الطالب</div>
+                    </div>
+                    <div class="flow-arrow"></div>
+                    <div class="flow-step">
+                        <div class="flow-step-icon" style="background: rgba(6, 182, 212, 0.1); color: var(--cyan); border-color: var(--cyan);">
+                            <i class='bx bx-search-alt'></i>
+                        </div>
+                        <div class="flow-step-title">2. فحص استباقي API</div>
+                        <div class="flow-step-desc">/CheckExistingQuran أو /CheckExistingMatn</div>
+                    </div>
+                    <div class="flow-arrow"></div>
+                    <div class="flow-step">
+                        <div class="flow-step-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--orange); border-color: var(--orange);">
+                            <i class='bx bx-bell'></i>
+                        </div>
+                        <div class="flow-step-title">3. تنبيه الشهادة السابقة</div>
+                        <div class="flow-step-desc">إن وُجدت: عرض SweetAlert2 برقم الشهادة والخيارات</div>
+                    </div>
+                    <div class="flow-arrow"></div>
+                    <div class="flow-step">
+                        <div class="flow-step-icon" style="background: rgba(139, 92, 246, 0.1); color: var(--purple); border-color: var(--purple);">
+                            <i class='bx bx-slider-alt'></i>
+                        </div>
+                        <div class="flow-step-title">4. نافذة ضبط المعاملات</div>
+                        <div class="flow-step-desc">تحديد الأجزاء (1-30) ومراجعة النتيجة والتقدير</div>
+                    </div>
+                    <div class="flow-arrow"></div>
+                    <div class="flow-step">
+                        <div class="flow-step-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--emerald); border-color: var(--emerald);">
+                            <i class='bx bx-check-double'></i>
+                        </div>
+                        <div class="flow-step-title">5. حتمية الاعتماد</div>
+                        <div class="flow-step-desc">إرجاع الوثيقة المعتمدة دون تكرار (Idempotent)</div>
+                    </div>
+                </div>
             </div>
         </div>
 

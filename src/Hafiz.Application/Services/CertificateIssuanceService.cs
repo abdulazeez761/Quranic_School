@@ -164,6 +164,77 @@ public class CertificateIssuanceService : ICertificateIssuanceService
             );
     }
 
+    public async Task<CertificateModel?> IssueGeneralCertificateAsync(
+        Guid studentId,
+        string? title = null,
+        string? reason = null,
+        Guid? templateId = null,
+        Guid? issuedBy = null,
+        string? baseUrl = null,
+        bool forceNew = false
+    )
+    {
+        var student = await _students.GetByIdAsync(studentId);
+        var instituteId = student?.StudentInfo?.InstituteId;
+        if (student is null)
+            return null;
+
+        if (!instituteId.HasValue && student.Classes != null)
+        {
+            instituteId = student.Classes.FirstOrDefault()?.InstituteId;
+        }
+
+        if (!instituteId.HasValue)
+            return null;
+
+        var certTitle = !string.IsNullOrWhiteSpace(title) ? title.Trim() : "شهادة شكر وتقدير";
+
+        if (!forceNew)
+        {
+            var existing = await _certificates.GetLatestForStudentAsync(studentId, CertificateType.General);
+            if (existing is not null && existing.Status == CertificateStatus.Active)
+            {
+                var existingModel = ToModel(existing, baseUrl);
+                if (existingModel is not null && (string.IsNullOrWhiteSpace(title) || string.Equals(existingModel.CertificateTitle, certTitle, StringComparison.OrdinalIgnoreCase)))
+                {
+                    existingModel.IsExistingCertificate = true;
+                    return existingModel;
+                }
+            }
+        }
+
+        var data = await _legacyCertificates.GetGeneralCertificateAsync(studentId, certTitle, reason);
+        return data is null
+            ? null
+            : await PersistAsync(
+                data,
+                instituteId.Value,
+                CertificateType.General,
+                null,
+                templateId,
+                issuedBy,
+                baseUrl
+            );
+    }
+
+    public async Task<CertificateModel?> GetExistingGeneralCertificateAsync(
+        Guid studentId,
+        string? title = null,
+        string? baseUrl = null
+    )
+    {
+        var existing = await _certificates.GetLatestForStudentAsync(studentId, CertificateType.General);
+        if (existing is null || existing.Status != CertificateStatus.Active)
+            return null;
+
+        var model = ToModel(existing, baseUrl);
+        if (!string.IsNullOrWhiteSpace(title) && !string.Equals(model.CertificateTitle, title.Trim(), StringComparison.OrdinalIgnoreCase))
+            return null;
+
+        model.IsExistingCertificate = true;
+        return model;
+    }
+
     public async Task<CertificateModel?> GetCertificateModelAsync(
         Guid certificateId,
         string? baseUrl = null
@@ -436,6 +507,21 @@ public class CertificateIssuanceService : ICertificateIssuanceService
         data.VerificationUrl = BuildUrl(baseUrl, $"/Certificates/Verify/{token}");
         data.Status = CertificateStatus.Active;
         data.Configuration = TemplateConfiguration.FromJson(version.ConfigurationJson);
+        if (type == CertificateType.General)
+        {
+            if (!string.IsNullOrWhiteSpace(data.ScopeDetails))
+            {
+                data.Configuration.Tokens.ClosingText = data.ScopeDetails;
+            }
+            if (!string.IsNullOrWhiteSpace(data.CertificateTitle))
+            {
+                var titleSec = data.Configuration.Sections.FirstOrDefault(s => s.Type == "title");
+                if (titleSec != null)
+                {
+                    titleSec.Config["text"] = data.CertificateTitle;
+                }
+            }
+        }
         data.QrCodeDataUrl = _qrCodes.GenerateDataUri(data.VerificationUrl);
 
         var entity = new Certificate
@@ -477,6 +563,42 @@ public class CertificateIssuanceService : ICertificateIssuanceService
         var template = templateId.HasValue
             ? await _templates.GetByIdAsync(templateId.Value, includeVersions: true)
             : await _templates.GetDefaultTemplateAsync(instituteId, type);
+
+        if (template is null && !templateId.HasValue)
+        {
+            var defaultName = type switch
+            {
+                CertificateType.Quran => "القالب الافتراضي لشهادة القرآن",
+                CertificateType.Matn => "القالب الافتراضي لشهادة المتن",
+                CertificateType.General => "القالب الافتراضي لشهادة الشكر والتقدير",
+                _ => $"القالب الافتراضي ({type})"
+            };
+            var config = DefaultTemplateConfigurations.GetDefault(type);
+            var newTemplate = new CertificateTemplate
+            {
+                Id = Guid.NewGuid(),
+                InstituteId = instituteId,
+                Type = type,
+                Name = defaultName,
+                IsDefault = true,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+            await _templates.AddAsync(newTemplate);
+
+            var newVersion = new CertificateTemplateVersion
+            {
+                Id = Guid.NewGuid(),
+                TemplateId = newTemplate.Id,
+                VersionNumber = 1,
+                ConfigurationJson = config.ToJson(),
+                CreatedAt = DateTime.UtcNow
+            };
+            await _templates.AddVersionAsync(newVersion);
+            newTemplate.Versions = new List<CertificateTemplateVersion> { newVersion };
+            template = newTemplate;
+        }
+
         if (
             template is null
             || template.InstituteId != instituteId
