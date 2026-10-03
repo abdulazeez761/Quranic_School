@@ -49,12 +49,19 @@ public class CertificateIssuanceService : ICertificateIssuanceService
         Guid studentMatnProgressId,
         Guid? templateId = null,
         Guid? issuedBy = null,
-        string? baseUrl = null
+        string? baseUrl = null,
+        Guid? instituteId = null
     )
     {
         var progress = await _progresses.GetByIdAsync(studentMatnProgressId);
-        var instituteId = progress?.Student?.StudentInfo?.InstituteId;
-        if (progress is null || !instituteId.HasValue)
+        if (progress is null)
+            return null;
+
+        var resolvedInstituteId = instituteId
+            ?? progress.Student?.StudentInfo?.InstituteId
+            ?? progress.Student?.Classes?.FirstOrDefault(c => c.InstituteId.HasValue)?.InstituteId;
+
+        if (!resolvedInstituteId.HasValue)
             return null;
 
         var completed =
@@ -77,7 +84,7 @@ public class CertificateIssuanceService : ICertificateIssuanceService
             ? null
             : await PersistAsync(
                 data,
-                instituteId.Value,
+                resolvedInstituteId.Value,
                 CertificateType.Matn,
                 progress.Id,
                 templateId,
@@ -122,30 +129,41 @@ public class CertificateIssuanceService : ICertificateIssuanceService
         int? toJuz = null,
         Guid? templateId = null,
         Guid? issuedBy = null,
-        string? baseUrl = null
+        string? baseUrl = null,
+        Guid? instituteId = null,
+        bool forceNew = false
     )
     {
         var student = await _students.GetByIdAsync(studentId);
-        var instituteId = student?.StudentInfo?.InstituteId;
-        if (student is null || !instituteId.HasValue)
+        if (student is null)
             return null;
+
+        var resolvedInstituteId = instituteId
+            ?? student.StudentInfo?.InstituteId
+            ?? student.Classes?.FirstOrDefault(c => c.InstituteId.HasValue)?.InstituteId;
+
+        if (!resolvedInstituteId.HasValue)
+            return null;
+
         if (!IsValidQuranAchievement(student, fromJuz, toJuz))
             return null;
 
-        var existing = await _certificates.GetLatestForStudentAsync(studentId, CertificateType.Quran);
-        if (existing is not null && existing.Status == CertificateStatus.Active)
+        if (!forceNew)
         {
-            var existingModel = ToModel(existing, baseUrl);
-            if (existingModel is not null)
+            var existing = await _certificates.GetLatestForStudentAsync(studentId, CertificateType.Quran);
+            if (existing is not null && existing.Status == CertificateStatus.Active)
             {
-                var matchesRange = (!fromJuz.HasValue && !toJuz.HasValue) ||
-                                   (existingModel.FromJuz == fromJuz && existingModel.ToJuz == toJuz) ||
-                                   (fromJuz == 1 && toJuz == 30 && (!existingModel.FromJuz.HasValue || existingModel.FromJuz == 1) && (!existingModel.ToJuz.HasValue || existingModel.ToJuz == 30));
-
-                if (matchesRange)
+                var existingModel = ToModel(existing, baseUrl);
+                if (existingModel is not null)
                 {
-                    existingModel.IsExistingCertificate = true;
-                    return existingModel;
+                    var matchesExactRange = (fromJuz.HasValue && toJuz.HasValue && existingModel.FromJuz == fromJuz && existingModel.ToJuz == toJuz) ||
+                                           (fromJuz == 1 && toJuz == 30 && (!existingModel.FromJuz.HasValue || existingModel.FromJuz == 1) && (!existingModel.ToJuz.HasValue || existingModel.ToJuz == 30));
+
+                    if (matchesExactRange)
+                    {
+                        existingModel.IsExistingCertificate = true;
+                        return existingModel;
+                    }
                 }
             }
         }
@@ -155,7 +173,7 @@ public class CertificateIssuanceService : ICertificateIssuanceService
             ? null
             : await PersistAsync(
                 data,
-                instituteId.Value,
+                resolvedInstituteId.Value,
                 CertificateType.Quran,
                 null,
                 templateId,
@@ -171,20 +189,19 @@ public class CertificateIssuanceService : ICertificateIssuanceService
         Guid? templateId = null,
         Guid? issuedBy = null,
         string? baseUrl = null,
-        bool forceNew = false
+        bool forceNew = false,
+        Guid? instituteId = null
     )
     {
         var student = await _students.GetByIdAsync(studentId);
-        var instituteId = student?.StudentInfo?.InstituteId;
         if (student is null)
             return null;
 
-        if (!instituteId.HasValue && student.Classes != null)
-        {
-            instituteId = student.Classes.FirstOrDefault()?.InstituteId;
-        }
+        var resolvedInstituteId = instituteId
+            ?? student.StudentInfo?.InstituteId
+            ?? student.Classes?.FirstOrDefault(c => c.InstituteId.HasValue)?.InstituteId;
 
-        if (!instituteId.HasValue)
+        if (!resolvedInstituteId.HasValue)
             return null;
 
         var certTitle = !string.IsNullOrWhiteSpace(title) ? title.Trim() : "شهادة شكر وتقدير";
@@ -208,7 +225,7 @@ public class CertificateIssuanceService : ICertificateIssuanceService
             ? null
             : await PersistAsync(
                 data,
-                instituteId.Value,
+                resolvedInstituteId.Value,
                 CertificateType.General,
                 null,
                 templateId,
@@ -638,14 +655,18 @@ public class CertificateIssuanceService : ICertificateIssuanceService
         int? toJuz
     )
     {
-        if (!fromJuz.HasValue && !toJuz.HasValue)
-            return student.MemorizedJuz > 0 || student.MemorizedPages > 0;
-        if (!fromJuz.HasValue || !toJuz.HasValue || fromJuz < 1 || toJuz > 30 || fromJuz > toJuz)
-            return false;
-        if (fromJuz == 1 && toJuz == 30)
-            return WirdPageCalculator.IsHafiz(student);
-        var completedJuz = student.MemorizedJuz + (student.MemorizedPages / 20m);
-        return toJuz.Value <= Math.Floor(completedJuz);
+        if (fromJuz.HasValue && toJuz.HasValue)
+        {
+            return fromJuz.Value >= 1 && toJuz.Value <= 30 && fromJuz.Value <= toJuz.Value;
+        }
+
+        if (fromJuz.HasValue || toJuz.HasValue)
+        {
+            var j = fromJuz ?? toJuz!.Value;
+            return j >= 1 && j <= 30;
+        }
+
+        return true;
     }
 
     private CertificateModel ToModel(Certificate certificate, string? baseUrl)

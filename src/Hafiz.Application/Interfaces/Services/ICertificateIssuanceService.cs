@@ -12,7 +12,8 @@ public interface ICertificateIssuanceService
         Guid studentMatnProgressId,
         Guid? templateId = null,
         Guid? issuedBy = null,
-        string? baseUrl = null
+        string? baseUrl = null,
+        Guid? instituteId = null
     );
     Task<CertificateModel?> IssueQuranCertificateAsync(
         Guid studentId,
@@ -20,7 +21,9 @@ public interface ICertificateIssuanceService
         int? toJuz = null,
         Guid? templateId = null,
         Guid? issuedBy = null,
-        string? baseUrl = null
+        string? baseUrl = null,
+        Guid? instituteId = null,
+        bool forceNew = false
     );
     Task<CertificateModel?> IssueGeneralCertificateAsync(
         Guid studentId,
@@ -29,7 +32,8 @@ public interface ICertificateIssuanceService
         Guid? templateId = null,
         Guid? issuedBy = null,
         string? baseUrl = null,
-        bool forceNew = false
+        bool forceNew = false,
+        Guid? instituteId = null
     );
     Task<CertificateModel?> GetExistingMatnCertificateAsync(Guid studentMatnProgressId, string? baseUrl = null);
     Task<CertificateModel?> GetExistingQuranCertificateAsync(Guid studentId, int? fromJuz = null, int? toJuz = null, string? baseUrl = null);

@@ -21,7 +21,7 @@ public class CertificatesController : Controller
     [HttpGet("Certificates/Matn/{id:guid}")]
     public async Task<IActionResult> Matn(Guid id)
     {
-        var model = await _certificateService.IssueMatnCertificateAsync(id, issuedBy: GetUserId(), baseUrl: GetBaseUrl());
+        var model = await _certificateService.IssueMatnCertificateAsync(id, issuedBy: GetUserId(), baseUrl: GetBaseUrl(), instituteId: GetCurrentInstituteId());
         if (model == null)
         {
             TempData["ErrorMessage"] = "تعذر إصدار الشهادة: الطالب لم يتمم بعد متطلبات دراسة أو حفظ هذا المتن.";
@@ -31,14 +31,27 @@ public class CertificatesController : Controller
         return IsCurrentInstitute(model.InstituteId) ? View("CertificateFrame", model) : Forbid();
     }
 
-    // GET: /Certificates/Quran/{studentId}?fromJuz=...&toJuz=...
+    // GET: /Certificates/Quran/{studentId}?fromJuz=...&toJuz=...&forceNew=...
     [HttpGet("Certificates/Quran/{studentId:guid}")]
-    public async Task<IActionResult> Quran(Guid studentId, [FromQuery] int? fromJuz = null, [FromQuery] int? toJuz = null)
+    public async Task<IActionResult> Quran(
+        Guid studentId,
+        [FromQuery] int? fromJuz = null,
+        [FromQuery] int? toJuz = null,
+        [FromQuery] bool forceNew = false
+    )
     {
-        var model = await _certificateService.IssueQuranCertificateAsync(studentId, fromJuz, toJuz, issuedBy: GetUserId(), baseUrl: GetBaseUrl());
+        var model = await _certificateService.IssueQuranCertificateAsync(
+            studentId,
+            fromJuz,
+            toJuz,
+            issuedBy: GetUserId(),
+            baseUrl: GetBaseUrl(),
+            instituteId: GetCurrentInstituteId(),
+            forceNew: forceNew
+        );
         if (model == null)
         {
-            TempData["ErrorMessage"] = "تعذر إصدار شهادة القرآن: بيانات الطالب غير موجودة.";
+            TempData["ErrorMessage"] = "تعذر إصدار شهادة القرآن: يرجى التحقق من بيانات الطالب وصحة نطاق الأجزاء وارتباطه بمركز معتمد.";
             return View("CertificateNotFound");
         }
 
@@ -71,20 +84,33 @@ public class CertificatesController : Controller
     public async Task<IActionResult> CheckExistingQuran(Guid studentId, [FromQuery] int? fromJuz = null, [FromQuery] int? toJuz = null)
     {
         var existing = await _certificateService.GetExistingQuranCertificateAsync(studentId, fromJuz, toJuz, GetBaseUrl());
-        if (existing == null)
-            return Json(new { exists = false });
+        var history = (await _certificateService.GetHistoryAsync(
+            studentId: studentId,
+            type: Hafiz.Domain.Enums.CertificateType.Quran,
+            status: Hafiz.Domain.Enums.CertificateStatus.Active,
+            pageSize: 20
+        )).Select(c => new
+        {
+            id = c.Id,
+            number = c.CertificateNumber,
+            title = c.SubjectTitle ?? "شهادة القرآن الكريم",
+            date = c.IssuedAtDisplay,
+            viewUrl = $"/Certificates/View/{c.Id}"
+        }).ToList();
 
         return Json(new
         {
-            exists = true,
-            certificateId = existing.CertificateId,
-            certificateNumber = existing.CertificateNumber,
-            issueDate = existing.IssueDateFormatted,
-            hijriDate = existing.HijriDateFormatted,
-            fromJuz = existing.FromJuz,
-            toJuz = existing.ToJuz,
-            studentName = existing.StudentName,
-            viewUrl = $"/Certificates/View/{existing.CertificateId}"
+            exists = existing != null || history.Any(),
+            hasExactMatch = existing != null,
+            certificateId = existing?.CertificateId,
+            certificateNumber = existing?.CertificateNumber,
+            issueDate = existing?.IssueDateFormatted,
+            hijriDate = existing?.HijriDateFormatted,
+            fromJuz = existing?.FromJuz,
+            toJuz = existing?.ToJuz,
+            studentName = existing?.StudentName,
+            viewUrl = existing != null ? $"/Certificates/View/{existing.CertificateId}" : null,
+            allCertificates = history
         });
     }
 
@@ -103,7 +129,8 @@ public class CertificatesController : Controller
             reason,
             issuedBy: GetUserId(),
             baseUrl: GetBaseUrl(),
-            forceNew: forceNew
+            forceNew: forceNew,
+            instituteId: GetCurrentInstituteId()
         );
         if (model == null)
         {
@@ -143,6 +170,7 @@ public class CertificatesController : Controller
     }
 
     private Guid? GetUserId() => Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : null;
+    private Guid? GetCurrentInstituteId() => Guid.TryParse(User.FindFirstValue("InstituteId"), out var id) ? id : null;
     private bool IsCurrentInstitute(Guid instituteId) => User.IsInRole("SuperAdmin") ||
         (Guid.TryParse(User.FindFirstValue("InstituteId"), out var current) && current == instituteId);
     private string GetBaseUrl() => $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
