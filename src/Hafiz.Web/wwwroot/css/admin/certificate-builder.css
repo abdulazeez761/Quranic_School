@@ -487,6 +487,14 @@
   gap: 8px;
   border-top: 1px solid var(--cb-line);
   padding: 13px 18px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.template-card-footer .actions-right {
+  margin-inline-start: auto;
+  display: flex;
+  gap: 6px;
+  align-items: center;
 }
 .chip {
   font-size: 11px;
@@ -499,6 +507,14 @@
   display: flex;
   gap: 8px;
   margin-bottom: 20px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 4px 2px 8px;
+  flex-wrap: nowrap;
+}
+.filter-tabs::-webkit-scrollbar {
+  display: none;
 }
 .filter-tabs a {
   padding: 7px 14px;
@@ -507,20 +523,55 @@
   text-decoration: none;
   background: #f0f4f0;
   font-size: 13px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+.filter-tabs a:hover {
+  background: #e5ece6;
+  color: #1b4d35;
 }
 .filter-tabs a.active {
   background: var(--cb-forest);
   color: #fff;
+  box-shadow: 0 2px 6px rgba(23, 107, 73, 0.25);
 }
-/* The admin shell holds a 260px sidebar next to the content, so these breakpoints are measured
-   against the content area, not the viewport: between roughly 1180px and 1440px the two panels
-   still fit side by side, and the flexible track is allowed to shrink to nothing so the grid can
-   never spill past the page. */
+
+/* Responsive View Switcher for Editor on Tablets & Mobiles */
+.editor-view-switcher {
+  display: none;
+  gap: 8px;
+  margin-bottom: 18px;
+  background: #eef2ed;
+  padding: 6px;
+  border-radius: 12px;
+}
+.editor-view-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--cb-muted);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.editor-view-btn.active {
+  background: #fff;
+  color: var(--cb-forest);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
 @media (max-width: 1440px) {
   .cert-builder {
     grid-template-columns: minmax(330px, 460px) minmax(0, 1fr);
   }
-  /* Five fields plus a button need ~500px, which the narrowed panel no longer has. */
   .sig-row {
     grid-template-columns: 1fr 1fr;
   }
@@ -529,36 +580,83 @@
     width: 100%;
   }
 }
-@media (max-width: 1180px) {
+@media (max-width: 1024px) {
+  .editor-view-switcher {
+    display: flex;
+  }
   .cert-builder {
     grid-template-columns: 1fr;
   }
-  /* The preview is the point of the page, so it leads once the panels stack. */
-  .preview-panel {
-    position: static;
-    order: -1;
+  .cert-builder.show-form .preview-panel {
+    display: none !important;
+  }
+  .cert-builder.show-form .builder-panel {
+    display: block !important;
+  }
+  .cert-builder.show-preview .builder-panel {
+    display: none !important;
+  }
+  .cert-builder.show-preview .preview-panel {
+    display: block !important;
+    position: static !important;
   }
   .cert-admin-page {
-    padding: 18px;
+    padding: 16px;
   }
 }
 @media (max-width: 560px) {
+  .cert-admin-header {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    gap: 14px;
+  }
+  .cert-admin-header > div:last-child {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  .cert-admin-header .btn {
+    width: 100%;
+    justify-content: center;
+  }
   .field-grid,
   .color-grid {
     grid-template-columns: 1fr;
   }
   .preset-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
   .sig-row {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
   }
   .sig-row .icon-btn {
-    grid-column: 1/-1;
+    grid-column: 1;
     width: 100%;
   }
   .section-card-head small {
     display: none;
+  }
+  .preview-controls-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .preview-controls-group {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .preview-sample-select {
+    max-width: 100%;
+    width: 100%;
+  }
+  .template-card-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .template-card-footer .actions-right {
+    margin-inline-start: 0;
+    justify-content: flex-end;
   }
 }
 

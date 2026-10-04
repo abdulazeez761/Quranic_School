@@ -138,7 +138,19 @@
         <input asp-for="TemplateId" id="templateIdInput" type="hidden" />
         <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-        <div class="cert-builder">
+        <!-- أزرار التبديل للشاشات الصغيرة والمتوسطة بين النموذج والمعاينة المباشرة -->
+        <div class="editor-view-switcher" role="tablist">
+            <button type="button" class="editor-view-btn active" id="btnShowForm" onclick="switchEditorTab('form')">
+                <i class='bx bx-slider-alt'></i>
+                <span>إعدادات وتصميم القالب</span>
+            </button>
+            <button type="button" class="editor-view-btn" id="btnShowPreview" onclick="switchEditorTab('preview')">
+                <i class='bx bx-show'></i>
+                <span>المعاينة المباشرة للشهادة</span>
+            </button>
+        </div>
+
+        <div class="cert-builder show-form" id="certBuilderContainer">
             <section class="builder-panel">
                 <div class="builder-section">
                     <h3><i class='bx bx-file'></i> معلومات القالب</h3>
@@ -787,6 +799,26 @@
             window.resetToCurrentVersion = function() {
                 if (window.resetToOriginalConfig) {
                     window.resetToOriginalConfig();
+                }
+            };
+
+            window.switchEditorTab = function(tab) {
+                const container = document.getElementById('certBuilderContainer');
+                const btnForm = document.getElementById('btnShowForm');
+                const btnPreview = document.getElementById('btnShowPreview');
+                if (!container) return;
+
+                if (tab === 'form') {
+                    container.classList.remove('show-preview');
+                    container.classList.add('show-form');
+                    btnForm?.classList.add('active');
+                    btnPreview?.classList.remove('active');
+                } else {
+                    container.classList.remove('show-form');
+                    container.classList.add('show-preview');
+                    btnPreview?.classList.add('active');
+                    btnForm?.classList.remove('active');
+                    window.dispatchEvent(new Event('resize'));
                 }
             };
 

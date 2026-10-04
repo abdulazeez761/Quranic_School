@@ -16,18 +16,27 @@
         CertificateType.Custom => "مخصصة",
         _ => "شهادة"
     };
+
+    string TypeIcon(CertificateType type) => type switch
+    {
+        CertificateType.Quran => "bx-book-bookmark",
+        CertificateType.Matn => "bx-library",
+        CertificateType.Sanad => "bx-award",
+        CertificateType.General => "bx-star",
+        _ => "bx-certification"
+    };
 }
 
 <link rel="stylesheet" href="~/css/certificates/certificate.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/admin/certificate-builder.css" asp-append-version="true" />
 
 <div class="cert-admin-page" dir="rtl">
-    <header class="cert-admin-header">
+    <header class="cert-admin-header" style="flex-wrap: wrap;">
         <div>
             <h1><span class="cert-icon"><i class='bx bx-palette'></i></span>قوالب الشهادات</h1>
             <p>صمّم قوالب الشهادات التي تصدرها حلقات ومسارات المركز، تابع سجل النسخ السابقة، واستعد أي إصدار عند الحاجة.</p>
         </div>
-        <div style="display:flex; gap:9px; flex-wrap:wrap;">
+        <div style="display:flex; gap:9px; flex-wrap:wrap; align-items: center;">
             <a asp-controller="CertificatesManagement" asp-action="Index" class="btn btn-outline-secondary">
                 <i class='bx bx-certification'></i> الشهادات الصادرة
             </a>
@@ -109,7 +118,7 @@
                         </p>
 
                         <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:12px;">
-                            <span class="chip">@TypeName(template.Type)</span>
+                            <span class="chip"><i class='bx @TypeIcon(template.Type)'></i> @TypeName(template.Type)</span>
                             @if (template.CertificatesIssuedCount > 0)
                             {
                                 <span class="chip" style="background:#eef2fb; color:#2e4a86;">
@@ -185,7 +194,7 @@
 
 <!-- نافذة سجل نسخ القالب -->
 <div class="modal fade" id="versionsModal" tabindex="-1" aria-labelledby="versionsModalLabel" aria-hidden="true" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" style="max-width:min(95vw, 850px); margin:auto;">
         <div class="modal-content" dir="rtl">
             <div class="modal-header">
                 <h5 class="modal-title" id="versionsModalLabel">
@@ -214,7 +223,7 @@
 
 <!-- نافذة استنساخ القالب -->
 <div class="modal fade" id="duplicateModal" tabindex="-1" aria-labelledby="duplicateModalLabel" aria-hidden="true" role="dialog">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:min(95vw, 520px); margin:auto;">
         <form method="post" asp-action="Duplicate" class="modal-content" dir="rtl">
             @Html.AntiForgeryToken()
             <input type="hidden" name="id" id="duplicateTemplateId" />

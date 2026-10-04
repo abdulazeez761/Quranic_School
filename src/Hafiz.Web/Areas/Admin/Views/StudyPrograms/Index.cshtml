@@ -10,6 +10,15 @@
     var quranPrograms = Model.Count(p => p.Type == ProgramType.Quran);
     var matnPrograms = Model.Count(p => p.Type == ProgramType.Matn);
     var totalClasses = Model.Sum(p => p.ClassesCount);
+
+    string TypeIcon(ProgramType type) => type switch
+    {
+        ProgramType.Quran => "bx-book-bookmark",
+        ProgramType.Matn => "bx-library",
+        ProgramType.Sanad => "bx-award",
+        ProgramType.Ijaza => "bx-certification",
+        _ => "bx-folder"
+    };
 }
 
 <link rel="stylesheet" href="~/css/admin/study-programs.css" asp-append-version="true" />
@@ -17,14 +26,14 @@
 <div class="prog-page">
     <!-- رأس الصفحة -->
     <div class="prog-header">
-        <div>
+        <div class="prog-header-info">
             <h2 class="prog-header-title">
                 <i class='bx bx-book-open'></i>
-                البرامج التعليمية والعلمية
+                <span>البرامج التعليمية والعلمية</span>
             </h2>
-            <p class="text-medium">إدارة المسارات والمناهج الدراسية للمركز (قرآن كريم، متون علمية، إجازات وأسانيد).</p>
+            <p class="text-medium" style="margin: 0;">إدارة المسارات والمناهج الدراسية للمركز (قرآن كريم، متون علمية، إجازات وأسانيد).</p>
         </div>
-        <div>
+        <div class="prog-header-actions">
             <a asp-action="Create" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px;">
                 <i class='bx bx-plus-circle'></i>
                 <span>إضافة برنامج جديد</span>
@@ -35,20 +44,20 @@
     <!-- الإشعارات -->
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success d-flex align-center gap-sm">
+        <div class="alert alert-success d-flex align-center gap-sm" role="alert">
             <i class='bx bx-check-circle' style="font-size: 1.25rem;"></i>
             <span>@TempData["SuccessMessage"]</span>
         </div>
     }
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger d-flex align-center gap-sm">
+        <div class="alert alert-danger d-flex align-center gap-sm" role="alert">
             <i class='bx bx-error-circle' style="font-size: 1.25rem;"></i>
             <span>@TempData["ErrorMessage"]</span>
         </div>
     }
 
-    <!-- البطاقات الإحصائية السريعة -->
+    <!-- البطاقات الإحصائية السريعة (5 بطاقات متجاوبة) -->
     <div class="prog-kpi-grid">
         <div class="prog-kpi-card">
             <div class="prog-kpi-icon --emerald">
@@ -97,19 +106,19 @@
         </div>
     </div>
 
-    <!-- فلاتر نوع البرنامج -->
+    <!-- شريط فلاتر نوع المسار التعليمي -->
     <div class="prog-filter-bar">
         <a asp-action="Index" class="prog-filter-chip @(selectedType == null ? "active" : "")">
             <i class='bx bx-grid-alt'></i>
-            <span>كل البرامج</span>
+            <span>كل البرامج (@totalPrograms)</span>
         </a>
         <a asp-action="Index" asp-route-type="@ProgramType.Quran" class="prog-filter-chip @(selectedType == ProgramType.Quran ? "active" : "")">
             <i class='bx bx-book-bookmark'></i>
-            <span>القرآن الكريم</span>
+            <span>القرآن الكريم (@quranPrograms)</span>
         </a>
         <a asp-action="Index" asp-route-type="@ProgramType.Matn" class="prog-filter-chip @(selectedType == ProgramType.Matn ? "active" : "")">
-            <i class='bx bx-book'></i>
-            <span>المتون العلمية</span>
+            <i class='bx bx-library'></i>
+            <span>المتون العلمية (@matnPrograms)</span>
         </a>
         <a asp-action="Index" asp-route-type="@ProgramType.Sanad" class="prog-filter-chip @(selectedType == ProgramType.Sanad ? "active" : "")">
             <i class='bx bx-award'></i>
@@ -130,7 +139,7 @@
                     <i class='bx bx-folder-open'></i>
                 </div>
                 <div>
-                    <h3 style="font-weight: 700; color: var(--text-dark); margin: 0 0 var(--space-xs);">لا توجد برامج مسجلة</h3>
+                    <h3 style="font-weight: 800; color: var(--text-dark); margin: 0 0 var(--space-xs);">لا توجد برامج مسجلة</h3>
                     <p class="text-medium" style="font-size: var(--font-size-sm); margin: 0;">يمكنك البدء بإنشاء برنامج تعليمي جديد لتنظيم وإسناد الحلقات تحته.</p>
                 </div>
                 <a asp-action="Create" class="btn btn-primary btn-sm mt-sm">
@@ -151,25 +160,14 @@
                     _ => ""
                 };
 
+                var matnDetailText = prog.Type == ProgramType.Matn 
+                    ? (prog.MatunsCount > 0 ? $"{prog.MatunsCount} متون مقررة ({prog.MatnTitle})" : "لا توجد متون مخصصة بعد")
+                    : "";
+
                 <div class="prog-card @cardTypeClass">
                     <div class="prog-card-head">
                         <span class="prog-type-badge">
-                            @if (prog.Type == ProgramType.Quran)
-                            {
-                                <i class='bx bx-book-bookmark'></i>
-                            }
-                            else if (prog.Type == ProgramType.Matn)
-                            {
-                                <i class='bx bx-book'></i>
-                            }
-                            else if (prog.Type == ProgramType.Sanad)
-                            {
-                                <i class='bx bx-award'></i>
-                            }
-                            else
-                            {
-                                <i class='bx bx-certification'></i>
-                            }
+                            <i class='bx @TypeIcon(prog.Type)'></i>
                             <span>@prog.TypeName</span>
                         </span>
 
@@ -177,7 +175,7 @@
                             @if (prog.IsActive)
                             {
                                 <span class="prog-status-dot"></span>
-                                <span>نشط</span>
+                                <span>نشط ومتاح</span>
                             }
                             else
                             {
@@ -191,9 +189,9 @@
 
                         @if (prog.Type == ProgramType.Matn)
                         {
-                            <div class="prog-matn-pill" style="display: inline-flex; align-items: center; gap: 6px; background: #f3e8ff; color: #7e22ce; padding: 3px 10px; border-radius: 9999px; font-size: 12px; margin-bottom: 8px;">
+                            <div class="prog-matn-pill" title="قائمة المتون المقررة في هذا البرنامج">
                                 <i class='bx bx-library'></i>
-                                <span>@(prog.MatunsCount > 0 ? $"المتون ({prog.MatunsCount}): {prog.MatnTitle}" : "لا توجد متون مخصصة بعد")</span>
+                                <span>@(prog.MatunsCount > 0 ? $"المتون ({prog.MatunsCount}): {prog.MatnTitle}" : "لا توجد متون مقررة بعد")</span>
                             </div>
                         }
 
@@ -209,9 +207,15 @@
                         </span>
 
                         <div class="prog-actions">
-                            <a asp-action="Edit" asp-route-id="@prog.Id" class="prog-action-btn" title="تعديل البرنامج">
+                            <button type="button" class="prog-action-btn" title="عرض تفاصيل البرنامج"
+                                    onclick="showProgramDetails('@prog.Name', '@prog.TypeName', '@prog.ClassesCount', '@(prog.IsActive ? "نشط ومتاح" : "معطل")', '@(string.IsNullOrEmpty(prog.Description) ? "لا يوجد وصف محدد" : prog.Description)', '@matnDetailText')">
+                                <i class='bx bx-info-circle'></i>
+                            </button>
+
+                            <a asp-action="Edit" asp-route-id="@prog.Id" class="prog-action-btn" title="تعديل البرنامج وإدارته">
                                 <i class='bx bx-edit-alt'></i>
                             </a>
+
                             <form asp-action="Delete" asp-route-id="@prog.Id" method="post" style="display: inline;"
                                   onsubmit="return confirm('هل أنت متأكد من رغبتك في حذف هذا البرنامج التعليمي؟');">
                                 @Html.AntiForgeryToken()
@@ -226,3 +230,119 @@
         }
     </div>
 </div>
+
+<!-- نافذة عرض تفاصيل البرنامج التعليمي (Popup Modal) -->
+<div class="modal fade prog-details-modal" id="programDetailsModal" tabindex="-1" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" dir="rtl">
+            <div class="prog-modal-header">
+                <h4>
+                    <i class='bx bx-book-open'></i>
+                    <span id="modalProgName">تفاصيل البرنامج التعليمي</span>
+                </h4>
+                <button type="button" class="prog-modal-close-btn" data-bs-dismiss="modal" aria-label="إغلاق">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="prog-modal-body">
+                <div class="prog-modal-grid">
+                    <div class="prog-modal-item">
+                        <span class="prog-modal-label">
+                            <i class='bx bx-compass'></i> نوع المسار
+                        </span>
+                        <span class="prog-modal-value" id="modalProgType">—</span>
+                    </div>
+                    <div class="prog-modal-item">
+                        <span class="prog-modal-label">
+                            <i class='bx bx-check-circle'></i> حالة التفعيل
+                        </span>
+                        <span class="prog-modal-value" id="modalProgStatus">—</span>
+                    </div>
+                    <div class="prog-modal-item">
+                        <span class="prog-modal-label">
+                            <i class='bx bx-group'></i> الحلقات التابعة
+                        </span>
+                        <span class="prog-modal-value" id="modalProgClasses">—</span>
+                    </div>
+                    <div class="prog-modal-item" id="modalProgMatnContainer" style="display: none;">
+                        <span class="prog-modal-label">
+                            <i class='bx bx-bookmarks'></i> المتون المقررة
+                        </span>
+                        <span class="prog-modal-value" id="modalProgMatn">—</span>
+                    </div>
+                    <div class="prog-modal-item prog-modal-item-full">
+                        <span class="prog-modal-label">
+                            <i class='bx bx-detail'></i> وصف البرنامج وأهدافه
+                        </span>
+                        <span class="prog-modal-value" id="modalProgDesc" style="font-weight: 500; line-height: 1.6;">—</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" data-bs-dismiss="modal" style="min-width: 100px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                    <i class='bx bx-check'></i>
+                    <span>إغلاق</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openProgramModal() {
+            const modalEl = document.getElementById('programDetailsModal');
+            if (!modalEl) return;
+            if (modalEl.parentElement !== document.body) {
+                document.body.appendChild(modalEl);
+            }
+            modalEl.style.display = 'flex';
+            void modalEl.offsetHeight;
+            modalEl.classList.add('show', 'is-open');
+            modalEl.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeProgramModal() {
+            const modalEl = document.getElementById('programDetailsModal');
+            if (!modalEl) return;
+            modalEl.classList.remove('show', 'is-open');
+            modalEl.setAttribute('aria-hidden', 'true');
+            modalEl.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function showProgramDetails(name, type, classes, status, desc, matnInfo) {
+            document.getElementById('modalProgName').textContent = name || 'تفاصيل البرنامج';
+            document.getElementById('modalProgType').textContent = type || '—';
+            document.getElementById('modalProgClasses').textContent = classes + ' حلقة/شعبة';
+            document.getElementById('modalProgStatus').textContent = status || '—';
+            document.getElementById('modalProgDesc').textContent = desc || 'لا يوجد وصف مسجل';
+
+            const matnContainer = document.getElementById('modalProgMatnContainer');
+            if (matnInfo && matnInfo.trim().length > 0) {
+                matnContainer.style.display = 'flex';
+                document.getElementById('modalProgMatn').textContent = matnInfo;
+            } else {
+                matnContainer.style.display = 'none';
+            }
+
+            openProgramModal();
+        }
+
+        // Global dismiss handler (close buttons, backdrop click, Escape key)
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('[data-bs-dismiss="modal"]') || e.target.closest('[data-bs-dismiss="modal"]')) {
+                closeProgramModal();
+            } else if (e.target.id === 'programDetailsModal') {
+                closeProgramModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeProgramModal();
+            }
+        });
+    </script>
+}

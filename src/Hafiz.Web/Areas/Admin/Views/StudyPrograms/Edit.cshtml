@@ -9,18 +9,22 @@
     var availableMatns = ViewBag.AvailableMatns as List<SelectListItem> ?? new List<SelectListItem>();
 }
 
+<link rel="stylesheet" href="~/css/admin/study-programs.css" asp-append-version="true" />
+
 <div class="admin-form-container">
-    <!-- رأس الصفحة -->
-    <div class="d-flex justify-between align-center mb-lg flex-wrap gap-md">
+    <!-- رأس الصفحة متجاوب -->
+    <div class="prog-edit-header">
         <div>
-            <h2 class="section-title mb-xs">
+            <h2 class="section-title mb-xs" style="display: flex; align-items: center; gap: 8px;">
                 <i class='bx bx-edit' style="color: var(--primary-green);"></i>
-                تعديل البرنامج التعليمي: @Model.Name
+                <span>تعديل البرنامج التعليمي: @Model.Name</span>
             </h2>
-            <p class="text-medium">تحديث بيانات وإعدادات البرنامج وإدارة قائمة المتون المقررة وترتيبها.</p>
+            <p class="text-medium" style="margin: 0; font-size: var(--font-size-sm);">
+                تحديث بيانات وإعدادات البرنامج وإدارة قائمة المتون المقررة وترتيب أولوياتها.
+            </p>
         </div>
         <div>
-            <a asp-action="Index" class="btn btn-outline btn-sm">
+            <a asp-action="Index" class="btn btn-outline btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
                 <i class='bx bx-arrow-back'></i>
                 <span>العودة للبرامج</span>
             </a>
@@ -63,7 +67,7 @@
                     <span asp-validation-for="Name" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
                 </div>
 
-                <div class="form-row mb-md" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-md);">
+                <div class="form-row mb-md" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: var(--space-md);">
                     <div class="form-group">
                         <label asp-for="Type" class="form-label" style="font-weight: 600;">نوع المسار التعليمي <span class="text-danger">*</span></label>
                         <select asp-for="Type" id="programTypeSelect" class="form-select" required>
@@ -77,8 +81,8 @@
 
                     <div class="form-group">
                         <label class="form-label" style="font-weight: 600;">عدد الحلقات المرتبطة</label>
-                        <div class="form-input" style="background: #f8fafc; color: var(--text-dark); display: flex; align-items: center; gap: 8px;">
-                            <i class='bx bx-group'></i>
+                        <div class="form-input" style="background: #f8fafc; color: var(--text-dark); display: flex; align-items: center; gap: 8px; min-height: 42px;">
+                            <i class='bx bx-group' style="color: var(--primary-green); font-size: 1.15rem;"></i>
                             <span>@(program?.ClassesCount ?? 0) حلقة تعليمية</span>
                         </div>
                     </div>
@@ -86,23 +90,23 @@
 
                 <div class="form-group mb-md">
                     <label asp-for="Description" class="form-label" style="font-weight: 600;">الوصف</label>
-                    <textarea asp-for="Description" class="form-input" rows="3"></textarea>
+                    <textarea asp-for="Description" class="form-input" rows="3" placeholder="وصف موجز لأهداف ومخرجات هذا البرنامج..."></textarea>
                     <span asp-validation-for="Description" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
                 </div>
 
-                <div class="form-group mb-lg" style="display: flex; align-items: center; gap: var(--space-sm); background: #f8fafc; padding: var(--space-md); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
-                    <input type="checkbox" asp-for="IsActive" id="isActiveSwitch" style="width: 20px; height: 20px; cursor: pointer;" />
-                    <label for="isActiveSwitch" style="font-weight: 600; cursor: pointer; color: var(--text-dark); margin: 0;">
+                <div class="form-group mb-lg" style="display: flex; align-items: center; gap: 12px; background: #f8fafc; padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); cursor: pointer;">
+                    <input type="checkbox" asp-for="IsActive" id="isActiveSwitch" style="width: 22px; height: 22px; cursor: pointer; accent-color: var(--primary-green);" />
+                    <label for="isActiveSwitch" style="font-weight: 600; cursor: pointer; color: var(--text-dark); margin: 0; user-select: none;">
                         البرنامج نشط ومتاح لربط الحلقات وإسناد الأوراد
                     </label>
                 </div>
 
-                <div class="form-actions form-actions-right border-top pt-md mt-md">
-                    <button type="submit" class="btn btn-primary">
+                <div class="form-actions form-actions-right border-top pt-md mt-md d-flex gap-sm flex-wrap">
+                    <button type="submit" class="btn btn-primary" style="min-width: 150px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
                         <i class='bx bx-check'></i>
                         <span>حفظ بيانات البرنامج</span>
                     </button>
-                    <a asp-action="Index" class="btn btn-outline">إلغاء</a>
+                    <a asp-action="Index" class="btn btn-outline" style="min-width: 100px; display: inline-flex; align-items: center; justify-content: center;">إلغاء</a>
                 </div>
             </form>
         </div>
@@ -125,48 +129,54 @@
             </div>
 
             <div class="card-body">
-                <!-- شريط إضافة متن من المكتبة -->
-                <div class="p-md mb-lg" style="background: #f1f5f9; border-radius: var(--radius-md); border: 1px dashed #cbd5e1;">
-                    <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 8px; color: #1e293b;">
-                        <i class='bx bx-plus-circle'></i> إضافة متن من المكتبة إلى هذا البرنامج
+                <!-- شريط إضافة متن من المكتبة (متجاوب للهواتف) -->
+                <div class="prog-add-matn-box">
+                    <h4 class="prog-add-matn-title">
+                        <i class='bx bx-plus-circle'></i>
+                        <span>إضافة متن من المكتبة إلى هذا البرنامج</span>
                     </h4>
-                    <form asp-action="AddMatn" method="post" class="d-flex gap-sm flex-wrap align-center">
+                    <form asp-action="AddMatn" method="post" class="prog-add-matn-form">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="programId" value="@Model.Id" />
-                        <div style="flex: 1; min-width: 260px;">
-                            <select name="matnId" class="form-select" required>
-                                <option value="">-- اختر المتن المطلوب إضافته --</option>
+                        <div class="prog-add-matn-select-wrap">
+                            <select name="matnId" class="form-select" required style="width: 100%; min-height: 42px;">
+                                <option value="">-- اختر المتن المطلوب إضافته للمنهج --</option>
                                 @foreach (var item in availableMatns)
                                 {
                                     <option value="@item.Value">@item.Text</option>
                                 }
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-sm">
-                            <i class='bx bx-plus'></i> إضافة المتن للبرنامج
-                        </button>
-                        <a asp-controller="Matns" asp-action="Create" asp-route-studyProgramId="@Model.Id" class="btn btn-outline btn-sm">
-                            <i class='bx bx-book-add'></i> إنشاء متن جديد بالمكتبة
-                        </a>
+                        <div class="prog-add-matn-btns">
+                            <button type="submit" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                                <i class='bx bx-plus'></i>
+                                <span>إضافة المتن للبرنامج</span>
+                            </button>
+                            <a asp-controller="Matns" asp-action="Create" asp-route-studyProgramId="@Model.Id" class="btn btn-outline btn-sm" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                                <i class='bx bx-book-add'></i>
+                                <span>إنشاء متن جديد بالمكتبة</span>
+                            </a>
+                        </div>
                     </form>
                 </div>
 
-                <!-- جدول المتون الحالية -->
+                <!-- قائمة المتون المقررة -->
                 @if (!matuns.Any())
                 {
-                    <div class="text-center p-xl" style="background: #fafafa; border-radius: var(--radius-md);">
+                    <div class="text-center p-xl" style="background: #fafafa; border-radius: var(--radius-md); border: 1px dashed #e2e8f0;">
                         <i class='bx bx-book-open' style="font-size: 3rem; color: #94a3b8;"></i>
-                        <h4 style="margin: 12px 0 4px; color: #475569;">لا توجد متون مقررة في هذا البرنامج حالياً</h4>
+                        <h4 style="margin: 12px 0 4px; color: #475569; font-weight: 700;">لا توجد متون مقررة في هذا البرنامج حالياً</h4>
                         <p class="text-muted" style="font-size: 13px;">اختر متناً من القائمة أعلاه لإضافته كأول متن في منهج هذا البرنامج.</p>
                     </div>
                 }
                 else
                 {
-                    <div class="table-responsive">
+                    <!-- جدول الشاشات الكبيرة (Desktop Table) -->
+                    <div class="prog-syllabus-table-wrapper table-responsive">
                         <table class="table table-hover" style="width: 100%; border-collapse: collapse;">
                             <thead>
                                 <tr style="border-bottom: 2px solid var(--border-color); text-align: right; background: #f8fafc;">
-                                    <th style="padding: 12px; width: 60px;">الترتيب</th>
+                                    <th style="padding: 12px; width: 70px;">الترتيب</th>
                                     <th style="padding: 12px;">اسم المتن</th>
                                     <th style="padding: 12px;">المؤلف</th>
                                     <th style="padding: 12px;">الفن / التخصص</th>
@@ -180,18 +190,18 @@
                                     var m = matuns[i];
                                     <tr style="border-bottom: 1px solid var(--border-color);">
                                         <td style="padding: 12px; vertical-align: middle;">
-                                            <span class="badge" style="background: #e2e8f0; color: #334155; font-weight: 700; font-size: 13px; padding: 4px 10px; border-radius: 9999px;">
+                                            <span class="badge" style="background: #e2e8f0; color: #334155; font-weight: 800; font-size: 13px; padding: 4px 10px; border-radius: 9999px;">
                                                 @(i + 1)
                                             </span>
                                         </td>
-                                        <td style="padding: 12px; vertical-align: middle; font-weight: 600;">
+                                        <td style="padding: 12px; vertical-align: middle; font-weight: 700; color: var(--text-dark);">
                                             @m.Title
                                         </td>
                                         <td style="padding: 12px; vertical-align: middle; color: var(--text-medium);">
                                             @(string.IsNullOrEmpty(m.Author) ? "—" : m.Author)
                                         </td>
                                         <td style="padding: 12px; vertical-align: middle;">
-                                            <span class="badge" style="background: #f1f5f9; color: #475569; font-size: 11px; padding: 4px 8px; border-radius: 4px;">
+                                            <span class="badge" style="background: #f1f5f9; color: #475569; font-size: 11.5px; padding: 4px 8px; border-radius: 4px;">
                                                 @m.CategoryName
                                             </span>
                                         </td>
@@ -243,6 +253,102 @@
                                 }
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- بطاقات الهواتف والأجهزة اللوحية (Mobile & Tablet Cards) - تجربة مستخدم لمسية متطورة -->
+                    <div class="prog-syllabus-mobile-cards">
+                        @for (int i = 0; i < matuns.Count; i++)
+                        {
+                            var m = matuns[i];
+                            <div class="prog-syllabus-card @(m.IsActive ? "" : "is-inactive")">
+                                <div class="prog-syllabus-card-top">
+                                    <div class="prog-syllabus-rank">
+                                        <span class="prog-syllabus-order-pill">
+                                            <i class='bx bx-hash'></i>
+                                            <span>الترتيب @(i + 1)</span>
+                                        </span>
+                                        <span class="badge @(m.IsActive ? "badge-success-subtle" : "badge-secondary-subtle")">
+                                            <i class='bx @(m.IsActive ? "bx-check-circle" : "bx-pause-circle")'></i>
+                                            @(m.IsActive ? "مفعّل للدراسة" : "معطل مؤقتاً")
+                                        </span>
+                                    </div>
+                                    <div class="prog-syllabus-info">
+                                        <h4 class="prog-syllabus-title">@m.Title</h4>
+                                        <div class="prog-syllabus-meta">
+                                            <span class="prog-syllabus-author">
+                                                <i class='bx bx-pen'></i>
+                                                @(string.IsNullOrEmpty(m.Author) ? "المؤلف: غير محدد" : m.Author)
+                                            </span>
+                                            <span class="prog-syllabus-category">
+                                                <i class='bx bx-bookmark-alt'></i>
+                                                @m.CategoryName
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="prog-syllabus-card-bottom">
+                                    <!-- تبديل حالة التفعيل -->
+                                    <form asp-action="ToggleMatnActive" method="post" style="display: block; width: 100%;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="programId" value="@Model.Id" />
+                                        <input type="hidden" name="matnId" value="@m.Id" />
+                                        <button type="submit" class="btn btn-sm @(m.IsActive ? "btn-outline-warning" : "btn-outline-success") prog-syllabus-toggle-btn"
+                                                title="@(m.IsActive ? "تعطيل المتن مؤقتاً" : "تفعيل المتن للدراسة")">
+                                            <i class='bx @(m.IsActive ? "bx-pause" : "bx-play")'></i>
+                                            <span>@(m.IsActive ? "تعطيل المتن في البرنامج مؤقتاً" : "تفعيل المتن في المنهج")</span>
+                                        </button>
+                                    </form>
+
+                                    <!-- أزرار الترتيب والحذف اللمسية -->
+                                    <div class="prog-syllabus-actions">
+                                        @if (i > 0)
+                                        {
+                                            <form asp-action="MoveMatnUp" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="programId" value="@Model.Id" />
+                                                <input type="hidden" name="matnId" value="@m.Id" />
+                                                <button type="submit" class="prog-order-btn" title="تقديم للأعلى (ترتيب أسبق)">
+                                                    <i class='bx bx-up-arrow-alt'></i>
+                                                    <span>تقديم للأعلى</span>
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <div></div>
+                                        }
+
+                                        @if (i < matuns.Count - 1)
+                                        {
+                                            <form asp-action="MoveMatnDown" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="programId" value="@Model.Id" />
+                                                <input type="hidden" name="matnId" value="@m.Id" />
+                                                <button type="submit" class="prog-order-btn" title="تأخير للأسفل (ترتيب لاحق)">
+                                                    <i class='bx bx-down-arrow-alt'></i>
+                                                    <span>تأخير للأسفل</span>
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <div></div>
+                                        }
+
+                                        <form asp-action="RemoveMatn" method="post" onsubmit="return confirm('هل أنت متأكد من فك ارتباط هذا المتن من البرنامج؟ لن يتم حذف المتن من المكتبة العامة.');">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="programId" value="@Model.Id" />
+                                            <input type="hidden" name="matnId" value="@m.Id" />
+                                            <button type="submit" class="prog-delete-btn" title="إزالة من البرنامج">
+                                                <i class='bx bx-trash'></i>
+                                                <span>فك ارتباط المتن من البرنامج</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     </div>
                 }
             </div>

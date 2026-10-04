@@ -10,6 +10,18 @@
     var globalCount = Model.Count(m => m.IsGlobal);
     var customCount = Model.Count(m => !m.IsGlobal);
     var poeticCount = Model.Count(m => m.TotalVerses.HasValue);
+
+    string CategoryIcon(MatnCategory cat) => cat switch
+    {
+        MatnCategory.Tajweed => "bx-microphone",
+        MatnCategory.Aqeedah => "bx-shield-quarter",
+        MatnCategory.Hadith => "bx-bookmarks",
+        MatnCategory.Fiqh => "bx-check-square",
+        MatnCategory.NahwAndLanguage => "bx-font-size",
+        MatnCategory.Seerah => "bx-history",
+        MatnCategory.Adab => "bx-heart",
+        _ => "bx-collection"
+    };
 }
 
 <link rel="stylesheet" href="~/css/admin/matns-library.css" asp-append-version="true" />
@@ -17,14 +29,14 @@
 <div class="matn-page">
     <!-- رأس الصفحة -->
     <div class="matn-header">
-        <div>
+        <div class="matn-header-info">
             <h2 class="matn-header-title">
                 <i class='bx bx-library'></i>
-                مكتبة المتون العلمية
+                <span>مكتبة المتون العلمية</span>
             </h2>
-            <p class="text-medium">المتون والمنظومات المعتمدة لتدريس العلوم الشرعية وإسناد أوراد الحفظ والمراجعة والمدارسة.</p>
+            <p class="text-medium" style="margin: 0;">المتون والمنظومات المعتمدة لتدريس العلوم الشرعية وإسناد أوراد الحفظ والمراجعة والمدارسة.</p>
         </div>
-        <div>
+        <div class="matn-header-actions">
             <a asp-action="Create" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px;">
                 <i class='bx bx-plus-circle'></i>
                 <span>إضافة متن جديد</span>
@@ -35,14 +47,14 @@
     <!-- الإشعارات -->
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success d-flex align-center gap-sm">
+        <div class="alert alert-success d-flex align-center gap-sm" role="alert">
             <i class='bx bx-check-circle' style="font-size: 1.25rem;"></i>
             <span>@TempData["SuccessMessage"]</span>
         </div>
     }
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger d-flex align-center gap-sm">
+        <div class="alert alert-danger d-flex align-center gap-sm" role="alert">
             <i class='bx bx-error-circle' style="font-size: 1.25rem;"></i>
             <span>@TempData["ErrorMessage"]</span>
         </div>
@@ -89,54 +101,56 @@
     </div>
 
     <!-- شريط فلاتر الفنون والتخصصات -->
-    <div class="matn-categories-bar">
-        <a asp-action="Index" asp-route-search="@search" class="matn-cat-pill @(selectedCategory == null ? "active" : "")">
-            <i class='bx bx-grid-alt'></i>
-            <span>كل الفنون</span>
-        </a>
-        <a asp-action="Index" asp-route-category="@((int)MatnCategory.Tajweed)" asp-route-search="@search"
-           class="matn-cat-pill @(selectedCategory == MatnCategory.Tajweed ? "active" : "")">
-            <i class='bx bx-microphone'></i>
-            <span>تجويد وقراءات</span>
-        </a>
-        <a asp-action="Index" asp-route-category="@((int)MatnCategory.Aqeedah)" asp-route-search="@search"
-           class="matn-cat-pill @(selectedCategory == MatnCategory.Aqeedah ? "active" : "")">
-            <i class='bx bx-shield-quarter'></i>
-            <span>عقيدة وتوحيد</span>
-        </a>
-        <a asp-action="Index" asp-route-category="@((int)MatnCategory.Hadith)" asp-route-search="@search"
-           class="matn-cat-pill @(selectedCategory == MatnCategory.Hadith ? "active" : "")">
-            <i class='bx bx-bookmarks'></i>
-            <span>حديث ومصطلح</span>
-        </a>
-        <a asp-action="Index" asp-route-category="@((int)MatnCategory.Fiqh)" asp-route-search="@search"
-           class="matn-cat-pill @(selectedCategory == MatnCategory.Fiqh ? "active" : "")">
-            <i class='bx bx-check-square'></i>
-            <span>فقه وأصوله</span>
-        </a>
-        <a asp-action="Index" asp-route-category="@((int)MatnCategory.NahwAndLanguage)" asp-route-search="@search"
-           class="matn-cat-pill @(selectedCategory == MatnCategory.NahwAndLanguage ? "active" : "")">
-            <i class='bx bx-font-size'></i>
-            <span>نحو ولغة</span>
-        </a>
-        <a asp-action="Index" asp-route-category="@((int)MatnCategory.Seerah)" asp-route-search="@search"
-           class="matn-cat-pill @(selectedCategory == MatnCategory.Seerah ? "active" : "")">
-            <i class='bx bx-history'></i>
-            <span>سيرة وتاريخ</span>
-        </a>
-        <a asp-action="Index" asp-route-category="@((int)MatnCategory.Adab)" asp-route-search="@search"
-           class="matn-cat-pill @(selectedCategory == MatnCategory.Adab ? "active" : "")">
-            <i class='bx bx-heart'></i>
-            <span>آداب وتزكية</span>
-        </a>
-        <a asp-action="Index" asp-route-category="@((int)MatnCategory.General)" asp-route-search="@search"
-           class="matn-cat-pill @(selectedCategory == MatnCategory.General ? "active" : "")">
-            <i class='bx bx-collection'></i>
-            <span>عام / أخرى</span>
-        </a>
+    <div class="matn-categories-container">
+        <div class="matn-categories-bar">
+            <a asp-action="Index" asp-route-search="@search" class="matn-cat-pill @(selectedCategory == null ? "active" : "")">
+                <i class='bx bx-grid-alt'></i>
+                <span>كل الفنون (@totalCount)</span>
+            </a>
+            <a asp-action="Index" asp-route-category="@((int)MatnCategory.Tajweed)" asp-route-search="@search"
+               class="matn-cat-pill @(selectedCategory == MatnCategory.Tajweed ? "active" : "")">
+                <i class='bx bx-microphone'></i>
+                <span>تجويد وقراءات</span>
+            </a>
+            <a asp-action="Index" asp-route-category="@((int)MatnCategory.Aqeedah)" asp-route-search="@search"
+               class="matn-cat-pill @(selectedCategory == MatnCategory.Aqeedah ? "active" : "")">
+                <i class='bx bx-shield-quarter'></i>
+                <span>عقيدة وتوحيد</span>
+            </a>
+            <a asp-action="Index" asp-route-category="@((int)MatnCategory.Hadith)" asp-route-search="@search"
+               class="matn-cat-pill @(selectedCategory == MatnCategory.Hadith ? "active" : "")">
+                <i class='bx bx-bookmarks'></i>
+                <span>حديث ومصطلح</span>
+            </a>
+            <a asp-action="Index" asp-route-category="@((int)MatnCategory.Fiqh)" asp-route-search="@search"
+               class="matn-cat-pill @(selectedCategory == MatnCategory.Fiqh ? "active" : "")">
+                <i class='bx bx-check-square'></i>
+                <span>فقه وأصوله</span>
+            </a>
+            <a asp-action="Index" asp-route-category="@((int)MatnCategory.NahwAndLanguage)" asp-route-search="@search"
+               class="matn-cat-pill @(selectedCategory == MatnCategory.NahwAndLanguage ? "active" : "")">
+                <i class='bx bx-font-size'></i>
+                <span>نحو ولغة</span>
+            </a>
+            <a asp-action="Index" asp-route-category="@((int)MatnCategory.Seerah)" asp-route-search="@search"
+               class="matn-cat-pill @(selectedCategory == MatnCategory.Seerah ? "active" : "")">
+                <i class='bx bx-history'></i>
+                <span>سيرة وتاريخ</span>
+            </a>
+            <a asp-action="Index" asp-route-category="@((int)MatnCategory.Adab)" asp-route-search="@search"
+               class="matn-cat-pill @(selectedCategory == MatnCategory.Adab ? "active" : "")">
+                <i class='bx bx-heart'></i>
+                <span>آداب وتزكية</span>
+            </a>
+            <a asp-action="Index" asp-route-category="@((int)MatnCategory.General)" asp-route-search="@search"
+               class="matn-cat-pill @(selectedCategory == MatnCategory.General ? "active" : "")">
+                <i class='bx bx-collection'></i>
+                <span>عام / أخرى</span>
+            </a>
+        </div>
     </div>
 
-    <!-- شريط البحث السريع -->
+    <!-- شريط البحث والتصفية السريعة -->
     <div class="matn-toolbar">
         <form method="get" class="matn-search-form">
             @if (selectedCategory.HasValue)
@@ -147,43 +161,49 @@
                 <i class='bx bx-search'></i>
                 <input type="text" name="search" class="matn-search-input" placeholder="بحث باسم المتن، المؤلف، أو الناظم..." value="@search" />
             </div>
-            <button type="submit" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
-                <i class='bx bx-filter-alt'></i>
-                <span>بحث وتصفية</span>
-            </button>
-            @if (!string.IsNullOrWhiteSpace(search) || selectedCategory.HasValue)
-            {
-                <a asp-action="Index" class="btn btn-outline btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
-                    <i class='bx bx-reset'></i>
-                    <span>إلغاء التصفية</span>
-                </a>
-            }
+            <div class="matn-search-buttons">
+                <button type="submit" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
+                    <i class='bx bx-filter-alt'></i>
+                    <span>بحث وتصفية</span>
+                </button>
+                @if (!string.IsNullOrWhiteSpace(search) || selectedCategory.HasValue)
+                {
+                    <a asp-action="Index" class="btn btn-outline btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
+                        <i class='bx bx-reset'></i>
+                        <span>إلغاء التصفية</span>
+                    </a>
+                }
+            </div>
         </form>
     </div>
 
-    <!-- جدول المتون -->
-    <div class="matn-table-wrapper">
-        @if (!Model.Any())
-        {
+    <!-- محتوى المتون: جدول لسطح المكتب + بطاقات ذكية للشاشات الصغيرة -->
+    @if (!Model.Any())
+    {
+        <div class="matn-table-wrapper">
             <div class="matn-empty">
                 <i class='bx bx-book-open'></i>
-                <h4 style="font-weight: 700; margin: 0; color: var(--text-dark);">لا توجد متون مطابقة</h4>
-                <p class="text-medium" style="font-size: var(--font-size-sm); margin: 0;">لم يتم العثور على متون مطابقة لمعايير البحث الحالية.</p>
+                <h4 style="font-weight: 800; margin: 0; color: var(--text-dark);">لا توجد متون مطابقة</h4>
+                <p class="text-medium" style="font-size: var(--font-size-sm); margin: 0;">لم يتم العثور على متون مطابقة لمعايير البحث والتصفية الحالية.</p>
                 <a asp-action="Create" class="btn btn-primary btn-sm mt-sm">
                     <i class='bx bx-plus'></i> إضافة متن جديد
                 </a>
             </div>
-        }
-        else
-        {
-            <table class="table table-responsive-cards" style="margin-bottom: 0;">
+        </div>
+    }
+    else
+    {
+        <!-- عرض سطح المكتب (Table) -->
+        <div class="matn-table-wrapper">
+            <table class="matn-desktop-table">
                 <thead>
                     <tr>
-                        <th>اسم المتن</th>
+                        <th>اسم المتن والبرنامج</th>
                         <th>المؤلف / الناظم</th>
                         <th>الفن والتصنيف</th>
                         <th>الحجم والتفاصيل</th>
                         <th>وحدة القياس</th>
+                        <th>درجة النجاح</th>
                         <th>النطاق</th>
                         <th style="text-align: center;">إجراءات</th>
                     </tr>
@@ -191,17 +211,22 @@
                 <tbody>
                     @foreach (var matn in Model)
                     {
+                        var sizeText = matn.TotalVerses.HasValue 
+                            ? $"{matn.TotalVerses} {matn.DefaultUnitSingular}" 
+                            : (matn.TotalChapters.HasValue ? $"{matn.TotalChapters} باب" : "—");
+                        var passingGrade = matn.PassingGrade > 0 ? $"{matn.PassingGrade}%" : "60%";
+
                         <tr>
-                            <td data-label="اسم المتن">
+                            <td>
                                 <div class="matn-title-cell">
                                     <div class="matn-avatar-icon">
-                                        <i class='bx bx-book-bookmark'></i>
+                                        <i class='bx @CategoryIcon(matn.Category)'></i>
                                     </div>
                                     <div>
                                         <span class="matn-title-text">@matn.Title</span>
                                         @if (!string.IsNullOrEmpty(matn.StudyProgramName))
                                         {
-                                            <div style="margin-top: 4px;">
+                                            <div style="margin-top: 3px;">
                                                 <span class="badge" style="background: #ede9fe; color: #6d28d9; font-size: 11px; padding: 2px 8px; border-radius: 4px;">
                                                     <i class='bx bx-book-open'></i> @matn.StudyProgramName
                                                 </span>
@@ -210,18 +235,19 @@
                                     </div>
                                 </div>
                             </td>
-                            <td data-label="المؤلف / الناظم">
+                            <td>
                                 <span class="matn-author-text">
                                     <i class='bx bx-pen'></i>
                                     @(string.IsNullOrEmpty(matn.Author) ? "غير محدد" : matn.Author)
                                 </span>
                             </td>
-                            <td data-label="الفن والتصنيف">
+                            <td>
                                 <span class="matn-badge-category">
+                                    <i class='bx @CategoryIcon(matn.Category)'></i>
                                     @matn.CategoryName
                                 </span>
                             </td>
-                            <td data-label="الحجم والتفاصيل">
+                            <td>
                                 <div class="matn-size-pill">
                                     @if (matn.TotalVerses.HasValue)
                                     {
@@ -237,10 +263,15 @@
                                     }
                                 </div>
                             </td>
-                            <td data-label="وحدة القياس">
+                            <td>
                                 <span class="matn-badge-unit">@matn.DefaultUnitName</span>
                             </td>
-                            <td data-label="النطاق">
+                            <td>
+                                <span class="matn-badge-grade" title="درجة النجاح المعتمدة في الاختبار">
+                                    <i class='bx bx-award'></i> @passingGrade
+                                </span>
+                            </td>
+                            <td>
                                 @if (matn.IsGlobal)
                                 {
                                     <span class="matn-badge-scope --global">
@@ -254,10 +285,16 @@
                                     </span>
                                 }
                             </td>
-                            <td data-label="إجراءات" style="text-align: center;">
-                                @if (!matn.IsGlobal)
-                                {
-                                    <div class="d-flex justify-center gap-xs align-center">
+                            <td style="text-align: center;">
+                                <div class="d-flex justify-center gap-xs align-center">
+                                    <button type="button" class="btn btn-outline btn-sm" style="padding: 4px 10px;"
+                                            title="عرض التفاصيل الكاملة"
+                                            onclick="showMatnDetails('@matn.Title', '@(string.IsNullOrEmpty(matn.Author) ? "غير محدد" : matn.Author)', '@matn.CategoryName', '@matn.DefaultUnitName', '@sizeText', '@passingGrade', '@(matn.IsGlobal ? "عام للنظام" : "خاص بالمركز")', '@(string.IsNullOrEmpty(matn.StudyProgramName) ? "غير مرتبط ببرنامج محدد" : matn.StudyProgramName)')">
+                                        <i class='bx bx-info-circle'></i>
+                                    </button>
+
+                                    @if (!matn.IsGlobal)
+                                    {
                                         <a asp-action="Edit" asp-route-id="@matn.Id" class="btn btn-outline btn-sm"
                                            style="padding: 4px 10px;" title="تعديل المتن">
                                             <i class='bx bx-edit'></i>
@@ -271,19 +308,249 @@
                                                 <i class='bx bx-trash'></i>
                                             </button>
                                         </form>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <span class="text-muted" title="متن عام معتمد في النظام لا يمكن حذفه" style="font-size: 1.1rem;">
-                                        <i class='bx bx-lock-alt'></i>
-                                    </span>
-                                }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted" title="متن عام معتمد في النظام" style="font-size: 1.1rem; padding: 0 4px;">
+                                            <i class='bx bx-lock-alt'></i>
+                                        </span>
+                                    }
+                                </div>
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
-        }
+        </div>
+
+        <!-- عرض الجوال والأجهزة اللوحية (Responsive Cards) -->
+        <div class="matn-mobile-cards">
+            @foreach (var matn in Model)
+            {
+                var sizeText = matn.TotalVerses.HasValue 
+                    ? $"{matn.TotalVerses} {matn.DefaultUnitSingular}" 
+                    : (matn.TotalChapters.HasValue ? $"{matn.TotalChapters} باب" : "غير محدد");
+                var passingGrade = matn.PassingGrade > 0 ? $"{matn.PassingGrade}%" : "60%";
+
+                <div class="matn-card">
+                    <div class="matn-card-header">
+                        <div class="matn-card-title-group">
+                            <div class="matn-avatar-icon">
+                                <i class='bx @CategoryIcon(matn.Category)'></i>
+                            </div>
+                            <div>
+                                <h3 class="matn-card-title">@matn.Title</h3>
+                                <div class="matn-author-text">
+                                    <i class='bx bx-pen'></i>
+                                    <span>@(string.IsNullOrEmpty(matn.Author) ? "المؤلف: غير محدد" : matn.Author)</span>
+                                </div>
+                                @if (!string.IsNullOrEmpty(matn.StudyProgramName))
+                                {
+                                    <div>
+                                        <span class="matn-card-program">
+                                            <i class='bx bx-book-open'></i> @matn.StudyProgramName
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div>
+                            @if (matn.IsGlobal)
+                            {
+                                <span class="matn-badge-scope --global">
+                                    <i class='bx bx-check-shield'></i> عام
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="matn-badge-scope --institute">
+                                    <i class='bx bx-building'></i> خاص
+                                </span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="matn-card-details-grid">
+                        <div class="matn-card-detail-item">
+                            <span class="matn-card-detail-label">الفن والتصنيف</span>
+                            <span class="matn-card-detail-val">
+                                <i class='bx @CategoryIcon(matn.Category) text-muted'></i>
+                                <span>@matn.CategoryName</span>
+                            </span>
+                        </div>
+                        <div class="matn-card-detail-item">
+                            <span class="matn-card-detail-label">الحجم المقدر</span>
+                            <span class="matn-card-detail-val">@sizeText</span>
+                        </div>
+                        <div class="matn-card-detail-item">
+                            <span class="matn-card-detail-label">وحدة القياس</span>
+                            <span class="matn-card-detail-val">@matn.DefaultUnitName</span>
+                        </div>
+                        <div class="matn-card-detail-item">
+                            <span class="matn-card-detail-label">درجة النجاح</span>
+                            <span class="matn-card-detail-val">
+                                <span class="matn-badge-grade">@passingGrade</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="matn-card-footer">
+                        <button type="button" class="btn btn-outline btn-sm"
+                                onclick="showMatnDetails('@matn.Title', '@(string.IsNullOrEmpty(matn.Author) ? "غير محدد" : matn.Author)', '@matn.CategoryName', '@matn.DefaultUnitName', '@sizeText', '@passingGrade', '@(matn.IsGlobal ? "عام للنظام" : "خاص بالمركز")', '@(string.IsNullOrEmpty(matn.StudyProgramName) ? "غير مرتبط ببرنامج محدد" : matn.StudyProgramName)')">
+                            <i class='bx bx-info-circle'></i>
+                            <span>التفاصيل</span>
+                        </button>
+
+                        <div class="matn-card-actions">
+                            @if (!matn.IsGlobal)
+                            {
+                                <a asp-action="Edit" asp-route-id="@matn.Id" class="btn btn-outline btn-sm">
+                                    <i class='bx bx-edit'></i>
+                                    <span>تعديل</span>
+                                </a>
+                                <form asp-action="Delete" asp-route-id="@matn.Id" method="post" style="display: inline;"
+                                      onsubmit="return confirm('هل أنت متأكد من رغبتك في حذف هذا المتن من مكتبة المركز؟');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-outline btn-sm" style="color: var(--danger); border-color: rgba(220,53,69,0.3);">
+                                        <i class='bx bx-trash'></i>
+                                        <span>حذف</span>
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="badge" style="background:#f1f5f9; color:#64748b; font-size:11px; padding:6px 10px;">
+                                    <i class='bx bx-lock-alt'></i> متن عام معتمد
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<!-- نافذة عرض تفاصيل المتن العلمي (Popup Modal) -->
+<div class="modal fade matn-details-modal" id="matnDetailsModal" tabindex="-1" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" dir="rtl">
+            <div class="matn-modal-header">
+                <h4>
+                    <i class='bx bx-book-bookmark'></i>
+                    <span id="modalMatnTitle">تفاصيل المتن العلمي</span>
+                </h4>
+                <button type="button" class="matn-modal-close-btn" data-bs-dismiss="modal" aria-label="إغلاق">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="matn-modal-body">
+                <div class="matn-modal-grid">
+                    <div class="matn-modal-item">
+                        <span class="matn-modal-label">
+                            <i class='bx bx-pen'></i> المؤلف / الناظم
+                        </span>
+                        <span class="matn-modal-value" id="modalMatnAuthor">—</span>
+                    </div>
+                    <div class="matn-modal-item">
+                        <span class="matn-modal-label">
+                            <i class='bx bx-category-alt'></i> الفن والتخصص
+                        </span>
+                        <span class="matn-modal-value" id="modalMatnCategory">—</span>
+                    </div>
+                    <div class="matn-modal-item">
+                        <span class="matn-modal-label">
+                            <i class='bx bx-book-reader'></i> البرنامج المرتبط
+                        </span>
+                        <span class="matn-modal-value" id="modalMatnProgram">—</span>
+                    </div>
+                    <div class="matn-modal-item">
+                        <span class="matn-modal-label">
+                            <i class='bx bx-shield-quarter'></i> النطاق والاعتماد
+                        </span>
+                        <span class="matn-modal-value" id="modalMatnScope">—</span>
+                    </div>
+                    <div class="matn-modal-item">
+                        <span class="matn-modal-label">
+                            <i class='bx bx-layer'></i> الحجم المقدر
+                        </span>
+                        <span class="matn-modal-value" id="modalMatnSize">—</span>
+                    </div>
+                    <div class="matn-modal-item">
+                        <span class="matn-modal-label">
+                            <i class='bx bx-slider-alt'></i> وحدة التسميع
+                        </span>
+                        <span class="matn-modal-value" id="modalMatnUnit">—</span>
+                    </div>
+                    <div class="matn-modal-item matn-modal-item-full">
+                        <span class="matn-modal-label">
+                            <i class='bx bx-award'></i> درجة النجاح المقررة
+                        </span>
+                        <span class="matn-modal-value" id="modalMatnGrade">—</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" data-bs-dismiss="modal" style="min-width: 100px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                    <i class='bx bx-check'></i>
+                    <span>إغلاق</span>
+                </button>
+            </div>
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function openMatnModal() {
+            const modalEl = document.getElementById('matnDetailsModal');
+            if (!modalEl) return;
+            if (modalEl.parentElement !== document.body) {
+                document.body.appendChild(modalEl);
+            }
+            modalEl.style.display = 'flex';
+            void modalEl.offsetHeight;
+            modalEl.classList.add('show', 'is-open');
+            modalEl.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMatnModal() {
+            const modalEl = document.getElementById('matnDetailsModal');
+            if (!modalEl) return;
+            modalEl.classList.remove('show', 'is-open');
+            modalEl.setAttribute('aria-hidden', 'true');
+            modalEl.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function showMatnDetails(title, author, category, unit, size, grade, scope, program) {
+            document.getElementById('modalMatnTitle').textContent = title || 'تفاصيل المتن';
+            document.getElementById('modalMatnAuthor').textContent = author || 'غير محدد';
+            document.getElementById('modalMatnCategory').textContent = category || '—';
+            document.getElementById('modalMatnUnit').textContent = unit || '—';
+            document.getElementById('modalMatnSize').textContent = size || '—';
+            document.getElementById('modalMatnGrade').textContent = grade || '—';
+            document.getElementById('modalMatnScope').textContent = scope || '—';
+            document.getElementById('modalMatnProgram').textContent = program || '—';
+
+            openMatnModal();
+        }
+
+        // Global dismiss handler (close buttons, backdrop click, Escape key)
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('[data-bs-dismiss="modal"]') || e.target.closest('[data-bs-dismiss="modal"]')) {
+                closeMatnModal();
+            } else if (e.target.id === 'matnDetailsModal') {
+                closeMatnModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeMatnModal();
+            }
+        });
+    </script>
+}

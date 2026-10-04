@@ -5,18 +5,22 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
+<link rel="stylesheet" href="~/css/admin/study-programs.css" asp-append-version="true" />
+
 <div class="admin-form-container">
-    <!-- رأس الصفحة -->
-    <div class="d-flex justify-between align-center mb-lg flex-wrap gap-md">
+    <!-- رأس الصفحة متجاوب -->
+    <div class="prog-edit-header">
         <div>
-            <h2 class="section-title mb-xs">
+            <h2 class="section-title mb-xs" style="display: flex; align-items: center; gap: 8px;">
                 <i class='bx bx-book-add' style="color: var(--primary-green);"></i>
-                إضافة برنامج تعليمي جديد
+                <span>إضافة برنامج تعليمي جديد</span>
             </h2>
-            <p class="text-medium">تحديد مسار ونوع البرنامج التعليمي وإمكانية إسناد المتون العلمية تحته.</p>
+            <p class="text-medium" style="margin: 0; font-size: var(--font-size-sm);">
+                تحديد مسار ونوع البرنامج التعليمي وإمكانية إسناد المتون العلمية تحته.
+            </p>
         </div>
         <div>
-            <a asp-action="Index" class="btn btn-outline btn-sm">
+            <a asp-action="Index" class="btn btn-outline btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
                 <i class='bx bx-arrow-back'></i>
                 <span>العودة للبرامج</span>
             </a>
@@ -41,7 +45,7 @@
                     <span asp-validation-for="Name" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
                 </div>
 
-                <div class="form-row mb-md" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-md);">
+                <div class="form-row mb-md" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: var(--space-md);">
                     <div class="form-group">
                         <label asp-for="Type" class="form-label" style="font-weight: 600;">نوع المسار التعليمي <span class="text-danger">*</span></label>
                         <select asp-for="Type" id="programTypeSelect" class="form-select" required>
@@ -67,8 +71,8 @@
                     <span asp-validation-for="Description" class="form-error text-danger" style="font-size: var(--font-size-xs);"></span>
                 </div>
 
-                <div class="form-actions form-actions-right border-top pt-md mt-md">
-                    <button type="submit" class="btn btn-primary">
+                <div class="form-actions form-actions-right border-top pt-md mt-md d-flex gap-sm flex-wrap">
+                    <button type="submit" class="btn btn-primary" style="min-width: 140px;">
                         <i class='bx bx-check'></i>
                         <span>حفظ البرنامج ومتابعة الإعداد</span>
                     </button>
