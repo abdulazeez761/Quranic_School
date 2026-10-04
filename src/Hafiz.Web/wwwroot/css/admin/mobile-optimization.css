@@ -156,12 +156,22 @@
   }
 
   /* Adjust content padding for small screens */
-  .content {
+  .content,
+  body[dir='rtl'] .content,
+  html[dir='rtl'] .content {
+    margin: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-inline: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
     padding: var(--space-md);
+    box-sizing: border-box;
   }
 
   .main-content {
     gap: var(--space-md);
+    min-width: 0;
   }
 }
 
@@ -222,8 +232,17 @@
   }
 
   /* Reduce padding for tight spaces */
-  .content {
+  .content,
+  body[dir='rtl'] .content,
+  html[dir='rtl'] .content {
     padding: var(--space-sm);
+    margin: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-inline: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box;
   }
 
   .card {

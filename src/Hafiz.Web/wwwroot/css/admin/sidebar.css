@@ -266,7 +266,7 @@ body[dir='rtl'] .sidebar-toggle {
 }
 
 /* Mobile Styles */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .sidebar {
     transform: translateX(-100%);
     opacity: 0;
@@ -278,7 +278,10 @@ body[dir='rtl'] .sidebar-toggle {
       visibility 0s linear 0.32s;
   }
 
-  body[dir='rtl'] .sidebar {
+  body[dir='rtl'] .sidebar,
+  html[dir='rtl'] .sidebar {
+    left: auto !important;
+    right: 0 !important;
     transform: translateX(100%);
   }
 
@@ -286,12 +289,17 @@ body[dir='rtl'] .sidebar-toggle {
     animation: sidebarSlideIn 0.32s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     visibility: visible;
     transition: none;
+    opacity: 1;
+    display: flex !important;
   }
 
-  body[dir='rtl'] .sidebar.active {
+  body[dir='rtl'] .sidebar.active,
+  html[dir='rtl'] .sidebar.active {
     animation: sidebarSlideInRtl 0.32s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     visibility: visible;
     transition: none;
+    opacity: 1;
+    display: flex !important;
   }
 
   /* Staggered fade-in for nav items — only when sidebar is opening */

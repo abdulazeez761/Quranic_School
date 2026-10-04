@@ -40,7 +40,7 @@ if (sidebar && sidebarOverlay) {
   window.addEventListener('resize', function () {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(function () {
-      if (window.innerWidth > 768) {
+      if (window.innerWidth > 992) {
         sidebar.classList.remove('active');
         sidebarOverlay.classList.remove('active');
         document.body.style.overflow = '';
@@ -61,7 +61,7 @@ if (sidebar && sidebarOverlay) {
 
       // Don't close on logout button in some cases, but close on nav links
       if (
-        window.innerWidth <= 768 &&
+        window.innerWidth <= 992 &&
         !link.classList.contains('logout') &&
         !isLanguageToggle &&
         !isLanguageMenu

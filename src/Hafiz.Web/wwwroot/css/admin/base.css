@@ -9,6 +9,8 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 body {
@@ -18,9 +20,11 @@ body {
   background: var(--light-gray);
   color: var(--text-dark);
   overflow-x: hidden;
+  max-width: 100vw;
 }
 
 /* RTL Support */
+html[dir='rtl'],
 body[dir='rtl'] {
   direction: rtl;
   text-align: right;

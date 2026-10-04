@@ -11,13 +11,16 @@
 /* Main Content Area */
 .content {
   flex: 1;
+  min-width: 0;
   padding: var(--space-lg);
   margin-left: var(--sidebar-width);
-  transition: margin-left var(--transition-base);
+  transition: margin-left var(--transition-base), margin-right var(--transition-base);
   width: calc(100% - var(--sidebar-width));
+  box-sizing: border-box;
 }
 
-body[dir='rtl'] .content {
+body[dir='rtl'] .content,
+html[dir='rtl'] .content {
   margin-left: 0;
   margin-right: var(--sidebar-width);
 }
@@ -25,6 +28,7 @@ body[dir='rtl'] .content {
 .main-content {
   display: grid;
   gap: var(--space-lg);
+  min-width: 0;
   animation: fadeIn 0.3s ease;
 }
 
@@ -90,16 +94,17 @@ body[dir='rtl'] .content {
 }
 
 @media (max-width: 992px) {
-  .content {
-    margin-left: 70px;
-    width: calc(100% - 70px);
+  .content,
+  body[dir='rtl'] .content,
+  html[dir='rtl'] .content {
+    margin: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-inline: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
     padding: var(--space-md);
-  }
-
-  body[dir='rtl'] .content {
-    margin-left: 0;
-    margin-right: 70px;
-    width: calc(100% - 70px);
+    box-sizing: border-box;
   }
 
   .grid-4,
@@ -113,11 +118,16 @@ body[dir='rtl'] .content {
 }
 
 @media (max-width: 768px) {
-  .content {
+  .content,
+  body[dir='rtl'] .content,
+  html[dir='rtl'] .content {
+    margin: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
     margin-inline: 0 !important;
     width: 100% !important;
+    max-width: 100vw !important;
     padding: 14px;
-    max-width: 100vw;
     box-sizing: border-box;
   }
 
@@ -134,10 +144,17 @@ body[dir='rtl'] .content {
 }
 
 @media (max-width: 480px) {
-  .content {
+  .content,
+  body[dir='rtl'] .content,
+  html[dir='rtl'] .content {
     padding: 12px;
+    margin: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
     margin-inline: 0 !important;
     width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box;
   }
 
   .main-content {

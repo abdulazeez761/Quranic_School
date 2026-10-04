@@ -461,8 +461,9 @@
 }
 .templates-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 16px;
+  min-width: 0;
 }
 .template-card {
   overflow: hidden;
@@ -583,6 +584,15 @@
 @media (max-width: 1024px) {
   .editor-view-switcher {
     display: flex;
+    position: sticky;
+    top: 8px;
+    z-index: 25;
+    background: rgba(238, 242, 237, 0.96);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  }
+  .editor-view-btn {
+    min-height: 42px;
   }
   .cert-builder {
     grid-template-columns: 1fr;
@@ -604,25 +614,92 @@
     padding: 16px;
   }
 }
+
 @media (max-width: 560px) {
+  .cert-admin-page {
+    padding: 12px 12px 36px;
+  }
   .cert-admin-header {
     flex-direction: column;
     align-items: stretch;
     text-align: center;
-    gap: 14px;
+    gap: 12px;
+    margin-bottom: 18px;
   }
+  .cert-admin-header h1 {
+    font-size: 1.35rem;
+    justify-content: center;
+  }
+  .cert-header-actions,
   .cert-admin-header > div:last-child {
     display: flex;
     flex-direction: column;
     width: 100%;
+    gap: 8px;
   }
+  .cert-header-actions .btn,
   .cert-admin-header .btn {
     width: 100%;
     justify-content: center;
+    min-height: 44px;
+    font-size: 14.5px;
+  }
+  .templates-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .template-card {
+    border-radius: 16px;
+  }
+  .template-card-body {
+    padding: 16px;
+  }
+  .template-card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 14px;
+  }
+  .template-card-footer > a.btn-primary {
+    width: 100%;
+    order: 1;
+    justify-content: center;
+    min-height: 42px;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .template-card-footer > button.btn-outline-secondary {
+    flex: 1;
+    order: 2;
+    justify-content: center;
+    min-height: 38px;
+    font-size: 13px;
+  }
+  .template-card-footer .actions-right {
+    order: 3;
+    margin-inline-start: 0;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .template-card-footer .actions-right form {
+    display: contents !important;
+  }
+  .template-card-footer .actions-right .btn {
+    min-height: 38px;
+    min-width: 38px;
+    padding: 6px 12px;
   }
   .field-grid,
   .color-grid {
     grid-template-columns: 1fr;
+  }
+  .cb-field input,
+  .cb-field select,
+  .cb-field textarea {
+    min-height: 44px;
+    font-size: 15px;
+    padding: 10px 12px;
   }
   .preset-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -650,13 +727,53 @@
     max-width: 100%;
     width: 100%;
   }
-  .template-card-footer {
+  .builder-actions {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+  .builder-actions .btn {
+    width: 100%;
+    min-height: 46px;
+    justify-content: center;
+    font-size: 15px;
+  }
+  .version-card-details {
     flex-direction: column;
     align-items: stretch;
+    gap: 10px;
   }
-  .template-card-footer .actions-right {
-    margin-inline-start: 0;
-    justify-content: flex-end;
+  .version-actions {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+  }
+  .version-actions .btn {
+    flex: 1;
+    min-height: 38px;
+    justify-content: center;
+  }
+  .modal-dialog {
+    margin: 12px auto !important;
+    max-width: calc(100% - 24px) !important;
+  }
+  .modal-content {
+    border-radius: 16px !important;
+  }
+  .modal-header {
+    padding: 14px 16px !important;
+  }
+  .modal-body {
+    padding: 14px 16px !important;
+  }
+  .modal-footer {
+    padding: 12px 16px !important;
+    flex-direction: column-reverse !important;
+    gap: 8px !important;
+  }
+  .modal-footer .btn {
+    width: 100% !important;
+    min-height: 44px !important;
+    justify-content: center !important;
   }
 }
 
@@ -1605,12 +1722,19 @@
   /* .content already pads the page, so the register adds none of its own. */
   .cert-admin-page {
     padding: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
   }
   .cert-admin-header {
     flex-direction: column;
     align-items: stretch;
     gap: 14px;
     margin-bottom: 18px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
   }
   .cert-admin-header h1 {
     font-size: 22px;
@@ -1630,12 +1754,15 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
+    width: 100%;
   }
   .cert-header-actions .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
+    min-height: 44px;
+    width: 100%;
   }
 
   /* --- stat tiles ------------------------------------------------------- */
